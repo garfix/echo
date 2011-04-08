@@ -146,7 +146,7 @@ class ChatbotEcho
 				return $this->LanguageProcessor->generate($semantics, $this->workingMemory);
 			}
 		} else {
-			return 'No comprendo';
+			return "I don't understand";
 		}
 	}
 
