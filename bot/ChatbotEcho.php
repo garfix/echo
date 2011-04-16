@@ -1,20 +1,20 @@
 <?php
 
 require_once __DIR__ . '/language/LanguageProcessor.php';
+require_once __DIR__ . '/language/DiscoursePlanner.php';
 
 class ChatbotEcho
 {
-	static $instance = null;
+	/** There is only one agent */
+	private static $instance = null;
 
-	private $statements = array();
-	private $LanguageProcessor;
+	/** Data structures */
+	private $declarativeMemory = array();
 	private $workingMemory = array();
 
-	public $lastestStructure = null;
-
-	private $knownWords = array(
-		'i', 'am', 'who'
-	);
+	/** Modules */
+	private $LanguageProcessor;
+	private $discoursePlanners = array();
 
 	private function __construct()
 	{
@@ -29,6 +29,12 @@ class ChatbotEcho
 		return self::$instance;
 	}
 
+	/**
+	 * Parses $input into a series of Sentences
+	 *
+	 * @param string $input
+	 * @return array An array of Sentence
+	 */
 	public function parse($input)
 	{
 		$sentences = $this->LanguageProcessor->parse($input, $this->workingMemory);
@@ -77,15 +83,45 @@ class ChatbotEcho
 //		return $bestResponse;
 
 
-
+	/**
+	 * Starts a new conversation with a given user.
+	 * A dialog manager is created for this conversation.
+	 */
+	public function startConversation($userId)
+	{
+		$this->addToWorkingMemory('context', 'speaker', $userId);
+		$this->createDiscoursePlanner($userId);
+	}
 
 	/**
+	 * Within the current conversation with the user, $input is processed and output is returned.
 	 *
-	 * @param mixed $statement three parameters: subject, predicate, object
+	 * @param string $userId
+	 * @param string $input Human readable input
+	 * @return string Human readable output
 	 */
-	public function tell($statement)
+	public function interact($userId, $input)
 	{
-		$this->statements[] = func_get_args();
+		if (!isset($this->discoursePlanners[$userId])) {
+			$this->startConversation($userId);
+		}
+
+		return $this->discoursePlanners[$userId]->interact($input);
+	}
+
+	/**
+	 * Ends and removes the conversation with the user.
+	 *
+	 * @param string $userId
+	 */
+	public function stopConversation($userId)
+	{
+		unset($this->discoursePlanners[$userId]);
+	}
+
+	private function createDiscoursePlanner($userId)
+	{
+		$this->discoursePlanners[$userId] = new DiscoursePlanner($userId, $this->LanguageProcessor, $this->workingMemory);
 	}
 
 	public function addToWorkingMemory($subject, $predicate, $object)
@@ -93,28 +129,40 @@ class ChatbotEcho
 		$this->workingMemory[$subject][$predicate] = $object;
 	}
 
-	public function ask($pattern)
+
+	/**
+	 * Low-level: enters $statment into declarative memory.
+	 *
+	 * @param array $statement three parameters: subject, predicate, object
+	 */
+	public function tell(array $statement)
 	{
-		$pattern = func_get_args();
+		$this->declarativeMemory[] = $statement;
+	}
+
+	/**
+	 * Low-level: queries declarative memory for $pattern
+	 *
+	 * @param $pattern
+	 * @return mixed|null
+	 */
+	public function ask(array $triple)
+	{
 		$answer = null;
 
-		$count = count($pattern);
 		$index = -1;
-		foreach ($pattern as $index => $word) {
-			if ($pattern[$index][0] == '?') {
+		foreach ($triple as $index => $word) {
+			if ($triple[$index][0] == '?') {
 				break;
 			}
 		}
 
-		foreach ($this->statements as $statement) {
-			if (count($statement) != $count) {
-				continue;
-			}
+		foreach ($this->declarativeMemory as $statement) {
 			foreach ($statement as $i => $part) {
-				if ($pattern[$i][0] == '?') {
+				if ($triple[$i][0] == '?') {
 					$answer = $part;
 				} else {
-					if ($pattern[$i] != $part) {
+					if ($triple[$i] != $part) {
 						continue;
 					}
 				}
@@ -125,6 +173,12 @@ class ChatbotEcho
 		return null;
 	}
 
+	/**
+	 * High-level: reply to the human readable $question with a human readable sentence
+	 *
+	 * @param string $question
+	 * @return string The response
+	 */
 	public function answer($question)
 	{
 		$sentences = $this->parse($question);
@@ -138,16 +192,43 @@ class ChatbotEcho
 				$semantics = $Sentence->interpretations[0]->semantics;
 
 				// try to answer it
+				foreach ($semantics as $triple) {
+					$answer = $this->ask($triple);
+					if ($answer) {
+						$answerTriple = $this->bind($triple, $answer);
 
-				// turn semantics into triples
-//				r($semantics);
+						$semantics = array($answerTriple);
 
-				// generate a sentence from triples
-				return $this->LanguageProcessor->generate($semantics, $this->workingMemory);
+						// generate a reply sentence
+						return $this->LanguageProcessor->generate($semantics, $this->workingMemory);
+					}
+				}
+
+				return "I don't know the answer";
 			}
-		} else {
-			return "I don't understand";
 		}
+		return "I don't understand";
+	}
+
+	/**
+	 * Replaces a variable in a triple with a value
+	 *
+	 * @param array $unboundTriple
+	 * @param string $answer
+	 */
+	private function bind($unboundTriple, $answer)
+	{
+		$boundTriple = array();
+
+		foreach ($unboundTriple as $index => $word) {
+			if ($word[0] == '?') {
+				$boundTriple[] = $answer;
+			} else {
+				$boundTriple[] = $word;
+			}
+		}
+
+		return $boundTriple;
 	}
 
 	public function understandSimpleStatements($input, &$score)

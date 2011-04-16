@@ -30,7 +30,7 @@ test(2, $sentences[0]->getSyntax(), '[S [VP [verb book][NP [determiner that][nou
 test(5, $sentences[0]->getStructure(), "imperative");
 test(3, $sentences[1]->language, 'dutch');
 test(4, $sentences[1]->getSyntax(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
-test(5, $sentences[0]->getStructure(), "imperative");
+test(5, $sentences[1]->getStructure(), "imperative");
 
 $sentences = $Echo->parse('I am Patrick');
 test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [proper-noun patrick]]]]');
@@ -42,8 +42,8 @@ test(111, $sentences[0]->getSyntax(), '[S [Wh-NP [wh-word who]][VP [verb am][NP 
 test(112, $sentences[0]->getSemantics(), "[[$objectId name ?variable]]");
 test(113, $sentences[0]->getStructure(), "wh-subject-question");
 
-$Echo->tell($objectId, 'name', 'patrick');
-$answer = $Echo->ask($objectId, 'name', '?variable');
+$Echo->tell(array($objectId, 'name', 'patrick'));
+$answer = $Echo->ask(array($objectId, 'name', '?variable'));
 test(121, $answer, 'patrick');
 $answer = $Echo->answer('Who am I?');
 test(122, $answer, 'You are Patrick.');

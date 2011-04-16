@@ -88,8 +88,13 @@ class LanguageProcessor
 	/**
 	 * Turns an array of meaning representations into a sentence, in the current language.
 	 *
-	 * @param array $semantics
-	 * @param string A human readable sentence, or false if an error occurred
+	 * "We can characterize the input to a single invocation of an NLG system as a four-tuple <k, c, u, d>
+	 * where k is the KNOWLEDGE SOURCE, c is the COMMUNICATIVE GOAL, u is the USER MODEL, and
+	 * d is the DISCOURSE HISTORY" - Building natural language systems (p. 43)
+	 *
+	 * @param array $semantics - (part of the) COMMUNICATIVE GOAL
+	 * @param $workingMemory - the DISCOURSE HISTORY
+	 * @return string A human readable sentence, or false if an error occurred
 	 */
 	public function generate(array $semantics, $workingMemory)
 	{

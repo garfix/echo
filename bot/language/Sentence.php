@@ -56,10 +56,9 @@ class Sentence
 	{
 		$clauses = array();
 		$semanticSet = $this->interpretations[$treeIndex]->semantics;
-		foreach ($semanticSet as $subject => $predicates) {
-			foreach ($predicates as $predicate => $object) {
-				$clauses[] = '[' . $subject . ' ' . $predicate . ' ' . $object . ']';
-			}
+		foreach ($semanticSet as $triple) {
+			list($subject, $predicate, $object) = $triple;
+			$clauses[] = '[' . $subject . ' ' . $predicate . ' ' . $object . ']';
 		}
 		return '[' . implode(',', $clauses) . ']';
 	}

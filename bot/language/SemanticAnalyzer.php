@@ -42,7 +42,7 @@ class SemanticAnalyzer
 				isset($partialMeaning['VP']['NP']) &&
 				($partialMeaning['VP']['verb'] == 'be')
 			) {
-				$clauses[$partialMeaning['NP']]['name'] = $partialMeaning['VP']['NP'];
+				$clauses[] = array($partialMeaning['NP'], 'name', $partialMeaning['VP']['NP']);
 			}
 
 			if (
@@ -51,7 +51,7 @@ class SemanticAnalyzer
 				isset($partialMeaning['VP']['NP']) &&
 				($partialMeaning['Wh-NP'] == '?variable')
 			) {
-				$clauses[$partialMeaning['VP']['NP']]['name'] = $partialMeaning['Wh-NP'];
+				$clauses[] = array($partialMeaning['VP']['NP'], 'name', $partialMeaning['Wh-NP']);
 			}
 
 			if (count($partialMeaning) == 1) {

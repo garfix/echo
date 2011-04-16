@@ -85,7 +85,7 @@ class SimpleGrammar implements Grammar
 		$Sentence->interpretations[0]->syntaxTree = $syntaxTree;
 
 		// create the output text from the syntactic structure
-		$output = $this->Realiser->realise($syntaxTree);
+		$output = $this->SurfaceRealiser->realise($syntaxTree);
 		$Sentence->surfaceText = $output;
 
 		return $output;
