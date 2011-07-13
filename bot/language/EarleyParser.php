@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Given an array of lexemes (a sentence), this class provides zero or more syntactic representations.
+ * Given an array of lexemes (a sentence) and a grammar, this class provides zero or more syntactic representations.
  *
  * Note: this parser should hold no external references. If it has finished parsing it should be
  * completely discardible.
@@ -9,15 +9,16 @@
  */
 class EarleyParser
 {
+	static $debug = false;
+	#static $debug = true;
+
 	/**
 	 * Parses a sentence (given in an array of words) into a single chart structure
-	 * that holds both the syntactic and a semantic structure.
-	 * Implements the algorithmn found on in chapter 11 of "Speech And Language Processing",
-	 * extended with the semantics part in chapter 15.
+	 * that holds the syntactic structure.
+	 * Implements the algorithmn found on in chapter 10 of "Speech And Language Processing".
 	 *
 	 * @param $words array An array of lowercase strings
 	 * @param Grammar $Grammar The rules that structure the words.
-	 * @todo This parser does not handle compound lexemes (i.e. "science fiction").
 	 *
 	 * @return array Parse trees
 	 */
@@ -44,7 +45,7 @@ class EarleyParser
 			'startWordIndex' => 0,
 			'endWordIndex' => 0
 		);
-		$this->enqueue($chart, $initialState, 0);
+		$this->enqueue($chart, $words, $initialState, 0);
 
 		for ($i = 0; $i <= $wordCount; $i++) {
 			for ($j = 0; $j < count($chart[$i]); $j++) {
@@ -52,40 +53,46 @@ class EarleyParser
 				if ($this->isIncomplete($state)) {
 					$nextCat = $this->getNextCat($state);
 					if (!$Grammar->isPartOfSpeech($nextCat)) {
-						$this->predict($Grammar, $chart, $state);
+						$this->predict($Grammar, $chart, $words, $state);
 					} elseif ($i < $wordCount) {
 						$this->scan($Grammar, $chart, $words, $state);
 					}
 				} else {
-					$this->complete($chart, $state);
+					$this->complete($chart, $words, $state);
 				}
 			}
 		}
 
 		$parseTrees = $this->extractParseTrees($Grammar, $chart, $wordCount);
-
+#r($parseTrees);
+#exit;
 		return $parseTrees;
 	}
 
-	protected function predict(Grammar $Grammar, &$chart, $state)
+	protected function predict(Grammar $Grammar, &$chart, $words, $state)
 	{
+		$this->showDebug('predict', $words, $state);
+
 		$rule = $state['rule'];
 		$B = $rule['consequents'][$state['dotPosition']];
 		$j = $state['endWordIndex'];
 
-		foreach ($Grammar->getGrammarRulesForConstituent($B) as $rule) {
+		foreach ($Grammar->getGrammarRulesForConstituent($B) as $newRule) {
+
 			$predictedState = array(
-				'rule' => $rule,
+				'rule' => $newRule,
 				'dotPosition' => 0,
 				'startWordIndex' => $j,
 				'endWordIndex' => $j
 			);
-			$this->enqueue($chart, $predictedState, $j);
+			$this->enqueue($chart, $words, $predictedState, $j);
 		}
 	}
 
 	protected function scan(Grammar $Grammar, &$chart, $words, $state)
 	{
+		$this->showDebug('scan', $words, $state);
+
 		$rule = $state['rule'];
 		$B = $rule['consequents'][$state['dotPosition']];
 		$j = $state['endWordIndex'];
@@ -101,7 +108,8 @@ class EarleyParser
 				'startWordIndex' => $j,
 				'endWordIndex' => $j + 1,
 			);
-			$this->enqueue($chart, $scannedState, $j + 1);
+
+			$this->enqueue($chart, $words, $scannedState, $j + 1);
 		}
 	}
 
@@ -112,24 +120,25 @@ class EarleyParser
 	 * @param unknown_type $chart
 	 * @param unknown_type $state
 	 */
-	protected function complete(&$chart, $state)
+	protected function complete(&$chart, $words, $state)
 	{
+		$this->showDebug('complete', $words, $state);
+
 		$j = $state['startWordIndex'];
 		$k = $state['endWordIndex'];
 		$B = $state['rule']['antecedent'];
-		$stateID = $state['id'];
 
 		foreach ($chart[$j] as $chartedState) {
 			$dotPosition = $chartedState['dotPosition'];
 			$rule = $chartedState['rule'];
 			$consequents = $rule['consequents'];
+
 			if (($dotPosition >= count($consequents)) || ($consequents[$dotPosition] != $B)) {
 				continue;
 			}
 
 			$i = $chartedState['startWordIndex'];
-			$rule = $chartedState['rule'];
-#print_r($rule);
+
 			$completedState = array(
 				'rule' => $rule,
 				'dotPosition' => $dotPosition + 1,
@@ -141,7 +150,7 @@ class EarleyParser
 			$completedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
 			$completedState['children'][] = $state['id'];
 
-			$this->enqueue($chart, $completedState, $k);
+			$this->enqueue($chart, $words, $completedState, $k);
 
 			if ($dotPosition + 1 == count($rule['consequents'])) {
 				if ($rule['antecedent'] == 'S') {
@@ -161,7 +170,7 @@ class EarleyParser
 	 * @param array $state
 	 * @param int $position
 	 */
-	protected function enqueue(&$chart, &$state, $position)
+	protected function enqueue(&$chart, $words, &$state, $position)
 	{
 		static $stateIDs = 0;
 
@@ -172,6 +181,9 @@ class EarleyParser
 		}
 
 		if ($addState) {
+
+			$this->showDebug('enqueue', $words, $state);
+
 			$stateIDs++;
 			$state['id'] = $stateIDs;
 			$chart['states'][$stateIDs] = $state;
@@ -181,14 +193,16 @@ class EarleyParser
 
 	protected function isStateInChart($state, $chart, $position)
 	{
-		$found = false;
 		foreach ($chart[$position] as $presentState) {
-			if ($presentState['rule'] == $state['rule']) {
-				$found = true;
-				# dit is misschien niet genoeg
+			if (
+				$presentState['rule'] == $state['rule'] &&
+				$presentState['dotPosition'] == $state['dotPosition'] &&
+				$presentState['startWordIndex'] == $state['startWordIndex'] &&
+				$presentState['endWordIndex'] == $state['endWordIndex']) {
+					return true;
 			}
 		}
-		return $found;
+		return false;
 	}
 
 	protected function isIncomplete($state)
@@ -199,6 +213,28 @@ class EarleyParser
 	protected function getNextCat($state)
 	{
 		return $state['rule']['consequents'][$state['dotPosition']];
+	}
+
+	protected function showDebug($function, $words, $state)
+	{
+		if (ChatbotSettings::$debugParser) {
+			$rule = $state['rule'];
+			$consequents = $rule['consequents'];
+			$dotPosition = $state['dotPosition'];
+			$start = $state['startWordIndex'];
+			$end = $state['endWordIndex'];
+
+			$post = array_merge(
+				array_slice($consequents, 0, $dotPosition),
+				array('.'),
+				array_slice($consequents, $dotPosition));
+
+			echo
+				str_repeat('    ', $start) .
+				$function . ' ' .
+				$rule['antecedent'] . ' => ' . implode(' ', $post) . ' ' .
+				"[" . implode(' ', array_slice($words, $start, ($end - $start))) . "]\n";
+		}
 	}
 
 	/**

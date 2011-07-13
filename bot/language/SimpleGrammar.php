@@ -28,6 +28,7 @@ class SimpleGrammar implements Grammar
 		// structure
 		$this->lexicon = $this->getLexicon();
 		$this->syntax = $this->getSyntax();
+		$this->word2predicate = $this->getWord2Predicate();
 
 		// input processing
 		$this->Parser = new EarleyParser();
@@ -61,12 +62,195 @@ class SimpleGrammar implements Grammar
 			$Interpretation = new SentenceInterpretation();
 			$Interpretation->syntaxTree = $syntaxTree;
 			$Interpretation->structure = $this->getSentenceStructure($syntaxTree);
-			$Interpretation->semantics = $this->Analyzer->analyze($syntaxTree, $workingMemory);
+			$Interpretation->phraseStructure = $this->Analyzer->analyze($this, $syntaxTree, $workingMemory);
 
 			$Sentence->interpretations[] = $Interpretation;
 		}
 
 		return !empty($Sentence->interpretations);
+	}
+
+	protected function word2predicate($word, $partOfSpeech)
+	{
+		if (isset($this->word2predicate[$partOfSpeech][$word])) {
+			return $this->word2predicate[$partOfSpeech][$word];
+		} else {
+			trigger_error('Word meaning not known: ' . $word . ' (' . $partOfSpeech . ')');
+			return null;
+		}
+	}
+
+	/**
+	 * Creates a phrase structure based on a word of a given part-of-speech.
+	 *
+	 * @param array $partOfSpeech
+	 * @param array $word
+	 * @return array A phrase structure
+	 */
+	public function analyzeWord($partOfSpeech, $word)
+	{
+		$structure = array();
+
+		if ($partOfSpeech == 'proper-noun') {
+			$structure['id'] = uniqid();
+			$structure['type'] = 'object';
+			$structure['name'] = $word;
+		} elseif ($partOfSpeech == 'preposition') {
+			$structure = $this->word2predicate($word, $partOfSpeech);
+			#$structure['predicate'] = $this->word2predicate($word, $partOfSpeech);
+		} elseif ($partOfSpeech == 'noun') {
+			$structure =  $this->word2predicate($word, $partOfSpeech);
+			$structure['type'] = 'object';
+			$structure['id'] = uniqid();
+//		} elseif ($partOfSpeech == 'pronoun') {
+//			$structure['type'] = 'object';
+//			$structure['id'] = uniqid();
+		} elseif ($partOfSpeech == 'verb') {
+			$structure = $this->word2predicate($word, $partOfSpeech);
+			#todo: past tense (e.g. influenced)
+		} elseif ($partOfSpeech == 'aux') {
+			$structure['mode'] = 'passive'; # is not always the case (i.e. did ... have)
+			$structure['lex'] = $word;
+		} elseif ($partOfSpeech == 'determiner') {
+			$structure = $this->word2predicate($word, $partOfSpeech);
+		} elseif ($partOfSpeech == 'wh-word') {
+			$structure = $this->word2predicate($word, $partOfSpeech);
+			$structure['type'] = 'object';
+			$structure['id'] = uniqid();
+		} else {
+			trigger_error('Part-of-speech not recognized: ' . $partOfSpeech);
+		}
+
+		if (ChatbotSettings::$debugAnalyzer) {
+			if ($structure) {
+				r($structure);
+			}
+		}
+
+		return $structure;
+	}
+
+	/**
+	 * Creates a phrase structure based on a set of parts-of-speech and the child phrase structures
+	 * that correspond with these parts of speech.
+	 *
+	 * @param array $partsOfSpeech
+	 * @param array $constituentStructures
+	 * @return array A phrase structure
+	 */
+	public function analyzeBranch($partOfSpeech, $constituentPartsOfSpeech, $constituentStructures)
+	{
+		$structure = array();
+
+		$rule = array_merge(array($partOfSpeech), $constituentPartsOfSpeech);
+
+		switch ($rule) {
+			case array('S', 'aux', 'NP', 'VP'):
+				list($aux, $NP, $VP) = $constituentStructures;
+				$structure = $VP;
+				$structure['type'] = 'clause';
+# leid de rol af uit het werkwoord!
+				$structure['participants']['*patient'] = $NP;
+				$structure['mode'] = $aux['mode'];
+				$structure['act'] = 'yes-no-question';
+				break;
+			case array('S', 'Wh-NP', 'aux', 'NP', 'VP'):
+				list($WhNP, $aux, $NP, $VP) = $constituentStructures;
+				$structure = $VP;
+				$structure['type'] = 'clause';
+#				$structure['participants']['*patient'] = $NP;
+#				$structure['participants'][$WhNP['question']] = $WhNP;
+$structure['participants']['*actor'] = $NP;
+$structure['participants']['*patient'] = $WhNP;
+				$structure['mode'] = $aux['mode'];
+				$structure['act'] = 'question-about-object';
+				break;
+			case array('S', 'Wh-NP', 'VP'):
+				list($WhNP, $VP) = $constituentStructures;
+				$structure = $VP;
+				$structure['participants']['*patient'] = $WhNP;
+				$structure['act'] = 'question-about-object';
+				break;
+//			case array('S', 'VP'):
+//				list($VP) = $constituentStructures;
+//				$structure = $VP;
+//				break;
+//			case array('S', 'NP', 'VP'):
+//				list($NP, $VP) = $constituentStructures;
+//				$structure = $VP;
+//				$structure['subject'] = $NP;
+//				break;
+			case array('NP', 'proper-noun'):
+				list($proper) = $constituentStructures;
+				$structure = $proper;
+				break;
+//			case array('NP', 'pronoun'):
+//				list($pronoun) = $constituentStructures;
+//				$structure = $pronoun;
+//				break;
+			case array('NP', 'noun'):
+				list($noun) = $constituentStructures;
+				$structure = $noun;
+				break;
+			case array('NP', 'proper-noun', 'NP'):
+				list($proper, $NP) = $constituentStructures;
+				$structure = $NP;
+				$structure['name'] = $proper['name'] . ' ' . $structure['name'];
+				break;
+			case array('NP', 'NP', 'PP'):
+				list($NP, $PP) = $constituentStructures;
+				$structure = $NP;
+				$modifier = $PP;
+				unset($modifier['preposition']);
+				$structure['modifiers'][$PP['preposition']] = $modifier;
+				break;
+			case array('NP', 'determiner', 'noun'):
+				list($det, $noun) = $constituentStructures;
+				$structure = $noun;
+				$structure['determiner'] = $det['determiner'];
+				break;
+			case array('VP', 'verb'):
+				list($verb) = $constituentStructures;
+				$structure = $verb;
+				break;
+			case array('VP', 'verb', 'PP'):
+				list($verb, $PP) = $constituentStructures;
+				$structure = $verb;
+				$participant = $PP;
+				unset($participant['preposition']);
+				$structure['participants'][$PP['preposition']] = $participant;
+				break;
+			case array('VP', 'verb', 'NP'):
+				list($verb, $NP) = $constituentStructures;
+				$structure = $verb;
+				$structure['participants']['*actor'] = $NP;
+				break;
+			case array('PP', 'preposition', 'NP'):
+				list($preposition, $NP) = $constituentStructures;
+				$structure = $NP;
+				$structure['preposition'] = $preposition['preposition'];
+				break;
+			case array('Wh-NP', 'wh-word'):
+				list($whWord) = $constituentStructures;
+				$structure = $whWord;
+				break;
+			case array('Wh-NP', 'wh-word', 'NP'):
+				list($whWord, $NP) = $constituentStructures;
+				$structure = array_merge($NP, $whWord);
+				break;
+			default:
+				trigger_error('Unknown rule: ' . print_r($rule, true));
+#exit;
+				break;
+		}
+
+		if (ChatbotSettings::$debugAnalyzer) {
+			if ($structure) {
+				r($structure);
+			}
+		}
+
+		return $structure;
 	}
 
 	/**
@@ -78,7 +262,7 @@ class SimpleGrammar implements Grammar
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$syntaxTree = $this->Microplanner->plan($Sentence->interpretations[0]->semantics);
+		$syntaxTree = $this->Microplanner->plan($Sentence->interpretations[0]->phraseStructure);
 		if (!$syntaxTree) {
 			return false;
 		}
@@ -104,11 +288,11 @@ class SimpleGrammar implements Grammar
 
 		if ($input == array('NP', 'VP', null, null)) {
 			return "declarative";
-		} elseif ($input == array('Aux', 'NP', 'VP', null)) {
+		} elseif ($input == array('aux', 'NP', 'VP', null)) {
 			return "yes-no-question";
 		} elseif ($input == array('Wh-NP', 'VP', null, null)) {
 			return "wh-subject-question";
-		} elseif ($input == array('Wh-NP', 'Aux', 'NP', 'VP')) {
+		} elseif ($input == array('Wh-NP', 'aux', 'NP', 'VP')) {
 			return "wh-non-subject-question";
 		} elseif ($input == array('VP', null, null, null)) {
 			return "imperative";
@@ -173,23 +357,26 @@ class SimpleGrammar implements Grammar
 	 */
 	public function isWordAPartOfSpeech($word, $partOfSpeech)
 	{
+		$result = false;
+
 		if (isset($this->lexicon[$word])) {
 			$parts = $this->lexicon[$word];
 			if (is_array($parts)) {
-				return in_array($partOfSpeech, $parts);
+				$result = in_array($partOfSpeech, $parts);
 			} else {
-				return $partOfSpeech == $parts;
+				$result = $partOfSpeech == $parts;
 			}
 		} else {
 
 			// all words can be proper nouns
 			if ($partOfSpeech == 'proper-noun') {
-				return true;
+				$result = true;
 			}
 
 		}
+//echo "$word/$partOfSpeech/$result\n";
 
-		return false;
+		return $result;
 	}
 
 	private function getNextWord($string, &$index)
@@ -255,7 +442,7 @@ class SimpleGrammar implements Grammar
 	}
 
 	/**
-	 * Returns true if the given syntactic category is a basic part-of-speech.
+	 * Returns true if the given syntactic category is a non-abstract part-of-speech.
 	 *
 	 * @param string $category
 	 * @return bool
@@ -272,99 +459,132 @@ class SimpleGrammar implements Grammar
 			'numeral',
 			'verb',
 			'proper-noun',
-			'wh-word'
+			'wh-word',
+			'aux',
+			'preposition',
 		));
 	}
 
 	public function getSyntax()
 	{
+# which rules are really necessary?
 		$syntax = array(
 			'S' => array(
-				// S => NP VP [1]
+				// John drives
 				array(
 					'antecedent' => 'S',
 					'consequents' => array('NP', 'VP'),
 				),
-				// S => Wh-NP VP [1]
 				array(
 					'antecedent' => 'S',
 					'consequents' => array('Wh-NP', 'VP'),
 				),
-				// S => VP NP [1]
 				array(
 					'antecedent' => 'S',
 					'consequents' => array('VP'),
 				),
-				//				// S => CPwh [2]
+				// Was John driving?
+				array(
+					'antecedent' => 'S',
+					'consequents' => array('aux', 'NP', 'VP'),
+				),
+				// Why was John driving?
+				array(
+					'antecedent' => 'S',
+					'consequents' => array('Wh-NP', 'aux', 'NP', 'VP'),
+				),
 //				array(
 //					'antecedent' => 'S',
 //					'consequents' => array('WH-phrase'),
 //				),
 //			),
 //			'WH-phrase' => array(
-//				// CPwh => AP V NP [2]
 //				array(
 //					'antecedent' => 'WH-phrase',
 //					'consequents' => array('AP', 'verb', 'NP'),
 //				),
 			),
 			'VP' => array(
-				// VP => V [1]
 				array(
 					'antecedent' => 'VP',
 					'consequents' => array('verb')
 				),
-				// VP => V [1]
 				array(
 					'antecedent' => 'VP',
 					'consequents' => array('verb', 'NP')
 				),
-				//				// VP => V AP [1]
+				array(
+					'antecedent' => 'VP',
+					'consequents' => array('verb', 'PP')
+				),
 //				array(
 //					'antecedent' => 'VP',
 //					'consequents' => array('verb', 'AP'),
 //				)
 			),
 			'Wh-NP' => array(
-				// Wh-NP => Wh-word
 				array(
 					'antecedent' => 'Wh-NP',
 					'consequents' => array('wh-word'),
 				),
+				array(
+					'antecedent' => 'Wh-NP',
+					'consequents' => array('wh-word', 'NP'),
+				),
 			),
 			'NP' => array(
-				// NP => Pronoun [1][2]
+				// he
 				array(
 					'antecedent' => 'NP',
 					'consequents' => array('pronoun'),
 				),
+				// children
+				array(
+					'antecedent' => 'NP',
+					'consequents' => array('noun'),
+				),
+				// John
 				array(
 					'antecedent' => 'NP',
 					'consequents' => array('proper-noun'),
 				),
-				//				// NP => Numeral Noun [1]
+				// John de Vries
+				array(
+					'antecedent' => 'NP',
+					'consequents' => array('proper-noun', 'NP'),
+				),
 //				array(
 //					'antecedent' => 'NP',
 //					'consequents' => array('numeral', 'noun'),
 //				),
-				// NP => Det Noun [1]
+				// the car
 				array(
 					'antecedent' => 'NP',
 					'consequents' => array('determiner', 'noun'),
 				),
+				// the car  in the lot
+				array(
+					'antecedent' => 'NP',
+					'consequents' => array('NP', 'PP'),
+				),
 			),
-			'AP' => array(
-//				// AP => NP Adj [1]
+			'PP' => array(
+				// in the lot
+				array(
+					'antecedent' => 'PP',
+					'consequents' => array('preposition', 'NP')
+				),
+			),
+//			'AP' => array(
 //				array(
 //					'antecedent' => 'AP',
 //					'consequents' => array('NP', 'adjective'),
 //				),
-//				// AP => ADV Adj [2]
 //				array(
 //					'antecedent' => 'AP',
 //					'consequents' => array('adverb', 'adjective'),
 //				)
-			)
+//			)
 		);
 
 		return $syntax;

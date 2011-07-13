@@ -103,10 +103,10 @@ class LanguageProcessor
 		return $this->generateInLanguage($semantics, $language, $workingMemory);
 	}
 
-	protected function generateInLanguage($semantics, $language, $workingMemory)
+	protected function generateInLanguage($phraseStructure, $language, $workingMemory)
 	{
 		$Interpretation = new SentenceInterpretation();
-		$Interpretation->semantics = $semantics;
+		$Interpretation->phraseStructure = $phraseStructure;
 
 		$Sentence = new Sentence();
 		$Sentence->interpretations[] = $Interpretation;

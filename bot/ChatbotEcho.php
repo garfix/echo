@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/ChatbotSettings.php';
 require_once __DIR__ . '/language/LanguageProcessor.php';
 require_once __DIR__ . '/language/DiscoursePlanner.php';
 
@@ -186,28 +187,54 @@ class ChatbotEcho
 
 			$Sentence = $sentences[0];
 
-			if ($Sentence->interpretations[0]->structure == 'wh-subject-question') {
+#			if ($Sentence->interpretations[0]->structure == 'yes-no-question') {
 
-				// this is a question
-				$semantics = $Sentence->interpretations[0]->semantics;
+				$phraseStructure = $Sentence->interpretations[0]->phraseStructure;
 
-				// try to answer it
-				foreach ($semantics as $triple) {
-					$answer = $this->ask($triple);
-					if ($answer) {
-						$answerTriple = $this->bind($triple, $answer);
+				if (isset($phraseStructure['act'])) {
+					$act = $phraseStructure['act'];
 
-						$semantics = array($answerTriple);
+					if ($act == 'yes-no-question') {
 
-						// generate a reply sentence
-						return $this->LanguageProcessor->generate($semantics, $this->workingMemory);
+						// since this is a yes-no question, check the statement
+						$answer = $this->check($phraseStructure);
+
+						if ($answer) {
+							return 'Yes.';
+						} else {
+							return 'No.';
+						}
+
+					} elseif ($act == 'question-about-object') {
+
+						$answer = $this->answerQuestionAboutObject($phraseStructure);
+						if ($answer) {
+							return $answer;
+						}
+
 					}
 				}
 
 				return "I don't know the answer";
-			}
+
 		}
 		return "I don't understand";
+	}
+
+	private function check($phraseStructure)
+	{
+		require_once(__DIR__ . '/knowledge_source/DBPedia.php');
+
+		$DBPedia = new DBPedia();
+		return $DBPedia->check($phraseStructure);
+	}
+
+	private function answerQuestionAboutObject($phraseStructure)
+	{
+		require_once(__DIR__ . '/knowledge_source/DBPedia.php');
+
+		$DBPedia = new DBPedia();
+		return $DBPedia->answerQuestionAboutObject($phraseStructure);
 	}
 
 	/**

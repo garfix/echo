@@ -16,13 +16,60 @@ class EnglishGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
-			'i' => 'pronoun',
+			'a' => 'article', 'an' => 'article',
 			'am' => 'verb',
-			'a' => 'article', 'an' => 'article', 'the' => 'article',
-			'that' => 'determiner',
+			'author' => 'noun',
 			'book' => 'verb',
+			'born' => 'verb',
+			'by' => 'preposition',
+			'children' => 'noun',
+			'did' => 'aux',
 			'flight' => 'noun',
-			'who' => 'wh-word'
+			'have' => 'verb',
+			'how' => 'wh-word',
+			'i' => 'pronoun',
+			'influenced' => 'verb',
+			'many' => 'determiner',
+			'of' => 'preposition',
+			'the' => array('article', 'determiner'),
+			'that' => 'determiner',
+			'was' => 'aux',
+			'when' => 'wh-word',
+			'where' => 'wh-word',
+			'who' => 'wh-word',
+		);
+	}
+
+	public function getWord2Predicate()
+	{
+		return array(
+			'preposition' => array(
+				'of' => array('preposition' => '*belong-to'),
+				'by' => array('preposition' => '*actor'),
+			),
+			'verb' => array(
+				'influenced' => array('predicate' => '*influence'),
+				'book' => array('predicate' => '*book'),
+				'am' => array('predicate' => '*be'),
+				'have' => array('predicate' => '*have'),
+				'born' => array('predicate' => '*give-birth')
+			),
+			'noun' => array(
+				'author' => array('isa' => '*author'),
+				'flight' => array('isa' => '*flight'),
+				'children' => array('isa' => '*child')
+			),
+#todo
+			'determiner' => array(
+				'the' => array('determiner' => 'the'),
+				'many' => array('determiner' => 'many'),
+				'that' => array('determiner' => 'that')
+			),
+			'wh-word' => array(
+				'when' => array('question' => '*time'),
+				'where' => array('question' => '*location'),
+				'how' => array('question' => '*nature-of'),
+			)
 		);
 	}
 }

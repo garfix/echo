@@ -8,6 +8,8 @@ interface Grammar
 	public function isPartOfSpeech($constituent);
 	public function getSentenceStructure($syntaxTree);
 	public function generate(Sentence $Sentence);
+	public function analyzeWord($partOfSpeech, $word);
+	public function analyzeBranch($partOfSpeech, $constituentPartsOfSpeech, $constituentStructures);
 }
 
 ?>

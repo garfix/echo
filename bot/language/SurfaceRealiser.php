@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * A surface realiser turns a syntactic representation of a sentence into a single string of characters.
+ * It applies these rules:
+ * - syntax
+ * - morphology
+ * - orthography (Start with a capital letter, end with a sentence terminator (.!?))
+ */
 class SurfaceRealiser
 {
 	/**

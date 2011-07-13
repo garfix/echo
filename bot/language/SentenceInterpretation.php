@@ -8,6 +8,9 @@ class SentenceInterpretation
 	/** @var A possible syntax trees that could be parsed from the $words */
 	public $syntaxTree = null;
 
-	/** @var A possible meaning representation of the syntax tree */
-	public $semantics = null;
+	/** @var A syntax-meaning representation of the syntax tree */
+	public $phraseStructure = null;
+
+	/** @var The type of sentence */
+	public $structure = null;
 }

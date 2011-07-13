@@ -4,95 +4,39 @@ class SemanticAnalyzer
 {
 	/**
 	 * Turns a syntax tree into a set of semantic representations.
+	 * For each of the language specific parts, the grammar is used.
 	 *
 	 * @param array $syntaxTree
 	 * @param array $context A set of statements describing current situation
-	 * @return array
+	 * @return array A phrase structure
 	 */
-	public function analyze(array $syntaxTree, array $workingMemory)
+	public function analyze(Grammar $Grammar, array $syntaxTree, array $workingMemory)
 	{
-		$clauses = array();
+		$phraseStructure = $this->analyzeBranch($Grammar, $syntaxTree, $workingMemory);
 
-		$this->analyzeBranch($syntaxTree, $clauses, $workingMemory);
-//r($clauses);
-		return $clauses;
+		return $phraseStructure;
 	}
 
-	protected function analyzeBranch(array $syntaxBranch, array &$clauses, array $workingMemory)
+	protected function analyzeBranch(Grammar $Grammar, array $syntaxBranch, array $workingMemory)
 	{
-		$meaning = '?';
-//r($syntaxBranch);
-		$partOfSpeech = $syntaxBranch['part-of-speech'];
 		$constituents = isset($syntaxBranch['constituents']) ? $syntaxBranch['constituents'] : array();
 		$word = isset($syntaxBranch['word']) ? $syntaxBranch['word'] : null;
+		$partOfSpeech = isset($syntaxBranch['part-of-speech']) ? $syntaxBranch['part-of-speech'] : null;
 
-		if ($constituents) {
-
-			// meaning is composed of the meaning of the constituents
-			$partialMeaning = array();
-			foreach ($constituents as $constituent) {
-				$partialMeaning[$constituent['part-of-speech']] = $this->analyzeBranch($constituent, $clauses, $workingMemory);
-			}
-//r($partialMeaning);
-			//$meaning = $partialMeaning;
-
-			if (
-				isset($partialMeaning['NP']) &&
-				isset($partialMeaning['VP']['verb']) &&
-				isset($partialMeaning['VP']['NP']) &&
-				($partialMeaning['VP']['verb'] == 'be')
-			) {
-				$clauses[] = array($partialMeaning['NP'], 'name', $partialMeaning['VP']['NP']);
-			}
-
-			if (
-				isset($partialMeaning['Wh-NP']) &&
-				isset($partialMeaning['VP']['verb']) &&
-				isset($partialMeaning['VP']['NP']) &&
-				($partialMeaning['Wh-NP'] == '?variable')
-			) {
-				$clauses[] = array($partialMeaning['VP']['NP'], 'name', $partialMeaning['Wh-NP']);
-			}
-
-			if (count($partialMeaning) == 1) {
-				$meaning = reset($partialMeaning);
-			} else {
-				$meaning = $partialMeaning;
-			}
-
-		} else {
-
-			// syntactic leaf: this is where the meaning starts
-			if (
-				($partOfSpeech == 'pronoun') &&
-	# english specific
-				($word == 'i')
-			) {
-				$meaning = $workingMemory['context']['speaker'];
-			}
-
-			if (
-				($partOfSpeech == 'proper-noun')
-			) {
-				$meaning = $word;
-			}
-
-			if (
-				($partOfSpeech == 'wh-word')
-			) {
-				$meaning = '?variable';
-			}
-
-			if (
-				($partOfSpeech == 'verb') &&
-	# english specific
-				($word == 'am')
-			) {
-				$meaning = 'be';
-			}
-
+		$constituentPartsOfSpeech = array();
+		$constituentStructures = array();
+		foreach ($constituents as $constituent) {
+			$constituentStructures[] = $this->analyzeBranch($Grammar, $constituent, $workingMemory);
+			$constituentPartsOfSpeech[] = $constituent['part-of-speech'];
 		}
 
-		return $meaning;
+		// meaning association is language dependent, so it is left to the grammar
+		if ($word) {
+			$phraseStructure = $Grammar->analyzeWord($partOfSpeech, $word);
+		} else {
+			$phraseStructure = $Grammar->analyzeBranch($partOfSpeech, $constituentPartsOfSpeech, $constituentStructures);
+		}
+
+		return $phraseStructure;
 	}
 }

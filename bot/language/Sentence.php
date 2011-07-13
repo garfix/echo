@@ -52,15 +52,28 @@ class Sentence
 		return $string;
 	}
 
-	public function getSemantics($treeIndex = 0)
+	public function getPhraseStructure($treeIndex = 0)
 	{
 		$clauses = array();
-		$semanticSet = $this->interpretations[$treeIndex]->semantics;
-		foreach ($semanticSet as $triple) {
-			list($subject, $predicate, $object) = $triple;
-			$clauses[] = '[' . $subject . ' ' . $predicate . ' ' . $object . ']';
+		$phraseStructure = $this->interpretations[$treeIndex]->phraseStructure;
+		return $this->getPhraseStructureBranch($phraseStructure);
+	}
+
+	public function getPhraseStructureBranch($phraseStructure)
+	{
+		$parts = array();
+		foreach ($phraseStructure as $key => $val) {
+			if ($key == 'id') {
+				continue;
+			} elseif (is_array($val)) {
+				$valString = $this->getPhraseStructureBranch($val);
+			} else {
+				$valString = $val;
+			}
+
+			$parts[] = $key . ': ' . $valString;
 		}
-		return '[' . implode(',', $clauses) . ']';
+		return '[' . implode(', ', $parts) . ']';
 	}
 
 	public function getStructure($treeIndex = 0)

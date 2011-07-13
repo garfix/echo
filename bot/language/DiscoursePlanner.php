@@ -9,7 +9,7 @@
  * - Characteristics of the reader (for example: novice, expert)
  * - Constraints (size, for example)
  * - The underlying information source (name only most significant information)
- * Depending on the goal, the planner should apply a different plan.
+ * Depending on the goal, the planner should apply a different plan. A plan is hierarchical.
  *
  * I did not make the dialog manager part of the LanguageProcessor, because it's just one of the possible uses of that module.
  * Adding all uses to the module would make it unnecessarily complicated.
