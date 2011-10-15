@@ -28,7 +28,7 @@ class SimpleGrammar implements Grammar
 		// structure
 		$this->lexicon = $this->getLexicon();
 		$this->syntax = $this->getSyntax();
-		$this->word2predicate = $this->getWord2Predicate();
+		$this->word2phraseStructure = $this->getWord2PhraseStructure();
 
 		// input processing
 		$this->Parser = new EarleyParser();
@@ -37,6 +37,13 @@ class SimpleGrammar implements Grammar
 		// output processing
 		$this->Microplanner = new Microplanner();
 		$this->SurfaceRealiser = new SurfaceRealiser();
+	}
+
+	private static function getUniqueId()
+	{
+		static $id = 0;
+
+		return ++$id;
 	}
 
 	/**
@@ -51,11 +58,11 @@ class SimpleGrammar implements Grammar
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($input, $Sentence);
 
-		// continue to work with lower cased words
-		$Sentence->lcWords = array_map('strtolower', $Sentence->words);
+		// continue to work with words as they occur in the lexicon
+		$this->makeLexicalEntries($Sentence);
 
 		// create one or more parse trees from this sentence
-		$syntaxTrees = $this->Parser->parse($this, $Sentence->lcWords);
+		$syntaxTrees = $this->Parser->parse($this, $Sentence->lexicalEntries);
 
 		$Sentence->interpretations = array();
 		foreach ($syntaxTrees as $syntaxTree) {
@@ -70,10 +77,10 @@ class SimpleGrammar implements Grammar
 		return !empty($Sentence->interpretations);
 	}
 
-	protected function word2predicate($word, $partOfSpeech)
+	protected function word2phraseStructure($word, $partOfSpeech)
 	{
-		if (isset($this->word2predicate[$partOfSpeech][$word])) {
-			return $this->word2predicate[$partOfSpeech][$word];
+		if (isset($this->word2phraseStructure[$partOfSpeech][$word])) {
+			return $this->word2phraseStructure[$partOfSpeech][$word];
 		} else {
 			trigger_error('Word meaning not known: ' . $word . ' (' . $partOfSpeech . ')');
 			return null;
@@ -92,31 +99,32 @@ class SimpleGrammar implements Grammar
 		$structure = array();
 
 		if ($partOfSpeech == 'proper-noun') {
-			$structure['id'] = uniqid();
+			$structure['id'] = self::getUniqueId();
 			$structure['type'] = 'object';
 			$structure['name'] = $word;
 		} elseif ($partOfSpeech == 'preposition') {
-			$structure = $this->word2predicate($word, $partOfSpeech);
-			#$structure['predicate'] = $this->word2predicate($word, $partOfSpeech);
+			$structure = $this->word2phraseStructure($word, $partOfSpeech);
+			#$structure['predicate'] = $this->word2phraseStructure($word, $partOfSpeech);
 		} elseif ($partOfSpeech == 'noun') {
-			$structure =  $this->word2predicate($word, $partOfSpeech);
+			$structure =  $this->word2phraseStructure($word, $partOfSpeech);
 			$structure['type'] = 'object';
-			$structure['id'] = uniqid();
-//		} elseif ($partOfSpeech == 'pronoun') {
-//			$structure['type'] = 'object';
-//			$structure['id'] = uniqid();
+			$structure['id'] = self::getUniqueId();
+		} elseif ($partOfSpeech == 'pronoun') {
+			$structure =  $this->word2phraseStructure($word, $partOfSpeech);
+			$structure['type'] = 'object';
+			$structure['id'] = self::getUniqueId();
 		} elseif ($partOfSpeech == 'verb') {
-			$structure = $this->word2predicate($word, $partOfSpeech);
+			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 			#todo: past tense (e.g. influenced)
 		} elseif ($partOfSpeech == 'aux') {
 			$structure['mode'] = 'passive'; # is not always the case (i.e. did ... have)
 			$structure['lex'] = $word;
 		} elseif ($partOfSpeech == 'determiner') {
-			$structure = $this->word2predicate($word, $partOfSpeech);
+			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 		} elseif ($partOfSpeech == 'wh-word') {
-			$structure = $this->word2predicate($word, $partOfSpeech);
+			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 			$structure['type'] = 'object';
-			$structure['id'] = uniqid();
+			$structure['id'] = self::getUniqueId();
 		} else {
 			trigger_error('Part-of-speech not recognized: ' . $partOfSpeech);
 		}
@@ -154,40 +162,57 @@ class SimpleGrammar implements Grammar
 				$structure['mode'] = $aux['mode'];
 				$structure['act'] = 'yes-no-question';
 				break;
+			case array('S', 'aux', 'NP', 'NP'):
+				list($aux, $NP, $NP2) = $constituentStructures;
+$structure['type'] = 'clause';
+$structure['predicate'] = '*be';
+$structure['participants']['*theme'] = $NP;
+$structure['participants']['*patient'] = $NP2;
+$structure['mode'] = $aux['mode'];
+$structure['act'] = 'yes-no-question';
+				break;
 			case array('S', 'Wh-NP', 'aux', 'NP', 'VP'):
 				list($WhNP, $aux, $NP, $VP) = $constituentStructures;
 				$structure = $VP;
 				$structure['type'] = 'clause';
-#				$structure['participants']['*patient'] = $NP;
-#				$structure['participants'][$WhNP['question']] = $WhNP;
-$structure['participants']['*actor'] = $NP;
-$structure['participants']['*patient'] = $WhNP;
-				$structure['mode'] = $aux['mode'];
 				$structure['act'] = 'question-about-object';
+				$structure['mode'] = $aux['mode'];
+				$structure['participants']['*actor'] = $NP;
+
+				$question = $WhNP['question'];
+				$participants = array('*location', '*time');
+				if (in_array($question, $participants)) {
+					$structure['participants'][$question] = $WhNP;
+				} else {
+					$structure['participants']['*patient'] = $WhNP;
+				}
+
 				break;
 			case array('S', 'Wh-NP', 'VP'):
 				list($WhNP, $VP) = $constituentStructures;
 				$structure = $VP;
+				$structure['type'] = 'clause';
 				$structure['participants']['*patient'] = $WhNP;
 				$structure['act'] = 'question-about-object';
 				break;
-//			case array('S', 'VP'):
-//				list($VP) = $constituentStructures;
-//				$structure = $VP;
-//				break;
-//			case array('S', 'NP', 'VP'):
-//				list($NP, $VP) = $constituentStructures;
-//				$structure = $VP;
-//				$structure['subject'] = $NP;
-//				break;
+			case array('S', 'VP'):
+				list($VP) = $constituentStructures;
+				$structure = $VP;
+				break;
+			case array('S', 'NP', 'VP'):
+				list($NP, $VP) = $constituentStructures;
+				$structure = $VP;
+				$structure['type'] = 'clause';
+				$structure['participants']['*actor'] = $NP;
+				break;
 			case array('NP', 'proper-noun'):
 				list($proper) = $constituentStructures;
 				$structure = $proper;
 				break;
-//			case array('NP', 'pronoun'):
-//				list($pronoun) = $constituentStructures;
-//				$structure = $pronoun;
-//				break;
+			case array('NP', 'pronoun'):
+				list($pronoun) = $constituentStructures;
+				$structure = $pronoun;
+				break;
 			case array('NP', 'noun'):
 				list($noun) = $constituentStructures;
 				$structure = $noun;
@@ -222,8 +247,21 @@ $structure['participants']['*patient'] = $WhNP;
 				break;
 			case array('VP', 'verb', 'NP'):
 				list($verb, $NP) = $constituentStructures;
-				$structure = $verb;
-				$structure['participants']['*actor'] = $NP;
+
+				if ($verb['predicate'] == '*be') {
+					if (isset($NP['name']) || isset($NP['referring-expression'])) {
+						// identification
+						$structure['predicate'] = '*identify';
+						// I made up this participant for lack of suitable match in p. 270 of 'The structure of modern english'
+						$structure['participants']['*identity'] = $NP;
+					} else {
+						// class-membership or class-inclusion
+						# todo
+					}
+				} else {
+					$structure = $verb;
+					$structure['participants']['*actor'] = $NP;
+				}
 				break;
 			case array('PP', 'preposition', 'NP'):
 				list($preposition, $NP) = $constituentStructures;
@@ -302,7 +340,7 @@ $structure['participants']['*patient'] = $WhNP;
 	}
 
 	/**
-	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase rom the value of $input
+	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase from the value of $input
 	 * @param string $input
 	 * @param Sentence $Sentence
 	 */
@@ -331,6 +369,51 @@ $structure['participants']['*patient'] = $WhNP;
 		$Sentence->words = $words;
 		$Sentence->surfaceText = substr($input, 0, $index);
 		$Sentence->terminator = $terminator;
+	}
+
+	/**
+	 * Turns words into "lexical entries" (words that can be used by the parser).
+	 * This means:
+	 * 1) words are put into lowercase
+	 * 2) unknown words are grouped together (so that 'john carpenter' becomes a single entry)
+	 *
+	 * @param Sentence $Sentence
+	 */
+	private function makeLexicalEntries($Sentence)
+	{
+		$lexicalEntries = array();
+		$count = count($Sentence->words);
+		$store = '';
+
+		for ($i = 0; $i < $count; $i++) {
+
+			// lowercase
+			$lcWord = strtolower($Sentence->words[$i]);
+
+			// word is recognized?
+			if (isset($this->lexicon[$lcWord])) {
+				// pending store?
+				if ($store != '') {
+					$lexicalEntries[] = $store;
+					$store = '';
+				}
+				$lexicalEntries[] = $lcWord;
+			} else {
+				// glue together with previously unidentified words
+				if ($store == '') {
+					$store = $lcWord;
+				} else {
+					$store .= ' ' . $lcWord;
+				}
+			}
+		}
+
+		// pending store?
+		if ($store != '') {
+			$lexicalEntries[] = $store;
+		}
+
+		$Sentence->lexicalEntries = $lexicalEntries;
 	}
 
 	/**
@@ -488,6 +571,11 @@ $structure['participants']['*patient'] = $WhNP;
 					'antecedent' => 'S',
 					'consequents' => array('aux', 'NP', 'VP'),
 				),
+				// Was John a fool?
+				array(
+					'antecedent' => 'S',
+					'consequents' => array('aux', 'NP', 'NP'),
+				),
 				// Why was John driving?
 				array(
 					'antecedent' => 'S',
@@ -562,7 +650,7 @@ $structure['participants']['*patient'] = $WhNP;
 					'antecedent' => 'NP',
 					'consequents' => array('determiner', 'noun'),
 				),
-				// the car  in the lot
+				// the car in the lot
 				array(
 					'antecedent' => 'NP',
 					'consequents' => array('NP', 'PP'),

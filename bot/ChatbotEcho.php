@@ -43,47 +43,6 @@ class ChatbotEcho
 		return $sentences;
 	}
 
-//		$strategies = array(
-//			'strategyCommands',
-//			'simpleQuestions',
-//			'understandSimpleStatements',
-//			'answerSimpleQuestions'
-//		);
-
-//		// people make many spelling errors
-//		// try to correct for these
-//
-//		// note: i am sam => i am am (!)
-//		$words = explode(' ', $input);
-//		$newWords = array();
-//		foreach ($words as $word) {
-//			if (array_search($word, $this->knownWords) === false) {
-//				foreach ($this->knownWords as $knownWord) {
-//					if (levenshtein($word, $knownWord) < 2) {
-//						$word = $knownWord;
-//						break;
-//					}
-//				}
-//			}
-//			$newWords[] = $word;
-//		}
-//
-//		$input = implode(' ', $newWords);
-//
-//		$score = $highScore = 0;
-//		$bestResponse = 'ok';
-//
-//		foreach ($strategies as $strategy) {
-//			$response = $this->$strategy($input, $score);
-//			if ($response && $score > $highScore) {
-//				$highScore = $score;
-//				$bestResponse = $response;
-//			}
-//		}
-//
-//		return $bestResponse;
-
-
 	/**
 	 * Starts a new conversation with a given user.
 	 * A dialog manager is created for this conversation.
@@ -182,43 +141,36 @@ class ChatbotEcho
 	 */
 	public function answer($question)
 	{
+		$answer = '';
+
 		$sentences = $this->parse($question);
-		if ($sentences) {
+		foreach ($sentences as $Sentence) {
 
-			$Sentence = $sentences[0];
+			$phraseStructure = $Sentence->interpretations[0]->phraseStructure;
+//r($phraseStructure['act']);
+			if (isset($phraseStructure['act'])) {
+				$act = $phraseStructure['act'];
 
-#			if ($Sentence->interpretations[0]->structure == 'yes-no-question') {
+				if ($act == 'yes-no-question') {
 
-				$phraseStructure = $Sentence->interpretations[0]->phraseStructure;
+					// since this is a yes-no question, check the statement
+					$result = $this->check($phraseStructure);
 
-				if (isset($phraseStructure['act'])) {
-					$act = $phraseStructure['act'];
-
-					if ($act == 'yes-no-question') {
-
-						// since this is a yes-no question, check the statement
-						$answer = $this->check($phraseStructure);
-
-						if ($answer) {
-							return 'Yes.';
-						} else {
-							return 'No.';
-						}
-
-					} elseif ($act == 'question-about-object') {
-
-						$answer = $this->answerQuestionAboutObject($phraseStructure);
-						if ($answer) {
-							return $answer;
-						}
-
+					if ($result) {
+						$answer .= 'Yes.';
+					} else {
+						$answer .= 'No.';
 					}
+
+				} elseif ($act == 'question-about-object') {
+
+					$answer .= $this->answerQuestionAboutObject($phraseStructure);
+
 				}
-
-				return "I don't know the answer";
-
+			}
 		}
-		return "I don't understand";
+
+		return $answer;
 	}
 
 	private function check($phraseStructure)

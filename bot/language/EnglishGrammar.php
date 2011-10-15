@@ -23,7 +23,9 @@ class EnglishGrammar extends SimpleGrammar
 			'born' => 'verb',
 			'by' => 'preposition',
 			'children' => 'noun',
+			'daughter' => 'noun',
 			'did' => 'aux',
+			'die' => 'verb',
 			'flight' => 'noun',
 			'have' => 'verb',
 			'how' => 'wh-word',
@@ -40,7 +42,7 @@ class EnglishGrammar extends SimpleGrammar
 		);
 	}
 
-	public function getWord2Predicate()
+	public function getWord2PhraseStructure()
 	{
 		return array(
 			'preposition' => array(
@@ -48,27 +50,32 @@ class EnglishGrammar extends SimpleGrammar
 				'by' => array('preposition' => '*actor'),
 			),
 			'verb' => array(
-				'influenced' => array('predicate' => '*influence'),
-				'book' => array('predicate' => '*book'),
 				'am' => array('predicate' => '*be'),
+				'book' => array('predicate' => '*book'),
+				'born' => array('predicate' => '*give-birth'),
+				'die' => array('predicate' => '*die'),
+				'influenced' => array('predicate' => '*influence'),
 				'have' => array('predicate' => '*have'),
-				'born' => array('predicate' => '*give-birth')
 			),
 			'noun' => array(
 				'author' => array('isa' => '*author'),
+				'children' => array('isa' => '*child'),
+				'daughter' => array('isa' => '*daughter'),
 				'flight' => array('isa' => '*flight'),
-				'children' => array('isa' => '*child')
 			),
-#todo
+			'pronoun' => array(
+				'i' => array('referring-expression' => '*current-speaker'),
+			),
 			'determiner' => array(
-				'the' => array('determiner' => 'the'),
-				'many' => array('determiner' => 'many'),
-				'that' => array('determiner' => 'that')
+				'the' => array('determiner' => '*the'),
+				'that' => array('determiner' => '*that'),
+				'many' => array('determiner' => '*many'),
 			),
 			'wh-word' => array(
+				'how' => array('question' => '*nature-of'),
 				'when' => array('question' => '*time'),
 				'where' => array('question' => '*location'),
-				'how' => array('question' => '*nature-of'),
+				'who' => array('question' => '*person'),
 			)
 		);
 	}

@@ -47,28 +47,48 @@ class EarleyParser
 		);
 		$this->enqueue($chart, $words, $initialState, 0);
 
+		// go through all word positions in the sentence
 		for ($i = 0; $i <= $wordCount; $i++) {
+			// go through all chart entries in this position (entries may be added while we're in the loop)
 			for ($j = 0; $j < count($chart[$i]); $j++) {
+				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 				$state = $chart[$i][$j];
+				// check if the entry is parsed completely
 				if ($this->isIncomplete($state)) {
+					// fetch the next consequent in the rule of the entry
 					$nextCat = $this->getNextCat($state);
+					// is this an 'abstract' consequent like NP, VP, PP?
 					if (!$Grammar->isPartOfSpeech($nextCat)) {
+						// yes it is; add all entries that have this abstract consequent as their antecedent
 						$this->predict($Grammar, $chart, $words, $state);
 					} elseif ($i < $wordCount) {
+						// no it isn't, it is a low-level part-of-speech like noun, verb or adverb
+						// if the current word in the sentence has this part-of-speech, then
+						// we add a completed entry to the chart ($part-of-speech => $word)
 						$this->scan($Grammar, $chart, $words, $state);
 					}
 				} else {
+					// proceed all other entries in the chart that have this entry's antecedent as their next consequent
 					$this->complete($chart, $words, $state);
 				}
 			}
 		}
 
 		$parseTrees = $this->extractParseTrees($Grammar, $chart, $wordCount);
-#r($parseTrees);
-#exit;
+
+		if (ChatbotSettings::$debugParser) r($parseTrees);
+
 		return $parseTrees;
 	}
 
+	/**
+	 * Adds all entries to the chart that have the current consequent of $state as their antecedent.
+	 *
+	 * @param Grammar $Grammar
+	 * @param array $chart
+	 * @param array $words
+	 * @param array $state
+	 */
 	protected function predict(Grammar $Grammar, &$chart, $words, $state)
 	{
 		$this->showDebug('predict', $words, $state);
@@ -89,6 +109,16 @@ class EarleyParser
 		}
 	}
 
+	/**
+	 * If the current consequent in $state (which non-abstract, like noun, verb, adjunct) is one
+	 * of the parts of speech associated with the current $word in the sentence,
+	 * then a new, completed, entry is added to the chart: ($part-of-speech => $word)
+	 *
+	 * @param Grammar $Grammar
+	 * @param $chart
+	 * @param $words
+	 * @param $state
+	 */
 	protected function scan(Grammar $Grammar, &$chart, $words, $state)
 	{
 		$this->showDebug('scan', $words, $state);
@@ -114,11 +144,16 @@ class EarleyParser
 	}
 
 	/**
-	 * Increments the dotposition of a state, if it's current antecedent is fullfilled.
-	 * The state is not really changes; a new state is queued.
+	 * This function is called whenever a state is completed.
+	 * It's purpose is to complete other states.
 	 *
-	 * @param unknown_type $chart
-	 * @param unknown_type $state
+	 * For example:
+	 * - this $state is NP -> noun, it has been completed
+	 * - now proceed all other states in the chart that are waiting for a NP at the current position
+	 *
+	 * @param array $chart
+	 * @param array $words
+	 * @param array $state
 	 */
 	protected function complete(&$chart, $words, $state)
 	{
