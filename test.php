@@ -26,11 +26,6 @@ function testAll($Echo)
 #	test(5, $sentences[1]->getSyntax(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
 #	test(6, $sentences[1]->getStructure(), "imperative");
 
-	$sentences = $Echo->parse('I am Patrick');
-	test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [proper-noun patrick]]]]');
-	test(102, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [type: object, name: patrick], *actor: [referring-expression: *current-speaker, type: object]], type: clause]");
-	test(103, $sentences[0]->getStructure(), "declarative");
-
 	$sentences = $Echo->parse('Who am I?');
 	test(111, $sentences[0]->getSyntax(), '[S [Wh-NP [wh-word who]][VP [verb am][NP [pronoun i]]]]');
 	test(112, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [referring-expression: *current-speaker, type: object], *patient: [question: *person, type: object]], type: clause, act: question-about-object]");
@@ -64,7 +59,15 @@ function testAll($Echo)
 
 $Echo = ChatbotEcho::getInstance();
 
-	testAll($Echo);
+//	testAll($Echo);
+
+$sentences = $Echo->parse('I am Patrick');
+test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [proper-noun patrick]]]]');
+test(102, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [type: object, name: patrick], *actor: [referring-expression: *current-speaker, type: object]], type: clause]");
+test(103, $sentences[0]->getStructure(), "declarative");
+
+
+
 
 //	$sentences = $Echo->parse('I am Patrick');
 
