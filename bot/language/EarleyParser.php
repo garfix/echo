@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/LabeledDAG.php';
+
 /**
  * Given an array of lexemes (a sentence) and a grammar, this class provides zero or more syntactic representations.
  *
@@ -24,8 +26,9 @@ class EarleyParser
 	 */
 	public function parse(Grammar $Grammar, $words)
 	{
-		// clear the chart
 		$wordCount = count($words);
+
+		// clear the chart
 		$chart = array(
 			'states' => array(),
 			'sentences' => array()
@@ -43,33 +46,43 @@ class EarleyParser
 			'rule' => $rule,
 			'dotPosition' => 0,
 			'startWordIndex' => 0,
-			'endWordIndex' => 0
+			'endWordIndex' => 0,
+			'features' => $Grammar->getFeatures(null, null)
 		);
 		$this->enqueue($chart, $words, $initialState, 0);
 
 		// go through all word positions in the sentence
 		for ($i = 0; $i <= $wordCount; $i++) {
+
 			// go through all chart entries in this position (entries may be added while we're in the loop)
 			for ($j = 0; $j < count($chart[$i]); $j++) {
+
 				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 				$state = $chart[$i][$j];
+
 				// check if the entry is parsed completely
 				if ($this->isIncomplete($state)) {
+
 					// fetch the next consequent in the rule of the entry
 					$nextCat = $this->getNextCat($state);
+
 					// is this an 'abstract' consequent like NP, VP, PP?
 					if (!$Grammar->isPartOfSpeech($nextCat)) {
+
 						// yes it is; add all entries that have this abstract consequent as their antecedent
 						$this->predict($Grammar, $chart, $words, $state);
+
 					} elseif ($i < $wordCount) {
+
 						// no it isn't, it is a low-level part-of-speech like noun, verb or adverb
 						// if the current word in the sentence has this part-of-speech, then
 						// we add a completed entry to the chart ($part-of-speech => $word)
 						$this->scan($Grammar, $chart, $words, $state);
 					}
 				} else {
+
 					// proceed all other entries in the chart that have this entry's antecedent as their next consequent
-					$this->complete($chart, $words, $state);
+					$this->complete($Grammar, $chart, $words, $state);
 				}
 			}
 		}
@@ -94,7 +107,8 @@ class EarleyParser
 		$this->showDebug('predict', $words, $state);
 
 		$rule = $state['rule'];
-		$B = $rule['consequents'][$state['dotPosition']];
+		$dotPosition = $state['dotPosition'];
+		$B = $rule['consequents'][$dotPosition];
 		$j = $state['endWordIndex'];
 
 		foreach ($Grammar->getGrammarRulesForConstituent($B) as $newRule) {
@@ -103,7 +117,11 @@ class EarleyParser
 				'rule' => $newRule,
 				'dotPosition' => 0,
 				'startWordIndex' => $j,
-				'endWordIndex' => $j
+				'endWordIndex' => $j,
+# gebruik de constraint van de n-de consequent
+//				'constraints' => isset($rule['constraints']) ? $rule['constraints'] : array()
+				//'features' => isset($rule['features'][$dotPosition]) ? $rule['features'][$dotPosition] : array()
+				'features' => self::createLabeledDag($newRule),
 			);
 			$this->enqueue($chart, $words, $predictedState, $j);
 		}
@@ -133,10 +151,13 @@ class EarleyParser
 				'rule' => array(
 					'antecedent' => $B,
 					'consequents' => array($words[$j])
+# todo: replace with $word
 				),
 				'dotPosition' => 1,
 				'startWordIndex' => $j,
 				'endWordIndex' => $j + 1,
+				//'constraints' => $Grammar->getFeatures($word, $B)
+				'features' => self::createLabeledDag($Grammar->getRuleForWord($word, $B)),
 			);
 
 			$this->enqueue($chart, $words, $scannedState, $j + 1);
@@ -155,7 +176,7 @@ class EarleyParser
 	 * @param array $words
 	 * @param array $state
 	 */
-	protected function complete(&$chart, $words, $state)
+	protected function complete(Grammar $Grammar, &$chart, $words, $state)
 	{
 		$this->showDebug('complete', $words, $state);
 
@@ -174,23 +195,34 @@ class EarleyParser
 
 			$i = $chartedState['startWordIndex'];
 
-			$completedState = array(
-				'rule' => $rule,
-				'dotPosition' => $dotPosition + 1,
-				'startWordIndex' => $i,
-				'endWordIndex' => $k,
+			$NewFeatures = $this->unifyStates(
+				self::createLabeledDag($state['rule']),
+				self::createLabeledDag($rule),
+				$B
 			);
 
-			// store the state's "children" to ease building the parse trees from the packed forest
-			$completedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
-			$completedState['children'][] = $state['id'];
+			if ($NewFeatures !== false) {
 
-			$this->enqueue($chart, $words, $completedState, $k);
+				$completedState = array(
+					'rule' => $rule,
+					'dotPosition' => $dotPosition + 1,
+					'startWordIndex' => $i,
+					'endWordIndex' => $k,
+					'features' => $NewFeatures
+				);
 
-			if ($dotPosition + 1 == count($rule['consequents'])) {
-				if ($rule['antecedent'] == 'S') {
-					$chart['sentences'][] = $completedState;
+				// store the state's "children" to ease building the parse trees from the packed forest
+				$completedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
+				$completedState['children'][] = $state['id'];
+
+				$this->enqueue($chart, $words, $completedState, $k);
+
+				if ($dotPosition + 1 == count($rule['consequents'])) {
+					if ($rule['antecedent'] == 'S') {
+						$chart['sentences'][] = $completedState;
+					}
 				}
+
 			}
 
 		}
@@ -248,6 +280,32 @@ class EarleyParser
 	protected function getNextCat($state)
 	{
 		return $state['rule']['consequents'][$state['dotPosition']];
+	}
+
+	protected function createLabeledDag($rule)
+	{
+		if (isset($rule['features'])) {
+			$features = $rule['features'];
+
+			$tree = array();
+			$tree['antecedent'] = $features['antecedent'];
+
+			foreach ($features['consequents'] as $i => $consequent) {
+				$tree['consequent' . $i] = $consequent;
+			}
+		} else {
+			$tree = null;
+		}
+
+		return new LabeledDAG($tree);
+	}
+
+	protected function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $cat)
+	{
+		$SubDag1 = $Dag1->followPath($cat);
+		$SubDag2 = $Dag2->followPath($cat);
+
+		return $SubDag1->unify($SubDag2);
 	}
 
 	protected function showDebug($function, $words, $state)

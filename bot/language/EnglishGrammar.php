@@ -16,8 +16,9 @@ class EnglishGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
-			'a' => 'article', 'an' => 'article',
-			'am' => 'verb',
+			'a' => 'article',
+			'an' => 'article',
+			'am' => array('verb' => array('features' => array('person' => 1, 'number' => 's'))),
 			'author' => 'noun',
 			'book' => 'verb',
 			'born' => 'verb',
@@ -29,11 +30,14 @@ class EnglishGrammar extends SimpleGrammar
 			'flight' => 'noun',
 			'have' => 'verb',
 			'how' => 'wh-word',
-			'i' => 'pronoun',
+			'i' => array('pronoun' => array('features' => array('person' => 1, 'number' => 's'))),
 			'influenced' => 'verb',
 			'many' => 'determiner',
 			'of' => 'preposition',
-			'the' => array('article', 'determiner'),
+			'the' => array(
+				'article' => array('cat' => 'article'),
+				# note: an article _is_ a determiner
+				'determiner' => array('cat' => 'determiner')),
 			'that' => 'determiner',
 			'was' => 'aux',
 			'when' => 'wh-word',

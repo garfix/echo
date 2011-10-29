@@ -87,6 +87,15 @@ class SimpleGrammar implements Grammar
 		}
 	}
 
+	public function getFeatures($word, $partOfSpeech)
+	{
+		if (isset($this->lexicon[$word][$partOfSpeech]['features'])) {
+			return $this->lexicon[$word][$partOfSpeech]['features'];
+		} else {
+			return array();
+		}
+	}
+
 	/**
 	 * Creates a phrase structure based on a word of a given part-of-speech.
 	 *
@@ -548,8 +557,30 @@ $structure['act'] = 'yes-no-question';
 		));
 	}
 
+	/**
+	 * Creates a syntax rule, including especially, features, for a word.
+	 * @return array
+	 */
+	public function getRuleForWord($word, $partOfSpeech)
+	{
+		return array(
+			'features' => $this->lexicon[$word][$partOfSpeech]['features']
+		);
+	}
+
 	public function getSyntax()
 	{
+/*
+        alternative:
+
+		$syntax[] = array(
+			array('cat' => 'S', 'features' => array('head-1')),
+			array('cat' => 'NP', 'features' => array('head', 'agreement-2')),
+			array('cat' => 'VP', 'features' => array('head-1', 'agreement-2')),
+		);
+*/
+
+
 # which rules are really necessary?
 		$syntax = array(
 			'S' => array(
@@ -557,7 +588,17 @@ $structure['act'] = 'yes-no-question';
 				array(
 					'antecedent' => 'S',
 					'consequents' => array('NP', 'VP'),
+					'features' => array(
+						'antecedent' => array('head-1'),
+						'consequents' => array(
+							array('head' => array('agreement-2')),
+							array('head-1' => array('agreement-2')),
+						)
+					)
 				),
+
+
+
 				array(
 					'antecedent' => 'S',
 					'consequents' => array('Wh-NP', 'VP'),
