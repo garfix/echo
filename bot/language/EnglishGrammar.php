@@ -18,7 +18,12 @@ class EnglishGrammar extends SimpleGrammar
 		return array(
 			'a' => 'article',
 			'an' => 'article',
-			'am' => array('verb' => array('features' => array('person' => 1, 'number' => 's'))),
+			'am' => array(
+					'verb' => array(
+							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+			'are' => array(
+					'verb' => array(
+							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
 			'author' => 'noun',
 			'book' => 'verb',
 			'born' => 'verb',
@@ -29,8 +34,10 @@ class EnglishGrammar extends SimpleGrammar
 			'die' => 'verb',
 			'flight' => 'noun',
 			'have' => 'verb',
-			'how' => 'wh-word',
-			'i' => array('pronoun' => array('features' => array('person' => 1, 'number' => 's'))),
+			'how' => 'whword',
+			'i' => array(
+					'pronoun' => array(
+							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
 			'influenced' => 'verb',
 			'many' => 'determiner',
 			'of' => 'preposition',
@@ -40,9 +47,9 @@ class EnglishGrammar extends SimpleGrammar
 				'determiner' => array('cat' => 'determiner')),
 			'that' => 'determiner',
 			'was' => 'aux',
-			'when' => 'wh-word',
-			'where' => 'wh-word',
-			'who' => 'wh-word',
+			'when' => 'whword',
+			'where' => 'whword',
+			'who' => 'whword',
 		);
 	}
 
@@ -55,6 +62,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'verb' => array(
 				'am' => array('predicate' => '*be'),
+				'are' => array('predicate' => '*be'),
 				'book' => array('predicate' => '*book'),
 				'born' => array('predicate' => '*give-birth'),
 				'die' => array('predicate' => '*die'),
@@ -75,7 +83,7 @@ class EnglishGrammar extends SimpleGrammar
 				'that' => array('determiner' => '*that'),
 				'many' => array('determiner' => '*many'),
 			),
-			'wh-word' => array(
+			'whword' => array(
 				'how' => array('question' => '*nature-of'),
 				'when' => array('question' => '*time'),
 				'where' => array('question' => '*location'),

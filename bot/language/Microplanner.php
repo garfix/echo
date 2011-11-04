@@ -44,7 +44,7 @@ class Microplanner
 							'part-of-speech' => 'NP',
 							'constituents' => array(
 								array(
-									'part-of-speech' => 'proper-noun',
+									'part-of-speech' => 'propernoun',
 									'word' => $object
 								)
 							)

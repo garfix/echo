@@ -73,10 +73,41 @@ class LabeledDAG
 		return $dag;
 	}
 
+	/**
+	 * Returns the outermost keys of the dag.
+	 *
+	 * @return array
+	 */
+	public function getKeys()
+	{
+		return array_keys($this->dag);
+	}
+
+	/**
+	 * Replaces the outermost $key by $newKey.
+	 *
+	 * @param $key
+	 * @param $newKey
+	 */
+	public function replaceKey($key, $newKey)
+	{
+		if ($newKey != $key) {
+			$this->dag[$newKey] = $this->dag[$key];
+			unset($this->dag[$key]);
+		}
+	}
+
+	/**
+	 * Splits the $label into a name and an id.
+	 *
+	 * @param $label
+	 *
+	 * @return array An (name, id) array
+	 */
 	private function extractLabel($label)
 	{
 		// extract the name and id of the feature
-		if (!preg_match('/^([a-z_0-9]+)(-(\d+))?$/', $label, $matches)) {
+		if (!preg_match('/^([a-z][a-z@_0-9]*)(-(\d+))?$/i', $label, $matches)) {
 			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
 		}
 		$name = $matches[1];
@@ -121,42 +152,41 @@ class LabeledDAG
 		// go through each label
 		foreach ($newDag as $label => $subDag) {
 
-			// is the $subDag a value?
-			if (!is_array($subDag)) {
+			// make sure the node exists in this dag
+			if (!isset($dag[$label])) {
+				// create a new bin. Make sure this bin will be shared by other labels in the dag.
+				// we do this by looking up the internal label of the bin and using it for the new bin
+				// this internal label needs to be modified because it conflicts with the namespace of labels in this DAG
+				$internalLabel = array_search($subDag, $newBins) . '-' . $uniqId;
+				$this->bins[$internalLabel] = null;
+				$dag[$label] = &$this->bins[$internalLabel];
+			}
 
-				// yes it is
-				// check for conflicts
-				if (isset($dag[$label]) && $dag[$label] != $subDag) {
-
-					return false;
-
-				} else {
-					// assign new value
-					$dag[$label] = $subDag;
-				}
-
-			} else {
-
-				// it is a substructure
-				// check if the substructure is available in the source dag
-				if (!isset($dag[$label])) {
-
-					// it is not
-					// create a new bin. Make sure this bin will be shared by other labels in the dag.
-					// we do this by looking up the internal label of the bin and using it for the new bin
-					// this internal label needs to be modified because it conflicts with the namespace of labels in this DAG
-					$internalLabel = array_search($subDag, $newBins) . '-' . $uniqId;
-					$this->bins[$internalLabel] = array();
-
-					$dag[$label] = &$this->bins[$internalLabel];
+			if (is_array($subDag)) {
+				if (is_null($dag[$label])) {
+					$dag[$label] = array();
+				} elseif (is_scalar($dag[$label])) {
+					trigger_error('Merge of scalar and array', E_USER_ERROR);
 				}
 
 				// merge the new structure with the existing one
-				$success = $this->mergeDag($dag[$label], $subDag, $newBins, $uniqId);
-				if (!$success) {
+				// if this merge fails, fail too
+				if (!$this->mergeDag($dag[$label], $subDag, $newBins, $uniqId)) {
 					return false;
 				}
 
+			} elseif (is_scalar($subDag)) {
+				if (is_null($dag[$label])) {
+					$dag[$label] = $subDag;
+				} elseif (is_array($dag[$label])) {
+					trigger_error('Merge of scalar and array', E_USER_ERROR);
+				} else {
+					if ($subDag != $dag[$label]) {
+						return false;
+					}
+				}
+			} else { // $subDag is null
+				return true;
 			}
 		}
 
@@ -170,6 +200,12 @@ class LabeledDAG
 	 */
 	public function followPath($path)
 	{
+if (!isset($this->dag[$path])) {
+#	die($path);
+	return new LabeledDAG();
+}
+
+
 		$NewDAG = new LabeledDAG();
 		$NewDAG->dag = array();
 
@@ -249,6 +285,11 @@ class LabeledDAG
 				$this->copyDag($dag[$label], $newDag[$label], $newBins);
 			}
 		}
+	}
+
+	public function __toString()
+	{
+		return print_r($this->dag, true);
 	}
 
 	protected static function createUniqueId()

@@ -8,7 +8,8 @@ class DutchGrammar extends SimpleGrammar
 	{
 		return array(
 			'auteur' => 'noun',
-			'ben' => 'verb',
+			//'ben' => 'verb',
+'ben' => array('verb' => array('features' => array('person' => 1, 'number' => 's'))),
 			'beïnvloed' => 'verb',
 			'boek' => 'verb',
 			'de' => array('article', 'determiner'),
@@ -19,15 +20,16 @@ class DutchGrammar extends SimpleGrammar
 			'had' => 'verb',
 			'geboren' => 'verb',
 			'het' => 'article',
-			'hoeveel' => 'wh-word',
-			'ik' => 'pronoun',
+			'hoeveel' => 'whword',
+			//'ik' => 'pronoun',
+'ik' => array('pronoun' => array('features' => array('person' => 1, 'number' => 's'))),
 			'kinderen' => 'noun',
 			'van' => 'preposition',
 			'vlucht' => 'noun',
 			'was' => 'aux',
 			'werd' => 'aux',
-			'waar' => 'wh-word',
-			'wanneer' => 'wh-word',
+			'waar' => 'whword',
+			'wanneer' => 'whword',
 		);
 	}
 
@@ -59,7 +61,7 @@ class DutchGrammar extends SimpleGrammar
 				'de' => array('determiner' => '*the'),
 				'een' => array('determiner' => '*a'),
 			),
-			'wh-word' => array(
+			'whword' => array(
 				'wanneer' => array('question' => '*time'),
 				'waar' => array('question' => '*location'),
 				'hoeveel' => array('question' => '*nature-of', 'determiner' => '*many'),

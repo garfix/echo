@@ -61,7 +61,6 @@ class LanguageProcessor
 				// now parse the rest of the input, if there is one
 				// this code works either in ltr and rtl languages (not that i tried ;)
 				$restInput = str_replace($Sentence->surfaceText, '', $input);
-
 				return array_merge($sentences, $this->parse($restInput, $workingMemory));
 			}
 		}

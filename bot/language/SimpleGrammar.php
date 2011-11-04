@@ -5,6 +5,7 @@ require_once(__DIR__ . '/SemanticAnalyzer.php');
 require_once(__DIR__ . '/SentenceInterpretation.php');
 require_once(__DIR__ . '/Microplanner.php');
 require_once(__DIR__ . '/SurfaceRealiser.php');
+require_once(__DIR__ . '/EarleyParser.php');
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -107,7 +108,7 @@ class SimpleGrammar implements Grammar
 	{
 		$structure = array();
 
-		if ($partOfSpeech == 'proper-noun') {
+		if ($partOfSpeech == 'propernoun') {
 			$structure['id'] = self::getUniqueId();
 			$structure['type'] = 'object';
 			$structure['name'] = $word;
@@ -130,7 +131,7 @@ class SimpleGrammar implements Grammar
 			$structure['lex'] = $word;
 		} elseif ($partOfSpeech == 'determiner') {
 			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-		} elseif ($partOfSpeech == 'wh-word') {
+		} elseif ($partOfSpeech == 'whword') {
 			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 			$structure['type'] = 'object';
 			$structure['id'] = self::getUniqueId();
@@ -214,7 +215,7 @@ $structure['act'] = 'yes-no-question';
 				$structure['type'] = 'clause';
 				$structure['participants']['*actor'] = $NP;
 				break;
-			case array('NP', 'proper-noun'):
+			case array('NP', 'propernoun'):
 				list($proper) = $constituentStructures;
 				$structure = $proper;
 				break;
@@ -226,7 +227,7 @@ $structure['act'] = 'yes-no-question';
 				list($noun) = $constituentStructures;
 				$structure = $noun;
 				break;
-			case array('NP', 'proper-noun', 'NP'):
+			case array('NP', 'propernoun', 'NP'):
 				list($proper, $NP) = $constituentStructures;
 				$structure = $NP;
 				$structure['name'] = $proper['name'] . ' ' . $structure['name'];
@@ -277,11 +278,11 @@ $structure['act'] = 'yes-no-question';
 				$structure = $NP;
 				$structure['preposition'] = $preposition['preposition'];
 				break;
-			case array('Wh-NP', 'wh-word'):
+			case array('Wh-NP', 'whword'):
 				list($whWord) = $constituentStructures;
 				$structure = $whWord;
 				break;
-			case array('Wh-NP', 'wh-word', 'NP'):
+			case array('Wh-NP', 'whword', 'NP'):
 				list($whWord, $NP) = $constituentStructures;
 				$structure = array_merge($NP, $whWord);
 				break;
@@ -451,17 +452,19 @@ $structure['act'] = 'yes-no-question';
 	{
 		$result = false;
 
-		if (isset($this->lexicon[$word])) {
-			$parts = $this->lexicon[$word];
-			if (is_array($parts)) {
-				$result = in_array($partOfSpeech, $parts);
-			} else {
-				$result = $partOfSpeech == $parts;
-			}
+#		if (isset($this->lexicon[$word])) {
+if (isset($this->lexicon[$word][$partOfSpeech])) {
+$result = true;
+//			$parts = $this->lexicon[$word];
+//			if (is_array($parts)) {
+//				$result = in_array($partOfSpeech, $parts);
+//			} else {
+//				$result = $partOfSpeech == $parts;
+//			}
 		} else {
 
 			// all words can be proper nouns
-			if ($partOfSpeech == 'proper-noun') {
+			if ($partOfSpeech == 'propernoun') {
 				$result = true;
 			}
 
@@ -550,8 +553,8 @@ $structure['act'] = 'yes-no-question';
 			'pronoun',
 			'numeral',
 			'verb',
-			'proper-noun',
-			'wh-word',
+			'propernoun',
+			'whword',
 			'aux',
 			'preposition',
 		));
@@ -561,11 +564,16 @@ $structure['act'] = 'yes-no-question';
 	 * Creates a syntax rule, including especially, features, for a word.
 	 * @return array
 	 */
-	public function getRuleForWord($word, $partOfSpeech)
+	public function getLabeledDagForWord($word, $partOfSpeech)
 	{
-		return array(
-			'features' => $this->lexicon[$word][$partOfSpeech]['features']
-		);
+		if (isset($this->lexicon[$word][$partOfSpeech])) {
+			return new LabeledDAG(array($partOfSpeech => $this->lexicon[$word][$partOfSpeech]['features']));
+		} else {
+			// presume proper noun
+			return new LabeledDAG(
+				array($partOfSpeech => array('head' => array('agreement' => array('number' => 's', 'person' => 1))))
+			);
+		}
 	}
 
 	public function getSyntax()
@@ -589,10 +597,10 @@ $structure['act'] = 'yes-no-question';
 					'antecedent' => 'S',
 					'consequents' => array('NP', 'VP'),
 					'features' => array(
-						'antecedent' => array('head-1'),
+						'antecedent' => array('head-1' => null),
 						'consequents' => array(
-							array('head' => array('agreement-2')),
-							array('head-1' => array('agreement-2')),
+							array('head' => array('agreement-2' => null)),
+							array('head-1' => array('agreement-2' => null)),
 						)
 					)
 				),
@@ -636,11 +644,18 @@ $structure['act'] = 'yes-no-question';
 			'VP' => array(
 				array(
 					'antecedent' => 'VP',
-					'consequents' => array('verb')
+					'consequents' => array('verb'),
 				),
 				array(
 					'antecedent' => 'VP',
-					'consequents' => array('verb', 'NP')
+					'consequents' => array('verb', 'NP'),
+					'features' => array(
+						'antecedent' => array('head-1' => null),
+						'consequents' => array(
+							array('head-1' => array('agreement' => null)),
+							array(),
+						)
+					)
 				),
 				array(
 					'antecedent' => 'VP',
@@ -654,11 +669,11 @@ $structure['act'] = 'yes-no-question';
 			'Wh-NP' => array(
 				array(
 					'antecedent' => 'Wh-NP',
-					'consequents' => array('wh-word'),
+					'consequents' => array('whword'),
 				),
 				array(
 					'antecedent' => 'Wh-NP',
-					'consequents' => array('wh-word', 'NP'),
+					'consequents' => array('whword', 'NP'),
 				),
 			),
 			'NP' => array(
@@ -666,6 +681,12 @@ $structure['act'] = 'yes-no-question';
 				array(
 					'antecedent' => 'NP',
 					'consequents' => array('pronoun'),
+					'features' => array(
+						'antecedent' => array('head-1' => null),
+						'consequents' => array(
+							array('head-1' => array('agreement' => null)),
+						)
+					)
 				),
 				// children
 				array(
@@ -675,12 +696,12 @@ $structure['act'] = 'yes-no-question';
 				// John
 				array(
 					'antecedent' => 'NP',
-					'consequents' => array('proper-noun'),
+					'consequents' => array('propernoun'),
 				),
 				// John de Vries
 				array(
 					'antecedent' => 'NP',
-					'consequents' => array('proper-noun', 'NP'),
+					'consequents' => array('propernoun', 'NP'),
 				),
 //				array(
 //					'antecedent' => 'NP',

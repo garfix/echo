@@ -11,9 +11,6 @@ require_once __DIR__ . '/LabeledDAG.php';
  */
 class EarleyParser
 {
-	static $debug = false;
-	#static $debug = true;
-
 	/**
 	 * Parses a sentence (given in an array of words) into a single chart structure
 	 * that holds the syntactic structure.
@@ -47,7 +44,7 @@ class EarleyParser
 			'dotPosition' => 0,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
-			'features' => $Grammar->getFeatures(null, null)
+			'dag' => self::createLabeledDag($rule),
 		);
 		$this->enqueue($chart, $words, $initialState, 0);
 
@@ -113,6 +110,10 @@ class EarleyParser
 
 		foreach ($Grammar->getGrammarRulesForConstituent($B) as $newRule) {
 
+#r($newRule);
+#var_dump(self::createLabeledDag($newRule));
+#exit;
+
 			$predictedState = array(
 				'rule' => $newRule,
 				'dotPosition' => 0,
@@ -121,7 +122,7 @@ class EarleyParser
 # gebruik de constraint van de n-de consequent
 //				'constraints' => isset($rule['constraints']) ? $rule['constraints'] : array()
 				//'features' => isset($rule['features'][$dotPosition]) ? $rule['features'][$dotPosition] : array()
-				'features' => self::createLabeledDag($newRule),
+				'dag' => self::createLabeledDag($newRule),
 			);
 			$this->enqueue($chart, $words, $predictedState, $j);
 		}
@@ -147,18 +148,23 @@ class EarleyParser
 		$word = $words[$j];
 
 		if ($Grammar->isWordAPartOfSpeech($word, $B)) {
+#var_dump($Grammar->getLabeledDagForWord($word, $B));
 			$scannedState = array(
 				'rule' => array(
 					'antecedent' => $B,
-					'consequents' => array($words[$j])
-# todo: replace with $word
+					'consequents' => array($word)
 				),
 				'dotPosition' => 1,
 				'startWordIndex' => $j,
 				'endWordIndex' => $j + 1,
 				//'constraints' => $Grammar->getFeatures($word, $B)
-				'features' => self::createLabeledDag($Grammar->getRuleForWord($word, $B)),
+				'dag' => $Grammar->getLabeledDagForWord($word, $B),
 			);
+
+#Hallo:
+#1) De 'features' index moet in de 'rule' komen te staan
+#2) De inhoud van de 'features' is de ruwe data, niet de verwerkte DAG of tree
+
 
 			$this->enqueue($chart, $words, $scannedState, $j + 1);
 		}
@@ -194,21 +200,23 @@ class EarleyParser
 			}
 
 			$i = $chartedState['startWordIndex'];
-
-			$NewFeatures = $this->unifyStates(
-				self::createLabeledDag($state['rule']),
-				self::createLabeledDag($rule),
-				$B
+#r($state['rule']);
+#r(self::createLabeledDag($state['rule']));
+			$NewDag = $this->unifyStates(
+				$state['dag'],
+				$B,
+				$chartedState['dag'],
+				$B . '@' . $dotPosition
 			);
 
-			if ($NewFeatures !== false) {
+			if ($NewDag !== false) {
 
 				$completedState = array(
 					'rule' => $rule,
 					'dotPosition' => $dotPosition + 1,
 					'startWordIndex' => $i,
 					'endWordIndex' => $k,
-					'features' => $NewFeatures
+					'dag' => $NewDag
 				);
 
 				// store the state's "children" to ease building the parse trees from the packed forest
@@ -282,30 +290,58 @@ class EarleyParser
 		return $state['rule']['consequents'][$state['dotPosition']];
 	}
 
-	protected function createLabeledDag($rule)
+	protected static function createLabeledDag($rule)
 	{
 		if (isset($rule['features'])) {
 			$features = $rule['features'];
 
 			$tree = array();
-			$tree['antecedent'] = $features['antecedent'];
+			$tree[$rule['antecedent']] = $features['antecedent'];
 
 			foreach ($features['consequents'] as $i => $consequent) {
-				$tree['consequent' . $i] = $consequent;
+				$tree[$rule['consequents'][$i] . '@' . $i] = $consequent;
 			}
 		} else {
 			$tree = null;
 		}
-
+//r($tree);
 		return new LabeledDAG($tree);
 	}
 
-	protected function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $cat)
+	protected function unifyStates(LabeledDAG $Dag1, $cat1, LabeledDAG $Dag2, $cat2)
 	{
-		$SubDag1 = $Dag1->followPath($cat);
-		$SubDag2 = $Dag2->followPath($cat);
+		$SubDag1 = $Dag1->followPath($cat1);
+		$SubDag2 = $Dag2->followPath($cat2);
+#r($Dag2);
+#r($cat2);
+		// remove the index in the key of $SubDag2
+		$keys = $SubDag2->getKeys();
+		if (!empty($keys)) {
+			$key = reset($keys);
+			list($newKey,) = explode('@', $key);
+			$SubDag2->replaceKey($key, $newKey);
 
-		return $SubDag1->unify($SubDag2);
+
+
+		}
+
+#r($SubDag2);
+#var_dump($cat . $dotPosition);
+
+		$UniDag = $SubDag1->unify($SubDag2);
+
+		if ($newKey == 'pronoun') {
+#			var_dump($Dag1);
+			echo ($SubDag1);
+			var_dump ($SubDag2);
+		#	$UniDag = $SubDag1->unify($SubDag2);
+			echo '#'.($UniDag).'#';
+			echo "=====================================\n\n";
+			exit;
+
+		}
+
+		return $UniDag;
 	}
 
 	protected function showDebug($function, $words, $state)
