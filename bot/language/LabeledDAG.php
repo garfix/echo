@@ -130,36 +130,64 @@ class LabeledDAG
 		return $success ? $NewDAG : false;
 	}
 
-	protected function __clone()
+	public function __clone()
 	{
 		// this will do the trick. note that both fields need to be done at once, since they contain cross-references
 		list($this->dag, $this->bins) = unserialize(serialize(array($this->dag, $this->bins)));
 	}
 
+	/**
+	 * Merges $DAG into this dag.
+	 * Fails if both dags contain incompatible scalar values
+	 *
+	 * @param LabeledDAG $DAG
+	 * @return bool Successful merge?
+	 */
 	public function merge(LabeledDAG $DAG)
 	{
 		$uniqId = self::createUniqueId();
-		return $this->mergeDag($this->dag, $DAG->dag, $DAG->bins, $uniqId);
+		$map = array();
+		return $this->mergeDag($this->dag, $DAG->dag, $DAG->bins, $uniqId, $map);
 	}
 
 	/**
 	 * Merge $newDag into the existing $dag.
+	 * Fails if both dags contain incompatible scalar values.
+	 *
 	 * @param array $dag
 	 * @param array $newDag
+	 * @return bool Successful merge?
 	 */
-	protected function mergeDag(&$dag, $newDag, $newBins, $uniqId)
+	protected function mergeDag(&$dag, $newDag, $newBins, $uniqId, &$map)
 	{
+		// make sure the labels in $newDag that are present in $dag are processed first
+		$newDag = array_merge(array_intersect_assoc($dag, $newDag), $newDag);
+
 		// go through each label
 		foreach ($newDag as $label => $subDag) {
 
+			// create an internal label if a new bin needs to be created
+			// it should be recognizable for subdags that are processed later
+			// it should also make sure that it doesn't collide with the existing labels of $dag (hence the $uniqId)
+			$labelInNewDag = array_search($subDag, $newBins);
+			$internalLabel = ($labelInNewDag ?: $label)  . '-' . $uniqId;
+
 			// make sure the node exists in this dag
 			if (!isset($dag[$label])) {
-				// create a new bin. Make sure this bin will be shared by other labels in the dag.
-				// we do this by looking up the internal label of the bin and using it for the new bin
-				// this internal label needs to be modified because it conflicts with the namespace of labels in this DAG
-				$internalLabel = array_search($subDag, $newBins) . '-' . $uniqId;
-				$this->bins[$internalLabel] = null;
-				$dag[$label] = &$this->bins[$internalLabel];
+				// check if this subdag matches case [A], see below
+				if (isset($map[$internalLabel])) {
+					// it does, use the bin that was referenced before
+					$dag[$label] = $map[$internalLabel];
+				} else {
+					// create a new bin. Make sure this bin will be shared by other labels in the dag.
+					$this->bins[$internalLabel] = null;
+					$dag[$label] = &$this->bins[$internalLabel];
+				}
+			} else {
+				// this $subDag matches the one in $dag
+				// [A] now store a reference for the case in which another path reaches the same $subDag;
+				// a path that is _not_ present in $dag
+				$map[$internalLabel] = $dag[$label];
 			}
 
 			if (is_array($subDag)) {
@@ -171,7 +199,7 @@ class LabeledDAG
 
 				// merge the new structure with the existing one
 				// if this merge fails, fail too
-				if (!$this->mergeDag($dag[$label], $subDag, $newBins, $uniqId)) {
+				if (!$this->mergeDag($dag[$label], $subDag, $newBins, $uniqId, $map)) {
 					return false;
 				}
 
@@ -185,8 +213,8 @@ class LabeledDAG
 						return false;
 					}
 				}
-			} else { // $subDag is null
-				return true;
+			} else {
+				// $subDag is null
 			}
 		}
 

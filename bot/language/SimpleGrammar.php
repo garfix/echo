@@ -453,8 +453,10 @@ $structure['act'] = 'yes-no-question';
 		$result = false;
 
 #		if (isset($this->lexicon[$word])) {
-if (isset($this->lexicon[$word][$partOfSpeech])) {
+		if (isset($this->lexicon[$word])) {
+			if (isset($this->lexicon[$word][$partOfSpeech])) {
 $result = true;
+			}
 //			$parts = $this->lexicon[$word];
 //			if (is_array($parts)) {
 //				$result = in_array($partOfSpeech, $parts);
@@ -590,6 +592,9 @@ $result = true;
 
 
 # which rules are really necessary?
+
+# NB: regels met twee dezelfde consequents mogen gewoon niet meer: herschrijf maar naar wat anders
+
 		$syntax = array(
 			'S' => array(
 				// John drives
@@ -684,7 +689,7 @@ $result = true;
 					'features' => array(
 						'antecedent' => array('head-1' => null),
 						'consequents' => array(
-							array('head-1' => array('agreement' => null)),
+							array('head-1' => null),
 						)
 					)
 				),
@@ -695,8 +700,16 @@ $result = true;
 				),
 				// John
 				array(
+#					'antecedent' => 'NP',
+#					'consequents' => array('propernoun'),
 					'antecedent' => 'NP',
 					'consequents' => array('propernoun'),
+					'features' => array(
+						'antecedent' => array('head-1' => null),
+						'consequents' => array(
+							array('head-1' => array('agreement' => null)),
+						)
+					)
 				),
 				// John de Vries
 				array(

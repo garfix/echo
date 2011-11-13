@@ -108,6 +108,7 @@ class EarleyParser
 		$B = $rule['consequents'][$dotPosition];
 		$j = $state['endWordIndex'];
 
+		// go through all rules that have $B as their antecedent
 		foreach ($Grammar->getGrammarRulesForConstituent($B) as $newRule) {
 
 #r($newRule);
@@ -148,7 +149,7 @@ class EarleyParser
 		$word = $words[$j];
 
 		if ($Grammar->isWordAPartOfSpeech($word, $B)) {
-#var_dump($Grammar->getLabeledDagForWord($word, $B));
+
 			$scannedState = array(
 				'rule' => array(
 					'antecedent' => $B,
@@ -161,49 +162,45 @@ class EarleyParser
 				'dag' => $Grammar->getLabeledDagForWord($word, $B),
 			);
 
-#Hallo:
-#1) De 'features' index moet in de 'rule' komen te staan
-#2) De inhoud van de 'features' is de ruwe data, niet de verwerkte DAG of tree
-
-
 			$this->enqueue($chart, $words, $scannedState, $j + 1);
 		}
 	}
 
 	/**
 	 * This function is called whenever a state is completed.
-	 * It's purpose is to complete other states.
+	 * It's purpose is to advance other states.
 	 *
 	 * For example:
 	 * - this $state is NP -> noun, it has been completed
-	 * - now proceed all other states in the chart that are waiting for a NP at the current position
+	 * - now proceed all other states in the chart that are waiting for an NP at the current position
 	 *
 	 * @param array $chart
 	 * @param array $words
 	 * @param array $state
 	 */
-	protected function complete(Grammar $Grammar, &$chart, $words, $state)
+	protected function complete(Grammar $Grammar, &$chart, $words, $completedState)
 	{
-		$this->showDebug('complete', $words, $state);
+		$this->showDebug('complete', $words, $completedState);
 
-		$j = $state['startWordIndex'];
-		$k = $state['endWordIndex'];
-		$B = $state['rule']['antecedent'];
+		$j = $completedState['startWordIndex'];
+		$k = $completedState['endWordIndex'];
+		$B = $completedState['rule']['antecedent'];
 
 		foreach ($chart[$j] as $chartedState) {
 			$dotPosition = $chartedState['dotPosition'];
 			$rule = $chartedState['rule'];
 			$consequents = $rule['consequents'];
 
+			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 			if (($dotPosition >= count($consequents)) || ($consequents[$dotPosition] != $B)) {
 				continue;
 			}
 
-			$i = $chartedState['startWordIndex'];
+		$i = $chartedState['startWordIndex'];
 #r($state['rule']);
 #r(self::createLabeledDag($state['rule']));
 			$NewDag = $this->unifyStates(
-				$state['dag'],
+				$completedState['dag'],
 				$B,
 				$chartedState['dag'],
 				$B . '@' . $dotPosition
@@ -211,7 +208,7 @@ class EarleyParser
 
 			if ($NewDag !== false) {
 
-				$completedState = array(
+				$advancedState = array(
 					'rule' => $rule,
 					'dotPosition' => $dotPosition + 1,
 					'startWordIndex' => $i,
@@ -220,14 +217,14 @@ class EarleyParser
 				);
 
 				// store the state's "children" to ease building the parse trees from the packed forest
-				$completedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
-				$completedState['children'][] = $state['id'];
+				$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
+				$advancedState['children'][] = $completedState['id'];
 
-				$this->enqueue($chart, $words, $completedState, $k);
+				$this->enqueue($chart, $words, $advancedState, $k);
 
 				if ($dotPosition + 1 == count($rule['consequents'])) {
 					if ($rule['antecedent'] == 'S') {
-						$chart['sentences'][] = $completedState;
+						$chart['sentences'][] = $advancedState;
 					}
 				}
 
@@ -254,11 +251,11 @@ class EarleyParser
 		if (!$this->isStateInChart($state, $chart, $position)) {
 			$addState = true;
 		}
-
+#todo rewrite
 		if ($addState) {
 
 			$this->showDebug('enqueue', $words, $state);
-
+#todo do the subsuming thing
 			$stateIDs++;
 			$state['id'] = $stateIDs;
 			$chart['states'][$stateIDs] = $state;
@@ -299,7 +296,8 @@ class EarleyParser
 			$tree[$rule['antecedent']] = $features['antecedent'];
 
 			foreach ($features['consequents'] as $i => $consequent) {
-				$tree[$rule['consequents'][$i] . '@' . $i] = $consequent;
+#				$tree[$rule['consequents'][$i] . '@' . $i] = $consequent;
+				$tree[$rule['consequents'][$i]] = $consequent;
 			}
 		} else {
 			$tree = null;
@@ -311,35 +309,40 @@ class EarleyParser
 	protected function unifyStates(LabeledDAG $Dag1, $cat1, LabeledDAG $Dag2, $cat2)
 	{
 		$SubDag1 = $Dag1->followPath($cat1);
-		$SubDag2 = $Dag2->followPath($cat2);
+		$SubDag2 = clone $Dag2;//->followPath($cat2);
 #r($Dag2);
 #r($cat2);
 		// remove the index in the key of $SubDag2
-		$keys = $SubDag2->getKeys();
-		if (!empty($keys)) {
-			$key = reset($keys);
-			list($newKey,) = explode('@', $key);
-			$SubDag2->replaceKey($key, $newKey);
+//		$keys = $SubDag2->getKeys();
+//		if (!empty($keys)) {
+//			$key = reset($keys);
+//			list($newKey,) = explode('@', $key);
+//			$SubDag2->replaceKey($key, $newKey);
+//
+//
+//#			if ($newKey == 'pronoun') {
+//	#			var_dump($Dag1);
+//			//	exit;
+//
+//			}
 
+		//}
 
-
-		}
 
 #r($SubDag2);
 #var_dump($cat . $dotPosition);
 
+echo "- 1 --------------------\n\n";
+echo ($SubDag1);
+echo "- 2 --------------------\n\n";
+echo ($SubDag2);
+$UniDag = $SubDag1->unify($SubDag2);
+echo "- uni --------------------\n\n";
+echo $UniDag;
+echo "=====================================\n\n";
+
 		$UniDag = $SubDag1->unify($SubDag2);
 
-		if ($newKey == 'pronoun') {
-#			var_dump($Dag1);
-			echo ($SubDag1);
-			var_dump ($SubDag2);
-		#	$UniDag = $SubDag1->unify($SubDag2);
-			echo '#'.($UniDag).'#';
-			echo "=====================================\n\n";
-			exit;
-
-		}
 
 		return $UniDag;
 	}
