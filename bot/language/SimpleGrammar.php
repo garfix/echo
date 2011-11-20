@@ -659,6 +659,7 @@ $result = true;
 						'consequents' => array(
 							array('head-1' => array('agreement' => null)),
 							array(),
+#todo: also needs a match
 						)
 					)
 				),

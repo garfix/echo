@@ -333,12 +333,12 @@ class EarleyParser
 #var_dump($cat . $dotPosition);
 
 echo "- 1 --------------------\n\n";
-echo ($SubDag1);
+echo($SubDag1);
 echo "- 2 --------------------\n\n";
-echo ($SubDag2);
+echo($SubDag2);
 $UniDag = $SubDag1->unify($SubDag2);
 echo "- uni --------------------\n\n";
-echo $UniDag;
+echo($UniDag);
 echo "=====================================\n\n";
 
 		$UniDag = $SubDag1->unify($SubDag2);

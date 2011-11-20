@@ -63,50 +63,49 @@ function testNamedDAG()
 	);
 
 
-//	$F1 = new LabeledDAG($tree1);
-//	$F2 = new LabeledDAG($tree1);
-//	$F3 = new LabeledDAG($tree2);
-//	$F4 = $F2->unify($F3);
-//	$F5 = new LabeledDAG($tree3);
-//	$F6 = $F5->followPath('skies');
-//	$F7 = new LabeledDAG($tree4);
-//	$F8 = new LabeledDAG($tree5);
-//	$F9 = $F7->unify($F8);
-//	$F10 = new LabeledDAG(array('color' => null));
-//	$F11 = new LabeledDAG(array('color' => array('a' => 1, 'b' => 2)));
-//	$F12 = $F10->unify($F11);
-//	$F13 = new LabeledDAG($tree6);
-//	$F14 = new LabeledDAG($tree7);
-//	$F15 = $F13->unify($F14);
+	$F1 = new LabeledDAG($tree1);
+	$F2 = new LabeledDAG($tree1);
+	$F3 = new LabeledDAG($tree2);
+	$F4 = $F2->unify($F3);
+	$F5 = new LabeledDAG($tree3);
+	$F6 = $F5->followPath('skies');
+	$F7 = new LabeledDAG($tree4);
+	$F8 = new LabeledDAG($tree5);
+	$F9 = $F7->unify($F8);
+	$F10 = new LabeledDAG(array('color' => null));
+	$F11 = new LabeledDAG(array('color' => array('a' => 1, 'b' => 2)));
+	$F12 = $F10->unify($F11);
+	$F13 = new LabeledDAG($tree6);
+	$F14 = new LabeledDAG($tree7);
+	$F15 = $F13->unify($F14);
 	$F16 = new LabeledDAG($tree8);
 	$F17 = new LabeledDAG($tree9);
 	$F18 = $F16->unify($F17);
 
-//	$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
-//
-//	// check that a shared child is implemented correctly
-//	test(300, $F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
-//	test(301, $F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
-//	test(302, $F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
-//	// check that $F2 is not changed by the unification
-//	test(310, $F2->getPathValue(array('ccc', 'head', 'agreement')), null);
-//	// check that $F3 is not changed by the unification
-//	test(311, $F3->getPathValue(array('ccc', 'head', 'agreement')), null);
-//	// check that $F4 shows unification
-//	test(312, $F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
-//	test(313, $F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
-//	// check that $F6 contains the followed path
-//	test(320, $F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
-//	// check that $F6 does not contain removed paths from $F5
-//	test(321, $F5->getPathValue(array('dogs', 'blackie')), 3);
-//	test(322, $F6->getPathValue(array('dogs', 'blackie')), null);
-//	// check for failing unifications
-//	test(330, $F9, false);
-//	test(331, $F12->getPathValue(array('color', 'a')), 1);
-//	test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
+	$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
+
+	// check that a shared child is implemented correctly
+	test(300, $F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
+	test(301, $F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
+	test(302, $F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
+	// check that $F2 is not changed by the unification
+	test(310, $F2->getPathValue(array('ccc', 'head', 'agreement')), null);
+	// check that $F3 is not changed by the unification
+	test(311, $F3->getPathValue(array('ccc', 'head', 'agreement')), null);
+	// check that $F4 shows unification
+	test(312, $F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
+	test(313, $F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
+	// check that $F6 contains the followed path
+	test(320, $F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
+	// check that $F6 does not contain removed paths from $F5
+	test(321, $F5->getPathValue(array('dogs', 'blackie')), 3);
+	test(322, $F6->getPathValue(array('dogs', 'blackie')), null);
+	// check for failing unifications
+	test(330, $F9, false);
+	test(331, $F12->getPathValue(array('color', 'a')), 1);
+	test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
 	// regression test
 	test(333, $F18->getPathValue(array('NP', 'person')), null);
-var_dump($F18);
 }
 
 function testAll($Echo)
@@ -161,13 +160,13 @@ $Echo = ChatbotEcho::getInstance();
 
 //	testAll($Echo);
 
-testNamedDAG();
-return;
+//testNamedDAG();
+//return;
 # should fail: I are Patrick
 
 #$sentences = $Echo->parse('I am Patrick');
 $sentences = $Echo->parse('I are Patrick');
-test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [proper-noun patrick]]]]');
+test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [propernoun patrick]]]]');
 //test(102, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [type: object, name: patrick], *actor: [referring-expression: *current-speaker, type: object]], type: clause]");
 //test(103, $sentences[0]->getStructure(), "declarative");
 

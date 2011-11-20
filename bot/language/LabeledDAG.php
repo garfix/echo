@@ -5,14 +5,11 @@
  */
 class LabeledDAG
 {
-	private $bins = array();
 	private $dag = array();
 
 	public function __construct($tree = null)
 	{
-		if ($tree !== null) {
-			$this->dag = $this->createDag($tree);
-		}
+		$this->createDag('root', $tree);
 	}
 
 	/**
@@ -20,57 +17,56 @@ class LabeledDAG
 	 * @param array $clause
 	 * @return array A dag
 	 */
-	public function createDag($tree)
+	public function createDag($dagLabel, $tree)
 	{
-		if (!is_array($tree)) {
+		$node = array();
+
+		if (is_scalar($tree)) {
 
 			// end of recursion
-			$dag = $tree;
+			$node['value'] = $tree;
 
-		} else {
-
-			// initialize dag
-			$dag = array();
+		} elseif (is_array($tree)) {
 
 			foreach ($tree as $label => $subTree) {
 
+				// create a $name for the user and $internalLabel for internal node management
 				list($name, $internalLabel) = $this->extractLabel($label);
 
-				// create a dag for the label
-				$subDag = $this->createDag($subTree);
+				// traverse the subtree
+				$this->createDag($internalLabel, $subTree);
 
-				// the value of the label may either be null, a tree or a scalar
-				if (is_null($subDag)) {
-					// if the bin existed, leave it unchanged, otherwise create it
-					if (!isset($this->bins[$internalLabel])) {
-						$this->bins[$internalLabel] = null;
-					}
-				} elseif (is_array($subDag)) {
-					// if the bin existed, merge it, otherwise create it
-					if (isset($this->bins[$internalLabel])) {
-						$this->bins[$internalLabel] = array_merge($this->bins[$internalLabel], $subDag);
-					} else {
-						$this->bins[$internalLabel] = $subDag;
-					}
-				} else {
-					// it is a scalar
-					// we can check here for a possible inconsistency in the tree
-					if (isset($this->bins[$internalLabel])) {
-						if ($subDag !== $this->bins[$internalLabel]) {
-							trigger_error('The DAG contains two values for the same position.', E_USER_ERROR);
-						}
-					}
-					$this->bins[$internalLabel] = $subDag;
-				}
-
-				// join the subdag to the dag via the labeled arc
-				$dag[$name] = &$this->bins[$internalLabel];
-
+				// add an child to the dag
+				$node['children'][$name] = $internalLabel;
 			}
-
 		}
 
-		return $dag;
+		// check if the node existed already
+		if (!isset($this->dag[$dagLabel])) {
+
+			// it is new
+			$this->dag[$dagLabel] = $node;
+
+		} else {
+
+			// the node exists, so merge
+			// does the new node have children?
+			if (!empty($node['children'])) {
+
+				// ensure that there is a 'children' field in the existing node
+				if (!isset($this->dag[$dagLabel]['children'])) {
+					$this->dag[$dagLabel]['children'] = array();
+				}
+
+				// merge new children
+				$this->dag[$dagLabel]['children'] += $node['children'];
+			}
+
+			// does the new node has a value?
+			if (isset($node['value'])) {
+				$this->dag[$dagLabel]['value'] = $node['value'];
+			}
+		}
 	}
 
 	/**
@@ -130,12 +126,6 @@ class LabeledDAG
 		return $success ? $NewDAG : false;
 	}
 
-	public function __clone()
-	{
-		// this will do the trick. note that both fields need to be done at once, since they contain cross-references
-		list($this->dag, $this->bins) = unserialize(serialize(array($this->dag, $this->bins)));
-	}
-
 	/**
 	 * Merges $DAG into this dag.
 	 * Fails if both dags contain incompatible scalar values
@@ -147,7 +137,8 @@ class LabeledDAG
 	{
 		$uniqId = self::createUniqueId();
 		$map = array();
-		return $this->mergeDag($this->dag, $DAG->dag, $DAG->bins, $uniqId, $map);
+
+		return $this->mergeNode('root', 'root', $DAG->dag, $uniqId, $map);
 	}
 
 	/**
@@ -158,67 +149,88 @@ class LabeledDAG
 	 * @param array $newDag
 	 * @return bool Successful merge?
 	 */
-	protected function mergeDag(&$dag, $newDag, $newBins, $uniqId, &$map)
+	protected function mergeNode($thisDagInternalLabel, $newDagInternalLabel , $newDag, $uniqId, &$map)
 	{
-		// make sure the labels in $newDag that are present in $dag are processed first
-		$newDag = array_merge(array_intersect_assoc($dag, $newDag), $newDag);
+		$newNode = $newDag[$newDagInternalLabel];
 
-		// go through each label
-		foreach ($newDag as $label => $subDag) {
+		// get or create this dag's equivalent node
+		if (isset($this->dag[$thisDagInternalLabel])) {
+			$thisNode = $this->dag[$thisDagInternalLabel];
+		} else {
+			$thisNode = array();
+		}
 
-			// create an internal label if a new bin needs to be created
-			// it should be recognizable for subdags that are processed later
-			// it should also make sure that it doesn't collide with the existing labels of $dag (hence the $uniqId)
-			$labelInNewDag = array_search($subDag, $newBins);
-			$internalLabel = ($labelInNewDag ?: $label)  . '-' . $uniqId;
+		if (isset($newNode['value'])) {
 
-			// make sure the node exists in this dag
-			if (!isset($dag[$label])) {
-				// check if this subdag matches case [A], see below
-				if (isset($map[$internalLabel])) {
-					// it does, use the bin that was referenced before
-					$dag[$label] = $map[$internalLabel];
-				} else {
-					// create a new bin. Make sure this bin will be shared by other labels in the dag.
-					$this->bins[$internalLabel] = null;
-					$dag[$label] = &$this->bins[$internalLabel];
+			if (isset($thisNode['value'])) {
+				if ($thisNode['value'] != $newNode['value']) {
+					return false;
 				}
+#todo check for incompatible types 'children'
 			} else {
-				// this $subDag matches the one in $dag
-				// [A] now store a reference for the case in which another path reaches the same $subDag;
-				// a path that is _not_ present in $dag
-				$map[$internalLabel] = $dag[$label];
+				$thisNode['value'] = $newNode['value'];
 			}
 
-			if (is_array($subDag)) {
-				if (is_null($dag[$label])) {
-					$dag[$label] = array();
-				} elseif (is_scalar($dag[$label])) {
-					trigger_error('Merge of scalar and array', E_USER_ERROR);
-				}
+		} elseif (isset($newNode['children'])) {
 
-				// merge the new structure with the existing one
-				// if this merge fails, fail too
-				if (!$this->mergeDag($dag[$label], $subDag, $newBins, $uniqId, $map)) {
+#todo check for incompatible types 'value'
+
+			// make sure the labels in $newDag that are present in $dag are processed first
+			$children = $newNode['children'];
+			if (isset($thisNode['children'])) {
+				$children = array_merge(array_intersect_key($thisNode['children'], $newNode['children']), $newNode['children']);
+			}
+
+			// go through all children
+			foreach ($children as $label => $newDagInternalChildLabel) {
+
+				$thisDagInternalChildLabel = $this->createInternalLabelForMerge($label, $newDagInternalChildLabel, $thisNode, $uniqId, $map);
+
+				$success = $this->mergeNode($thisDagInternalChildLabel, $newDagInternalChildLabel, $newDag, $uniqId, $map);
+				if (!$success) {
 					return false;
 				}
 
-			} elseif (is_scalar($subDag)) {
-				if (is_null($dag[$label])) {
-					$dag[$label] = $subDag;
-				} elseif (is_array($dag[$label])) {
-					trigger_error('Merge of scalar and array', E_USER_ERROR);
-				} else {
-					if ($subDag != $dag[$label]) {
-						return false;
-					}
-				}
-			} else {
-				// $subDag is null
+				$thisNode['children'][$label] = $thisDagInternalChildLabel;
 			}
 		}
 
+		$this->dag[$thisDagInternalLabel] = $thisNode;
+
 		return true;
+	}
+
+	private function createInternalLabelForMerge($label, $newDagInternalLabel, $thisNode, $uniqId, &$map)
+	{
+		// check if the new dag shares the label with this dag
+		if (isset($thisNode['children'][$label])) {
+			// same label => same node
+			$internalLabel = $thisNode['children'][$label];
+
+			// store the fact that the internal label has changed
+			$map[$newDagInternalLabel] = $internalLabel;
+
+		// check if the new dag has a shared node that has been mapped before (in the previous if)
+		} elseif (isset($map[$newDagInternalLabel])) {
+
+			// use that mapped label
+			$internalLabel = $map[$newDagInternalLabel];
+
+		// reuse the internal label of the new dag, if it isn't used yet
+		} elseif (!isset($this->dag[$newDagInternalLabel])) {
+
+			// reuse the existing label
+			$internalLabel = $newDagInternalLabel;
+
+			// make sure this label can be used for futher nodes
+			$map[$newDagInternalLabel] = $internalLabel;
+
+		} else {
+			// create a new internal label
+			list(, $internalLabel) = self::extractLabel($label);
+		}
+
+		return $internalLabel;
 	}
 
 	/**
@@ -226,105 +238,173 @@ class LabeledDAG
 	 * @param string $label
 	 * @return LabeledDAG
 	 */
-	public function followPath($path)
+	public function followPath($label)
 	{
-if (!isset($this->dag[$path])) {
-#	die($path);
-	return new LabeledDAG();
-}
-
-
 		$NewDAG = new LabeledDAG();
-		$NewDAG->dag = array();
 
-		if (is_array($this->dag[$path])) {
-			$this->copyDag($this->dag, $NewDAG->dag, $NewDAG->bins, $path);
-		} else {
-			$NewDAG->dag[$path] = $this->dag[$path];
+		// check if this dag has
+		if (!isset($this->dag['root']['children'][$label])) {
+#todo this should not happen
+			return $NewDAG;
+		}
+
+		// find the internal label of the node that $label points to
+		$internalLabel = $this->dag['root']['children'][$label];
+
+		// create a subset root
+		$NewDAG->dag['root']['children'][$label] = $internalLabel;
+
+		// initialize list of nodes to copy
+		$todo = array($internalLabel);
+
+		// go though all nodes to copy
+		while (!empty($todo)) {
+
+			$internalLabel = array_pop($todo);
+
+			// copy node
+			$NewDAG->dag[$internalLabel] = $this->dag[$internalLabel];
+
+			// copy node's children
+			if (isset($this->dag[$internalLabel]['children'])) {
+				foreach ($this->dag[$internalLabel]['children'] as $childLabel) {
+					$todo[] = $childLabel;
+				}
+			}
 		}
 
 		return $NewDAG;
 	}
 
-	public function setPathValue($path, $value)
+	public function setPathValue(array $path, $value)
 	{
-		if (empty($path)) {
-			trigger_error('Path cannot be empty.', E_USER_ERROR);
-		}
-
 		if (is_array($value)) {
 			trigger_error('Value should be a scalar.', E_USER_ERROR);
 		}
 
-		$dag = &$this->dag;
-		$length = count($path);
+		// init node label
+		$internalLabel = 'root';
 
-		for ($i = 0; $i < $length - 1; $i++) {
-			$label = $path[$i];
-			if (!isset($dag[$label])) {
+		// walk the path
+		foreach ($path as $label) {
+
+			if (!isset($this->dag[$internalLabel]['children'][$label])) {
 				trigger_error('Label not found: ' . $label, E_USER_ERROR);
 			}
-			$dag = &$dag[$label];
+
+			// update node label
+			$internalLabel = $this->dag[$internalLabel]['children'][$label];
 		}
 
-		$label = $path[$length - 1];
-
-		$dag[$label] = $value;
+		// update the value
+		$this->dag[$internalLabel]['value'] = $value;
 	}
 
 	public function getPathValue($path)
 	{
-		$dag = $this->dag;
+		// init node label
+		$internalLabel = 'root';
 
+		// walk the path
 		foreach ($path as $label) {
-			if (!isset($dag[$label])) {
+
+			if (!isset($this->dag[$internalLabel]['children'][$label])) {
 				return null;
-			} else {
-				$dag = $dag[$label];
 			}
+
+			// update node label
+			$internalLabel = $this->dag[$internalLabel]['children'][$label];
 		}
 
-		return $dag;
-	}
-
-	private function copyDag(&$dag, &$newDag, &$newBins, $path = null)
-	{
-		foreach ($dag as $label => $subDag) {
-
-			if ($path !== null) {
-				if ($label != $path) {
-					continue;
-				}
-			}
-
-			// is the $subDag a value?
-			if (!is_array($subDag)) {
-
-				// yes it is
-				$newDag[$label] = $subDag;
-
-			} else {
-
-				$internalLabel = array_search($subDag, $this->bins);
-				$newBins[$internalLabel] = array();
-
-				$newDag[$label] = &$newBins[$internalLabel];
-
-				$this->copyDag($dag[$label], $newDag[$label], $newBins);
-			}
+		// return the value
+		if (!isset($this->dag[$internalLabel]['value'])) {
+			return null;
+		} else {
+			return $this->dag[$internalLabel]['value'];
 		}
 	}
 
 	public function __toString()
 	{
-		return print_r($this->dag, true);
+		// a single path from start to end
+		$path = array();
+		// all traversed paths
+		$paths = array();
+
+		// traverse all paths
+		$this->traverse('root', $path, $paths);
+
+		// create a string that describes all paths
+		$string = "";
+		foreach ($paths as $pathIndex => $currentPath) {
+			foreach ($currentPath as $stepIndex => $step) {
+
+				// check if this copies the field above
+				if ($this->isStepCopy($pathIndex, $stepIndex, $paths)) {
+					$string .= '"                   ';
+				} else {
+					$string .= $step . str_repeat(' ', (20 - strlen($step)));
+				}
+			}
+			$string .= "\n";
+
+		}
+
+		return $string;
+	}
+
+	/**
+	 * Determines if step $stepIndex of the $pathIndex-th $paths is a copy of the same step in a step above
+	 */
+	private function isStepCopy($pathIndex, $stepIndex, $paths)
+	{
+		$field = $paths[$pathIndex][$stepIndex];
+		$parentField = $stepIndex == 0 ? null : $paths[$pathIndex][$stepIndex - 1];
+
+		for ($i = $pathIndex - 1; $i >= 0; $i--) {
+			// the parent field needs to be the same
+			if ($stepIndex == 0 || $paths[$i][$stepIndex - 1] == $parentField) {
+				// the field needs to be the same
+				if ($paths[$i][$stepIndex] == $field) {
+					return true;
+				}
+			} else {
+				break;
+			}
+		}
+
+		return false;
+	}
+
+	private function traverse($internalLabel, array $path, array &$paths)
+	{
+		$path[] = $internalLabel;
+
+		$node = $this->dag[$internalLabel];
+
+		if (empty($node['children'])) {
+
+			if (isset($node['value'])) {
+				$last = count($path) - 1;
+				$path[$last] .= ' = ' . $node['value'];
+			}
+
+			$paths[] = $path;
+
+		} else {
+
+			foreach ($node['children'] as $label => $internalChildLabel) {
+				$this->traverse($internalChildLabel, $path, $paths);
+			}
+
+		}
 	}
 
 	protected static function createUniqueId()
 	{
 		static $id = 0;
 
-		return 'uniq' . ++$id;
+		return 'gen' . ++$id;
 	}
 
 }
