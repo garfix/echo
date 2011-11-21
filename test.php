@@ -62,6 +62,13 @@ function testNamedDAG()
 		'NP' => array()
 	);
 
+	$tree10 = array(
+	);
+
+	$tree11 = array(
+		'a' => array('head-1' => null),
+		'b' => array('head-1' => null),
+	);
 
 	$F1 = new LabeledDAG($tree1);
 	$F2 = new LabeledDAG($tree1);
@@ -81,6 +88,10 @@ function testNamedDAG()
 	$F16 = new LabeledDAG($tree8);
 	$F17 = new LabeledDAG($tree9);
 	$F18 = $F16->unify($F17);
+	$F19 = new LabeledDAG($tree10);
+	$F20 = new LabeledDAG($tree11);
+	$F21 = $F19->unify($F20);
+	$F21->setPathValue(array('b', 'head'), 1);
 
 	$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
 
@@ -106,6 +117,7 @@ function testNamedDAG()
 	test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
 	// regression test
 	test(333, $F18->getPathValue(array('NP', 'person')), null);
+	test(334, $F21->getPathValue(array('a', 'head')), 1);
 }
 
 function testAll($Echo)
@@ -160,12 +172,12 @@ $Echo = ChatbotEcho::getInstance();
 
 //	testAll($Echo);
 
-//testNamedDAG();
-//return;
+testNamedDAG();
+#return;
 # should fail: I are Patrick
 
-#$sentences = $Echo->parse('I am Patrick');
-$sentences = $Echo->parse('I are Patrick');
+$sentences = $Echo->parse('I am Patrick');
+#$sentences = $Echo->parse('I are Patrick');
 test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [propernoun patrick]]]]');
 //test(102, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [type: object, name: patrick], *actor: [referring-expression: *current-speaker, type: object]], type: clause]");
 //test(103, $sentences[0]->getStructure(), "declarative");

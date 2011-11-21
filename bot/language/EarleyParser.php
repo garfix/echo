@@ -6,7 +6,7 @@ require_once __DIR__ . '/LabeledDAG.php';
  * Given an array of lexemes (a sentence) and a grammar, this class provides zero or more syntactic representations.
  *
  * Note: this parser should hold no external references. If it has finished parsing it should be
- * completely discardible.
+ * completely discardable.
  *
  */
 class EarleyParser
@@ -14,7 +14,7 @@ class EarleyParser
 	/**
 	 * Parses a sentence (given in an array of words) into a single chart structure
 	 * that holds the syntactic structure.
-	 * Implements the algorithmn found on in chapter 10 of "Speech And Language Processing".
+	 * Implements the algorithm found on in chapter 10 of "Speech And Language Processing".
 	 *
 	 * @param $words array An array of lowercase strings
 	 * @param Grammar $Grammar The rules that structure the words.
@@ -246,13 +246,7 @@ class EarleyParser
 	{
 		static $stateIDs = 0;
 
-		$addState = false;
-
 		if (!$this->isStateInChart($state, $chart, $position)) {
-			$addState = true;
-		}
-#todo rewrite
-		if ($addState) {
 
 			$this->showDebug('enqueue', $words, $state);
 #todo do the subsuming thing
@@ -310,36 +304,15 @@ class EarleyParser
 	{
 		$SubDag1 = $Dag1->followPath($cat1);
 		$SubDag2 = clone $Dag2;//->followPath($cat2);
-#r($Dag2);
-#r($cat2);
-		// remove the index in the key of $SubDag2
-//		$keys = $SubDag2->getKeys();
-//		if (!empty($keys)) {
-//			$key = reset($keys);
-//			list($newKey,) = explode('@', $key);
-//			$SubDag2->replaceKey($key, $newKey);
-//
-//
-//#			if ($newKey == 'pronoun') {
-//	#			var_dump($Dag1);
-//			//	exit;
-//
-//			}
 
-		//}
-
-
-#r($SubDag2);
-#var_dump($cat . $dotPosition);
-
-echo "- 1 --------------------\n\n";
-echo($SubDag1);
-echo "- 2 --------------------\n\n";
-echo($SubDag2);
-$UniDag = $SubDag1->unify($SubDag2);
-echo "- uni --------------------\n\n";
-echo($UniDag);
-echo "=====================================\n\n";
+//echo "- 1 --------------------\n\n";
+//echo($SubDag1);
+//echo "- 2 --------------------\n\n";
+//echo($SubDag2);
+//$UniDag = $SubDag1->unify($SubDag2);
+//echo "- uni --------------------\n\n";
+//echo($UniDag);
+//echo "=====================================\n\n";
 
 		$UniDag = $SubDag1->unify($SubDag2);
 
@@ -414,5 +387,3 @@ echo "=====================================\n\n";
 	}
 
 }
-
-?>

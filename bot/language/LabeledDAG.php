@@ -1,29 +1,42 @@
 <?php
 
 /**
- * This this an implementation of a Directed Acyclic Graph with named arcs.
+ * This this an implementation of a Directed Acyclic Graph with labeled arcs.
  */
 class LabeledDAG
 {
-	private $dag = array();
+	/** @var An array of nodes. Each node contains either children or a value. */
+	private $nodes = array();
 
+	/**
+	 * Creates the DAG based on a description in a tree.
+	 * An example description:
+	 *
+	 * 	$tree = array(
+	 *	    'noun' => array('head-1' => array('tense-2' => 'past', 'agreement' => 'yes')),
+	 *	    'verb' => array('head-1' => null),
+	 *	    'VP' => array('head' => array('tense-2' => null)),
+	 *	);
+	 *
+	 *  In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node. 'tense-2' is similar.
+	 */
 	public function __construct($tree = null)
 	{
-		$this->createDag('root', $tree);
+		$this->createNode('root', $tree);
 	}
 
 	/**
-	 * Turns a tree structure with labeled arcs into a labeled dag (directed acyclic graph) in which the numbered labeled arcs point to the same nodes.
-	 * @param array $clause
-	 * @return array A dag
+	 * Turns a (sub)tree structure with labeled arcs into a single labeled node.
 	 */
-	public function createDag($dagLabel, $tree)
+	private function createNode($internalLabel, $tree)
 	{
+		// create the node
 		$node = array();
 
+		// fill it
 		if (is_scalar($tree)) {
 
-			// end of recursion
+			// set the node's value and end the recursion
 			$node['value'] = $tree;
 
 		} elseif (is_array($tree)) {
@@ -31,21 +44,21 @@ class LabeledDAG
 			foreach ($tree as $label => $subTree) {
 
 				// create a $name for the user and $internalLabel for internal node management
-				list($name, $internalLabel) = $this->extractLabel($label);
+				list($name, $internalSubLabel) = $this->extractLabel($label);
 
 				// traverse the subtree
-				$this->createDag($internalLabel, $subTree);
+				$this->createNode($internalSubLabel, $subTree);
 
-				// add an child to the dag
-				$node['children'][$name] = $internalLabel;
+				// add an child to the node
+				$node['children'][$name] = $internalSubLabel;
 			}
 		}
 
 		// check if the node existed already
-		if (!isset($this->dag[$dagLabel])) {
+		if (!isset($this->nodes[$internalLabel])) {
 
 			// it is new
-			$this->dag[$dagLabel] = $node;
+			$this->nodes[$internalLabel] = $node;
 
 		} else {
 
@@ -54,50 +67,26 @@ class LabeledDAG
 			if (!empty($node['children'])) {
 
 				// ensure that there is a 'children' field in the existing node
-				if (!isset($this->dag[$dagLabel]['children'])) {
-					$this->dag[$dagLabel]['children'] = array();
+				if (!isset($this->nodes[$internalLabel]['children'])) {
+					$this->nodes[$internalLabel]['children'] = array();
 				}
 
 				// merge new children
-				$this->dag[$dagLabel]['children'] += $node['children'];
+				$this->nodes[$internalLabel]['children'] += $node['children'];
 			}
 
-			// does the new node has a value?
+			// does the new node have a value?
 			if (isset($node['value'])) {
-				$this->dag[$dagLabel]['value'] = $node['value'];
+				// overwrite it
+				$this->nodes[$internalLabel]['value'] = $node['value'];
 			}
 		}
 	}
 
 	/**
-	 * Returns the outermost keys of the dag.
-	 *
-	 * @return array
-	 */
-	public function getKeys()
-	{
-		return array_keys($this->dag);
-	}
-
-	/**
-	 * Replaces the outermost $key by $newKey.
-	 *
-	 * @param $key
-	 * @param $newKey
-	 */
-	public function replaceKey($key, $newKey)
-	{
-		if ($newKey != $key) {
-			$this->dag[$newKey] = $this->dag[$key];
-			unset($this->dag[$key]);
-		}
-	}
-
-	/**
-	 * Splits the $label into a name and an id.
+	 * Splits the $label into a short label and a longer internal labe;.
 	 *
 	 * @param $label
-	 *
 	 * @return array An (name, id) array
 	 */
 	private function extractLabel($label)
@@ -114,93 +103,102 @@ class LabeledDAG
 	}
 
 	/**
-	 * Returns a new LabeleDAG object that is the unification of this DAG object and $DAG
-	 * @param LabeledDAG $DAG
-	 * @return LabeledDAG
+	 * Returns a new LabeledDAG object that is the unification of this DAG object and $DAG,
+	 * or false if unification fails.
+	 * @return LabeledDAG|false
 	 */
 	public function unify(LabeledDAG $DAG)
 	{
 		$NewDAG = clone $this;
-		$success = $NewDAG->merge($DAG);
+		$map = array();
+		$success = $NewDAG->mergeNode('root', 'root', $DAG->nodes, $map);
 
 		return $success ? $NewDAG : false;
 	}
 
 	/**
-	 * Merges $DAG into this dag.
-	 * Fails if both dags contain incompatible scalar values
-	 *
-	 * @param LabeledDAG $DAG
-	 * @return bool Successful merge?
-	 */
-	public function merge(LabeledDAG $DAG)
-	{
-		$uniqId = self::createUniqueId();
-		$map = array();
-
-		return $this->mergeNode('root', 'root', $DAG->dag, $uniqId, $map);
-	}
-
-	/**
-	 * Merge $newDag into the existing $dag.
+	 * Merges the node specified with $thisDagInternalLabel of this dag with
+	 *the node specified with $newDagInternalLabel of $newDag into the existing $dag.
 	 * Fails if both dags contain incompatible scalar values.
 	 *
 	 * @param array $dag
 	 * @param array $newDag
 	 * @return bool Successful merge?
 	 */
-	protected function mergeNode($thisDagInternalLabel, $newDagInternalLabel , $newDag, $uniqId, &$map)
+	protected function mergeNode($thisDagInternalLabel, $newDagInternalLabel , $newDag, &$map)
 	{
+		// look up the node in the new dag
 		$newNode = $newDag[$newDagInternalLabel];
 
 		// get or create this dag's equivalent node
-		if (isset($this->dag[$thisDagInternalLabel])) {
-			$thisNode = $this->dag[$thisDagInternalLabel];
+		if (isset($this->nodes[$thisDagInternalLabel])) {
+			$thisNode = $this->nodes[$thisDagInternalLabel];
 		} else {
 			$thisNode = array();
 		}
 
+		// the new node has either a value or children
 		if (isset($newNode['value'])) {
 
+			// if this node has a value, it should be the same
 			if (isset($thisNode['value'])) {
 				if ($thisNode['value'] != $newNode['value']) {
 					return false;
 				}
-#todo check for incompatible types 'children'
+
+			} elseif (isset($thisNode['children'])) {
+
+				trigger_error('This node has children while new node has a value.', E_USER_ERROR);
+
 			} else {
+
 				$thisNode['value'] = $newNode['value'];
+
 			}
 
 		} elseif (isset($newNode['children'])) {
 
-#todo check for incompatible types 'value'
-
-			// make sure the labels in $newDag that are present in $dag are processed first
 			$children = $newNode['children'];
 			if (isset($thisNode['children'])) {
-				$children = array_merge(array_intersect_key($thisNode['children'], $newNode['children']), $newNode['children']);
+
+				// combine this node's children with the new node's children
+				$children = array_merge(array_intersect_key($thisNode['children'], $children), $children);
+
+			} elseif (isset($thisNode['value'])) {
+
+				trigger_error('This node has a value while new node has children.', E_USER_ERROR);
+
 			}
 
 			// go through all children
 			foreach ($children as $label => $newDagInternalChildLabel) {
 
-				$thisDagInternalChildLabel = $this->createInternalLabelForMerge($label, $newDagInternalChildLabel, $thisNode, $uniqId, $map);
+				// create an internal label for the new node
+				$thisDagInternalChildLabel = $this->createInternalLabelForMerge($label, $newDagInternalChildLabel, $thisNode, $map);
 
-				$success = $this->mergeNode($thisDagInternalChildLabel, $newDagInternalChildLabel, $newDag, $uniqId, $map);
+				// merge the child nodes
+				$success = $this->mergeNode($thisDagInternalChildLabel, $newDagInternalChildLabel, $newDag, $map);
 				if (!$success) {
 					return false;
 				}
 
+				// link the child to this node
 				$thisNode['children'][$label] = $thisDagInternalChildLabel;
 			}
 		}
 
-		$this->dag[$thisDagInternalLabel] = $thisNode;
+		// register the node
+		$this->nodes[$thisDagInternalLabel] = $thisNode;
 
 		return true;
 	}
 
-	private function createInternalLabelForMerge($label, $newDagInternalLabel, $thisNode, $uniqId, &$map)
+	/**
+	 * Important helper function to create internal labels that allow for a successful merge.
+	 *
+	 * @return string An internal label
+	 */
+	private function createInternalLabelForMerge($label, $newDagInternalLabel, $thisNode, &$map)
 	{
 		// check if the new dag shares the label with this dag
 		if (isset($thisNode['children'][$label])) {
@@ -217,12 +215,12 @@ class LabeledDAG
 			$internalLabel = $map[$newDagInternalLabel];
 
 		// reuse the internal label of the new dag, if it isn't used yet
-		} elseif (!isset($this->dag[$newDagInternalLabel])) {
+		} elseif (!isset($this->nodes[$newDagInternalLabel])) {
 
 			// reuse the existing label
 			$internalLabel = $newDagInternalLabel;
 
-			// make sure this label can be used for futher nodes
+			// make sure this label can be used for further nodes
 			$map[$newDagInternalLabel] = $internalLabel;
 
 		} else {
@@ -243,16 +241,17 @@ class LabeledDAG
 		$NewDAG = new LabeledDAG();
 
 		// check if this dag has
-		if (!isset($this->dag['root']['children'][$label])) {
+		if (!isset($this->nodes['root']['children'][$label])) {
+#r($label);
 #todo this should not happen
 			return $NewDAG;
 		}
 
 		// find the internal label of the node that $label points to
-		$internalLabel = $this->dag['root']['children'][$label];
+		$internalLabel = $this->nodes['root']['children'][$label];
 
 		// create a subset root
-		$NewDAG->dag['root']['children'][$label] = $internalLabel;
+		$NewDAG->nodes['root']['children'][$label] = $internalLabel;
 
 		// initialize list of nodes to copy
 		$todo = array($internalLabel);
@@ -263,11 +262,11 @@ class LabeledDAG
 			$internalLabel = array_pop($todo);
 
 			// copy node
-			$NewDAG->dag[$internalLabel] = $this->dag[$internalLabel];
+			$NewDAG->nodes[$internalLabel] = $this->nodes[$internalLabel];
 
 			// copy node's children
-			if (isset($this->dag[$internalLabel]['children'])) {
-				foreach ($this->dag[$internalLabel]['children'] as $childLabel) {
+			if (isset($this->nodes[$internalLabel]['children'])) {
+				foreach ($this->nodes[$internalLabel]['children'] as $childLabel) {
 					$todo[] = $childLabel;
 				}
 			}
@@ -276,6 +275,9 @@ class LabeledDAG
 		return $NewDAG;
 	}
 
+	/**
+	 * Sets the value at the specified path through the dag.
+	 */
 	public function setPathValue(array $path, $value)
 	{
 		if (is_array($value)) {
@@ -288,18 +290,22 @@ class LabeledDAG
 		// walk the path
 		foreach ($path as $label) {
 
-			if (!isset($this->dag[$internalLabel]['children'][$label])) {
+			if (!isset($this->nodes[$internalLabel]['children'][$label])) {
 				trigger_error('Label not found: ' . $label, E_USER_ERROR);
 			}
 
 			// update node label
-			$internalLabel = $this->dag[$internalLabel]['children'][$label];
+			$internalLabel = $this->nodes[$internalLabel]['children'][$label];
 		}
 
 		// update the value
-		$this->dag[$internalLabel]['value'] = $value;
+		$this->nodes[$internalLabel]['value'] = $value;
 	}
 
+	/**
+	 * Returns the value at the specified path through the dag.
+	 * @return mixed|null Returns the value if the path exists. If it doesn't, it returns null.
+	 */
 	public function getPathValue($path)
 	{
 		// init node label
@@ -308,19 +314,19 @@ class LabeledDAG
 		// walk the path
 		foreach ($path as $label) {
 
-			if (!isset($this->dag[$internalLabel]['children'][$label])) {
+			if (!isset($this->nodes[$internalLabel]['children'][$label])) {
 				return null;
 			}
 
 			// update node label
-			$internalLabel = $this->dag[$internalLabel]['children'][$label];
+			$internalLabel = $this->nodes[$internalLabel]['children'][$label];
 		}
 
 		// return the value
-		if (!isset($this->dag[$internalLabel]['value'])) {
+		if (!isset($this->nodes[$internalLabel]['value'])) {
 			return null;
 		} else {
-			return $this->dag[$internalLabel]['value'];
+			return $this->nodes[$internalLabel]['value'];
 		}
 	}
 
@@ -354,6 +360,37 @@ class LabeledDAG
 	}
 
 	/**
+	 * Take the next step through the dag, that starts with $internalLabel.
+	 * A path is added to $path each time the $path is completed.
+	 *
+	 * @param $path A stack to keep track of the current path through the dag.
+	 * @param $paths A set of all paths through the dag.
+	 */
+	private function traverse($internalLabel, array $path, array &$paths)
+	{
+		$path[] = $internalLabel;
+
+		$node = $this->nodes[$internalLabel];
+
+		if (empty($node['children'])) {
+
+			if (isset($node['value'])) {
+				$last = count($path) - 1;
+				$path[$last] .= ' = ' . $node['value'];
+			}
+
+			$paths[] = $path;
+
+		} else {
+
+			foreach ($node['children'] as $label => $internalChildLabel) {
+				$this->traverse($internalChildLabel, $path, $paths);
+			}
+
+		}
+	}
+
+	/**
 	 * Determines if step $stepIndex of the $pathIndex-th $paths is a copy of the same step in a step above
 	 */
 	private function isStepCopy($pathIndex, $stepIndex, $paths)
@@ -374,30 +411,6 @@ class LabeledDAG
 		}
 
 		return false;
-	}
-
-	private function traverse($internalLabel, array $path, array &$paths)
-	{
-		$path[] = $internalLabel;
-
-		$node = $this->dag[$internalLabel];
-
-		if (empty($node['children'])) {
-
-			if (isset($node['value'])) {
-				$last = count($path) - 1;
-				$path[$last] .= ' = ' . $node['value'];
-			}
-
-			$paths[] = $path;
-
-		} else {
-
-			foreach ($node['children'] as $label => $internalChildLabel) {
-				$this->traverse($internalChildLabel, $path, $paths);
-			}
-
-		}
 	}
 
 	protected static function createUniqueId()
