@@ -213,14 +213,17 @@ class EarleyParser
 				);
 
 				// store extra information to make it easier to extract parse trees later
-				$this->storeCompletedStateInfo($completedState, $chartedState, $advancedState);
+				$this->storeStateInfo($completedState, $chartedState, $advancedState);
 
 				$this->enqueue($advancedState, $completedState['endWordIndex']);
 			}
 		}
 	}
 
-	private function storeCompletedStateInfo(array $completedState, array $chartedState, array &$advancedState)
+	/**
+	 * store extra information to make it easier to extract parse trees later
+	 */
+	private function storeStateInfo(array $completedState, array $chartedState, array &$advancedState)
 	{
 		// store the state's "children" to ease building the parse trees from the packed forest
 		$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
@@ -248,7 +251,7 @@ class EarleyParser
 		if (!$this->isStateInChart($state, $position)) {
 
 			$this->showDebug('enqueue', $state);
-#todo do the subsuming thing
+
 			$stateIDs++;
 			$state['id'] = $stateIDs;
 			$this->treeInfo['states'][$stateIDs] = $state;
@@ -263,7 +266,11 @@ class EarleyParser
 				$presentState['rule'] == $state['rule'] &&
 				$presentState['dotPosition'] == $state['dotPosition'] &&
 				$presentState['startWordIndex'] == $state['startWordIndex'] &&
-				$presentState['endWordIndex'] == $state['endWordIndex']) {
+				$presentState['endWordIndex'] == $state['endWordIndex'] &&
+				// this could be replaced by a fast test for subsumption of both dags;
+				// however, accepting the duplicate state is probably faster than the fastest test for subsumption
+				true
+				) {
 					return true;
 			}
 		}

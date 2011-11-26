@@ -12,10 +12,10 @@ function test($case, $got, $expected) {
 	}
 }
 
-testLabeledDAG();
+#testLabeledDAG();
 #testLanguage();
-
 #return;
+
 # should fail: I are Patrick
 
 $Echo = ChatbotEcho::getInstance();
