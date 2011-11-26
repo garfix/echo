@@ -129,8 +129,7 @@ class EarleyParser
 	{
 		$this->showDebug('predict', $state);
 
-		$dotPosition = $state['dotPosition'];
-		$nextConsequent = $state['rule']['consequents'][$dotPosition];
+		$nextConsequent = $state['rule']['consequents'][$state['dotPosition']];
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
@@ -156,31 +155,30 @@ class EarleyParser
 	{
 		$this->showDebug('scan', $state);
 
-		$rule = $state['rule'];
-		$B = $rule['consequents'][$state['dotPosition']];
-		$j = $state['endWordIndex'];
-		$word = $this->words[$j];
+		$nextConsequent = $state['rule']['consequents'][$state['dotPosition']];
+		$endWordIndex = $state['endWordIndex'];
+		$endWord = $this->words[$endWordIndex];
 
-		if ($this->Grammar->isWordAPartOfSpeech($word, $B)) {
+		if ($this->Grammar->isWordAPartOfSpeech($endWord, $nextConsequent)) {
 
 			$scannedState = array(
 				'rule' => array(
-					'antecedent' => $B,
-					'consequents' => array($word)
+					'antecedent' => $nextConsequent,
+					'consequents' => array($endWord)
 				),
 				'dotPosition' => 1,
-				'startWordIndex' => $j,
-				'endWordIndex' => $j + 1,
-				'dag' => $this->Grammar->getLabeledDagForWord($word, $B),
+				'startWordIndex' => $endWordIndex,
+				'endWordIndex' => $endWordIndex + 1,
+				'dag' => $this->Grammar->getLabeledDagForWord($endWord, $nextConsequent),
 			);
 
-			$this->enqueue($scannedState, $j + 1);
+			$this->enqueue($scannedState, $endWordIndex + 1);
 		}
 	}
 
 	/**
 	 * This function is called whenever a state is completed.
-	 * It's purpose is to advance other states.
+	 * Its purpose is to advance other states.
 	 *
 	 * For example:
 	 * - this $state is NP -> noun, it has been completed
@@ -190,7 +188,7 @@ class EarleyParser
 	{
 		$this->showDebug('complete', $completedState);
 
-		$B = $completedState['rule']['antecedent'];
+		$completedAntecedent = $completedState['rule']['antecedent'];
 
 		foreach ($this->chart[$completedState['startWordIndex']] as $chartedState) {
 
@@ -199,11 +197,11 @@ class EarleyParser
 			$consequents = $rule['consequents'];
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition >= count($consequents)) || ($consequents[$dotPosition] != $B)) {
+			if (($dotPosition >= count($consequents)) || ($consequents[$dotPosition] != $completedAntecedent)) {
 				continue;
 			}
 
-			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $B);
+			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent);
 			if ($NewDag !== false) {
 
 				$advancedState = array(
@@ -214,17 +212,23 @@ class EarleyParser
 					'dag' => $NewDag
 				);
 
-				// store the state's "children" to ease building the parse trees from the packed forest
-				$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
-				$advancedState['children'][] = $completedState['id'];
+				// store extra information to make it easier to extract parse trees later
+				$this->storeCompletedStateInfo($completedState, $chartedState, $advancedState);
 
 				$this->enqueue($advancedState, $completedState['endWordIndex']);
+			}
+		}
+	}
 
-				if ($dotPosition + 1 == count($rule['consequents'])) {
-					if ($rule['antecedent'] == 'S') {
-						$this->treeInfo['sentences'][] = $advancedState;
-					}
-				}
+	private function storeCompletedStateInfo(array $completedState, array $chartedState, array &$advancedState)
+	{
+		// store the state's "children" to ease building the parse trees from the packed forest
+		$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
+		$advancedState['children'][] = $completedState['id'];
+
+		if ($chartedState['dotPosition'] + 1 == count($chartedState['rule']['consequents'])) {
+			if ($chartedState['rule']['antecedent'] == 'S') {
+				$this->treeInfo['sentences'][] = $advancedState;
 			}
 		}
 	}
@@ -334,14 +338,11 @@ class EarleyParser
 	 */
 	private function extractAllTrees()
 	{
-		$wordCount = count($this->words);
-
 		$parseTrees = array();
 		foreach ($this->treeInfo['sentences'] as $root) {
 
 			// do not accept sentences that are only partial parses
-			#note: if these are the only parses available, they may be of use
-			if ($root['endWordIndex'] != $wordCount) {
+			if ($root['endWordIndex'] != count($this->words)) {
 				continue;
 			}
 
@@ -350,22 +351,47 @@ class EarleyParser
 		return $parseTrees;
 	}
 
+	private function extractFirstTree()
+	{
+		foreach ($this->treeInfo['sentences'] as $root) {
+
+			// do not accept sentences that are only partial parses
+			if ($root['endWordIndex'] != count($this->words)) {
+				continue;
+			}
+
+			$tree = $this->extractParseTreeBranch($root);
+			return $tree;
+		}
+		return null;
+	}
+
+	/**
+	 * Turns a parse state into a parse tree branch
+	 * @return array A branch.
+	 */
 	private function extractParseTreeBranch(array $state)
 	{
 		$rule = $state['rule'];
-		$branch = array('part-of-speech' => $rule['antecedent']);
+
+		$branch = array(
+			'part-of-speech' => $rule['antecedent']
+		);
+
 		if ($this->Grammar->isPartOfSpeech($rule['antecedent'])) {
 			$branch['word'] = $rule['consequents'][0];
 		}
+
 		if (isset($state['children'])) {
-			$constituentIds = $state['children'];
+
 			$constituents = array();
-			foreach ($constituentIds as $constituentId) {
+			foreach ($state['children'] as $constituentId) {
 				$constituent = $this->treeInfo['states'][$constituentId];
 				$constituents[] = $this->extractParseTreeBranch($constituent);
 			}
 			$branch['constituents'] = $constituents;
 		}
+
 		return $branch;
 	}
 
