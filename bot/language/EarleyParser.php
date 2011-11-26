@@ -9,6 +9,9 @@ require_once __DIR__ . '/LabeledDAG.php';
  */
 class EarleyParser
 {
+	const ANTECEDENT = 0;
+	const CONSEQUENT = 1;
+
 	private $Grammar = null;
 
 	private $chart = array();
@@ -64,8 +67,8 @@ class EarleyParser
 
 		// top down parsing starts with queueing the topmost state
 		$rule = array(
-			'antecedent' => 'gamma',
-			'consequents' => array('S')
+			array('cat' => 'gamma'),
+			array('cat' => 'S')
 		);
 
 		$initialState = array(
@@ -129,7 +132,7 @@ class EarleyParser
 	{
 		$this->showDebug('predict', $state);
 
-		$nextConsequent = $state['rule']['consequents'][$state['dotPosition']];
+		$nextConsequent = $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
@@ -155,7 +158,7 @@ class EarleyParser
 	{
 		$this->showDebug('scan', $state);
 
-		$nextConsequent = $state['rule']['consequents'][$state['dotPosition']];
+		$nextConsequent = $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
 		$endWordIndex = $state['endWordIndex'];
 		$endWord = $this->words[$endWordIndex];
 
@@ -163,8 +166,8 @@ class EarleyParser
 
 			$scannedState = array(
 				'rule' => array(
-					'antecedent' => $nextConsequent,
-					'consequents' => array($endWord)
+					array('cat' => $nextConsequent),
+					array('cat' => $endWord)
 				),
 				'dotPosition' => 1,
 				'startWordIndex' => $endWordIndex,
@@ -188,16 +191,15 @@ class EarleyParser
 	{
 		$this->showDebug('complete', $completedState);
 
-		$completedAntecedent = $completedState['rule']['antecedent'];
+		$completedAntecedent = $completedState['rule'][self::ANTECEDENT]['cat'];
 
 		foreach ($this->chart[$completedState['startWordIndex']] as $chartedState) {
 
 			$dotPosition = $chartedState['dotPosition'];
 			$rule = $chartedState['rule'];
-			$consequents = $rule['consequents'];
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition >= count($consequents)) || ($consequents[$dotPosition] != $completedAntecedent)) {
+			if (($dotPosition >= count($rule) - 1) || ($rule[$dotPosition + 1]['cat'] != $completedAntecedent)) {
 				continue;
 			}
 
@@ -229,8 +231,9 @@ class EarleyParser
 		$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
 		$advancedState['children'][] = $completedState['id'];
 
-		if ($chartedState['dotPosition'] + 1 == count($chartedState['rule']['consequents'])) {
-			if ($chartedState['rule']['antecedent'] == 'S') {
+		$consequentCount = count($chartedState['rule']) - 1;
+		if ($chartedState['dotPosition'] + 1 == $consequentCount) {
+			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'S') {
 				$this->treeInfo['sentences'][] = $advancedState;
 			}
 		}
@@ -279,25 +282,24 @@ class EarleyParser
 
 	private function isIncomplete(array $state)
 	{
-		return ($state['dotPosition'] < count($state['rule']['consequents']));
+		$consequentCount = count($state['rule']) - 1;
+		return ($state['dotPosition'] < $consequentCount);
 	}
 
 	private function getNextCat(array $state)
 	{
-		return $state['rule']['consequents'][$state['dotPosition']];
+		return $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
 	}
 
 	private static function createLabeledDag(array $rule)
 	{
 		if (isset($rule['features'])) {
-			$features = $rule['features'];
 
 			$tree = array();
-			$tree[$rule['antecedent']] = $features['antecedent'];
-
-			foreach ($features['consequents'] as $i => $consequent) {
-				$tree[$rule['consequents'][$i]] = $consequent;
+			foreach ($rule as $line) {
+				$tree[$line['cat']] = $tree[$line]['features'];
 			}
+
 		} else {
 			$tree = null;
 		}
@@ -319,20 +321,25 @@ class EarleyParser
 	{
 		if (ChatbotSettings::$debugParser) {
 			$rule = $state['rule'];
-			$consequents = $rule['consequents'];
 			$dotPosition = $state['dotPosition'];
 			$start = $state['startWordIndex'];
 			$end = $state['endWordIndex'];
 
-			$post = array_merge(
-				array_slice($consequents, 0, $dotPosition),
-				array('.'),
-				array_slice($consequents, $dotPosition));
+			$post = array();
+			for ($i = self::CONSEQUENT; $i < count($rule); $i++) {
+				if ($i - 1 == $dotPosition) {
+					$post[] = '.';
+				}
+				$post[] = $rule[$i]['cat'];
+			}
+			if ($i - 1 == $dotPosition) {
+				$post[] = '.';
+			}
 
 			echo
 				str_repeat('    ', $start) .
 				$function . ' ' .
-				$rule['antecedent'] . ' => ' . implode(' ', $post) . ' ' .
+				$rule[self::ANTECEDENT]['cat'] . ' => ' . implode(' ', $post) . ' ' .
 				"[" . implode(' ', array_slice($this->words, $start, ($end - $start))) . "]\n";
 		}
 	}
@@ -381,12 +388,14 @@ class EarleyParser
 	{
 		$rule = $state['rule'];
 
+		$antecedent = $rule[0]['cat'];
+
 		$branch = array(
-			'part-of-speech' => $rule['antecedent']
+			'part-of-speech' => $antecedent
 		);
 
-		if ($this->Grammar->isPartOfSpeech($rule['antecedent'])) {
-			$branch['word'] = $rule['consequents'][0];
+		if ($this->Grammar->isPartOfSpeech($antecedent)) {
+			$branch['word'] = $rule[self::CONSEQUENT]['cat'];
 		}
 
 		if (isset($state['children'])) {
