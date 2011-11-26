@@ -20,7 +20,6 @@ class SimpleGrammar implements Grammar
 	/** @var array An array of grammar rules, ordered by antecedent */
 	protected $syntax = null;
 	protected $lexicon = null;
-	protected $Parser = null;
 	protected $Microplanner = null;
 	protected $SurfaceRealiser = null;
 
@@ -32,7 +31,6 @@ class SimpleGrammar implements Grammar
 		$this->word2phraseStructure = $this->getWord2PhraseStructure();
 
 		// input processing
-		$this->Parser = new EarleyParser();
 		$this->Analyzer = new SemanticAnalyzer();
 
 		// output processing
@@ -63,7 +61,7 @@ class SimpleGrammar implements Grammar
 		$this->makeLexicalEntries($Sentence);
 
 		// create one or more parse trees from this sentence
-		$syntaxTrees = $this->Parser->parse($this, $Sentence->lexicalEntries);
+		$syntaxTrees = EarleyParser::getAllTrees($this, $Sentence->lexicalEntries);
 
 		$Sentence->interpretations = array();
 		foreach ($syntaxTrees as $syntaxTree) {
