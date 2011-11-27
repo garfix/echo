@@ -297,8 +297,6 @@ class EarleyParser
 		foreach ($rule as $line) {
 			if (isset($line['features'])) {
 				$tree[$line['cat']] = $line['features'];
-			} else {
-				$tree[$line['cat']] = null;
 			}
 		}
 

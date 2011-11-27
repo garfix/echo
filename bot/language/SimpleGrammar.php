@@ -578,226 +578,111 @@ $result = true;
 
 	public function getSyntax()
 	{
-/*
-        alternative:
-
-		$syntax[] = array(
-			array('cat' => 'S', 'features' => array('head-1')),
-			array('cat' => 'NP', 'features' => array('head', 'agreement-2')),
-			array('cat' => 'VP', 'features' => array('head-1', 'agreement-2')),
-		);
-*/
-
-
-# which rules are really necessary?
-
 # NB: regels met twee dezelfde consequents mogen gewoon niet meer: herschrijf maar naar wat anders
 
 		$syntax = array(
 			'S' => array(
 				// John drives
 				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('NP', 'VP'),
-//					'features' => array(
-//						'antecedent' => array('head-1' => null),
-//						'consequents' => array(
-//							array('head' => array('agreement-2' => null)),
-//							array('head-1' => array('agreement-2' => null)),
-//						)
-//					)
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
-
-
 				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('WhNP', 'VP'),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
 				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('VP'),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => null)),
 				),
 				// Was John driving?
 				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('aux', 'NP', 'VP'),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'aux', 'features' => array()),
+					array('cat' => 'aux'),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
-				// Was John a fool?
-# kan niet meer
-//				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('aux', 'NP', 'NP'),
-//				),
 				// Why was John driving?
 				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('WhNP', 'aux', 'NP', 'VP'),
-					array('cat' => 'S', 'features' => array()),
-					array('cat' => 'WhNP', 'features' => array()),
-					array('cat' => 'aux', 'features' => array()),
-					array('cat' => 'NP', 'features' => array()),
-					array('cat' => 'VP', 'features' => array()),
+					array('cat' => 'S'),
+					array('cat' => 'WhNP'),
+					array('cat' => 'aux'),
+					array('cat' => 'NP'),
+					array('cat' => 'VP'),
 				),
-
-
-
-//				array(
-//					'antecedent' => 'S',
-//					'consequents' => array('WH-phrase'),
-//				),
-//			),
-//			'WH-phrase' => array(
-//				array(
-//					'antecedent' => 'WH-phrase',
-//					'consequents' => array('AP', 'verb', 'NP'),
-//				),
 			),
 			'VP' => array(
 				array(
-//					'antecedent' => 'VP',
-//					'consequents' => array('verb'),
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('agreement' => null))),
+					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				array(
-//					'antecedent' => 'VP',
-//					'consequents' => array('verb', 'NP'),
-//					'features' => array(
-//						'antecedent' => array('head-1' => null),
-//						'consequents' => array(
-//							array('head-1' => array('agreement' => null)),
-//							array(),
-//#todo: also needs a match
-//						)
-//					)
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('agreement' => null))),
-					array('cat' => 'NP', 'features' => array()),
+					array('cat' => 'verb', 'features' => array('head-1' => null)),
+					array('cat' => 'NP'),
 				),
 				array(
-//					'antecedent' => 'VP',
-//					'consequents' => array('verb', 'PP')
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('agreement' => null))),
-					array('cat' => 'PP', 'features' => array()),
+					array('cat' => 'verb', 'features' => array('head-1' => null)),
+					array('cat' => 'PP'),
 				),
-//				array(
-//					'antecedent' => 'VP',
-//					'consequents' => array('verb', 'AP'),
-//				)
 			),
 			'WhNP' => array(
 				array(
-//					'antecedent' => 'WhNP',
-//					'consequents' => array('whword'),
-					array('cat' => 'WhNP', 'features' => array()),
-					array('cat' => 'whword', 'features' => array()),
+					array('cat' => 'WhNP'),
+					array('cat' => 'whword'),
 				),
 				array(
-//					'antecedent' => 'WhNP',
-//					'consequents' => array('whword', 'NP'),
-					array('cat' => 'WhNP', 'features' => array()),
-					array('cat' => 'whword', 'features' => array()),
-					array('cat' => 'NP', 'features' => array()),
+					array('cat' => 'WhNP'),
+					array('cat' => 'whword'),
+					array('cat' => 'NP'),
 				),
 			),
 			'NP' => array(
 				// he
 				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('pronoun'),
-//					'features' => array(
-//						'antecedent' => array('head-1' => null),
-//						'consequents' => array(
-//							array('head-1' => null),
-//						)
-//					)
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// children
 				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('noun'),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),
 				// John
 				array(
-#					'antecedent' => 'NP',
-#					'consequents' => array('propernoun'),
-//					'antecedent' => 'NP',
-//					'consequents' => array('propernoun'),
-//					'features' => array(
-//						'antecedent' => array('head-1' => null),
-//						'consequents' => array(
-//							array('head-1' => array('agreement' => null)),
-//						)
-//					)
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'propernoun', 'features' => array('head-1' => array('agreement' => null))),
-				),
-				// John de Vries
-				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('propernoun', 'NP'),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
-//				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('numeral', 'noun'),
-//				),
+				// John de Vries
+				array(
+					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+				),
 				// the car
 				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('determiner', 'noun'),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'determiner', 'features' => array()),
+					array('cat' => 'determiner'),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),
 				// the car in the lot
 				array(
-//					'antecedent' => 'NP',
-//					'consequents' => array('NP', 'PP'),
 #error: dit gaat fout bij het omzetten naar een DAG
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'PP', 'features' => array()),
+					array('cat' => 'PP'),
 				),
 			),
 			'PP' => array(
 				// in the lot
 				array(
-//					'antecedent' => 'PP',
-//					'consequents' => array('preposition', 'NP')
-					array('cat' => 'PP', 'features' => array()),
-					array('cat' => 'preposition', 'features' => array()),
-					array('cat' => 'NP', 'features' => array()),
+					array('cat' => 'PP'),
+					array('cat' => 'preposition'),
+					array('cat' => 'NP'),
 				),
 			),
-//			'AP' => array(
-//				array(
-//					'antecedent' => 'AP',
-//					'consequents' => array('NP', 'adjective'),
-//				),
-//				array(
-//					'antecedent' => 'AP',
-//					'consequents' => array('adverb', 'adjective'),
-//				)
-//			)
 		);
 
 		return $syntax;
