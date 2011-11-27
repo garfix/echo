@@ -179,7 +179,7 @@ $structure['participants']['*patient'] = $NP2;
 $structure['mode'] = $aux['mode'];
 $structure['act'] = 'yes-no-question';
 				break;
-			case array('S', 'Wh-NP', 'aux', 'NP', 'VP'):
+			case array('S', 'WhNP', 'aux', 'NP', 'VP'):
 				list($WhNP, $aux, $NP, $VP) = $constituentStructures;
 				$structure = $VP;
 				$structure['type'] = 'clause';
@@ -196,7 +196,7 @@ $structure['act'] = 'yes-no-question';
 				}
 
 				break;
-			case array('S', 'Wh-NP', 'VP'):
+			case array('S', 'WhNP', 'VP'):
 				list($WhNP, $VP) = $constituentStructures;
 				$structure = $VP;
 				$structure['type'] = 'clause';
@@ -276,11 +276,11 @@ $structure['act'] = 'yes-no-question';
 				$structure = $NP;
 				$structure['preposition'] = $preposition['preposition'];
 				break;
-			case array('Wh-NP', 'whword'):
+			case array('WhNP', 'whword'):
 				list($whWord) = $constituentStructures;
 				$structure = $whWord;
 				break;
-			case array('Wh-NP', 'whword', 'NP'):
+			case array('WhNP', 'whword', 'NP'):
 				list($whWord, $NP) = $constituentStructures;
 				$structure = array_merge($NP, $whWord);
 				break;
@@ -336,9 +336,9 @@ $structure['act'] = 'yes-no-question';
 			return "declarative";
 		} elseif ($input == array('aux', 'NP', 'VP', null)) {
 			return "yes-no-question";
-		} elseif ($input == array('Wh-NP', 'VP', null, null)) {
+		} elseif ($input == array('WhNP', 'VP', null, null)) {
 			return "wh-subject-question";
-		} elseif ($input == array('Wh-NP', 'aux', 'NP', 'VP')) {
+		} elseif ($input == array('WhNP', 'aux', 'NP', 'VP')) {
 			return "wh-non-subject-question";
 		} elseif ($input == array('VP', null, null, null)) {
 			return "imperative";
@@ -614,9 +614,9 @@ $result = true;
 
 				array(
 //					'antecedent' => 'S',
-//					'consequents' => array('Wh-NP', 'VP'),
+//					'consequents' => array('WhNP', 'VP'),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'Wh-NP', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
 				array(
@@ -643,9 +643,9 @@ $result = true;
 				// Why was John driving?
 				array(
 //					'antecedent' => 'S',
-//					'consequents' => array('Wh-NP', 'aux', 'NP', 'VP'),
+//					'consequents' => array('WhNP', 'aux', 'NP', 'VP'),
 					array('cat' => 'S', 'features' => array()),
-					array('cat' => 'Wh-NP', 'features' => array()),
+					array('cat' => 'WhNP', 'features' => array()),
 					array('cat' => 'aux', 'features' => array()),
 					array('cat' => 'NP', 'features' => array()),
 					array('cat' => 'VP', 'features' => array()),
@@ -698,17 +698,17 @@ $result = true;
 //					'consequents' => array('verb', 'AP'),
 //				)
 			),
-			'Wh-NP' => array(
+			'WhNP' => array(
 				array(
-//					'antecedent' => 'Wh-NP',
+//					'antecedent' => 'WhNP',
 //					'consequents' => array('whword'),
-					array('cat' => 'Wh-NP', 'features' => array()),
+					array('cat' => 'WhNP', 'features' => array()),
 					array('cat' => 'whword', 'features' => array()),
 				),
 				array(
-//					'antecedent' => 'Wh-NP',
+//					'antecedent' => 'WhNP',
 //					'consequents' => array('whword', 'NP'),
-					array('cat' => 'Wh-NP', 'features' => array()),
+					array('cat' => 'WhNP', 'features' => array()),
 					array('cat' => 'whword', 'features' => array()),
 					array('cat' => 'NP', 'features' => array()),
 				),
@@ -772,6 +772,7 @@ $result = true;
 				array(
 //					'antecedent' => 'NP',
 //					'consequents' => array('NP', 'PP'),
+#error: dit gaat fout bij het omzetten naar een DAG
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'PP', 'features' => array()),

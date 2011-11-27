@@ -293,15 +293,13 @@ class EarleyParser
 
 	private static function createLabeledDag(array $rule)
 	{
-		if (isset($rule['features'])) {
-
-			$tree = array();
-			foreach ($rule as $line) {
-				$tree[$line['cat']] = $tree[$line]['features'];
+		$tree = array();
+		foreach ($rule as $line) {
+			if (isset($line['features'])) {
+				$tree[$line['cat']] = $line['features'];
+			} else {
+				$tree[$line['cat']] = null;
 			}
-
-		} else {
-			$tree = null;
 		}
 
 		return new LabeledDAG($tree);
@@ -313,6 +311,11 @@ class EarleyParser
 		$SubDag2 = clone $Dag2;//->followPath($cat2);
 
 		$UniDag = $SubDag1->unify($SubDag2);
+//echo $cat."\n";
+//echo $SubDag1;
+//echo $SubDag2;
+//echo $UniDag;
+//echo "===================================\n";
 
 		return $UniDag;
 	}

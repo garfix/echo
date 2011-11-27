@@ -21,8 +21,15 @@ function test($case, $got, $expected) {
 $Echo = ChatbotEcho::getInstance();
 
 $sentences = $Echo->parse('I am Patrick');
-#$sentences = $Echo->parse('I are Patrick');
 test(101, $sentences[0]->getSyntax(), '[S [NP [pronoun i]][VP [verb am][NP [propernoun patrick]]]]');
+
+$sentences = $Echo->parse('I are Patrick');
+test(102, $sentences, array());
+
+
+
+
+
 //test(102, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [type: object, name: patrick], *actor: [referring-expression: *current-speaker, type: object]], type: clause]");
 //test(103, $sentences[0]->getStructure(), "declarative");
 

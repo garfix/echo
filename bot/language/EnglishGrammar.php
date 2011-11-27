@@ -19,11 +19,11 @@ class EnglishGrammar extends SimpleGrammar
 			'a' => 'article',
 			'an' => 'article',
 			'am' => array(
-					'verb' => array(
-							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+				'verb' => array(
+						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
 			'are' => array(
-					'verb' => array(
-							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
+				'verb' => array(
+						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
 			'author' => 'noun',
 			'book' => 'verb',
 			'born' => 'verb',
@@ -36,8 +36,8 @@ class EnglishGrammar extends SimpleGrammar
 			'have' => 'verb',
 			'how' => 'whword',
 			'i' => array(
-					'pronoun' => array(
-							'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+				'pronoun' => array(
+						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
 			'influenced' => 'verb',
 			'many' => 'determiner',
 			'of' => 'preposition',

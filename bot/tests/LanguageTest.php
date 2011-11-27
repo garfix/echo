@@ -20,7 +20,7 @@ function testLanguage()
 #	test(6, $sentences[1]->getStructure(), "imperative");
 
 	$sentences = $Echo->parse('Who am I?');
-	test(111, $sentences[0]->getSyntax(), '[S [Wh-NP [whword who]][VP [verb am][NP [pronoun i]]]]');
+	test(111, $sentences[0]->getSyntax(), '[S [WhNP [whword who]][VP [verb am][NP [pronoun i]]]]');
 	test(112, $sentences[0]->getPhraseStructure(), "[predicate: *identify, participants: [*identity: [referring-expression: *current-speaker, type: object], *patient: [question: *person, type: object]], type: clause, act: question-about-object]");
 	test(113, $sentences[0]->getStructure(), "wh-subject-question");
 
