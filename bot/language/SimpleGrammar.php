@@ -61,10 +61,11 @@ class SimpleGrammar implements Grammar
 		$this->makeLexicalEntries($Sentence);
 
 		// create one or more parse trees from this sentence
-		$syntaxTrees = EarleyParser::getAllTrees($this, $Sentence->lexicalEntries);
+		$syntaxTree = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
 
 		$Sentence->interpretations = array();
-		foreach ($syntaxTrees as $syntaxTree) {
+
+		if ($syntaxTree) {
 			$Interpretation = new SentenceInterpretation();
 			$Interpretation->syntaxTree = $syntaxTree;
 			$Interpretation->structure = $this->getSentenceStructure($syntaxTree);
@@ -450,26 +451,19 @@ $structure['act'] = 'yes-no-question';
 	{
 		$result = false;
 
-#		if (isset($this->lexicon[$word])) {
 		if (isset($this->lexicon[$word])) {
+
 			if (isset($this->lexicon[$word][$partOfSpeech])) {
-$result = true;
+				$result = true;
 			}
-//			$parts = $this->lexicon[$word];
-//			if (is_array($parts)) {
-//				$result = in_array($partOfSpeech, $parts);
-//			} else {
-//				$result = $partOfSpeech == $parts;
-//			}
+
 		} else {
 
 			// all words can be proper nouns
 			if ($partOfSpeech == 'propernoun') {
 				$result = true;
 			}
-
 		}
-//echo "$word/$partOfSpeech/$result\n";
 
 		return $result;
 	}
@@ -567,20 +561,18 @@ $result = true;
 	public function getLabeledDagForWord($word, $partOfSpeech)
 	{
 		if (isset($this->lexicon[$word][$partOfSpeech])) {
-			return new LabeledDAG(array($partOfSpeech => $this->lexicon[$word][$partOfSpeech]['features']));
+			return new LabeledDAG(array($partOfSpeech . '@' . '0' => $this->lexicon[$word][$partOfSpeech]['features']));
 		} else {
 			// presume proper noun
 			return new LabeledDAG(
-				array($partOfSpeech => array('head' => array('agreement' => array('number' => 's', 'person' => 1))))
+				array($partOfSpeech . '@' . '0' => array('head' => array('agreement' => array('number' => 's', 'person' => 1))))
 			);
 		}
 	}
 
 	public function getSyntax()
 	{
-# NB: regels met twee dezelfde consequents mogen gewoon niet meer: herschrijf maar naar wat anders
-
-		$syntax = array(
+		return array(
 			'S' => array(
 				// John drives
 				array(
@@ -669,7 +661,6 @@ $result = true;
 				),
 				// the car in the lot
 				array(
-#error: dit gaat fout bij het omzetten naar een DAG
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'PP'),
@@ -684,7 +675,5 @@ $result = true;
 				),
 			),
 		);
-
-		return $syntax;
 	}
 }

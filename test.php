@@ -18,6 +18,9 @@ function test($case, $got, $expected) {
 
 # should fail: I are Patrick
 
+
+#todo: sta zo'n regel toe:  NP => NP PP
+
 $Echo = ChatbotEcho::getInstance();
 
 $sentences = $Echo->parse('I am Patrick');

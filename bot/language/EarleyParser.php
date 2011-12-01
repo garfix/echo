@@ -18,15 +18,19 @@ class EarleyParser
 
 	private $words = array();
 
+	/** @var Stop parsing when first tree is found? */
+	private $singleTree;
+
 	private $treeInfo = array(
 		'states' => array(),
 		'sentences' => array()
 	);
 
-	private function __construct($Grammar, $words)
+	private function __construct($Grammar, $words, $singleTree)
 	{
 		$this->Grammar = $Grammar;
 		$this->words = $words;
+		$this->singleTree = $singleTree;
 	}
 
 	/**
@@ -40,7 +44,7 @@ class EarleyParser
 	 */
 	public static function getAllTrees(Grammar $Grammar, $words)
 	{
-		$Parser = new EarleyParser($Grammar, $words);
+		$Parser = new EarleyParser($Grammar, $words, false);
 		$Parser->parseWords($words);
 		$trees = $Parser->extractAllTrees();
 		return $trees;
@@ -48,7 +52,7 @@ class EarleyParser
 
 	public static function getFirstTree(Grammar $Grammar, $words)
 	{
-		$Parser = new EarleyParser($Grammar, $words);
+		$Parser = new EarleyParser($Grammar, $words, true);
 		$Parser->parseWords($words);
 		$tree = $Parser->extractFirstTree();
 		return $tree;
@@ -119,7 +123,11 @@ class EarleyParser
 				} else {
 
 					// proceed all other entries in the chart that have this entry's antecedent as their next consequent
-					$this->complete($state);
+					$treeComplete = $this->complete($state);
+
+					if ($this->singleTree && $treeComplete) {
+						return;
+					}
 				}
 			}
 		}
@@ -186,11 +194,14 @@ class EarleyParser
 	 * For example:
 	 * - this $state is NP -> noun, it has been completed
 	 * - now proceed all other states in the chart that are waiting for an NP at the current position
+	 *
+	 * @return bool Tree complete?
 	 */
 	private function complete(array $completedState)
 	{
 		$this->showDebug('complete', $completedState);
 
+		$treeComplete = false;
 		$completedAntecedent = $completedState['rule'][self::ANTECEDENT]['cat'];
 
 		foreach ($this->chart[$completedState['startWordIndex']] as $chartedState) {
@@ -199,11 +210,13 @@ class EarleyParser
 			$rule = $chartedState['rule'];
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition >= count($rule) - 1) || ($rule[$dotPosition + 1]['cat'] != $completedAntecedent)) {
+			if (($dotPosition >= count($rule) - 1) || ($rule[self::CONSEQUENT + $dotPosition]['cat'] != $completedAntecedent)) {
 				continue;
 			}
 
-			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent);
+			$chartedConsequent = $rule[self::CONSEQUENT + $dotPosition]['cat'] . '@' . (self::CONSEQUENT + $dotPosition);
+
+			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent . '@' . '0', $chartedConsequent);
 			if ($NewDag !== false) {
 
 				$advancedState = array(
@@ -215,28 +228,46 @@ class EarleyParser
 				);
 
 				// store extra information to make it easier to extract parse trees later
-				$this->storeStateInfo($completedState, $chartedState, $advancedState);
+				$treeComplete = $this->storeStateInfo($completedState, $chartedState, $advancedState);
 
 				$this->enqueue($advancedState, $completedState['endWordIndex']);
 			}
 		}
+
+		return $treeComplete;
 	}
 
 	/**
 	 * store extra information to make it easier to extract parse trees later
+	 * @return bool Tree complete?
 	 */
 	private function storeStateInfo(array $completedState, array $chartedState, array &$advancedState)
 	{
+		$treeComplete = false;
+
 		// store the state's "children" to ease building the parse trees from the packed forest
 		$advancedState['children'] = !isset($chartedState['children']) ? array() : $chartedState['children'];
 		$advancedState['children'][] = $completedState['id'];
 
+		// rule complete?
 		$consequentCount = count($chartedState['rule']) - 1;
 		if ($chartedState['dotPosition'] + 1 == $consequentCount) {
+
+			// complete sentence?
 			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'S') {
-				$this->treeInfo['sentences'][] = $advancedState;
+
+				// that matches all words?
+				if ($completedState['endWordIndex'] == count($this->words)) {
+
+					$this->treeInfo['sentences'][] = $advancedState;
+
+					// set a flag to allow the parser to stop at the first complete parse
+					$treeComplete = true;
+				}
 			}
 		}
+
+		return $treeComplete;
 	}
 
 	/**
@@ -294,22 +325,23 @@ class EarleyParser
 	private static function createLabeledDag(array $rule)
 	{
 		$tree = array();
-		foreach ($rule as $line) {
+		foreach ($rule as $index => $line) {
 			if (isset($line['features'])) {
-				$tree[$line['cat']] = $line['features'];
+				$tree[$line['cat'] . '@' . $index] = $line['features'];
 			}
 		}
 
 		return new LabeledDAG($tree);
 	}
 
-	private function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $cat)
+	private function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $antecedent, $consequent)
 	{
-		$SubDag1 = $Dag1->followPath($cat);
-		$SubDag2 = clone $Dag2;//->followPath($cat2);
+		$SubDag1 = $Dag1->followPath($antecedent)->renameLabel($antecedent, $consequent);
+		$SubDag2 = clone $Dag2;
 
 		$UniDag = $SubDag1->unify($SubDag2);
-//echo $cat."\n";
+//echo $antecedent."\n";
+//echo $consequent . "\n";
 //echo $SubDag1;
 //echo $SubDag2;
 //echo $UniDag;
@@ -356,10 +388,10 @@ class EarleyParser
 		$parseTrees = array();
 		foreach ($this->treeInfo['sentences'] as $root) {
 
-			// do not accept sentences that are only partial parses
-			if ($root['endWordIndex'] != count($this->words)) {
-				continue;
-			}
+//			// do not accept sentences that are only partial parses
+//			if ($root['endWordIndex'] != count($this->words)) {
+//				continue;
+//			}
 
 			$parseTrees[] = $this->extractParseTreeBranch($root);
 		}
@@ -370,10 +402,10 @@ class EarleyParser
 	{
 		foreach ($this->treeInfo['sentences'] as $root) {
 
-			// do not accept sentences that are only partial parses
-			if ($root['endWordIndex'] != count($this->words)) {
-				continue;
-			}
+//			// do not accept sentences that are only partial parses
+//			if ($root['endWordIndex'] != count($this->words)) {
+//				continue;
+//			}
 
 			$tree = $this->extractParseTreeBranch($root);
 			return $tree;

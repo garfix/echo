@@ -84,7 +84,7 @@ class LabeledDAG
 	}
 
 	/**
-	 * Splits the $label into a short label and a longer internal labe;.
+	 * Splits the $label into a short label and a longer internal label;.
 	 *
 	 * @param $label
 	 * @return array An (name, id) array
@@ -240,13 +240,6 @@ class LabeledDAG
 	{
 		$NewDAG = new LabeledDAG();
 
-		// check if this dag has
-		if (!isset($this->nodes['root']['children'][$label])) {
-#r($label);
-#todo this should not happen
-			return $NewDAG;
-		}
-
 		// find the internal label of the node that $label points to
 		$internalLabel = $this->nodes['root']['children'][$label];
 
@@ -273,6 +266,17 @@ class LabeledDAG
 		}
 
 		return $NewDAG;
+	}
+
+	public function renameLabel($label, $newLabel)
+	{
+		if (isset($this->nodes['root']['children'][$label])) {
+			$node = $this->nodes['root']['children'][$label];
+			unset($this->nodes['root']['children'][$label]);
+			$this->nodes['root']['children'][$newLabel] = $node;
+		}
+
+		return $this;
 	}
 
 	/**
