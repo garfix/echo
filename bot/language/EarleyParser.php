@@ -77,7 +77,7 @@ class EarleyParser
 
 		$initialState = array(
 			'rule' => $rule,
-			'dotPosition' => 0,
+			'dotPosition' => self::CONSEQUENT,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
 			'dag' => self::createLabeledDag($rule),
@@ -140,7 +140,7 @@ class EarleyParser
 	{
 		$this->showDebug('predict', $state);
 
-		$nextConsequent = $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
+		$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
@@ -148,7 +148,7 @@ class EarleyParser
 
 			$predictedState = array(
 				'rule' => $newRule,
-				'dotPosition' => 0,
+				'dotPosition' => self::CONSEQUENT,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
 				'dag' => self::createLabeledDag($newRule),
@@ -166,7 +166,7 @@ class EarleyParser
 	{
 		$this->showDebug('scan', $state);
 
-		$nextConsequent = $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
+		$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
 		$endWordIndex = $state['endWordIndex'];
 		$endWord = $this->words[$endWordIndex];
 
@@ -177,7 +177,7 @@ class EarleyParser
 					array('cat' => $nextConsequent),
 					array('cat' => $endWord)
 				),
-				'dotPosition' => 1,
+				'dotPosition' => 2,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
 				'dag' => $this->Grammar->getLabeledDagForWord($endWord, $nextConsequent),
@@ -210,13 +210,13 @@ class EarleyParser
 			$rule = $chartedState['rule'];
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition >= count($rule) - 1) || ($rule[self::CONSEQUENT + $dotPosition]['cat'] != $completedAntecedent)) {
+			if (($dotPosition >= count($rule)) || ($rule[$dotPosition]['cat'] != $completedAntecedent)) {
 				continue;
 			}
 
-			$chartedConsequent = $rule[self::CONSEQUENT + $dotPosition]['cat'] . '@' . (self::CONSEQUENT + $dotPosition);
+			$chartedConsequent = $rule[$dotPosition]['cat'] . '@' . $dotPosition;
 
-			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent . '@' . '0', $chartedConsequent);
+			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent . '@' . self::ANTECEDENT, $chartedConsequent);
 			if ($NewDag !== false) {
 
 				$advancedState = array(
@@ -251,7 +251,7 @@ class EarleyParser
 
 		// rule complete?
 		$consequentCount = count($chartedState['rule']) - 1;
-		if ($chartedState['dotPosition'] + 1 == $consequentCount) {
+		if ($chartedState['dotPosition'] == $consequentCount) {
 
 			// complete sentence?
 			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'S') {
@@ -313,13 +313,13 @@ class EarleyParser
 
 	private function isIncomplete(array $state)
 	{
-		$consequentCount = count($state['rule']) - 1;
+		$consequentCount = count($state['rule']);
 		return ($state['dotPosition'] < $consequentCount);
 	}
 
 	private function getNextCat(array $state)
 	{
-		return $state['rule'][self::CONSEQUENT + $state['dotPosition']]['cat'];
+		return $state['rule'][$state['dotPosition']]['cat'];
 	}
 
 	private static function createLabeledDag(array $rule)
@@ -337,15 +337,8 @@ class EarleyParser
 	private function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $antecedent, $consequent)
 	{
 		$SubDag1 = $Dag1->followPath($antecedent)->renameLabel($antecedent, $consequent);
-		$SubDag2 = clone $Dag2;
 
-		$UniDag = $SubDag1->unify($SubDag2);
-//echo $antecedent."\n";
-//echo $consequent . "\n";
-//echo $SubDag1;
-//echo $SubDag2;
-//echo $UniDag;
-//echo "===================================\n";
+		$UniDag = $SubDag1->unify($Dag2);
 
 		return $UniDag;
 	}
@@ -360,12 +353,12 @@ class EarleyParser
 
 			$post = array();
 			for ($i = self::CONSEQUENT; $i < count($rule); $i++) {
-				if ($i - 1 == $dotPosition) {
+				if ($i == $dotPosition) {
 					$post[] = '.';
 				}
 				$post[] = $rule[$i]['cat'];
 			}
-			if ($i - 1 == $dotPosition) {
+			if ($i == $dotPosition) {
 				$post[] = '.';
 			}
 
@@ -388,11 +381,6 @@ class EarleyParser
 		$parseTrees = array();
 		foreach ($this->treeInfo['sentences'] as $root) {
 
-//			// do not accept sentences that are only partial parses
-//			if ($root['endWordIndex'] != count($this->words)) {
-//				continue;
-//			}
-
 			$parseTrees[] = $this->extractParseTreeBranch($root);
 		}
 		return $parseTrees;
@@ -400,17 +388,14 @@ class EarleyParser
 
 	private function extractFirstTree()
 	{
-		foreach ($this->treeInfo['sentences'] as $root) {
-
-//			// do not accept sentences that are only partial parses
-//			if ($root['endWordIndex'] != count($this->words)) {
-//				continue;
-//			}
-
+		if (!empty($this->treeInfo['sentences'])) {
+			$root = $this->treeInfo['sentences'][0];
 			$tree = $this->extractParseTreeBranch($root);
-			return $tree;
+		} else {
+			$tree = null;
 		}
-		return null;
+
+		return $tree;
 	}
 
 	/**
