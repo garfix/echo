@@ -22,6 +22,9 @@ class ChatbotEcho
 		$this->LanguageProcessor = new LanguageProcessor();
 	}
 
+	/**
+	 * @return Echo
+	 */
 	public static function getInstance()
 	{
 		if (self::$instance == null) {
@@ -41,6 +44,12 @@ class ChatbotEcho
 		$sentences = $this->LanguageProcessor->parse($input, $this->workingMemory);
 
 		return $sentences;
+	}
+
+	public function parseFirstLine($input)
+	{
+		$sentences = $this->parse($input);
+		return $sentences ? $sentences[0] : false;
 	}
 
 	/**

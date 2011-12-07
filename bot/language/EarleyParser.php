@@ -426,7 +426,7 @@ class EarleyParser
 	{
 		$rule = $state['rule'];
 
-		$antecedent = $rule[0]['cat'];
+		$antecedent = $rule[self::ANTECEDENT]['cat'];
 
 		$branch = array(
 			'part-of-speech' => $antecedent
@@ -434,6 +434,12 @@ class EarleyParser
 
 		if ($this->Grammar->isPartOfSpeech($antecedent)) {
 			$branch['word'] = $rule[self::CONSEQUENT]['cat'];
+		}
+
+		$dagTree = $state['dag']->getTree();
+		$branch['features'] = null;
+		if (isset($dagTree[$antecedent . '@0'])) {
+			$branch['features'] = $dagTree[$antecedent . '@0'];
 		}
 
 		if (isset($state['children'])) {

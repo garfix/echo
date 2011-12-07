@@ -334,6 +334,29 @@ class LabeledDAG
 		}
 	}
 
+	public function getTree()
+	{
+		$tree = $this->getTreeForNode('root');
+		return $tree;
+	}
+
+	private function getTreeForNode($internalLabel)
+	{
+		$node = $this->nodes[$internalLabel];
+
+		if (isset($node['children'])) {
+			$tree = array();
+			foreach ($node['children'] as $childLabel => $childInternalLabel) {
+				$tree[$childLabel] = $this->getTreeForNode($childInternalLabel);
+			}
+		}
+		if (isset($node['value'])) {
+			$tree = $node['value'];
+		}
+
+		return $tree;
+	}
+
 	public function __toString()
 	{
 		// a single path from start to end

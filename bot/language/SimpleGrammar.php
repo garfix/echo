@@ -61,20 +61,14 @@ class SimpleGrammar implements Grammar
 		$this->makeLexicalEntries($Sentence);
 
 		// create one or more parse trees from this sentence
-		$syntaxTree = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
+		$Sentence->syntaxTree = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
 
-		$Sentence->interpretations = array();
-
-		if ($syntaxTree) {
-			$Interpretation = new SentenceInterpretation();
-			$Interpretation->syntaxTree = $syntaxTree;
-			$Interpretation->structure = $this->getSentenceStructure($syntaxTree);
-			$Interpretation->phraseStructure = $this->Analyzer->analyze($this, $syntaxTree, $workingMemory);
-
-			$Sentence->interpretations[] = $Interpretation;
+		if ($Sentence->syntaxTree) {
+			$Sentence->structure = $this->getSentenceStructure($Sentence->syntaxTree);
+			$Sentence->phraseStructure = $this->Analyzer->analyze($this, $Sentence->syntaxTree, $workingMemory);
 		}
 
-		return !empty($Sentence->interpretations);
+		return !empty($Sentence->syntaxTree);
 	}
 
 	protected function word2phraseStructure($word, $partOfSpeech)

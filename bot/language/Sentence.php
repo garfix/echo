@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A complete sentence in a text. It is written in $language and has one or more interpretations.
+ * A complete sentence in a text.
  */
 class Sentence
 {
@@ -17,25 +17,26 @@ class Sentence
 	/** @var The token that ends the sentence, like . ! ? or Sentence::INDIGNATION */
 	public $terminator = null;
 
-	/** @var Interpretations of this sentence that are created when its syntax is parsed */
-	public $interpretations = null;
+	/** @var The syntax tree  */
+	public $syntaxTree = null;
+
+	/** @var Type of sentence: declarative, yes-no-question, imperative, ... */
+	public $structure = null;
+
+	/** @var A syntax / semantics structure */
+	public $phraseStructure = null;
 
 	/**
 	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpsyntaxtree/) of the parse tree.
 	 *
-	 * @param int $treeIndex Which of the available trees?
 	 * @return string
 	 */
-	public function getSyntax($treeIndex = 0)
+	public function getSyntaxString()
 	{
-		if (isset($this->interpretations[$treeIndex]->syntaxTree)) {
-			return $this->getBranchSyntax($this->interpretations[$treeIndex]->syntaxTree);
-		} else {
-			return '';
-		}
+		return $this->getBranchSyntax($this->syntaxTree);
 	}
 
-	protected function getBranchSyntax($branch)
+	private function getBranchSyntax($branch)
 	{
 		$string = '[' . $branch['part-of-speech'] . ' ';
 
@@ -52,14 +53,12 @@ class Sentence
 		return $string;
 	}
 
-	public function getPhraseStructure($treeIndex = 0)
+	public function getPhraseStructureString()
 	{
-		$clauses = array();
-		$phraseStructure = $this->interpretations[$treeIndex]->phraseStructure;
-		return $this->getPhraseStructureBranch($phraseStructure);
+		return $this->getPhraseStructureBranch($this->phraseStructure);
 	}
 
-	public function getPhraseStructureBranch($phraseStructure)
+	private function getPhraseStructureBranch($phraseStructure)
 	{
 		$parts = array();
 		foreach ($phraseStructure as $key => $val) {
@@ -78,6 +77,6 @@ class Sentence
 
 	public function getStructure($treeIndex = 0)
 	{
-		return $this->interpretations[$treeIndex]->structure;
+		return $this->structure;
 	}
 }
