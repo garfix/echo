@@ -431,7 +431,7 @@ $structure['act'] = 'yes-no-question';
 	 * @param string $constituent
 	 * @return array A grammar rule.
 	 */
-	public function getGrammarRulesForConstituent($constituent)
+	public function getRulesForConstituent($constituent)
 	{
 		if (isset($this->syntax[$constituent])) {
 			return $this->syntax[$constituent];
@@ -555,18 +555,16 @@ $structure['act'] = 'yes-no-question';
 	}
 
 	/**
-	 * Creates a syntax rule, including especially, features, for a word.
+	 * Returns the features for a word.
 	 * @return array
 	 */
-	public function getLabeledDagForWord($word, $partOfSpeech)
+	public function getFeaturesForWord($word, $partOfSpeech)
 	{
 		if (isset($this->lexicon[$word][$partOfSpeech])) {
-			return new LabeledDAG(array($partOfSpeech . '@' . '0' => $this->lexicon[$word][$partOfSpeech]['features']));
+			return $this->lexicon[$word][$partOfSpeech]['features'];
 		} else {
 			// presume proper noun
-			return new LabeledDAG(
-				array($partOfSpeech . '@' . '0' => array('head' => array('agreement' => array('number' => 's', 'person' => 1))))
-			);
+			return array('head' => array('agreement' => array('number' => 's', 'person' => 1)));
 		}
 	}
 

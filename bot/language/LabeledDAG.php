@@ -13,7 +13,7 @@ class LabeledDAG
 	 * An example description:
 	 *
 	 * 	$tree = array(
-	 *	    'noun' => array('head-1' => array('tense-2' => 'past', 'agreement' => 'yes')),
+	 *	    'noun' => array('head-1' => array('tense-2' => 'past', 'person' => 1)),
 	 *	    'verb' => array('head-1' => null),
 	 *	    'VP' => array('head' => array('tense-2' => null)),
 	 *	);
@@ -125,7 +125,7 @@ class LabeledDAG
 	 * @param array $newDag
 	 * @return bool Successful merge?
 	 */
-	protected function mergeNode($thisDagInternalLabel, $newDagInternalLabel , $newDag, &$map)
+	private function mergeNode($thisDagInternalLabel, $newDagInternalLabel , $newDag, &$map)
 	{
 		// look up the node in the new dag
 		$newNode = $newDag[$newDagInternalLabel];
@@ -417,7 +417,7 @@ class LabeledDAG
 		return false;
 	}
 
-	protected static function createUniqueId()
+	private static function createUniqueId()
 	{
 		static $id = 0;
 

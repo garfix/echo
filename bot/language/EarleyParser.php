@@ -1,26 +1,31 @@
 <?php
 
 require_once __DIR__ . '/LabeledDAG.php';
+require_once __DIR__ . '/Grammar.php';
 
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in
- * "Speech and Language Processing" - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
- * It is the basic algorithm (p 381) extended with unification (page 431)
+ * "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
+ * It is the basic algorithm (p 381) extended with unification (p 431)
  */
 class EarleyParser
 {
 	const ANTECEDENT = 0;
 	const CONSEQUENT = 1;
 
+	/** @var Grammar Contains call-backs for all language-specific information */
 	private $Grammar = null;
 
+	/** @var array Per word, all states that need to be processed */
 	private $chart = array();
 
+	/** @var array Words to be parsed */
 	private $words = array();
 
 	/** @var Stop parsing when first tree is found? */
-	private $singleTree;
+	private $singleTree = false;
 
+	/** @var array A structure to help splitting the parse forest into trees */
 	private $treeInfo = array(
 		'states' => array(),
 		'sentences' => array()
@@ -34,15 +39,14 @@ class EarleyParser
 	}
 
 	/**
-	 * Parses a sentence (given in an array of words) into a single chart structure
-	 * that holds the syntactic structure.
+	 * Returns all trees that can be parsed from $words, given a $Grammar.
 	 *
 	 * @param Grammar $Grammar The rules that structure the words.
 	 * @param $words array An array of lowercase strings
 	 *
 	 * @return array Parse trees
 	 */
-	public static function getAllTrees(Grammar $Grammar, $words)
+	public static function getAllTrees(Grammar $Grammar, array $words)
 	{
 		$Parser = new EarleyParser($Grammar, $words, false);
 		$Parser->parseWords($words);
@@ -50,7 +54,10 @@ class EarleyParser
 		return $trees;
 	}
 
-	public static function getFirstTree(Grammar $Grammar, $words)
+	/**
+	 * Returns the first tree that can be parsed from $words, given a $Grammar.
+	 */
+	public static function getFirstTree(Grammar $Grammar, array $words)
 	{
 		$Parser = new EarleyParser($Grammar, $words, true);
 		$Parser->parseWords($words);
@@ -95,10 +102,10 @@ class EarleyParser
 		$wordCount = count($this->words);
 		for ($i = 0; $i <= $wordCount; $i++) {
 
-			// go through all chart entries in this position (entries may be added while we're in the loop)
+			// go through all chart entries in this position (entries will be added while we're in the loop)
 			for ($j = 0; $j < count($this->chart[$i]); $j++) {
 
-				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
+				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex, dag)
 				$state = $this->chart[$i][$j];
 
 				// check if the entry is parsed completely
@@ -144,7 +151,7 @@ class EarleyParser
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
-		foreach ($this->Grammar->getGrammarRulesForConstituent($nextConsequent) as $newRule) {
+		foreach ($this->Grammar->getRulesForConstituent($nextConsequent) as $newRule) {
 
 			$predictedState = array(
 				'rule' => $newRule,
@@ -172,6 +179,9 @@ class EarleyParser
 
 		if ($this->Grammar->isWordAPartOfSpeech($endWord, $nextConsequent)) {
 
+			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
+			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
+;
 			$scannedState = array(
 				'rule' => array(
 					array('cat' => $nextConsequent),
@@ -180,7 +190,7 @@ class EarleyParser
 				'dotPosition' => 2,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
-				'dag' => $this->Grammar->getLabeledDagForWord($endWord, $nextConsequent),
+				'dag' => $DAG,
 			);
 
 			$this->enqueue($scannedState, $endWordIndex + 1);
@@ -214,9 +224,10 @@ class EarleyParser
 				continue;
 			}
 
-			$chartedConsequent = $rule[$dotPosition]['cat'] . '@' . $dotPosition;
+			$completedAntecedentLabel = $completedAntecedent . '@' . '0';
+			$chartedConsequentLabel = $rule[$dotPosition]['cat'] . '@' . $dotPosition;
 
-			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedent . '@' . self::ANTECEDENT, $chartedConsequent);
+			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedentLabel, $chartedConsequentLabel);
 			if ($NewDag !== false) {
 
 				$advancedState = array(
@@ -238,7 +249,7 @@ class EarleyParser
 	}
 
 	/**
-	 * store extra information to make it easier to extract parse trees later
+	 * Store extra information to make it easier to extract parse trees later
 	 * @return bool Tree complete?
 	 */
 	private function storeStateInfo(array $completedState, array $chartedState, array &$advancedState)
@@ -334,11 +345,20 @@ class EarleyParser
 		return new LabeledDAG($tree);
 	}
 
-	private function unifyStates(LabeledDAG $Dag1, LabeledDAG $Dag2, $antecedent, $consequent)
+	/**
+	 * Returns a new LabeledDAG object that is the unification of $ChartedDag and a single path in $CompletedDag.
+	 *
+	 * @param LabeledDAG $CompletedDag
+	 * @param LabeledDAG $ChartedDag
+	 * @param $antecedent A label in $CompletedDag that will be unified with $ChartedDag
+	 * @param $consequent Same label, except for the @ index
+	 * @return false|LabeledDAG
+	 */
+	private function unifyStates(LabeledDAG $CompletedDag, LabeledDAG $ChartedDag, $antecedent, $consequent)
 	{
-		$SubDag1 = $Dag1->followPath($antecedent)->renameLabel($antecedent, $consequent);
+		$PartialCompletedDag = $CompletedDag->followPath($antecedent)->renameLabel($antecedent, $consequent);
 
-		$UniDag = $SubDag1->unify($Dag2);
+		$UniDag = $PartialCompletedDag->unify($ChartedDag);
 
 		return $UniDag;
 	}
