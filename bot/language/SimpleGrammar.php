@@ -145,8 +145,6 @@ class SimpleGrammar implements Grammar
 	 * Creates a phrase structure based on a set of parts-of-speech and the child phrase structures
 	 * that correspond with these parts of speech.
 	 *
-	 * @param array $partsOfSpeech
-	 * @param array $constituentStructures
 	 * @return array A phrase structure
 	 */
 	public function analyzeBranch($partOfSpeech, $constituentPartsOfSpeech, $constituentStructures)
@@ -555,7 +553,11 @@ $structure['act'] = 'yes-no-question';
 	public function getFeaturesForWord($word, $partOfSpeech)
 	{
 		if (isset($this->lexicon[$word][$partOfSpeech])) {
-			return $this->lexicon[$word][$partOfSpeech]['features'];
+			if (isset($this->lexicon[$word][$partOfSpeech]['features'])) {
+				return $this->lexicon[$word][$partOfSpeech]['features'];
+			} else {
+				return array();
+			}
 		} else {
 			// presume proper noun
 			return array('head' => array('agreement' => array('number' => 's', 'person' => 1)));
@@ -572,11 +574,13 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
+				// Who Is John?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
+				// Drive!
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
@@ -584,17 +588,25 @@ $structure['act'] = 'yes-no-question';
 				// Was John driving?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'aux'),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
-				// Why was John driving?
+				// Was John a fool?
 				array(
-					array('cat' => 'S'),
+					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					// presuming the first NP to be the head
+					array('cat' => 'NP', 'features' => array('head-1' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
+				),
+				// How many miles was John driving?
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'WhNP'),
-					array('cat' => 'aux'),
-					array('cat' => 'NP'),
-					array('cat' => 'VP'),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
 			),
 			'VP' => array(
@@ -614,22 +626,19 @@ $structure['act'] = 'yes-no-question';
 				),
 			),
 			'WhNP' => array(
+				// where
 				array(
-					array('cat' => 'WhNP'),
-					array('cat' => 'whword'),
+					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+					array('cat' => 'whword', 'features' => array('head-1' => null)),
 				),
+				// how many children
 				array(
-					array('cat' => 'WhNP'),
+					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
 					array('cat' => 'whword'),
-					array('cat' => 'NP'),
+					array('cat' => 'NP', 'features' => array('head-1' => null)),
 				),
 			),
 			'NP' => array(
-				// he
-				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
-				),
 				// children
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
@@ -640,10 +649,10 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
-				// John de Vries
+				// he
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
 				array(
@@ -661,9 +670,9 @@ $structure['act'] = 'yes-no-question';
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP'),
+					array('cat' => 'PP', 'features' => array('head-1' => null)),
 					array('cat' => 'preposition'),
-					array('cat' => 'NP'),
+					array('cat' => 'NP', 'features' => array('head-1' => null)),
 				),
 			),
 		);

@@ -16,40 +16,86 @@ class EnglishGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
-			'a' => 'article',
-			'an' => 'article',
+			'a' => array(
+				'determiner' => array(),
+			),
+			'an' => array(
+				'determiner' => array(),
+			),
 			'am' => array(
 				'verb' => array(
-						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
 			'are' => array(
 				'verb' => array(
-						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
-			'author' => 'noun',
-			'book' => 'verb',
-			'born' => 'verb',
-			'by' => 'preposition',
-			'children' => 'noun',
-			'daughter' => 'noun',
-			'did' => 'aux',
-			'die' => 'verb',
-			'flight' => 'noun',
-			'have' => 'verb',
-			'how' => 'whword',
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
+			'author' => array(
+				'noun' => array(),
+			),
+			'book' => array(
+				'verb' => array(
+					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
+					'roles' => array('agent', 'patient')
+// check 'natural language understanding' voor mogelijke syntax
+			),
+			'born' => array(
+				'verb' => array(),
+			),
+			'by' => array(
+				'preposition' => array(),
+			),
+			'children' => array(
+				'noun' => array(),
+			),
+			'daughter' => array(
+				'noun' => array(),
+			),
+			'did' => array(
+				'aux' => array(),
+			),
+			'die' => array(
+				'verb' => array(),
+				'roles' => array('patient')
+			),
+			'flight' => array(
+				'noun' => array(
+					'features' => array('head' => array('agreement' => array('person' => 3, 'number' => 's')))),
+			),
+			'have' => array(
+				'verb' => array(),
+			),
+			'how' => array(
+				'whword' => array(),
+			),
 			'i' => array(
 				'pronoun' => array(
-						'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
-			'influenced' => 'verb',
-			'many' => 'determiner',
-			'of' => 'preposition',
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+			'influenced' => array(
+				'verb' => array(),
+			),
+			'many' => array(
+				'determiner' => array(),
+			),
+			'of' => array(
+				'preposition' => array(),
+			),
 			'the' => array(
-				'article' => array('cat' => 'article'),
-				# note: an article _is_ a determiner
-				'determiner' => array('cat' => 'determiner')),
-			'that' => 'determiner',
-			'was' => 'aux',
-			'when' => 'whword',
-			'where' => 'whword',
-			'who' => 'whword',
+				'determiner' => array()
+			),
+			'that' => array(
+				'determiner' => array(),
+			),
+			'was' => array(
+				'aux' => array(),
+			),
+			'when' => array(
+				'whword' => array(),
+			),
+			'where' => array(
+				'whword' => array(),
+			),
+			'who' => array(
+				'whword' => array(),
+			),
 		);
 	}
 

@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/ChatbotSettings.php';
 require_once __DIR__ . '/language/LanguageProcessor.php';
-require_once __DIR__ . '/language/DiscoursePlanner.php';
 
 class ChatbotEcho
 {
@@ -15,7 +14,6 @@ class ChatbotEcho
 
 	/** Modules */
 	private $LanguageProcessor;
-	private $discoursePlanners = array();
 
 	private function __construct()
 	{
@@ -23,7 +21,7 @@ class ChatbotEcho
 	}
 
 	/**
-	 * @return Echo
+	 * @return ChatbotEcho
 	 */
 	public static function getInstance()
 	{
@@ -37,7 +35,7 @@ class ChatbotEcho
 	 * Parses $input into a series of Sentences
 	 *
 	 * @param string $input
-	 * @return array An array of Sentence
+	 * @return array An array of Sentences
 	 */
 	public function parse($input)
 	{
@@ -46,58 +44,22 @@ class ChatbotEcho
 		return $sentences;
 	}
 
+	/**
+	 * Parses $input into a series of Sentences, but returns only the first of these,
+	 *
+	 * @param string $input
+	 * @return Sentence
+	 */
 	public function parseFirstLine($input)
 	{
 		$sentences = $this->parse($input);
 		return $sentences ? $sentences[0] : false;
 	}
 
-	/**
-	 * Starts a new conversation with a given user.
-	 * A dialog manager is created for this conversation.
-	 */
-	public function startConversation($userId)
-	{
-		$this->addToWorkingMemory('context', 'speaker', $userId);
-		$this->createDiscoursePlanner($userId);
-	}
-
-	/**
-	 * Within the current conversation with the user, $input is processed and output is returned.
-	 *
-	 * @param string $userId
-	 * @param string $input Human readable input
-	 * @return string Human readable output
-	 */
-	public function interact($userId, $input)
-	{
-		if (!isset($this->discoursePlanners[$userId])) {
-			$this->startConversation($userId);
-		}
-
-		return $this->discoursePlanners[$userId]->interact($input);
-	}
-
-	/**
-	 * Ends and removes the conversation with the user.
-	 *
-	 * @param string $userId
-	 */
-	public function stopConversation($userId)
-	{
-		unset($this->discoursePlanners[$userId]);
-	}
-
-	private function createDiscoursePlanner($userId)
-	{
-		$this->discoursePlanners[$userId] = new DiscoursePlanner($userId, $this->LanguageProcessor, $this->workingMemory);
-	}
-
 	public function addToWorkingMemory($subject, $predicate, $object)
 	{
 		$this->workingMemory[$subject][$predicate] = $object;
 	}
-
 
 	/**
 	 * Low-level: enters $statment into declarative memory.
@@ -119,7 +81,6 @@ class ChatbotEcho
 	{
 		$answer = null;
 
-		$index = -1;
 		foreach ($triple as $index => $word) {
 			if ($triple[$index][0] == '?') {
 				break;
@@ -152,11 +113,11 @@ class ChatbotEcho
 	{
 		$answer = '';
 
-		$sentences = $this->parse($question);
-		foreach ($sentences as $Sentence) {
+		$Sentence = $this->parseFirstLine($question);
+		if ($Sentence) {
 
-			$phraseStructure = $Sentence->interpretations[0]->phraseStructure;
-//r($phraseStructure['act']);
+			$phraseStructure = $Sentence->phraseStructure;
+
 			if (isset($phraseStructure['act'])) {
 				$act = $phraseStructure['act'];
 
@@ -166,14 +127,14 @@ class ChatbotEcho
 					$result = $this->check($phraseStructure);
 
 					if ($result) {
-						$answer .= 'Yes.';
+						$answer = 'Yes.';
 					} else {
-						$answer .= 'No.';
+						$answer = 'No.';
 					}
 
 				} elseif ($act == 'question-about-object') {
 
-					$answer .= $this->answerQuestionAboutObject($phraseStructure);
+					$answer = $this->answerQuestionAboutObject($phraseStructure);
 
 				}
 			}
@@ -217,66 +178,6 @@ class ChatbotEcho
 		}
 
 		return $boundTriple;
-	}
-
-	public function understandSimpleStatements($input, &$score)
-	{
-		$score = 3;
-
-		if (preg_match('/i am (\w*)/i', $input, $matches)) {
-			$this->store('name', 'DISCUSSION_PARTNER', $matches[1]);
-
-			return 'Hi, I\'m Echo';
-		}
-
-		return null;
-	}
-
-	public function answerSimpleQuestions($input, &$score)
-	{
-		$score = 3;
-		$lcInput = strtolower($input);
-
-		if ($lcInput == 'who am i?') {
-			if ($answer = $this->retrieve('name', 'DISCUSSION_PARTNER', '?')) {
-				return 'You are ' . $answer;
-			}
-		}
-	}
-
-	public function simpleQuestions($input, &$score)
-	{
-		$score = 2;
-		$lcInput = strtolower($input);
-
-		if ($lcInput == 'what is your name?') {
-			return "Echo";
-		}
-		if ($lcInput == 'wat is je naam?') {
-			return "Echo";
-		}
-		if ($lcInput == 'wat is jouw naam?') {
-			return "Echo";
-		}
-		if ($lcInput == 'what is your name?') {
-			return "Echo";
-		}
-		if ($lcInput == 'who are you?') {
-			return "Echo";
-		}
-
-		return null;
-	}
-
-	public function strategyCommands($input, &$score)
-	{
-		$score = 1;
-		$lcInput = strtolower($input);
-
-		if ($lcInput == 'quit' || $lcInput == 'exit') {
-			return 'Bye';
-		}
-		return null;
 	}
 }
 

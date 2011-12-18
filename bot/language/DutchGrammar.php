@@ -8,28 +8,70 @@ class DutchGrammar extends SimpleGrammar
 	{
 		return array(
 			'auteur' => 'noun',
-			//'ben' => 'verb',
-'ben' => array('verb' => array('features' => array('person' => 1, 'number' => 's'))),
-			'beïnvloed' => 'verb',
-			'boek' => 'verb',
-			'de' => array('article', 'determiner'),
-			'die' => 'determiner',
-			'door' => 'preposition',
-			'dochter' => 'noun',
-			'een' => array('article', 'determiner'),
-			'had' => 'verb',
-			'geboren' => 'verb',
-			'het' => 'article',
-			'hoeveel' => 'whword',
-			//'ik' => 'pronoun',
-'ik' => array('pronoun' => array('features' => array('person' => 1, 'number' => 's'))),
-			'kinderen' => 'noun',
-			'van' => 'preposition',
-			'vlucht' => 'noun',
-			'was' => 'aux',
-			'werd' => 'aux',
-			'waar' => 'whword',
-			'wanneer' => 'whword',
+			'ben' => array(
+				'verb' => array('features' => array('person' => 1, 'number' => 's'))
+			),
+			'beïnvloed' => array(
+				'verb' => array()
+			),
+			'boek' => array(
+				'verb' => array(
+					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
+					'roles' => array('agent', 'patient')
+			),
+			'de' => array(
+				'article' => array(),
+				'determiner' => array()
+			),
+			'die' => array(
+				'determiner' => array()
+			),
+			'door' => array(
+				'preposition' => array()
+			),
+			'dochter' => array(
+				'noun' => array()
+			),
+			'een' => array(
+				'article' => array(),
+				'determiner' => array()
+			),
+			'had' => array(
+				'verb' => array()
+			),
+			'geboren' => array(
+				'verb' => array()
+			),
+			'het' => array(
+				'article' => array()
+			),
+			'hoeveel' => array(
+				'whword' => array()
+			),
+			'ik' => array(
+				'pronoun' => array('features' => array('person' => 1, 'number' => 's'))
+			),
+			'kinderen' => array(
+				'noun' => array()
+			),
+			'van' => array(
+				'preposition' => array()
+			),
+			'vlucht' => array(
+				'noun' => array('features' => array('head' => array('agreement' => array('person' => 3, 'number' => 's')))),
+			),
+			'was' => array(
+				'aux' => array()
+			),
+			'werd' => array(
+				'aux' => array()
+			),
+			'waar' => array(
+				'whword' => array()
+			),
+			'wanneer' => array(
+				'whword' => array()
+			),
 		);
 	}
 

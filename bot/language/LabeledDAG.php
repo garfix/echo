@@ -240,6 +240,11 @@ class LabeledDAG
 	{
 		$NewDAG = new LabeledDAG();
 
+		// sanity check: following a label that is not available
+		if (!isset($this->nodes['root']['children'][$label])) {
+			return $NewDAG;
+		}
+
 		// find the internal label of the node that $label points to
 		$internalLabel = $this->nodes['root']['children'][$label];
 
@@ -343,6 +348,8 @@ class LabeledDAG
 	private function getTreeForNode($internalLabel)
 	{
 		$node = $this->nodes[$internalLabel];
+
+		$tree = null;
 
 		if (isset($node['children'])) {
 			$tree = array();

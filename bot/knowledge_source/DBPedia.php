@@ -193,6 +193,8 @@ if (ChatbotSettings::$debugKnowledge) r($query);
 			}
 		}
 
+if (ChatbotSettings::$debugKnowledge) r($result);
+
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 			$value = $result['results']['bindings'][0]['callret-0']['value'];
 		} else {
