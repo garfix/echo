@@ -92,14 +92,53 @@ class LabeledDAG
 	private function extractLabel($label)
 	{
 		// extract the name and id of the feature
-		if (!preg_match('/^([a-z][a-z@_0-9]*)(-(\d+))?$/i', $label, $matches)) {
+		$regexp =
+			'/^' .
+			'(?P<name1>[a-z][a-z@_0-9]*)(-(?P<id1>\d+))?' .
+			'(\{(?P<name2>[a-z][a-z@_0-9]*)(-(?P<id2>\d+))?\})?' .
+			'$/i';
+
+		if (!preg_match($regexp, $label, $matches)) {
 			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
 		}
-		$name = $matches[1];
-		$id = isset($matches[3]) ? $matches[3] : self::createUniqueId();
-		$internalLabel = $name . '-' . $id;
 
-		return array($name, $internalLabel);
+		if (!empty($matches['name2'])) {
+			$id = isset($matches['id2']) ? $matches['id2'] : self::createUniqueId();
+			$internalLabel = $matches['name2'] . '-' . $id;
+			$externalLabel = $matches['name1'];
+
+			if (!empty($matches['id1'])) {
+				trigger_error('The alias may not contain an id: ' . $label, E_USER_ERROR);
+			}
+		} else {
+			$id = isset($matches['id1']) ? $matches['id1'] : self::createUniqueId();
+			$internalLabel = $matches['name1'] . '-' . $id;
+			$externalLabel = $matches['name1'];
+		}
+
+		return array($externalLabel, $internalLabel);
+
+//		// extract the name and id of the feature
+//		$regexp =
+//			'/^' .
+//			'(?P<name>[a-z][a-z@_0-9]*)(-(?P<id>\d+))?' .
+//			'(\{(?P<alias>[a-z][a-z@_0-9]*)\})?' .
+//			'$/i';
+//
+//		if (!preg_match($regexp, $label, $matches)) {
+//			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
+//		}
+//
+//		$id = isset($matches['id']) ? $matches['id'] : self::createUniqueId();
+//		if (!empty($matches['alias'])) {
+//			$internalLabel = $matches['name'] . '-' . $id;
+//			$externalLabel = $matches['alias'];
+//		} else {
+//			$internalLabel = $matches['name'] . '-' . $id;
+//			$externalLabel = $matches['name'];
+//		}
+//
+//		return array($externalLabel, $internalLabel);
 
 
 //		// extract the name and id of the feature

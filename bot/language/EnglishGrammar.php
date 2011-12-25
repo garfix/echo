@@ -36,7 +36,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's'))),
 				),
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('content' => '*book'))),
+					'features' => array('head' => array('sem' => '*book')),
 				),
 			),
 			'born' => array(
@@ -87,10 +87,11 @@ class EnglishGrammar extends SimpleGrammar
 						'head' => array(
 							'sem' => array(
 								'predicate' => '*see',
-								'agent' => array('content-1' => null),
-								'theme' => array('content-2' => null)),
-							'subject' => array('content-1' => null),
-							'object' => array('content-2' => null)
+								'agent{subject-1}' => null,
+								'theme{object-1}' => null
+							),
+							'subject-1' => null,
+							'object-1' => null
 						)
 					),
 				)

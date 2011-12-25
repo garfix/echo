@@ -12,8 +12,5 @@ function test($case, $got, $expected) {
 	}
 }
 
-#testLabeledDAG();
+testLabeledDAG();
 testLanguage();
-//return;
-
-$Echo = ChatbotEcho::getInstance();

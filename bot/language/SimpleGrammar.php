@@ -560,7 +560,7 @@ $structure['act'] = 'yes-no-question';
 			}
 		} else {
 			// presume proper noun
-			return array('head' => array('agreement' => array('number' => 's', 'person' => 1), 'sem' => array('content' => '*' . $word)));
+			return array('head' => array('agreement' => array('number' => 's', 'person' => 1), 'sem' => '*' . $word));
 		}
 	}
 
@@ -572,8 +572,8 @@ $structure['act'] = 'yes-no-question';
 				array(
 # todo check of het simpeler kan!
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('content-1' => null)))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject' => array('content-1' => null)))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null))),
 				),
 				// Who Is John?
 				array(
@@ -617,8 +617,8 @@ $structure['act'] = 'yes-no-question';
 				),
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('object' => array('content-1' => null)), 'arguments' => 1)),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => array('content-1' => null)))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('object{sem-2}' => null), 'arguments' => 1)),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
