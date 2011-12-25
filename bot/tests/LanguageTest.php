@@ -11,15 +11,6 @@ function testLanguage()
 	$objectId = uniqid('user/', true);
 	$Echo->addToWorkingMemory('context', 'speaker', $objectId);
 
-$Sentence = $Echo->parseFirstLine('Boek die vlucht');
-test(6, $Sentence->language, 'dutch');
-test(7, $Sentence->getSyntaxString(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
-test(8, $Sentence->getStructure(), "imperative");
-test(9, $Sentence->syntaxTree['features']['head']['agreement']['person'], 2);
-test(10, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
-return;
-
-
 	// S => VP ; parse sentences in two languages in the same line
 	$sentences = $Echo->parse('Book that flight. Boek die vlucht');
 	test(1, $sentences[0]->language, 'english');
@@ -28,9 +19,11 @@ return;
 	test(4, $sentences[0]->syntaxTree['features']['head']['agreement']['person'], 2);
 	test(5, $sentences[0]->syntaxTree['features']['head']['agreement']['number'], 's');
 
-#	test(4, $sentences[1]->language, 'dutch');
-#	test(5, $sentences[1]->getSyntax(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
-#	test(6, $sentences[1]->getStructure(), "imperative");
+	test(6, $sentences[1]->language, 'dutch');
+	test(7, $sentences[1]->getSyntaxString(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
+	test(8, $sentences[1]->getStructure(), "imperative");
+	test(9, $sentences[1]->syntaxTree['features']['head']['agreement']['person'], 2);
+	test(10, $sentences[1]->syntaxTree['features']['head']['agreement']['number'], 's');
 
 	// agreement success
 	$Sentence = $Echo->parseFirstLine('I am Patrick');
@@ -86,6 +79,14 @@ return;
 	test(242, $answer, 'Yes.');
 	$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
 	test(243, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
+
+	$Sentence = $Echo->parseFirstLine('John sees the book');
+	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
+//r($Sentence->syntaxTree['features']);
+	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
+	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('sem' => '*john'));
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['patient'], array('sem' => '*book'));
+
 
 // heeft waarschijnlijk nog nooit gewerkt
 //	$Echo->tell(array($objectId, 'name', 'patrick'));

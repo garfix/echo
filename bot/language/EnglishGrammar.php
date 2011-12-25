@@ -24,18 +24,20 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'am' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+					'features' => array('head' => array('arguments' => 1, 'agreement' => array('person' => 1, 'number' => 's'))))),
 			'are' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p'))))),
+					'features' => array('head' => array('arguments' => 1, 'agreement' => array('person' => 1, 'number' => 'p'))))),
 			'author' => array(
 				'noun' => array(),
 			),
 			'book' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
-					'roles' => array('agent', 'patient')
-// check 'natural language understanding' voor mogelijke syntax
+					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's'))),
+				),
+				'noun' => array(
+					'features' => array('head' => array('sem' => '*book')),
+				),
 			),
 			'born' => array(
 				'verb' => array(),
@@ -53,7 +55,8 @@ class EnglishGrammar extends SimpleGrammar
 				'aux' => array(),
 			),
 			'die' => array(
-				'verb' => array(),
+				'verb' => array(
+					'features' => array('head' => array('arguments' => 0))),
 				'roles' => array('patient')
 			),
 			'flight' => array(
@@ -77,6 +80,11 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'of' => array(
 				'preposition' => array(),
+			),
+			'sees' => array(
+				'verb' => array(
+					'features' => array('head' => array('arguments' => 1, 'sem' => array('predicate' => '*see', 'agent' => null, 'patient' => null))),
+				)
 			),
 			'the' => array(
 				'determiner' => array()
@@ -114,9 +122,11 @@ class EnglishGrammar extends SimpleGrammar
 				'die' => array('predicate' => '*die'),
 				'influenced' => array('predicate' => '*influence'),
 				'have' => array('predicate' => '*have'),
+				'sees' => array('predicate' => '*see'),
 			),
 			'noun' => array(
 				'author' => array('isa' => '*author'),
+				'book' => array('isa' => '*book'),
 				'children' => array('isa' => '*child'),
 				'daughter' => array('isa' => '*daughter'),
 				'flight' => array('isa' => '*flight'),

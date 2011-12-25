@@ -560,7 +560,7 @@ $structure['act'] = 'yes-no-question';
 			}
 		} else {
 			// presume proper noun
-			return array('head' => array('agreement' => array('number' => 's', 'person' => 1)));
+			return array('head' => array('agreement' => array('number' => 's', 'person' => 1), 'sem' => '*' . $word));
 		}
 	}
 
@@ -570,8 +570,8 @@ $structure['act'] = 'yes-no-question';
 			'S' => array(
 				// John drives
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sem-1' => array('agent' => array('sem-2' => null))))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
 				// Who Is John?
@@ -612,12 +612,12 @@ $structure['act'] = 'yes-no-question';
 			'VP' => array(
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => null)),
+					array('cat' => 'verb', 'features' => array('head-1' => array('arguments' => 0))),
 				),
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => null)),
-					array('cat' => 'NP'),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('predicate-1' => null, 'patient-1' => array('sem-2' => null), 'agent' => null)))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('arguments' => 1, 'sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
