@@ -107,4 +107,12 @@ function testLabeledDAG()
 	// regression test
 	test(333, $F18->getPathValue(array('NP', 'person')), null);
 	test(334, $F21->getPathValue(array('a', 'head')), 1);
+
+	$tree = array(
+		'color-1' => null,
+		'colour{color-1}' => null,
+	);
+	$F22 = new LabeledDAG($tree);
+	$F22->setPathValue('color', 'red');
+	test(341, $F22->getPathValue('colour'), 'red');
 }

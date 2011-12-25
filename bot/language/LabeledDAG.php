@@ -100,6 +100,17 @@ class LabeledDAG
 		$internalLabel = $name . '-' . $id;
 
 		return array($name, $internalLabel);
+
+
+//		// extract the name and id of the feature
+//		if (!preg_match('/^([a-z][a-z@_0-9]*)(-(\d+))?$/i', $label, $matches)) {
+//			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
+//		}
+//		$name = $matches[1];
+//		$id = isset($matches[3]) ? $matches[3] : self::createUniqueId();
+//		$internalLabel = $name . '-' . $id;
+//
+//		return array($name, $internalLabel);
 	}
 
 	/**
@@ -166,6 +177,7 @@ class LabeledDAG
 
 			} elseif (isset($thisNode['value'])) {
 
+				r($thisNode);
 				trigger_error('This node has a value while new node has children.', E_USER_ERROR);
 
 			}

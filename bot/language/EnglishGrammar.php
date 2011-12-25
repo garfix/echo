@@ -24,10 +24,10 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'am' => array(
 				'verb' => array(
-					'features' => array('head' => array('arguments' => 1, 'agreement' => array('person' => 1, 'number' => 's'))))),
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's')), 'arguments' => 1))),
 			'are' => array(
 				'verb' => array(
-					'features' => array('head' => array('arguments' => 1, 'agreement' => array('person' => 1, 'number' => 'p'))))),
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
 			'author' => array(
 				'noun' => array(),
 			),
@@ -36,7 +36,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's'))),
 				),
 				'noun' => array(
-					'features' => array('head' => array('sem' => '*book')),
+					'features' => array('head' => array('sem' => array('content' => '*book'))),
 				),
 			),
 			'born' => array(
@@ -56,8 +56,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'die' => array(
 				'verb' => array(
-					'features' => array('head' => array('arguments' => 0))),
-				'roles' => array('patient')
+					'features' => array('arguments' => 0)),
 			),
 			'flight' => array(
 				'noun' => array(
@@ -83,7 +82,17 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'sees' => array(
 				'verb' => array(
-					'features' => array('head' => array('arguments' => 1, 'sem' => array('predicate' => '*see', 'agent' => null, 'patient' => null))),
+					'features' => array(
+						'arguments' => 1,
+						'head' => array(
+							'sem' => array(
+								'predicate' => '*see',
+								'agent' => array('content-1' => null),
+								'theme' => array('content-2' => null)),
+							'subject' => array('content-1' => null),
+							'object' => array('content-2' => null)
+						)
+					),
 				)
 			),
 			'the' => array(

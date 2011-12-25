@@ -82,10 +82,10 @@ function testLanguage()
 
 	$Sentence = $Echo->parseFirstLine('John sees the book');
 	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
-//r($Sentence->syntaxTree['features']);
+#r($Sentence->syntaxTree['features']);
 	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
-	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('sem' => '*john'));
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['patient'], array('sem' => '*book'));
+	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('content' => '*john'));
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], array('content' => '*book'));
 
 
 // heeft waarschijnlijk nog nooit gewerkt
