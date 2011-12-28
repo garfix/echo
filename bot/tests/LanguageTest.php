@@ -48,7 +48,71 @@ function testLanguage()
 	$answer = $Echo->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 	test(202, $answer, 'Yes.');
 	$Sentence = $Echo->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
-	test(203, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
+	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun lord byron]][VP [verb influenced][PP [preposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun paradise lost]]]]]]]');
+	test(204, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
+
+/*
+
+[S
+	[aux was]
+	[NP
+		[propernoun lord byron]
+	]
+	[VP
+		[verb influenced]
+		[PP
+			[preposition by]
+			[NP
+				[NP
+					[determiner the]
+					[noun author]
+				]
+				[PP
+					[preposition of]
+					[NP
+						[propernoun paradise lost]
+					]
+				]
+			]
+		]
+	]
+]
+
+
+[
+	predicate: *influence,
+	participants: [
+		*actor: [
+            isa: *author,
+            type: object,
+            determiner: *the,
+			modifiers: [
+				*belong-to: [
+                    type: object,
+					name: paradise lost
+				]
+			]
+		],
+		*patient: [
+            type: object,
+            name: lord byron
+		]
+	],
+	type: clause,
+	mode: passive,
+	act: yes-no-question
+]
+
+
+
+	*/
+
+r($Sentence->syntaxTree['features']);exit;
+
+	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
+	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], '*john');
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], '*book');
+
 
 	// S => WhNP VP
 	$answer = $Echo->answer("How many children did Lord Byron have?");
@@ -84,8 +148,8 @@ function testLanguage()
 	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
 //r($Sentence->syntaxTree['features']);
 	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
-	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], '*john');
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], '*book');
+	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('name' => 'john'));
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], array('isa' => '*book'));
 
 
 // heeft waarschijnlijk nog nooit gewerkt

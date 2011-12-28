@@ -29,21 +29,28 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
 			'author' => array(
-				'noun' => array(),
+				'noun' => array(
+					'features' => array('head' => array('sem' => array('isa' => '*author')))
+				),
 			),
 			'book' => array(
 				'verb' => array(
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's'))),
 				),
 				'noun' => array(
-					'features' => array('head' => array('sem' => '*book')),
+					'features' => array('head' => array('sem' => array('isa' => '*book'))),
 				),
 			),
 			'born' => array(
 				'verb' => array(),
 			),
 			'by' => array(
-				'preposition' => array(),
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('by{prep-1}' => null),
+						'prep-1' => null
+					))
+				),
 			),
 			'children' => array(
 				'noun' => array(),
@@ -70,26 +77,41 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'i' => array(
 				'pronoun' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's'))))),
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's')))),
+			),
 			'influenced' => array(
-				'verb' => array(),
+				'verb' => array(
+					'features' => array(
+						'arguments' => 1,
+						'head' => array(
+							'tense' => 'past',
+							'sem' => array('predicate' => '*influence', 'agent{subject-1}' => null, 'experiencer{object-1}' => null, 'by{subject-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+							// by => agent
+							//'prepositional_by{subject-1}' => null,
+						)
+					),
+				)
 			),
 			'many' => array(
 				'determiner' => array(),
 			),
 			'of' => array(
-				'preposition' => array(),
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('of{prep-1}' => null),
+						'prep-1' => null
+					))
+				),
 			),
 			'sees' => array(
 				'verb' => array(
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'sem' => array(
-								'predicate' => '*see',
-								'agent{subject-1}' => null,
-								'theme{object-1}' => null
-							),
+							'tense' => 'past',
+							'sem' => array('predicate' => '*see', 'agent{subject-1}' => null, 'theme{object-1}' => null),
 							'subject-1' => null,
 							'object-1' => null
 						)

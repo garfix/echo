@@ -198,6 +198,8 @@ class LabeledDAG
 
 			} elseif (isset($thisNode['children'])) {
 
+				r($thisNode);
+				r($newNode);
 				trigger_error('This node has children while new node has a value.', E_USER_ERROR);
 
 			} else {

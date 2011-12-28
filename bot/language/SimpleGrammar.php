@@ -560,7 +560,12 @@ $structure['act'] = 'yes-no-question';
 			}
 		} else {
 			// presume proper noun
-			return array('head' => array('agreement' => array('number' => 's', 'person' => 1), 'sem' => '*' . $word));
+			return array(
+				'head' => array(
+					'agreement' => array('number' => 's', 'person' => 1),
+					'sem' => array('name' => $word)
+				)
+			);
 		}
 	}
 
@@ -569,8 +574,10 @@ $structure['act'] = 'yes-no-question';
 		return array(
 			'S' => array(
 				// John drives
+				// VP is the head constituent (head-1)
+				// VP and NP agree (agreement-2)
+				// NP forms the subject of VP's verb (subject{sem-1})
 				array(
-# todo check of het simpeler kan!
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null))),
@@ -587,11 +594,14 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 				),
 				// Was John driving?
+				// VP is the head constituent (head-1)
+				// aux, NP, and VP agree (agreement-2)
+				// NP forms the object of VP's verb (object{sem-1})
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
 				),
 				// Was John a fool?
 				array(
@@ -615,15 +625,21 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => null, 'arguments' => 0)),
 				),
+				// verb is the head constituent (head-1)
+				// the verb has only 1 argument (arguments)
+				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('object{sem-2}' => null), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
+				// driven by John
+				// verb is the head constituent (head-1)
+				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => null)),
-					array('cat' => 'PP'),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem-2' => null))),
+					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
 			'WhNP' => array(
@@ -664,16 +680,16 @@ $structure['act'] = 'yes-no-question';
 				// the car in the lot
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'PP'),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'PP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),
 			'PP' => array(
 				// in the lot
 				array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
-					array('cat' => 'preposition'),
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('prep{sem-1}' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),
 		);
