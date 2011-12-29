@@ -18,7 +18,6 @@ function testLanguage()
 	test(3, $sentences[0]->getStructure(), "imperative");
 	test(4, $sentences[0]->syntaxTree['features']['head']['agreement']['person'], 2);
 	test(5, $sentences[0]->syntaxTree['features']['head']['agreement']['number'], 's');
-
 	test(6, $sentences[1]->language, 'dutch');
 	test(7, $sentences[1]->getSyntaxString(), '[S [VP [verb boek][NP [determiner die][noun vlucht]]]]');
 	test(8, $sentences[1]->getStructure(), "imperative");
@@ -50,6 +49,12 @@ function testLanguage()
 	$Sentence = $Echo->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun lord byron]][VP [verb influenced][PP [preposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun paradise lost]]]]]]]');
 	test(204, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
+	test(205, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*influence');
+	test(206, $Sentence->syntaxTree['features']['head']['sem']['agent']['of']['name'], 'paradise lost');
+	test(206, $Sentence->syntaxTree['features']['head']['sem']['agent']['isa'], '*author');
+	test(206, $Sentence->syntaxTree['features']['head']['sem']['agent']['determiner'], '*the');
+	test(209, $Sentence->syntaxTree['features']['head']['sem']['experiencer']['name'], 'lord byron');
+	test(210, $Sentence->syntaxTree['features']['head']['sentenceType'], 'yes-no-question');
 
 /*
 
@@ -107,12 +112,6 @@ function testLanguage()
 
 	*/
 
-r($Sentence->syntaxTree['features']);exit;
-
-	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
-	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], '*john');
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], '*book');
-
 
 	// S => WhNP VP
 	$answer = $Echo->answer("How many children did Lord Byron have?");
@@ -149,7 +148,11 @@ r($Sentence->syntaxTree['features']);exit;
 //r($Sentence->syntaxTree['features']);
 	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
 	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('name' => 'john'));
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], array('isa' => '*book'));
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], array('isa' => '*book', 'determiner' => '*the'));
+
+//$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
+//r($Sentence->getPhraseStructureString());
+//r($Sentence->syntaxTree['features']);exit;
 
 
 // heeft waarschijnlijk nog nooit gewerkt

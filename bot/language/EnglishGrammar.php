@@ -24,7 +24,13 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'am' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's')), 'arguments' => 1))),
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 1, 'number' => 's'),
+							),
+						'arguments' => 1)
+					)
+				),
 			'are' => array(
 				'verb' => array(
 					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
@@ -35,14 +41,30 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'book' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's'))),
+					'features' => array(
+						'arguments' => 1,
+						'head' => array(
+							'agreement' => array('person' => 2, 'number' => 's'),
+							'sem' => array('predicate' => '*book', 'agent{subject-1}' => null, 'theme{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
 				),
 				'noun' => array(
 					'features' => array('head' => array('sem' => array('isa' => '*book'))),
 				),
 			),
 			'born' => array(
-				'verb' => array(),
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*give-birth', 'agent{subject-1}' => null, 'patient{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
+				),
 			),
 			'by' => array(
 				'preposition' => array(
@@ -53,10 +75,24 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'children' => array(
-				'noun' => array(),
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 3, 'number' => 'p'),
+							'sem' => array('isa' => '*child')
+						)
+					),
+				),
 			),
 			'daughter' => array(
-				'noun' => array(),
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+//							'agreement' => array('person' => 3, 'number' => 's'),
+							'sem' => array('isa' => '*daughter')
+						)
+					),
+				),
 			),
 			'did' => array(
 				'aux' => array(),
@@ -67,17 +103,40 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'flight' => array(
 				'noun' => array(
-					'features' => array('head' => array('agreement' => array('person' => 3, 'number' => 's')))),
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 3, 'number' => 's'),
+							'sem' => array('isa' => '*flight'),
+						)
+					)
+				),
 			),
 			'have' => array(
-				'verb' => array(),
+				'verb' => array(
+					'features' => array(
+//						'arguments' => 1,
+						'head' => array(
+							'sem' => array('predicate' => '*have', 'possessor{subject-1}' => null, 'possession{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
+				),
 			),
 			'how' => array(
-				'whword' => array(),
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('question' => true))),
+				),
 			),
 			'i' => array(
 				'pronoun' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 's')))),
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 1, 'number' => 's'),
+							'sem' => array('isa' => '*firstPerson')
+						)
+					)
+				),
 			),
 			'influenced' => array(
 				'verb' => array(
@@ -88,14 +147,14 @@ class EnglishGrammar extends SimpleGrammar
 							'sem' => array('predicate' => '*influence', 'agent{subject-1}' => null, 'experiencer{object-1}' => null, 'by{subject-1}' => null),
 							'subject-1' => null,
 							'object-1' => null,
-							// by => agent
-							//'prepositional_by{subject-1}' => null,
 						)
 					),
 				)
 			),
 			'many' => array(
-				'determiner' => array(),
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('determiner' => '*many')))
+				),
 			),
 			'of' => array(
 				'preposition' => array(
@@ -119,19 +178,35 @@ class EnglishGrammar extends SimpleGrammar
 				)
 			),
 			'the' => array(
-				'determiner' => array()
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('determiner' => '*the')))
+				)
 			),
 			'that' => array(
-				'determiner' => array(),
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('determiner' => '*that')))
+				),
 			),
 			'was' => array(
-				'aux' => array(),
+				'aux' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*be', 'theme{subject-1}' => null, 'isa{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
+				),
 			),
 			'when' => array(
-				'whword' => array(),
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('time' => array('question' => true))))
+				),
 			),
 			'where' => array(
-				'whword' => array(),
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('location' => array('question' => true))))
+				),
 			),
 			'who' => array(
 				'whword' => array(),

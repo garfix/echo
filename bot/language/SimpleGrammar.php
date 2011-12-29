@@ -584,13 +584,13 @@ $structure['act'] = 'yes-no-question';
 				),
 				// Who Is John?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
 				),
 				// Drive!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative'))),
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 				),
 				// Was John driving?
@@ -598,26 +598,31 @@ $structure['act'] = 'yes-no-question';
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb (object{sem-1})
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
 				),
 				// Was John a fool?
+				// The verb is '*be'
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null, 'object{sem-2}' => null))),
 					// presuming the first NP to be the head
-					array('cat' => 'NP', 'features' => array('head-1' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
 				// How many miles was John driving?
+				// VP is the head constituent (head-1)
+				// aux, NP, and VP agree (agreement-2)
+				// WhNP semantics is passed directly to the VP (sem-1)
+				// NP forms the subject of VP's verb (subject{sem-2})
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'WhNP'),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-2}' => null, 'sem-1' => null))),
 				),
 			),
 			'VP' => array(
@@ -650,8 +655,8 @@ $structure['act'] = 'yes-no-question';
 				),
 				// how many children
 				array(
-					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whword'),
+					array('cat' => 'WhNP', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'whword', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
 				),
 			),
@@ -674,8 +679,8 @@ $structure['act'] = 'yes-no-question';
 				// the car
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => null)),
-					array('cat' => 'determiner'),
-					array('cat' => 'noun', 'features' => array('head-1' => null)),
+					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// the car in the lot
 				array(
