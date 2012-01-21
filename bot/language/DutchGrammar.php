@@ -17,7 +17,7 @@ class DutchGrammar extends SimpleGrammar
 			'boek' => array(
 				'verb' => array(
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
-					'roles' => array('agent', 'patient')
+					//'roles' => array('agent', 'patient')
 			),
 			'de' => array(
 				'article' => array(),
@@ -37,22 +37,47 @@ class DutchGrammar extends SimpleGrammar
 				'determiner' => array()
 			),
 			'had' => array(
-				'verb' => array()
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*have', 'possessor{subject-1}' => null, 'possession{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					)
+				)
 			),
 			'geboren' => array(
-				'verb' => array()
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*bear', 'agent{subject-1}' => null, 'theme{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
+				)
 			),
 			'het' => array(
 				'article' => array()
 			),
 			'hoeveel' => array(
-				'whword' => array()
+				'whwordNP' => array(
+					'features' => array('head' => array('sem' => array('question' => '*extent', 'determiner' => '*many')))
+				),
 			),
 			'ik' => array(
 				'pronoun' => array('features' => array('person' => 1, 'number' => 's'))
 			),
 			'kinderen' => array(
-				'noun' => array()
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 3, 'number' => 'p'),
+							'sem' => array('isa' => '*child')
+						)
+					),
+				)
 			),
 			'van' => array(
 				'preposition' => array()
@@ -64,13 +89,27 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array()
 			),
 			'werd' => array(
-				'aux' => array()
+				'auxPsv' => array(
+					'features' => array(
+						'head' => array(
+#todo klopt niet
+							'sem' => array('predicate' => '*be', 'theme{subject-1}' => null, 'isa{object-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					),
+				),
+
 			),
 			'waar' => array(
-				'whword' => array()
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('location' => array('question' => true))))
+				)
 			),
 			'wanneer' => array(
-				'whword' => array()
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('time' => array('question' => true))))
+				)
 			),
 		);
 	}
@@ -104,6 +143,10 @@ class DutchGrammar extends SimpleGrammar
 				'een' => array('determiner' => '*a'),
 			),
 			'whword' => array(
+				'wanneer' => array('question' => '*time'),
+				'waar' => array('question' => '*location'),
+			),
+			'whwordNP' => array(
 				'wanneer' => array('question' => '*time'),
 				'waar' => array('question' => '*location'),
 				'hoeveel' => array('question' => '*nature-of', 'determiner' => '*many'),

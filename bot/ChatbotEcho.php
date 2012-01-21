@@ -116,11 +116,22 @@ class ChatbotEcho
 		$Sentence = $this->parseFirstLine($question);
 		if ($Sentence) {
 
-			$phraseStructure = $Sentence->phraseStructure;
+			$tree = $Sentence->syntaxTree['features']['head'];
+//			$phraseStructure = $Sentence->phraseStructure;
+			$phraseStructure = $tree['sem'];
+//r($tree);
 
-			if (isset($phraseStructure['act'])) {
-				$act = $phraseStructure['act'];
+			//if (isset($phraseStructure['act'])) {
+			//	$act = $phraseStructure['act'];
+			if (isset($tree['sentenceType'])) {
+				$act = $tree['sentenceType'];
 
+				$phraseStructure['act'] = $act;
+
+				$id = 0;
+
+				self::addIds($phraseStructure, $id);
+//r($act);
 				if ($act == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
@@ -132,7 +143,7 @@ class ChatbotEcho
 						$answer = 'No.';
 					}
 
-				} elseif ($act == 'question-about-object') {
+				} elseif ($act == 'wh-non-subject-question') {
 
 					$answer = $this->answerQuestionAboutObject($phraseStructure);
 
@@ -142,6 +153,17 @@ class ChatbotEcho
 
 		return $answer;
 	}
+
+	private static function addIds(&$structure, &$id)
+	{
+		$structure['id'] = ++$id;
+		foreach ($structure as &$value) {
+			if (is_array(($value))) {
+				self::addIds($value, $id);
+			}
+		}
+	}
+
 
 	private function check($phraseStructure)
 	{

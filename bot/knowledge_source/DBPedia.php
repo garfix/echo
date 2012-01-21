@@ -6,7 +6,7 @@ class DBPedia
 
 	public function check($phraseStructure)
 	{
-if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
+		if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 
 //		$objectId = self::getVariableId();
 
@@ -43,6 +43,7 @@ if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 	private function interpret($phraseStructure, &$triples, &$select, $parentId)
 	{
 		$s = $phraseStructure;
+
 		if (isset($s['id'])) {
 			$subjectId = $s['id'];
 		} else {
@@ -57,48 +58,51 @@ if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 		}
 
 		if (isset($s['question']) && isset($s['determiner'])) {
-			if (($s['question'] == '*nature-of') && ($s['determiner'] == '*many')) {
+			if (($s['question'] == true) && ($s['determiner'] == '*many')) {
 				$select = 'COUNT(?' . $s['id'] . ')';
 			}
 		}
 
-		if (isset($s['question']) && ($s['question'] == '*location')) {
-			$triples[] = array('?' . $s['id'], 'rdfs:label', '?location');
+		if (isset($s['location']['question'])) {
+			$triples[] = array('?' . $s['location']['id'], 'rdfs:label', '?location');
 			$select = '?location';
 		}
 #todo may we combine these, or is this similarity just an exception?
-		if (isset($s['question']) && ($s['question'] == '*time')) {
-			$select = '?' . $s['id'];
+		if (isset($s['time']['question'])) {
+			$select = '?' . $s['time']['id'];
 		}
 
 		// http://dbpedia.org/ontology/birthPlace
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*give-birth') &&
-			isset($s['participants']['*location'])
+			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
+			isset($s['location']) &&
+			isset($s['theme'])
 		) {
-			$actorId = $s['participants']['*actor']['id'];
-			$locationId = $s['participants']['*location']['id'];
-			$triples[] = array('?' . $actorId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
+			$themeId = $s['theme']['id'];
+			$locationId = $s['location']['id'];
+			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
 		}
 
 		// http://dbpedia.org/ontology/deathPlace
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*die') &&
-			isset($s['participants']['*location'])
+			isset($s['location']) &&
+			isset($s['theme'])
 		) {
-			$actorId = $s['participants']['*actor']['id'];
-			$locationId = $s['participants']['*location']['id'];
-			$triples[] = array('?' . $actorId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
+			$themeId = $s['theme']['id'];
+			$locationId = $s['location']['id'];
+			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
 		}
 
 		// http://dbpedia.org/ontology/birthDate
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*give-birth') &&
-			isset($s['participants']['*time'])
+			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
+			isset($s['time']) &&
+			isset($s['theme'])
 		) {
-			$actorId = $s['participants']['*actor']['id'];
-			$timeId = $s['participants']['*time']['id'];
-			$triples[] = array('?' . $actorId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
+			$themeId = $s['theme']['id'];
+			$timeId = $s['time']['id'];
+			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
 		}
 
 		// rdfs:label
@@ -109,33 +113,33 @@ if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 		// http://dbpedia.org/ontology/author
 		if (
 			isset($s['isa']) && ($s['isa'] == '*author') &&
-			isset($s['modifiers']['*belong-to'])
+			isset($s['of'])
 		) {
-			$objectId = $s['modifiers']['*belong-to']['id'];
+			$objectId = $s['of']['id'];
 			$triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
 		}
 
 		// http://dbpedia.org/ontology/influencedBy
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*influence') &&
-			isset($s['participants']['*actor']) &&
-			isset($s['participants']['*patient'])
+			isset($s['agent']) &&
+			isset($s['experiencer'])
 		) {
-			$actorId = $s['participants']['*actor']['id'];
-			$patientId = $s['participants']['*patient']['id'];
+			$actorId = $s['agent']['id'];
+			$patientId = $s['experiencer']['id'];
 			$triples[] = array('?' . $patientId, '<http://dbpedia.org/ontology/influencedBy>', '?' . $actorId);
 		}
 
 		// http://dbpedia.org/ontology/child (1)
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*have') &&
-			isset($s['participants']['*actor']) &&
-			isset($s['participants']['*patient']) &&
-			($s['participants']['*patient']['isa'] == '*child')
+			isset($s['possessor']) &&
+			isset($s['possession']) &&
+			($s['possession']['isa'] == '*child')
 		) {
-			$actorId = $s['participants']['*actor']['id'];
-			$patientId = $s['participants']['*patient']['id'];
-			$triples[] = array('?' . $actorId, '<http://dbpedia.org/ontology/child>', '?' . $patientId);
+			$possessor = $s['possessor']['id'];
+			$posession = $s['possession']['id'];
+			$triples[] = array('?' . $possessor, '<http://dbpedia.org/ontology/child>', '?' . $posession);
 		}
 
 		// http://dbpedia.org/ontology/child (2)
@@ -173,10 +177,11 @@ if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 			$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $triples) . "\n}";
 		}
 
+		if (ChatbotSettings::$debugKnowledge) r($query);
+
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
 		if ($result === false) {
 
-if (ChatbotSettings::$debugKnowledge) r($query);
 			$url = 'http://dbpedia.org/sparql';
 			$params = array(
 				'default-graph-uri' => 'http://dbpedia.org',
@@ -193,7 +198,7 @@ if (ChatbotSettings::$debugKnowledge) r($query);
 			}
 		}
 
-if (ChatbotSettings::$debugKnowledge) r($result);
+//if (ChatbotSettings::$debugKnowledge) r($result);
 
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 			$value = $result['results']['bindings'][0]['callret-0']['value'];

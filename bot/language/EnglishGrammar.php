@@ -59,7 +59,7 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*give-birth', 'agent{subject-1}' => null, 'patient{object-1}' => null),
+							'sem' => array('predicate' => '*bear', 'agent{subject-1}' => null, 'theme{object-1}' => null),
 							'subject-1' => null,
 							'object-1' => null,
 						)
@@ -99,7 +99,14 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'die' => array(
 				'verb' => array(
-					'features' => array('arguments' => 0)),
+					'features' => array(
+						'arguments' => 0,
+						'head' => array(
+							'sem' => array('predicate' => '*die', 'theme{subject-1}' => null),
+							'subject-1' => null,
+							'object-1' => null,
+						)
+					)),
 			),
 			'flight' => array(
 				'noun' => array(
@@ -125,7 +132,11 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'how' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('question' => true))),
+					'features' => array('head' => array('sem' => array('manner' => array('question' => '*object'))))
+				),
+				'whwordNP' => array(
+					//'features' => array('head' => array('sem' => array('object' => array('question' => 'extent'))))
+					'features' => array('head' => array('sem' => array('question' => '*extent')))
 				),
 			),
 			'i' => array(
@@ -188,9 +199,10 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'was' => array(
-				'aux' => array(
+				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
+#todo klopt niet
 							'sem' => array('predicate' => '*be', 'theme{subject-1}' => null, 'isa{object-1}' => null),
 							'subject-1' => null,
 							'object-1' => null,
@@ -209,7 +221,7 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'who' => array(
-				'whword' => array(),
+				'whwordNP' => array(),
 			),
 		);
 	}
@@ -247,6 +259,12 @@ class EnglishGrammar extends SimpleGrammar
 				'many' => array('determiner' => '*many'),
 			),
 			'whword' => array(
+				'how' => array('question' => '*manner'),
+				'when' => array('question' => '*time'),
+				'where' => array('question' => '*location'),
+				'who' => array('question' => '*person'),
+			),
+			'whwordNP' => array(
 				'how' => array('question' => '*nature-of'),
 				'when' => array('question' => '*time'),
 				'where' => array('question' => '*location'),

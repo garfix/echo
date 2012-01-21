@@ -65,7 +65,7 @@ class SimpleGrammar implements Grammar
 
 		if ($Sentence->syntaxTree) {
 			$Sentence->structure = $this->getSentenceStructure($Sentence->syntaxTree);
-			$Sentence->phraseStructure = $this->Analyzer->analyze($this, $Sentence->syntaxTree, $workingMemory);
+//			$Sentence->phraseStructure = $this->Analyzer->analyze($this, $Sentence->syntaxTree, $workingMemory);
 		}
 
 		return !empty($Sentence->syntaxTree);
@@ -125,6 +125,10 @@ class SimpleGrammar implements Grammar
 		} elseif ($partOfSpeech == 'determiner') {
 			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 		} elseif ($partOfSpeech == 'whword') {
+			$structure = $this->word2phraseStructure($word, $partOfSpeech);
+			$structure['type'] = 'object';
+			$structure['id'] = self::getUniqueId();
+		} elseif ($partOfSpeech == 'whwordNP') {
 			$structure = $this->word2phraseStructure($word, $partOfSpeech);
 			$structure['type'] = 'object';
 			$structure['id'] = self::getUniqueId();
@@ -269,13 +273,17 @@ $structure['act'] = 'yes-no-question';
 				$structure = $NP;
 				$structure['preposition'] = $preposition['preposition'];
 				break;
-			case array('WhNP', 'whword'):
+			case array('WhNP', 'whwordNP'):
 				list($whWord) = $constituentStructures;
 				$structure = $whWord;
 				break;
-			case array('WhNP', 'whword', 'NP'):
+			case array('WhNP', 'whwordNP', 'NP'):
 				list($whWord, $NP) = $constituentStructures;
 				$structure = array_merge($NP, $whWord);
+				break;
+			case array('WhNP', 'whword'):
+				list($whWord) = $constituentStructures;
+				$structure = $whWord;
 				break;
 			default:
 				trigger_error('Unknown rule: ' . print_r($rule, true));
@@ -540,8 +548,10 @@ $structure['act'] = 'yes-no-question';
 			'numeral',
 			'verb',
 			'propernoun',
-			'whword',
+			'whword', // WH-word that may not be followed by an NP
+			'whwordNP', // WH-word that may be followed by an NP
 			'aux',
+			'auxPsv', // passivisation aux
 			'preposition',
 		));
 	}
@@ -582,17 +592,11 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null))),
 				),
-				// Who Is John?
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null))),
-				),
-				// Drive!
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative'))),
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 				),
+				// Drive!
 				// Was John driving?
 				// VP is the head constituent (head-1)
 				// aux, NP, and VP agree (agreement-2)
@@ -603,24 +607,45 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
 				),
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
+					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
+				),
 				// Was John a fool?
 				// The verb is '*be'
+#todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
 					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null, 'object{sem-2}' => null))),
-					// presuming the first NP to be the head
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+				),
+				// Who Is John?
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
 				),
 				// How many miles was John driving?
 				// VP is the head constituent (head-1)
 				// aux, NP, and VP agree (agreement-2)
 				// WhNP semantics is passed directly to the VP (sem-1)
 				// NP forms the subject of VP's verb (subject{sem-2})
+#todo alleen-engels constructie!
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'sem-1' => null))),
+				),
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-2}' => null, 'sem-1' => null))),
 				),
@@ -635,7 +660,7 @@ $structure['act'] = 'yes-no-question';
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('object{sem-2}' => null), 'arguments' => 1)),
+					array('cat' => 'verb', 'features' => array('head-1' => array('subject{sem-2}' => null), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				// driven by John
@@ -653,12 +678,22 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
 					array('cat' => 'whword', 'features' => array('head-1' => null)),
 				),
-				// how many children
+				// whose (did he drive)
 				array(
-					array('cat' => 'WhNP', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'whword', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+					array('cat' => 'whwordNP', 'features' => array('head-1' => null)),
 				),
+				// whose car (did he drive), how many children
+				array(
+					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+					array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
+				),
+//array(
+//	array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+//	array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
+//	array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
+//),
 			),
 			'NP' => array(
 				// children
