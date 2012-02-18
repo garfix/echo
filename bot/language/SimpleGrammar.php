@@ -1,7 +1,6 @@
 <?php
 
 require_once(__DIR__ . '/Grammar.php');
-require_once(__DIR__ . '/SemanticAnalyzer.php');
 require_once(__DIR__ . '/SentenceInterpretation.php');
 require_once(__DIR__ . '/Microplanner.php');
 require_once(__DIR__ . '/SurfaceRealiser.php');
@@ -29,9 +28,6 @@ class SimpleGrammar implements Grammar
 		$this->lexicon = $this->getLexicon();
 		$this->syntax = $this->getSyntax();
 		$this->word2phraseStructure = $this->getWord2PhraseStructure();
-
-		// input processing
-		$this->Analyzer = new SemanticAnalyzer();
 
 		// output processing
 		$this->Microplanner = new Microplanner();
@@ -65,7 +61,6 @@ class SimpleGrammar implements Grammar
 
 		if ($Sentence->syntaxTree) {
 			$Sentence->structure = $this->getSentenceStructure($Sentence->syntaxTree);
-//			$Sentence->phraseStructure = $this->Analyzer->analyze($this, $Sentence->syntaxTree, $workingMemory);
 		}
 
 		return !empty($Sentence->syntaxTree);
@@ -88,216 +83,6 @@ class SimpleGrammar implements Grammar
 		} else {
 			return array();
 		}
-	}
-
-	/**
-	 * Creates a phrase structure based on a word of a given part-of-speech.
-	 *
-	 * @param array $partOfSpeech
-	 * @param array $word
-	 * @return array A phrase structure
-	 */
-	public function analyzeWord($partOfSpeech, $word)
-	{
-		$structure = array();
-
-		if ($partOfSpeech == 'propernoun') {
-			$structure['id'] = self::getUniqueId();
-			$structure['type'] = 'object';
-			$structure['name'] = $word;
-		} elseif ($partOfSpeech == 'preposition') {
-			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-			#$structure['predicate'] = $this->word2phraseStructure($word, $partOfSpeech);
-		} elseif ($partOfSpeech == 'noun') {
-			$structure =  $this->word2phraseStructure($word, $partOfSpeech);
-			$structure['type'] = 'object';
-			$structure['id'] = self::getUniqueId();
-		} elseif ($partOfSpeech == 'pronoun') {
-			$structure =  $this->word2phraseStructure($word, $partOfSpeech);
-			$structure['type'] = 'object';
-			$structure['id'] = self::getUniqueId();
-		} elseif ($partOfSpeech == 'verb') {
-			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-			#todo: past tense (e.g. influenced)
-		} elseif ($partOfSpeech == 'aux') {
-			$structure['mode'] = 'passive'; # is not always the case (i.e. did ... have)
-			$structure['lex'] = $word;
-		} elseif ($partOfSpeech == 'determiner') {
-			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-		} elseif ($partOfSpeech == 'whword') {
-			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-			$structure['type'] = 'object';
-			$structure['id'] = self::getUniqueId();
-		} elseif ($partOfSpeech == 'whwordNP') {
-			$structure = $this->word2phraseStructure($word, $partOfSpeech);
-			$structure['type'] = 'object';
-			$structure['id'] = self::getUniqueId();
-		} else {
-			trigger_error('Part-of-speech not recognized: ' . $partOfSpeech);
-		}
-
-		if (ChatbotSettings::$debugAnalyzer) {
-			if ($structure) {
-				r($structure);
-			}
-		}
-
-		return $structure;
-	}
-
-	/**
-	 * Creates a phrase structure based on a set of parts-of-speech and the child phrase structures
-	 * that correspond with these parts of speech.
-	 *
-	 * @return array A phrase structure
-	 */
-	public function analyzeBranch($partOfSpeech, $constituentPartsOfSpeech, $constituentStructures)
-	{
-		$structure = array();
-
-		$rule = array_merge(array($partOfSpeech), $constituentPartsOfSpeech);
-
-		switch ($rule) {
-			case array('S', 'aux', 'NP', 'VP'):
-				list($aux, $NP, $VP) = $constituentStructures;
-				$structure = $VP;
-				$structure['type'] = 'clause';
-# leid de rol af uit het werkwoord!
-				$structure['participants']['*patient'] = $NP;
-				$structure['mode'] = $aux['mode'];
-				$structure['act'] = 'yes-no-question';
-				break;
-			case array('S', 'aux', 'NP', 'NP'):
-				list($aux, $NP, $NP2) = $constituentStructures;
-$structure['type'] = 'clause';
-$structure['predicate'] = '*be';
-$structure['participants']['*theme'] = $NP;
-$structure['participants']['*patient'] = $NP2;
-$structure['mode'] = $aux['mode'];
-$structure['act'] = 'yes-no-question';
-				break;
-			case array('S', 'WhNP', 'aux', 'NP', 'VP'):
-				list($WhNP, $aux, $NP, $VP) = $constituentStructures;
-				$structure = $VP;
-				$structure['type'] = 'clause';
-				$structure['act'] = 'question-about-object';
-				$structure['mode'] = $aux['mode'];
-				$structure['participants']['*actor'] = $NP;
-
-				$question = $WhNP['question'];
-				$participants = array('*location', '*time');
-				if (in_array($question, $participants)) {
-					$structure['participants'][$question] = $WhNP;
-				} else {
-					$structure['participants']['*patient'] = $WhNP;
-				}
-
-				break;
-			case array('S', 'WhNP', 'VP'):
-				list($WhNP, $VP) = $constituentStructures;
-				$structure = $VP;
-				$structure['type'] = 'clause';
-				$structure['participants']['*patient'] = $WhNP;
-				$structure['act'] = 'question-about-object';
-				break;
-			case array('S', 'VP'):
-				list($VP) = $constituentStructures;
-				$structure = $VP;
-				break;
-			case array('S', 'NP', 'VP'):
-				list($NP, $VP) = $constituentStructures;
-				$structure = $VP;
-				$structure['type'] = 'clause';
-				$structure['participants']['*actor'] = $NP;
-				break;
-			case array('NP', 'propernoun'):
-				list($proper) = $constituentStructures;
-				$structure = $proper;
-				break;
-			case array('NP', 'pronoun'):
-				list($pronoun) = $constituentStructures;
-				$structure = $pronoun;
-				break;
-			case array('NP', 'noun'):
-				list($noun) = $constituentStructures;
-				$structure = $noun;
-				break;
-			case array('NP', 'propernoun', 'NP'):
-				list($proper, $NP) = $constituentStructures;
-				$structure = $NP;
-				$structure['name'] = $proper['name'] . ' ' . $structure['name'];
-				break;
-			case array('NP', 'NP', 'PP'):
-				list($NP, $PP) = $constituentStructures;
-				$structure = $NP;
-				$modifier = $PP;
-				unset($modifier['preposition']);
-				$structure['modifiers'][$PP['preposition']] = $modifier;
-				break;
-			case array('NP', 'determiner', 'noun'):
-				list($det, $noun) = $constituentStructures;
-				$structure = $noun;
-				$structure['determiner'] = $det['determiner'];
-				break;
-			case array('VP', 'verb'):
-				list($verb) = $constituentStructures;
-				$structure = $verb;
-				break;
-			case array('VP', 'verb', 'PP'):
-				list($verb, $PP) = $constituentStructures;
-				$structure = $verb;
-				$participant = $PP;
-				unset($participant['preposition']);
-				$structure['participants'][$PP['preposition']] = $participant;
-				break;
-			case array('VP', 'verb', 'NP'):
-				list($verb, $NP) = $constituentStructures;
-
-				if ($verb['predicate'] == '*be') {
-					if (isset($NP['name']) || isset($NP['referring-expression'])) {
-						// identification
-						$structure['predicate'] = '*identify';
-						// I made up this participant for lack of suitable match in p. 270 of 'The structure of modern english'
-						$structure['participants']['*identity'] = $NP;
-					} else {
-						// class-membership or class-inclusion
-						# todo
-					}
-				} else {
-					$structure = $verb;
-					$structure['participants']['*actor'] = $NP;
-				}
-				break;
-			case array('PP', 'preposition', 'NP'):
-				list($preposition, $NP) = $constituentStructures;
-				$structure = $NP;
-				$structure['preposition'] = $preposition['preposition'];
-				break;
-			case array('WhNP', 'whwordNP'):
-				list($whWord) = $constituentStructures;
-				$structure = $whWord;
-				break;
-			case array('WhNP', 'whwordNP', 'NP'):
-				list($whWord, $NP) = $constituentStructures;
-				$structure = array_merge($NP, $whWord);
-				break;
-			case array('WhNP', 'whword'):
-				list($whWord) = $constituentStructures;
-				$structure = $whWord;
-				break;
-			default:
-				trigger_error('Unknown rule: ' . print_r($rule, true));
-#exit;
-				break;
-		}
-
-		if (ChatbotSettings::$debugAnalyzer) {
-			if ($structure) {
-				r($structure);
-			}
-		}
-
-		return $structure;
 	}
 
 	/**
@@ -590,7 +375,7 @@ $structure['act'] = 'yes-no-question';
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
 				),
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative'))),
@@ -605,20 +390,21 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
 				),
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
-					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
+//					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
+array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
 				),
 				// Was John a fool?
 				// The verb is '*be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-1}' => null, 'object{sem-2}' => null))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null, 'param2{sem-2}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
@@ -626,7 +412,8 @@ $structure['act'] = 'yes-no-question';
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-1}' => null))),
+//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => null))),
 				),
 				// How many miles was John driving?
 				// VP is the head constituent (head-1)
@@ -640,14 +427,15 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 					//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
 				),
+				// Where was John born?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'object{sem-2}' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('param2{sem-2}' => null)))),
 				),
 			),
 			'VP' => array(
@@ -660,7 +448,7 @@ $structure['act'] = 'yes-no-question';
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('subject{sem-2}' => null), 'arguments' => 1)),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('param1{sem-2}' => null)), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				// driven by John
@@ -684,42 +472,45 @@ $structure['act'] = 'yes-no-question';
 					array('cat' => 'whwordNP', 'features' => array('head-1' => null)),
 				),
 				// whose car (did he drive), how many children
-				array(
-					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
-				),
-//array(
-//	array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-//	array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
-//	array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
-//),
+//				array(
+//					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+//					array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
+//					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
+//				),
+array(
+	array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+	array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role{sem-1}' => null)))),
+	array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
+),
 			),
 			'NP' => array(
 				// children
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+
+# de functie n() moet bij iedere instantiatie van de regel opnieuw worden uitgevoerd
+
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),
 				// John
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
 					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// the car in the lot
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => null)),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => null))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-1' => null))),
 				),
@@ -728,7 +519,7 @@ $structure['act'] = 'yes-no-question';
 				// in the lot
 				array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('prep{sem-1}' => null))),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => null, 'variables' => array('prep{sem-1}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),

@@ -20,7 +20,6 @@ class DutchGrammar extends SimpleGrammar
 					//'roles' => array('agent', 'patient')
 			),
 			'de' => array(
-				'article' => array(),
 				'determiner' => array()
 			),
 			'die' => array(
@@ -30,19 +29,23 @@ class DutchGrammar extends SimpleGrammar
 				'preposition' => array()
 			),
 			'dochter' => array(
-				'noun' => array()
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+//							'agreement' => array('person' => 3, 'number' => 's'),
+							'sem' => array('isa' => '*daughter')
+						)
+					),
+				),
 			),
 			'een' => array(
-				'article' => array(),
 				'determiner' => array()
 			),
 			'had' => array(
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*have', 'possessor{subject-1}' => null, 'possession{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*have', 'possessor{param1-1}' => null, 'possession{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					)
 				)
@@ -51,9 +54,8 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear', 'agent{subject-1}' => null, 'theme{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*bear', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'progressive' => 0
 						)
 					),
 				)
@@ -63,7 +65,14 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'hoeveel' => array(
 				'whwordNP' => array(
-					'features' => array('head' => array('sem' => array('question' => '*extent', 'determiner' => '*many')))
+					'features' => array(
+						'head' => array(
+							'sem-1' => array(
+								'param2-1' => array('question' => '*extent', 'determiner' => '*many'),
+							),
+							'variables' => array('role{param2-1}' => null)
+						)
+					)
 				),
 			),
 			'ik' => array(
@@ -80,22 +89,39 @@ class DutchGrammar extends SimpleGrammar
 				)
 			),
 			'van' => array(
-				'preposition' => array()
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('of{prep-1}' => null),
+						'variables' => array('prep-1' => null),
+					))
+				),
 			),
 			'vlucht' => array(
 				'noun' => array('features' => array('head' => array('agreement' => array('person' => 3, 'number' => 's')))),
 			),
 			'was' => array(
-				'aux' => array()
-			),
-			'werd' => array(
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
 #todo klopt niet
-							'sem' => array('predicate' => '*be', 'theme{subject-1}' => null, 'isa{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+						)
+					),
+				),
+				'aux' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+						)
+					),
+				),
+			),
+			'werd' => array(
+				'aux' => array(
+					'features' => array(
+						'head' => array(
+#todo klopt niet
+							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				),

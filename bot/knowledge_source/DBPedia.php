@@ -145,12 +145,12 @@ class DBPedia
 		// http://dbpedia.org/ontology/child (2)
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*be') &&
-			isset($s['participants']['*theme']) &&
-			isset($s['participants']['*patient']['modifiers']['*belong-to']) &&
-			($s['participants']['*patient']['isa'] == '*daughter')
+			isset($s['theme']) &&
+			isset($s['isa']['of']) &&
+			($s['isa']['isa'] == '*daughter')
 		) {
-			$childId = $s['participants']['*theme']['id'];
-			$parentId = $s['participants']['*patient']['modifiers']['*belong-to']['id'];
+			$childId = $s['theme']['id'];
+			$parentId = $s['isa']['of']['id'];
 			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
 		}
 
@@ -174,6 +174,7 @@ class DBPedia
 			foreach ($clauses as $clause) {
 				$triples[] = implode(' ', $clause);
 			}
+$triples = array_unique($triples);
 			$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $triples) . "\n}";
 		}
 

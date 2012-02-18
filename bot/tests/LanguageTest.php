@@ -5,7 +5,8 @@ require_once __DIR__ . '/../ChatbotEcho.php';
 function testLanguage()
 {
 	$Echo = ChatbotEcho::getInstance();
-if (0) {
+
+if (1) {
 	// tell Echo who it is that is currently speaking to him
 	// for now: this is a different person every time
 	$objectId = uniqid('user/', true);
@@ -41,14 +42,16 @@ if (0) {
 	test(113, $Sentence->getStructure(), "wh-subject-question");
 	test(114, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
 
+
 	// S => aux NP VP ; DBPedia
 	$answer = $Echo->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 	test(201, $answer, 'Yes.');
+
 	$answer = $Echo->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 	test(202, $answer, 'Yes.');
 
 	$Sentence = $Echo->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
-	test(203, $Sentence->getSyntaxString(), '[S [auxPsv was][NP [propernoun lord byron]][VP [verb influenced][PP [preposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun paradise lost]]]]]]]');
+	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun lord byron]][VP [verb influenced][PP [preposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun paradise lost]]]]]]]');
 	test(204, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
 	test(205, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*influence');
 	test(206, $Sentence->syntaxTree['features']['head']['sem']['agent']['of']['name'], 'paradise lost');
@@ -56,47 +59,54 @@ if (0) {
 	test(206, $Sentence->syntaxTree['features']['head']['sem']['agent']['determiner'], '*the');
 	test(209, $Sentence->syntaxTree['features']['head']['sem']['experiencer']['name'], 'lord byron');
 	test(210, $Sentence->syntaxTree['features']['head']['sentenceType'], 'yes-no-question');
-}
+
 	// S => WhNP aux NP VP
 	$answer = $Echo->answer("How many children did Lord Byron have?");
 	test(211, $answer, '2');
-return;
+//return;
 	$answer = $Echo->answer("Hoeveel kinderen had Lord Byron?");
 	test(212, $answer, '2');
 
 	$Sentence = $Echo->parseFirstLine('How many children did Lord Byron have?');
 	test(213, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
-
+#ChatbotSettings::$debugParser = false; ChatbotSettings::$debugKnowledge = true;
 	// S => WnNP aux NP VP
 	$answer = $Echo->answer("Where was Lord Byron born?");
 	test(221, $answer, 'Dover');
+#return;
 	$answer = $Echo->answer("Waar werd Lord Byron geboren?");
 	test(222, $answer, 'Dover');
-
 	// S => WnNP aux NP VP
 	$answer = $Echo->answer("When was Lord Byron born?");
 	test(231, $answer, '1788-01-22');
+
 	$answer = $Echo->answer("Wanneer werd Lord Byron geboren?");
 	test(232, $answer, '1788-01-22');
-//}
+
 	$answer = $Echo->answer("Where did Lord Byron die?");
 	test(233, $answer, 'Aetolia-Acarnania');
-return;
 
+}
+
+ChatbotSettings::$debugParser = false; ChatbotSettings::$debugKnowledge = true;
 	// S => aux NP NP
 	$answer = $Echo->answer("Was Ada Lovelace the daughter of Lord Byron?");
 	test(241, $answer, 'Yes.');
+return;
+//}
 	$answer = $Echo->answer("Was Ada Lovelace een dochter van Lord Byron?");
 	test(242, $answer, 'Yes.');
 	$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
 	test(243, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
+return;
 
 	$Sentence = $Echo->parseFirstLine('John sees the book');
 	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
 //r($Sentence->syntaxTree['features']);
 	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
-	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent'], array('name' => 'john'));
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme'], array('isa' => '*book', 'determiner' => '*the'));
+	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent']['name'], 'john');
+//r($Sentence->syntaxTree['features']['head']['sem']);
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme']['isa'], '*book');
 
 //$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
 //r($Sentence->getPhraseStructureString());

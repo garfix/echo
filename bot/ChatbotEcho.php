@@ -119,7 +119,7 @@ class ChatbotEcho
 			$tree = $Sentence->syntaxTree['features']['head'];
 //			$phraseStructure = $Sentence->phraseStructure;
 			$phraseStructure = $tree['sem'];
-//r($tree);
+//r($Sentence->syntaxTree);
 
 			//if (isset($phraseStructure['act'])) {
 			//	$act = $phraseStructure['act'];
@@ -156,7 +156,15 @@ class ChatbotEcho
 
 	private static function addIds(&$structure, &$id)
 	{
-		$structure['id'] = ++$id;
+		if (!isset($structure['id'])) {
+			$structure['id'] = ++$id;
+		} else {
+			foreach ($structure['id'] as $k => $v) {
+				$id = $k;
+				break;
+			}
+			$structure['id'] = $id;
+		}
 		foreach ($structure as &$value) {
 			if (is_array(($value))) {
 				self::addIds($value, $id);

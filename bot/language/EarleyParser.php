@@ -296,7 +296,6 @@ class EarleyParser
 		if (!$this->isStateInChart($state, $position)) {
 
 			$this->showDebug('enqueue', $state);
-
 			$stateIDs++;
 			$state['id'] = $stateIDs;
 			$this->treeInfo['states'][$stateIDs] = $state;
@@ -341,6 +340,18 @@ class EarleyParser
 				$tree[$line['cat'] . '@' . $index] = $line['features'];
 			}
 		}
+
+		// create unique id
+		$callback = function(&$item, $key) use ($tree)
+		{
+			if ($key == 'id') {
+				$item = array(uniqid('id') => null);
+			}
+
+			return true;
+		};
+
+		array_walk_recursive($tree, $callback);
 
 		return new LabeledDAG($tree);
 	}

@@ -15,6 +15,7 @@ class EnglishGrammar extends SimpleGrammar
 {
 	public function getLexicon()
 	{
+#todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?
 		return array(
 			'a' => array(
 				'determiner' => array(),
@@ -45,9 +46,7 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'agreement' => array('person' => 2, 'number' => 's'),
-							'sem' => array('predicate' => '*book', 'agent{subject-1}' => null, 'theme{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*book', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				),
@@ -59,9 +58,8 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear', 'agent{subject-1}' => null, 'theme{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*bear', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'progressive' => 0
 						)
 					),
 				),
@@ -70,7 +68,7 @@ class EnglishGrammar extends SimpleGrammar
 				'preposition' => array(
 					'features' => array('head' => array(
 						'sem' => array('by{prep-1}' => null),
-						'prep-1' => null
+						'variables' => array('prep-1' => null)
 					))
 				),
 			),
@@ -102,9 +100,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 0,
 						'head' => array(
-							'sem' => array('predicate' => '*die', 'theme{subject-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*die', 'theme{param1-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					)),
 			),
@@ -123,9 +119,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 //						'arguments' => 1,
 						'head' => array(
-							'sem' => array('predicate' => '*have', 'possessor{subject-1}' => null, 'possession{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*have', 'possessor{param1-1}' => null, 'possession{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				),
@@ -135,8 +129,12 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('manner' => array('question' => '*object'))))
 				),
 				'whwordNP' => array(
-					//'features' => array('head' => array('sem' => array('object' => array('question' => 'extent'))))
-					'features' => array('head' => array('sem' => array('question' => '*extent')))
+					'features' => array(
+						'head' => array(
+							'sem-1' => array('param2-1' => array('question' => '*extent')),
+							'variables' => array('role{param2-1}' => null)
+						)
+					)
 				),
 			),
 			'i' => array(
@@ -155,9 +153,7 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'tense' => 'past',
-							'sem' => array('predicate' => '*influence', 'agent{subject-1}' => null, 'experiencer{object-1}' => null, 'by{subject-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+							'sem' => array('predicate' => '*influence', 'agent{param1-1}' => null, 'experiencer{param2-1}' => null, 'by{param1-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				)
@@ -171,7 +167,7 @@ class EnglishGrammar extends SimpleGrammar
 				'preposition' => array(
 					'features' => array('head' => array(
 						'sem' => array('of{prep-1}' => null),
-						'prep-1' => null
+						'variables' => array('prep-1' => null),
 					))
 				),
 			),
@@ -181,9 +177,7 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'tense' => 'past',
-							'sem' => array('predicate' => '*see', 'agent{subject-1}' => null, 'theme{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null
+							'sem' => array('predicate' => '*see', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				)
@@ -199,13 +193,19 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'was' => array(
-				'auxPsv' => array(
+//				'auxPsv' => array(
+//					'features' => array(
+//						'head' => array(
+//#todo klopt niet
+//							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+//						)
+//					),
+//				),
+				'aux' => array(
 					'features' => array(
 						'head' => array(
-#todo klopt niet
-							'sem' => array('predicate' => '*be', 'theme{subject-1}' => null, 'isa{object-1}' => null),
-							'subject-1' => null,
-							'object-1' => null,
+//							'sem' => array('predicate' => '*be', 'isa{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				),
