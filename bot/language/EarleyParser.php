@@ -334,6 +334,8 @@ class EarleyParser
 
 	private static function createLabeledDag(array $rule)
 	{
+		static $id = 0;
+
 		$tree = array();
 		foreach ($rule as $index => $line) {
 			if (isset($line['features'])) {
@@ -342,10 +344,12 @@ class EarleyParser
 		}
 
 		// create unique id
-		$callback = function(&$item, $key) use ($tree)
+		$callback = function(&$item, $key) use ($tree, &$id)
 		{
+			$id++;
+
 			if ($key == 'id') {
-				$item = array(uniqid('id') => null);
+				$item = array('id' . $id => null);
 			}
 
 			return true;

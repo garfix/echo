@@ -64,9 +64,10 @@ if (1) {
 	$answer = $Echo->answer("How many children did Lord Byron have?");
 	test(211, $answer, '2');
 //return;
+//ChatbotSettings::$debugKnowledge = true;
 	$answer = $Echo->answer("Hoeveel kinderen had Lord Byron?");
 	test(212, $answer, '2');
-
+//return;
 	$Sentence = $Echo->parseFirstLine('How many children did Lord Byron have?');
 	test(213, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
 #ChatbotSettings::$debugParser = false; ChatbotSettings::$debugKnowledge = true;
@@ -88,26 +89,31 @@ if (1) {
 
 }
 
-ChatbotSettings::$debugParser = false; ChatbotSettings::$debugKnowledge = true;
+
 	// S => aux NP NP
 	$answer = $Echo->answer("Was Ada Lovelace the daughter of Lord Byron?");
 	test(241, $answer, 'Yes.');
-return;
+#return;
 //}
+//ChatbotSettings::$debugParser = false; ChatbotSettings::$debugKnowledge = true;
 	$answer = $Echo->answer("Was Ada Lovelace een dochter van Lord Byron?");
 	test(242, $answer, 'Yes.');
 	$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
 	test(243, $Sentence->syntaxTree['features']['head']['agreement']['number'], 's');
-return;
 
+
+	// S => NP VP
+//ChatbotSettings::$debugKnowledge = true;
 	$Sentence = $Echo->parseFirstLine('John sees the book');
 	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
+
 //r($Sentence->syntaxTree['features']);
 	test(252, $Sentence->syntaxTree['features']['head']['sem']['predicate'], '*see');
 	test(253, $Sentence->syntaxTree['features']['head']['sem']['agent']['name'], 'john');
 //r($Sentence->syntaxTree['features']['head']['sem']);
-	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme']['isa'], '*book');
 
+	test(254, $Sentence->syntaxTree['features']['head']['sem']['theme']['isa'], '*book');
+//r($Sentence->syntaxTree['features']['head']);
 //$Sentence = $Echo->parseFirstLine('Was Ada Lovelace the daughter of Lord Byron?');
 //r($Sentence->getPhraseStructureString());
 //r($Sentence->syntaxTree['features']);exit;

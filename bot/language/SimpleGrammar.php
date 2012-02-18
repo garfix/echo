@@ -429,6 +429,13 @@ array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null)
 					//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
 				),
+		array(
+			array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+			array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+			array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
+			array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+			//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
+		),
 				// Where was John born?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
@@ -446,9 +453,10 @@ array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null)
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb (object{sem-1})
+				// book that flight! / sees the book
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('param1{sem-2}' => null)), 'arguments' => 1)),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('param2{sem-2}' => null)), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				// driven by John
@@ -486,9 +494,6 @@ array(
 			'NP' => array(
 				// children
 				array(
-
-# de functie n() moet bij iedere instantiatie van de regel opnieuw worden uitgevoerd
-
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),

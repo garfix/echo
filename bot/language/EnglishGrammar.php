@@ -176,7 +176,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'tense' => 'past',
+							'tense' => 'present',
 							'sem' => array('predicate' => '*see', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
