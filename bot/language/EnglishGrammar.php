@@ -28,8 +28,9 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 's'),
+							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 							),
-						'arguments' => 1)
+						)//'arguments' => 2)
 					)
 				),
 			'are' => array(
@@ -193,19 +194,10 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'was' => array(
-//				'auxPsv' => array(
-//					'features' => array(
-//						'head' => array(
-//#todo klopt niet
-//							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
-//						)
-//					),
-//				),
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-//							'sem' => array('predicate' => '*be', 'isa{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
-'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
 				),
@@ -221,7 +213,9 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'who' => array(
-				'whwordNP' => array(),
+				'whword' => array(
+					'features' => array('head' => array('sem' => array('param2' => array('question' => true))))
+				),
 			),
 		);
 	}

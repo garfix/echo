@@ -20,12 +20,6 @@ class Sentence
 	/** @var The syntax tree  */
 	public $syntaxTree = null;
 
-	/** @var Type of sentence: declarative, yes-no-question, imperative, ... */
-	public $structure = null;
-
-	/** @var A syntax / semantics structure */
-	public $phraseStructure = null;
-
 	/**
 	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpsyntaxtree/) of the parse tree.
 	 *
@@ -55,7 +49,7 @@ class Sentence
 
 	public function getPhraseStructureString()
 	{
-		return $this->getPhraseStructureBranch($this->phraseStructure);
+		return $this->getPhraseStructureBranch($this->syntaxTree['features']);
 	}
 
 	private function getPhraseStructureBranch($phraseStructure)
@@ -77,6 +71,6 @@ class Sentence
 
 	public function getStructure($treeIndex = 0)
 	{
-		return $this->structure;
+		return $this->syntaxTree['features']['head']['sentenceType'];
 	}
 }

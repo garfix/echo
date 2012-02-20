@@ -28,7 +28,6 @@ interface Grammar
 	 */
 	public function getFeaturesForWord($word, $partOfSpeech);
 
-	public function getSentenceStructure($syntaxTree);
 	public function generate(Sentence $Sentence);
 }
 

@@ -103,7 +103,6 @@ class DutchGrammar extends SimpleGrammar
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
-#todo klopt niet
 							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
@@ -120,7 +119,6 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-#todo klopt niet
 							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),

@@ -59,10 +59,6 @@ class SimpleGrammar implements Grammar
 		// create one or more parse trees from this sentence
 		$Sentence->syntaxTree = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
 
-		if ($Sentence->syntaxTree) {
-			$Sentence->structure = $this->getSentenceStructure($Sentence->syntaxTree);
-		}
-
 		return !empty($Sentence->syntaxTree);
 	}
 
@@ -105,32 +101,6 @@ class SimpleGrammar implements Grammar
 		$Sentence->surfaceText = $output;
 
 		return $output;
-	}
-
-	/**
-	 * An implementation of Ch. 9.3 of "Speech and Language Processing (p.332)"
-	 */
-	public function getSentenceStructure($syntaxTree)
-	{
-		$c1 = isset($syntaxTree['constituents'][0]) ? $syntaxTree['constituents'][0]['part-of-speech'] : null;
-		$c2 = isset($syntaxTree['constituents'][1]) ? $syntaxTree['constituents'][1]['part-of-speech'] : null;
-		$c3 = isset($syntaxTree['constituents'][2]) ? $syntaxTree['constituents'][2]['part-of-speech'] : null;
-		$c4 = isset($syntaxTree['constituents'][3]) ? $syntaxTree['constituents'][3]['part-of-speech'] : null;
-		$input = array($c1, $c2, $c3, $c4);
-
-		if ($input == array('NP', 'VP', null, null)) {
-			return "declarative";
-		} elseif ($input == array('aux', 'NP', 'VP', null)) {
-			return "yes-no-question";
-		} elseif ($input == array('WhNP', 'VP', null, null)) {
-			return "wh-subject-question";
-		} elseif ($input == array('WhNP', 'aux', 'NP', 'VP')) {
-			return "wh-non-subject-question";
-		} elseif ($input == array('VP', null, null, null)) {
-			return "imperative";
-		} else {
-			return null;
-		}
 	}
 
 	/**
@@ -336,7 +306,6 @@ class SimpleGrammar implements Grammar
 			'whword', // WH-word that may not be followed by an NP
 			'whwordNP', // WH-word that may be followed by an NP
 			'aux',
-			'auxPsv', // passivisation aux
 			'preposition',
 		));
 	}
@@ -368,20 +337,63 @@ class SimpleGrammar implements Grammar
 	{
 		return array(
 			'S' => array(
+
+				// declarative
+
 				// John drives
 				// VP is the head constituent (head-1)
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb (subject{sem-1})
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
 				),
+
+				// imperative
+
+				// Drive! / Book that flight.
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative'))),
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 				),
-				// Drive!
+
+				// non-subject questions
+
+				// Who Is John? / How many children had Lord Byron?
+				// present tense
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+				),
+				// How many miles was John driving?
+				// progressive
+				// VP is the head constituent (head-1)
+				// aux, NP, and VP agree (agreement-2)
+				// WhNP semantics is passed directly to the VP (sem-1)
+				// NP forms the subject of VP's verb (subject{sem-2})
+#todo alleen-engels constructie!
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
+				),
+				// Where was John born?
+				// perfect tense
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('param2{sem-2}' => null)))),
+				),
+
+				// yes-no questions
+
 				// Was John driving?
 				// VP is the head constituent (head-1)
 				// aux, NP, and VP agree (agreement-2)
@@ -389,13 +401,6 @@ class SimpleGrammar implements Grammar
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
-				),
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
-//					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement-2' => null))),
-array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
 				),
@@ -408,52 +413,17 @@ array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null)
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
-				// Who Is John?
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => null))),
-				),
-				// How many miles was John driving?
-				// VP is the head constituent (head-1)
-				// aux, NP, and VP agree (agreement-2)
-				// WhNP semantics is passed directly to the VP (sem-1)
-				// NP forms the subject of VP's verb (subject{sem-2})
-#todo alleen-engels constructie!
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
-				),
-		array(
-			array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
-			array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-			array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
-			array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-			//array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'subject{sem-2}' => null, 'object{sem-1}' => null))),
-		),
-				// Where was John born?
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('param2{sem-2}' => null)))),
-				),
 			),
 			'VP' => array(
+				// drives
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => null, 'arguments' => 0)),
 				),
+				// book that flight! / sees the book
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb (object{sem-1})
-				// book that flight! / sees the book
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('param2{sem-2}' => null)), 'arguments' => 1)),
@@ -469,27 +439,17 @@ array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null)
 				),
 			),
 			'WhNP' => array(
-				// where
+				// where, who
 				array(
 					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
 					array('cat' => 'whword', 'features' => array('head-1' => null)),
 				),
-				// whose (did he drive)
+				// which car, how many children
 				array(
 					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whwordNP', 'features' => array('head-1' => null)),
+					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role{sem-1}' => null)))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
-				// whose car (did he drive), how many children
-//				array(
-//					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-//					array('cat' => 'whwordNP', 'features' => array('head-1' => array('sem-1' => null))),
-//					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null, 'subject{sem-1}' => null))),
-//				),
-array(
-	array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-	array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role{sem-1}' => null)))),
-	array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
-),
 			),
 			'NP' => array(
 				// children
