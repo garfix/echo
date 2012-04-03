@@ -29,6 +29,8 @@ interface Grammar
 	public function getFeaturesForWord($word, $partOfSpeech);
 
 	public function generate(Sentence $Sentence);
+
+	public function getRulesForFeatures($antecedent, $features);
 }
 
 ?>

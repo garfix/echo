@@ -137,44 +137,4 @@ class DutchGrammar extends SimpleGrammar
 			),
 		);
 	}
-
-	public function getWord2PhraseStructure()
-	{
-		return array(
-			'preposition' => array(
-				'van' => array('preposition' => '*belong-to'),
-				'door' => array('preposition' => '*actor'),
-			),
-			'verb' => array(
-				'beïnvloed' => array('predicate' => '*influence'),
-				'boek' => array('predicate' => '*book'),
-				'ben' => array('predicate' => '*be'),
-				'had' => array('predicate' => '*have'),
-				'geboren' => array('predicate' => '*give-birth'),
-			),
-			'noun' => array(
-				'auteur' => array('isa' => '*author'),
-				'vlucht' => array('isa' => '*flight'),
-				'kinderen' => array('isa' => '*child'),
-				'dochter' => array('isa' => '*daughter'),
-			),
-			'pronoun' => array(
-				'ik' => array('referring-expression' => '*current-speaker'),
-			),
-			'determiner' => array(
-				'die' => array('determiner' => '*that'),
-				'de' => array('determiner' => '*the'),
-				'een' => array('determiner' => '*a'),
-			),
-			'whword' => array(
-				'wanneer' => array('question' => '*time'),
-				'waar' => array('question' => '*location'),
-			),
-			'whwordNP' => array(
-				'wanneer' => array('question' => '*time'),
-				'waar' => array('question' => '*location'),
-				'hoeveel' => array('question' => '*nature-of', 'determiner' => '*many'),
-			)
-		);
-	}
 }

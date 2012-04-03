@@ -1,7 +1,6 @@
 <?php
 
 require_once(__DIR__ . '/Grammar.php');
-require_once(__DIR__ . '/SentenceInterpretation.php');
 require_once(__DIR__ . '/Microplanner.php');
 require_once(__DIR__ . '/SurfaceRealiser.php');
 require_once(__DIR__ . '/EarleyParser.php');
@@ -27,7 +26,7 @@ class SimpleGrammar implements Grammar
 		// structure
 		$this->lexicon = $this->getLexicon();
 		$this->syntax = $this->getSyntax();
-		$this->word2phraseStructure = $this->getWord2PhraseStructure();
+//		$this->word2phraseStructure = $this->getWord2PhraseStructure();
 
 		// output processing
 		$this->Microplanner = new Microplanner();
@@ -90,11 +89,11 @@ class SimpleGrammar implements Grammar
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$syntaxTree = $this->Microplanner->plan($Sentence->interpretations[0]->phraseStructure);
+		$syntaxTree = $this->Microplanner->plan($Sentence->phraseStructure, $this);
 		if (!$syntaxTree) {
 			return false;
 		}
-		$Sentence->interpretations[0]->syntaxTree = $syntaxTree;
+		$Sentence->syntaxTree = $syntaxTree;
 
 		// create the output text from the syntactic structure
 		$output = $this->SurfaceRealiser->realise($syntaxTree);
@@ -333,6 +332,31 @@ class SimpleGrammar implements Grammar
 		}
 	}
 
+	/**
+	 * Returns the rules that have $antecedent and that match $features.
+	 * @param $antecedent
+	 * @param $features
+	 */
+	public function getRulesForFeatures($antecedent, $features)
+	{
+		$FeatureDag = new LabeledDAG(array(
+			"$antecedent@0" => $features
+		));
+
+		$matches = array();
+		foreach ($this->syntax[$antecedent] as $rule) {
+
+			$Dag = EarleyParser::createLabeledDag($rule);
+			$UnifiedDag = $Dag->unify($FeatureDag);
+
+			if ($UnifiedDag) {
+				$matches[] = array($rule, $UnifiedDag);
+			}
+		}
+//echo count($matches);exit;
+		return $matches;
+	}
+
 	public function getSyntax()
 	{
 		return array(
@@ -345,8 +369,15 @@ class SimpleGrammar implements Grammar
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb (subject{sem-1})
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
+				),
+				// John was driving
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'aux'),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
 				),
 

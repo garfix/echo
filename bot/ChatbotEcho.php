@@ -116,7 +116,14 @@ class ChatbotEcho
 		$Sentence = $this->parseFirstLine($question);
 		if ($Sentence) {
 
-			$tree = $Sentence->syntaxTree['features']['head'];
+			$features = $Sentence->syntaxTree['features'];
+
+			$id = 0;
+
+			self::addIds($features, $id);
+
+
+			$tree = $features['head'];
 //			$phraseStructure = $Sentence->phraseStructure;
 			$phraseStructure = $tree['sem'];
 //r($Sentence->syntaxTree);
@@ -128,20 +135,24 @@ class ChatbotEcho
 
 				$phraseStructure['act'] = $act;
 
-				$id = 0;
-
-				self::addIds($phraseStructure, $id);
 //r($act);
 				if ($act == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
 					$result = $this->check($phraseStructure);
-
+if (false) {
 					if ($result) {
 						$answer = 'Yes.';
 					} else {
 						$answer = 'No.';
 					}
+} else {
+					$features['head']['sentenceType'] = 'declarative';
+	if (!$result) {
+		$features['head']['negate'] = true;
+	}
+	$answer = $this->LanguageProcessor->generate($features, array());
+}
 
 				} elseif ($act == 'wh-non-subject-question') {
 

@@ -332,7 +332,8 @@ class EarleyParser
 		return $state['rule'][$state['dotPosition']]['cat'];
 	}
 
-	private static function createLabeledDag(array $rule)
+#todo verplaats omdat hij ook elders gebruikt wordt
+	public static function createLabeledDag(array $rule)
 	{
 		static $id = 0;
 

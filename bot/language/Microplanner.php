@@ -14,7 +14,61 @@ class Microplanner
 	 * @param array $semantics
 	 * @return array A syntax tree
 	 */
-	public function plan(array $semantics)
+	public function plan(array $phraseStructure, Grammar $Grammar)
+	{
+//r($phraseStructure);exit;
+		$this->removeIds($phraseStructure);
+		$sentence = $this->planPhrase('S', $phraseStructure, $Grammar);
+		return $sentence;
+	}
+
+	private function removeIds(array &$structure)
+	{
+		foreach ($structure as $key => &$value) {
+echo $key.' ';
+			if (preg_match('/id[\d]*/', $key)) {
+//die('found');
+				unset($structure[$key]);
+			} elseif (is_array($value)) {
+				$this->removeIds($value);
+			}
+		}
+	}
+
+	private function planPhrase($antecedent, array $phraseStructure, Grammar $Grammar)
+	{
+		$partialSentence = '';
+echo '#'.$antecedent.' ';
+		// go through all grammar rules to find a match for the feature set
+		foreach ($Grammar->getRulesForFeatures($antecedent, $phraseStructure) as $result) {
+
+			list ($rule, $UnifiedDAG) = $result;
+
+			for ($i = 1; $i < count($rule); $i++) {
+
+				$consequent = $rule[$i];
+
+				if ($Grammar->isPartOfSpeech($consequent)) {
+					// generate word
+					// find matching entry in lexicon
+
+				} else {
+					// generate phrase
+
+					#todo
+					$partialStructure = $phraseStructure;
+
+					$partialSentence .= "[$consequent] " . $this->planPhrase($consequent, $partialStructure, $Grammar);
+				}
+
+			}
+
+		}
+
+		return $partialSentence;
+	}
+
+	public function plan1(array $semantics)
 	{
 		$tree = array(
 			'part-of-speech' => 'S'

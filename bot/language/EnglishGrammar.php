@@ -154,6 +154,8 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'tense' => 'past',
+							// possible forms: simple, participle, infinitive
+							'form' => 'participle',
 							'sem' => array('predicate' => '*influence', 'agent{param1-1}' => null, 'experiencer{param2-1}' => null, 'by{param1-1}' => null, 'param1-1' => null, 'param2-1' => null),
 						)
 					),
@@ -217,53 +219,6 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('param2' => array('question' => true))))
 				),
 			),
-		);
-	}
-
-	public function getWord2PhraseStructure()
-	{
-		return array(
-			'preposition' => array(
-				'of' => array('preposition' => '*belong-to'),
-				'by' => array('preposition' => '*actor'),
-			),
-			'verb' => array(
-				'am' => array('predicate' => '*be'),
-				'are' => array('predicate' => '*be'),
-				'book' => array('predicate' => '*book'),
-				'born' => array('predicate' => '*give-birth'),
-				'die' => array('predicate' => '*die'),
-				'influenced' => array('predicate' => '*influence'),
-				'have' => array('predicate' => '*have'),
-				'sees' => array('predicate' => '*see'),
-			),
-			'noun' => array(
-				'author' => array('isa' => '*author'),
-				'book' => array('isa' => '*book'),
-				'children' => array('isa' => '*child'),
-				'daughter' => array('isa' => '*daughter'),
-				'flight' => array('isa' => '*flight'),
-			),
-			'pronoun' => array(
-				'i' => array('referring-expression' => '*current-speaker'),
-			),
-			'determiner' => array(
-				'the' => array('determiner' => '*the'),
-				'that' => array('determiner' => '*that'),
-				'many' => array('determiner' => '*many'),
-			),
-			'whword' => array(
-				'how' => array('question' => '*manner'),
-				'when' => array('question' => '*time'),
-				'where' => array('question' => '*location'),
-				'who' => array('question' => '*person'),
-			),
-			'whwordNP' => array(
-				'how' => array('question' => '*nature-of'),
-				'when' => array('question' => '*time'),
-				'where' => array('question' => '*location'),
-				'who' => array('question' => '*person'),
-			)
 		);
 	}
 }
