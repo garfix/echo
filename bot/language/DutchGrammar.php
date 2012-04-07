@@ -17,7 +17,6 @@ class DutchGrammar extends SimpleGrammar
 			'boek' => array(
 				'verb' => array(
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
-					//'roles' => array('agent', 'patient')
 			),
 			'de' => array(
 				'determiner' => array()
@@ -26,7 +25,10 @@ class DutchGrammar extends SimpleGrammar
 				'determiner' => array()
 			),
 			'door' => array(
-				'preposition' => array()
+				'preposition' => array(),
+				'passivisationPreposition' => array(
+					'features' => array('head' => array())
+				)
 			),
 			'dochter' => array(
 				'noun' => array(
@@ -45,7 +47,7 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*have', 'possessor{param1-1}' => null, 'possession{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*have'),
 						)
 					)
 				)
@@ -54,7 +56,7 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*bear'),
 							'progressive' => 0
 						)
 					),
@@ -68,9 +70,9 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem-1' => array(
-								'param2-1' => array('question' => '*extent', 'determiner' => '*many'),
+								'arg2-1' => array('question' => '*extent', 'determiner' => '*many'),
 							),
-							'variables' => array('role{param2-1}' => null)
+							'variables' => array('role{arg2-1}' => null)
 						)
 					)
 				),
@@ -91,8 +93,7 @@ class DutchGrammar extends SimpleGrammar
 			'van' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('of{prep-1}' => null),
-						'variables' => array('prep-1' => null),
+						'sem' => array('type' => 'of'),
 					))
 				),
 			),
@@ -103,14 +104,14 @@ class DutchGrammar extends SimpleGrammar
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be'),
 						)
 					),
 				),
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be'),
 						)
 					),
 				),
@@ -119,7 +120,7 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be'),
 						)
 					),
 				),

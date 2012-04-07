@@ -16,18 +16,21 @@ class Microplanner
 	 */
 	public function plan(array $phraseStructure, Grammar $Grammar)
 	{
-//r($phraseStructure);exit;
+r($phraseStructure);exit;
 		$this->removeIds($phraseStructure);
-		$sentence = $this->planPhrase('S', $phraseStructure, $Grammar);
+
+		$FeatureDAG = new LabeledDAG(array(
+			"S@0" => $phraseStructure
+		));
+
+		$sentence = $this->planPhrase('S', $FeatureDAG, $Grammar);
 		return $sentence;
 	}
 
 	private function removeIds(array &$structure)
 	{
 		foreach ($structure as $key => &$value) {
-echo $key.' ';
 			if (preg_match('/id[\d]*/', $key)) {
-//die('found');
 				unset($structure[$key]);
 			} elseif (is_array($value)) {
 				$this->removeIds($value);
@@ -35,79 +38,98 @@ echo $key.' ';
 		}
 	}
 
-	private function planPhrase($antecedent, array $phraseStructure, Grammar $Grammar)
+	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
-		$partialSentence = '';
-echo '#'.$antecedent.' ';
+		static $d = 0;
+
+		$d++;
+
+		if ($d == 4) {
+			$d--;
+			return '';
+		}
+
+// dit is niet eerlijk: als eenmaal een regel slaagt, wordt de rest niet meer geprobeerd; en misschien kan de hele zin
+// alleen maar slagen als hier een andere regel wordt geprobeerd
+
 		// go through all grammar rules to find a match for the feature set
-		foreach ($Grammar->getRulesForFeatures($antecedent, $phraseStructure) as $result) {
+		foreach ($Grammar->getRulesForDAG($antecedent, $DAG) as $result) {
 
 			list ($rule, $UnifiedDAG) = $result;
 
-			for ($i = 1; $i < count($rule); $i++) {
-
-				$consequent = $rule[$i];
-
-				if ($Grammar->isPartOfSpeech($consequent)) {
-					// generate word
-					// find matching entry in lexicon
-
-				} else {
-					// generate phrase
-
-					#todo
-					$partialStructure = $phraseStructure;
-
-					$partialSentence .= "[$consequent] " . $this->planPhrase($consequent, $partialStructure, $Grammar);
-				}
-
+			$partialSentence = $this->planPhraseByRule($rule, $UnifiedDAG, $Grammar);
+			if ($partialSentence) {
+				break;
 			}
 
 		}
 
-		return $partialSentence;
+		echo $partialSentence."\n";
+
+		$d--;
+
+		return $partialSentence ? $partialSentence : false;
 	}
 
-	public function plan1(array $semantics)
+	private function planPhraseByRule($rule, $UnifiedDAG, $Grammar)
 	{
-		$tree = array(
-			'part-of-speech' => 'S'
-		);
+		$partialSentence = '';
 
-		foreach ($semantics as $triple) {
-			list ($subject, $predicate, $object) = $triple;
-			if ($predicate == 'name') {
-				$np = array(
-					'part-of-speech' => 'NP',
-					'constituents' => array(
-						array(
-							'part-of-speech' => 'pronoun',
-# todo: referring expression
-							'word' => $subject
-						)
-					)
-				);
-				$vp = array(
-					'part-of-speech' => 'VP',
-					'constituents' => array(
-						array(
-							'part-of-speech' => 'verb',
-							'word' => 'be'
-						),
-						array(
-							'part-of-speech' => 'NP',
-							'constituents' => array(
-								array(
-									'part-of-speech' => 'propernoun',
-									'word' => $object
-								)
-							)
-						)
-					)
-				);
-				$tree['constituents'] = array($np, $vp);
+		for ($i = 1; $i < count($rule); $i++) {
+
+			$consequent = $rule[$i]['cat'];
+//r($consequent);
+			// restrict the unified DAG to this consequent
+			$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
+			//r($ConsequentDAG);
+			if ($Grammar->isPartOfSpeech($consequent)) {
+
+				// generate word
+				// find matching entry in lexicon
+				$word = $Grammar->getWordForFeatures($consequent, $ConsequentDAG->getPathValue(array($consequent . '@0')));
+
+				if ($word !== false) {
+
+					//$name = $ConsequentDAG->getPathValue(array($consequent . '@0', 'head', 'sem', 'name'));
+					//echo '#>' . $consequent;
+
+					$partialSentence .= "[$word]";
+
+				} else {
+
+					if (!in_array($consequent, array('noun', 'propernoun', 'pronoun', 'determiner', 'preposition', 'aux'))) {
+						//r("-----\n");
+						//	r($consequent);
+						//	r($word);
+						//r($partialSentence);
+						//r("\n-----\n");
+						//exit;
+					}
+
+
+					return false;
+					$partialSentence = false;
+					break;
+				}
+
+
+			} else {
+				// generate phrase
+
+				//r($consequent);
+				$phrase = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
+				if ($phrase !== false) {
+					$partialSentence .= ' ' . $phrase;
+				} else {
+					$partialSentence = false;
+					return false;
+					break;
+				}
+
+
 			}
+
 		}
-		return $tree;
+		return $partialSentence;
 	}
 }

@@ -28,7 +28,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 's'),
-							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be'),
 							),
 						)//'arguments' => 2)
 					)
@@ -47,7 +47,7 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'agreement' => array('person' => 2, 'number' => 's'),
-							'sem' => array('predicate' => '*book', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*book'),
 						)
 					),
 				),
@@ -59,7 +59,7 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*bear'),
 							'progressive' => 0
 						)
 					),
@@ -68,10 +68,15 @@ class EnglishGrammar extends SimpleGrammar
 			'by' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('by{prep-1}' => null),
-						'variables' => array('prep-1' => null)
+						'sem' => array('type' => 'by'),
 					))
 				),
+
+				'passivisationPreposition' => array(
+					'features' => array('head' => array(
+					))
+				),
+
 			),
 			'children' => array(
 				'noun' => array(
@@ -101,7 +106,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 0,
 						'head' => array(
-							'sem' => array('predicate' => '*die', 'theme{param1-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*die'),
 						)
 					)),
 			),
@@ -120,7 +125,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 //						'arguments' => 1,
 						'head' => array(
-							'sem' => array('predicate' => '*have', 'possessor{param1-1}' => null, 'possession{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*have'),
 						)
 					),
 				),
@@ -132,8 +137,8 @@ class EnglishGrammar extends SimpleGrammar
 				'whwordNP' => array(
 					'features' => array(
 						'head' => array(
-							'sem-1' => array('param2-1' => array('question' => '*extent')),
-							'variables' => array('role{param2-1}' => null)
+							'sem-1' => array('arg2-1' => array('question' => '*extent')),
+							'variables' => array('role{arg2-1}' => null)
 						)
 					)
 				),
@@ -156,7 +161,7 @@ class EnglishGrammar extends SimpleGrammar
 							'tense' => 'past',
 							// possible forms: simple, participle, infinitive
 							'form' => 'participle',
-							'sem' => array('predicate' => '*influence', 'agent{param1-1}' => null, 'experiencer{param2-1}' => null, 'by{param1-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*influence'),
 						)
 					),
 				)
@@ -169,8 +174,7 @@ class EnglishGrammar extends SimpleGrammar
 			'of' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('of{prep-1}' => null),
-						'variables' => array('prep-1' => null),
+						'sem' => array('type' => 'of'),
 					))
 				),
 			),
@@ -180,7 +184,7 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'tense' => 'present',
-							'sem' => array('predicate' => '*see', 'agent{param1-1}' => null, 'theme{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*see'),
 						)
 					),
 				)
@@ -199,7 +203,7 @@ class EnglishGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be', 'theme{param1-1}' => null, 'isa{param2-1}' => null, 'param1-1' => null, 'param2-1' => null),
+							'sem' => array('predicate' => '*be'),
 						)
 					),
 				),
@@ -216,7 +220,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'who' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('param2' => array('question' => true))))
+					'features' => array('head' => array('sem' => array('arg2' => array('question' => true))))
 				),
 			),
 		);

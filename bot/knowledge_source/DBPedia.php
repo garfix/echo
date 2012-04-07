@@ -76,9 +76,9 @@ class DBPedia
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
 			isset($s['location']) &&
-			isset($s['theme'])
+			isset($s['arg2'])
 		) {
-			$themeId = $s['theme']['id'];
+			$themeId = $s['arg2']['id'];
 			$locationId = $s['location']['id'];
 			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
 		}
@@ -87,9 +87,9 @@ class DBPedia
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*die') &&
 			isset($s['location']) &&
-			isset($s['theme'])
+			isset($s['arg1'])
 		) {
-			$themeId = $s['theme']['id'];
+			$themeId = $s['arg1']['id'];
 			$locationId = $s['location']['id'];
 			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
 		}
@@ -98,9 +98,9 @@ class DBPedia
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
 			isset($s['time']) &&
-			isset($s['theme'])
+			isset($s['arg2'])
 		) {
-			$themeId = $s['theme']['id'];
+			$themeId = $s['arg2']['id'];
 			$timeId = $s['time']['id'];
 			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
 		}
@@ -133,27 +133,26 @@ class DBPedia
 		// http://dbpedia.org/ontology/child (1)
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*have') &&
-			isset($s['possessor']) &&
-			isset($s['possession']) &&
-			($s['possession']['isa'] == '*child')
+			isset($s['arg1']) &&
+			isset($s['arg2']) &&
+			($s['arg2']['isa'] == '*child')
 		) {
-			$possessor = $s['possessor']['id'];
-			$posession = $s['possession']['id'];
+			$possessor = $s['arg1']['id'];
+			$posession = $s['arg2']['id'];
 			$triples[] = array('?' . $possessor, '<http://dbpedia.org/ontology/child>', '?' . $posession);
 		}
 
 		// http://dbpedia.org/ontology/child (2)
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*be') &&
-			isset($s['theme']) &&
-			isset($s['isa']['of']) &&
-			($s['isa']['isa'] == '*daughter')
+			isset($s['arg1']) &&
+			isset($s['arg2']['of']) &&
+			($s['arg2']['isa'] == '*daughter')
 		) {
-			$childId = $s['theme']['id'];
-			$parentId = $s['isa']['of']['id'];
+			$childId = $s['arg1']['id'];
+			$parentId = $s['arg2']['of']['id'];
 			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
 		}
-
 
 		// interpret child elements
 		foreach ($s as $key => $value) {
@@ -180,7 +179,7 @@ $triples = array_unique($triples);
 
 		if (ChatbotSettings::$debugKnowledge) r($query);
 
-		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
+		$result = false;// self::$cacheResults ? $this->getResultFromCache($query) : false;
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -191,7 +190,6 @@ $triples = array_unique($triples);
 			);
 
 			$json = file_get_contents($url . '?' . http_build_query($params));
-
 			$result = json_decode($json, true);
 
 			if (self::$cacheResults) {

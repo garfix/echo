@@ -93,6 +93,9 @@ class SimpleGrammar implements Grammar
 		if (!$syntaxTree) {
 			return false;
 		}
+
+return $syntaxTree;
+
 		$Sentence->syntaxTree = $syntaxTree;
 
 		// create the output text from the syntactic structure
@@ -306,6 +309,7 @@ class SimpleGrammar implements Grammar
 			'whwordNP', // WH-word that may be followed by an NP
 			'aux',
 			'preposition',
+			'passivisationPreposition',
 		));
 	}
 
@@ -332,22 +336,108 @@ class SimpleGrammar implements Grammar
 		}
 	}
 
+	public function getWordForFeatures($partOfSpeech, $features)
+	{
+		$word = false;
+
+		if ($partOfSpeech == 'propernoun') {
+			if (isset($features['head']['sem']['name'])) {
+				$word = $features['head']['sem']['name'];
+			}
+
+		} elseif ($partOfSpeech == 'aux') {
+			$word = '?aux?';
+		} elseif ($partOfSpeech == 'passivisationPreposition') {
+			$word = '?by?';
+		} elseif ($partOfSpeech == 'determiner') {
+			$word = '?det?';
+//		} elseif ($partOfSpeech == 'preposition') {
+//			$word = '?prep?';
+		} elseif ($partOfSpeech == 'noun') {
+			if (isset($features['head']['sem']['isa'])) {
+				$isa = $features['head']['sem']['isa'];
+				if ($findWord = $this->getNoun($isa)) {
+					$word = $findWord;
+				}
+			}
+
+		} elseif ($partOfSpeech == 'preposition') {
+			$word = '?of?';
+//r($features);exit;
+//			$word = '?by?';
+		} elseif ($partOfSpeech == 'verb') {
+
+			if (isset($features['head']['sem']['predicate'])) {
+				$predicate = $features['head']['sem']['predicate'];
+
+				if (isset($features['head']['tense'])) {
+					$tense = $features['head']['tense'];
+
+					if ($findWord = $this->getVerb($predicate, $tense)) {
+//die($findWord);
+						$word = $findWord;
+					}
+				}
+
+			}
+//			$word = '?aux?';
+//r($features);exit;
+		}
+
+		return $word;
+	}
+
+	/*
+	 * TODO: SLOW IMPLEMENTATION
+	 */
+	public function getVerb($predicate, $tense)
+	{
+		foreach ($this->lexicon as $word => $data) {
+			if (!isset($data['verb'])) {
+				continue;
+			}
+			$head = $data['verb']['features']['head'];
+			if (isset($head['tense'])) {
+				if ($head['tense'] == $tense && $head['sem']['predicate'] == $predicate) {
+					return $word;
+				}
+			}
+
+		}
+
+		return false;
+	}
+
+	public function getNoun($isa)
+	{
+		foreach ($this->lexicon as $word => $data) {
+			if (!isset($data['noun'])) {
+				continue;
+			}
+			$head = $data['noun']['features']['head'];
+			if (isset($head['sem']['isa'])) {
+				if ($head['sem']['isa'] == $isa) {
+					return $word;
+				}
+			}
+
+		}
+
+		return false;
+	}
+
 	/**
 	 * Returns the rules that have $antecedent and that match $features.
 	 * @param $antecedent
 	 * @param $features
 	 */
-	public function getRulesForFeatures($antecedent, $features)
+	public function getRulesForDAG($antecedent, LabeledDAG $FeatureDAG)
 	{
-		$FeatureDag = new LabeledDAG(array(
-			"$antecedent@0" => $features
-		));
-
 		$matches = array();
 		foreach ($this->syntax[$antecedent] as $rule) {
 
 			$Dag = EarleyParser::createLabeledDag($rule);
-			$UnifiedDag = $Dag->unify($FeatureDag);
+			$UnifiedDag = $Dag->unify($FeatureDAG);
 
 			if ($UnifiedDag) {
 				$matches[] = array($rule, $UnifiedDag);
@@ -362,7 +452,18 @@ class SimpleGrammar implements Grammar
 		return array(
 			'S' => array(
 
-				// declarative
+				// passive declarative
+				// The car was driven by John
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
+					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'aux'),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('predicate' => null, 'arg1{sem-2}' => null, 'arg2{sem-1}' => null)))),
+					array('cat' => 'passivisationPreposition'),
+					array('cat' => 'NP', 'features' => array('head-3' => array('sem-2' => null))),
+				),
+
+				// active declarative
 
 				// John drives
 				// VP is the head constituent (head-1)
@@ -371,14 +472,14 @@ class SimpleGrammar implements Grammar
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null)))),
 				),
 				// John was driving
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null)))),
 				),
 
 				// imperative
@@ -396,7 +497,7 @@ class SimpleGrammar implements Grammar
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
 				// How many miles was John driving?
@@ -411,7 +512,7 @@ class SimpleGrammar implements Grammar
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('param1{sem-2}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
 				),
 				// Where was John born?
 				// perfect tense
@@ -420,7 +521,7 @@ class SimpleGrammar implements Grammar
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('param2{sem-2}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('arg2{sem-2}' => null)))),
 				),
 
 				// yes-no questions
@@ -433,14 +534,25 @@ class SimpleGrammar implements Grammar
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param2{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg2{sem-1}' => null)))),
 				),
+
+				// Was the car driven by John?
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive'))),
+					array('cat' => 'aux'),
+					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('predicate' => null, 'arg1{sem-2}' => null, 'arg2{sem-1}' => null)))),
+					array('cat' => 'passivisationPreposition'),
+					array('cat' => 'NP', 'features' => array('head-3' => array('sem-2' => null))),
+				),
+
 				// Was John a fool?
 				// The verb is '*be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('param1{sem-1}' => null, 'param2{sem-2}' => null)))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null, 'arg2{sem-2}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
@@ -449,7 +561,7 @@ class SimpleGrammar implements Grammar
 				// drives
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => null, 'arguments' => 0)),
+					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
 				// verb is the head constituent (head-1)
@@ -457,7 +569,7 @@ class SimpleGrammar implements Grammar
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('param2{sem-2}' => null)), 'arguments' => 1)),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2{sem-2}' => null)), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
 				),
 				// driven by John
@@ -465,7 +577,7 @@ class SimpleGrammar implements Grammar
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem-2' => null))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
@@ -507,15 +619,15 @@ class SimpleGrammar implements Grammar
 				// the car in the lot
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'PP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
+					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
 			'PP' => array(
 				// in the lot
 				array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => null, 'variables' => array('prep{sem-1}' => null)))),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object{sem-1}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),

@@ -385,10 +385,12 @@ class LabeledDAG
 		}
 
 		// return the value
-		if (!isset($this->nodes[$internalLabel]['value'])) {
-			return null;
-		} else {
+		if (isset($this->nodes[$internalLabel]['value'])) {
 			return $this->nodes[$internalLabel]['value'];
+		} elseif (isset($this->nodes[$internalLabel])) {
+			return $this->getTreeForNode($internalLabel);
+		} else {
+			return null;
 		}
 	}
 
