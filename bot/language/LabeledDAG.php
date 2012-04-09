@@ -117,39 +117,6 @@ class LabeledDAG
 		}
 
 		return array($externalLabel, $internalLabel);
-
-//		// extract the name and id of the feature
-//		$regexp =
-//			'/^' .
-//			'(?P<name>[a-z][a-z@_0-9]*)(-(?P<id>\d+))?' .
-//			'(\{(?P<alias>[a-z][a-z@_0-9]*)\})?' .
-//			'$/i';
-//
-//		if (!preg_match($regexp, $label, $matches)) {
-//			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
-//		}
-//
-//		$id = isset($matches['id']) ? $matches['id'] : self::createUniqueId();
-//		if (!empty($matches['alias'])) {
-//			$internalLabel = $matches['name'] . '-' . $id;
-//			$externalLabel = $matches['alias'];
-//		} else {
-//			$internalLabel = $matches['name'] . '-' . $id;
-//			$externalLabel = $matches['name'];
-//		}
-//
-//		return array($externalLabel, $internalLabel);
-
-
-//		// extract the name and id of the feature
-//		if (!preg_match('/^([a-z][a-z@_0-9]*)(-(\d+))?$/i', $label, $matches)) {
-//			trigger_error('Error in identifier: ' . $label, E_USER_ERROR);
-//		}
-//		$name = $matches[1];
-//		$id = isset($matches[3]) ? $matches[3] : self::createUniqueId();
-//		$internalLabel = $name . '-' . $id;
-//
-//		return array($name, $internalLabel);
 	}
 
 	/**
@@ -164,6 +131,44 @@ class LabeledDAG
 		$success = $NewDAG->mergeNode('root', 'root', $DAG->nodes, $map);
 
 		return $success ? $NewDAG : false;
+	}
+
+	/**
+	 * Try to match this DAG to all values in $pattern
+	 *
+	 * @param array $pattern A tree that contains (arrays of) non-null values
+	 * @return bool Match?
+	 */
+	public function match(array $pattern)
+	{
+		return $this->matchTree($pattern, array());
+	}
+
+	private function matchTree(array $pattern, $path)
+	{
+		$match = true;
+
+		foreach ($pattern as $label => $node) {
+
+			$newPath = $path;
+			$newPath[] = $label;
+
+			if (is_array($node)) {
+				$match = $this->matchTree($node, $newPath);
+				if (!$match) {
+					return false;
+				}
+			} else {
+				$value = $this->getPathValue($newPath);
+				if ($value === null) {
+					return false;
+				} elseif ($node !== null && ($node !== $value)) {
+					return false;
+				}
+			}
+		}
+
+		return $match;
 	}
 
 	/**

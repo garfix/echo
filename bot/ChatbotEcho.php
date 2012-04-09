@@ -140,7 +140,7 @@ class ChatbotEcho
 
 					// since this is a yes-no question, check the statement
 					$result = $this->check($phraseStructure);
-if (1) {
+if (0) {
 					if ($result) {
 						$answer = 'Yes.';
 					} else {

@@ -17,6 +17,7 @@ class SimpleGrammar implements Grammar
 
 	/** @var array An array of grammar rules, ordered by antecedent */
 	protected $syntax = null;
+	protected $generationRules = null;
 	protected $lexicon = null;
 	protected $Microplanner = null;
 	protected $SurfaceRealiser = null;
@@ -26,7 +27,7 @@ class SimpleGrammar implements Grammar
 		// structure
 		$this->lexicon = $this->getLexicon();
 		$this->syntax = $this->getSyntax();
-//		$this->word2phraseStructure = $this->getWord2PhraseStructure();
+		$this->generationRules = $this->getGenerationRules();
 
 		// output processing
 		$this->Microplanner = new Microplanner();
@@ -351,8 +352,6 @@ return $syntaxTree;
 			$word = '?by?';
 		} elseif ($partOfSpeech == 'determiner') {
 			$word = '?det?';
-//		} elseif ($partOfSpeech == 'preposition') {
-//			$word = '?prep?';
 		} elseif ($partOfSpeech == 'noun') {
 			if (isset($features['head']['sem']['isa'])) {
 				$isa = $features['head']['sem']['isa'];
@@ -364,7 +363,6 @@ return $syntaxTree;
 		} elseif ($partOfSpeech == 'preposition') {
 			$word = '?of?';
 //r($features);exit;
-//			$word = '?by?';
 		} elseif ($partOfSpeech == 'verb') {
 
 			if (isset($features['head']['sem']['predicate'])) {
@@ -382,6 +380,8 @@ return $syntaxTree;
 			}
 //			$word = '?aux?';
 //r($features);exit;
+		} else {
+			//r($partOfSpeech);exit;
 		}
 
 		return $word;
@@ -427,34 +427,54 @@ return $syntaxTree;
 	}
 
 	/**
-	 * Returns the rules that have $antecedent and that match $features.
+	 * Returns the first rule that have $antecedent and that match $features.
 	 * @param $antecedent
 	 * @param $features
 	 */
-	public function getRulesForDAG($antecedent, LabeledDAG $FeatureDAG)
+	public function getRuleForDAG($antecedent, LabeledDAG $FeatureDAG)
 	{
-		$matches = array();
-		foreach ($this->syntax[$antecedent] as $rule) {
+		foreach ($this->generationRules[$antecedent] as $generationRule) {
 
-			$Dag = EarleyParser::createLabeledDag($rule);
-			$UnifiedDag = $Dag->unify($FeatureDAG);
+			$pattern = array($antecedent . '@0' => $generationRule['condition']);
 
-			if ($UnifiedDag) {
-				$matches[] = array($rule, $UnifiedDag);
+			if ($FeatureDAG->match($pattern)) {
+
+				$rawRule = $generationRule['rule'];
+
+				$rule = array();
+				$i = 0;
+				foreach ($rawRule as $line) {
+					$rule[$line['cat'] . '@' . $i] = $line['features'];
+					$i++;
+				}
+//r($antecedent);
+//r($rule);exit;
+				$Dag = new LabeledDAG($rule);
+				$UnifiedDag = $Dag->unify($FeatureDAG);
+
+				if ($UnifiedDag) {
+					return array($rawRule, $UnifiedDag);
+				}
+			} else {
+//				echo $antecedent . "\n";
+//	r($FeatureDAG);
+//	r($pattern);
+//	exit;
 			}
 		}
 //echo count($matches);exit;
-		return $matches;
+		return false;
 	}
 
 	public function getSyntax()
 	{
+#todo: de regel-identifiers mogen weer weg
 		return array(
 			'S' => array(
 
 				// passive declarative
 				// The car was driven by John
-				array(
+				'S NP aux VP psvPrep NP' => array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'aux'),
@@ -559,7 +579,7 @@ return $syntaxTree;
 			),
 			'VP' => array(
 				// drives
-				array(
+				'verb' => array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
@@ -567,7 +587,7 @@ return $syntaxTree;
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb (object{sem-1})
-				array(
+				'verb NP' => array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2{sem-2}' => null)), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
@@ -575,7 +595,7 @@ return $syntaxTree;
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb (object{sem-1})
-				array(
+				'verb PP' => array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
@@ -596,41 +616,122 @@ return $syntaxTree;
 			),
 			'NP' => array(
 				// children
-				array(
+				'noun' => array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),
 				// John
-				array(
+				'propernoun' => array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
-				array(
+				'pronoun' => array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
-				array(
+				'determiner noun' => array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
 					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// the car in the lot
-				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
+//				'NP PP' => array(
+//					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+//					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
+//					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
+//				),
+				'NP PP' => array(
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem{sem-1}' => array('modifier{sem-2}' => null, 'id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
 			'PP' => array(
 				// in the lot
-				array(
+				'preposition NP' => array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object{sem-1}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),
+		);
+	}
+
+	public function getGenerationRules()
+	{
+		// de volgorde van deze regels wijkt waarschijnlijk af van de syntax regels hierboven;
+		// de volgorde van deze regels is namelijk die van meest restrictief naar minst restrictief
+		// de volgorde van de regels hierboven is die van aflopende trefkans
+
+		// de 'rule's zijn nodig om te bepalen hoe de phrase structure verdeeld wordt over de syntactisch regel
+
+		return array(
+			'S' => array(
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null, 'arg1-1' => null, 'arg2-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem{arg2-1}' => null))),
+						array('cat' => 'aux', 'features' => array()),
+						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'passivisationPreposition', 'features' => array()),
+						array('cat' => 'NP', 'features' => array('head' => array('sem{arg1-1}' => null))),
+					)
+				)
+			),
+			'NP' => array(
+				array(
+					'condition' => array('head' => array('sem' => array('isa' => null, 'modifier' => null))),
+					'rule' => array(
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'modifier-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'PP', 'features' => array('head' => array('sem{modifier-1}' => null)))
+					)
+				),
+				array(
+					'condition' => array('head' =>array('sem' =>  array('isa' => null, 'determiner' => null))),
+					'rule' => array(
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('determiner-1' => null)))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
+					)
+				),
+				array(
+					'condition' => array('head' => array('sem' => array('isa' => null))),
+					'rule' => array(
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
+					)
+				),
+				array(
+					'condition' => array('head' => array('sem' => array('name' => null))),
+					'rule' => array(
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('name-1' => null)))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('sem' => array('name-1' => null)))),
+					)
+				),
+			),
+			'VP' => array(
+				array(
+					'condition' => array('head' => array('sem' => array('predicate' => null))),
+					'rule' => array(
+						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'verb', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+					)
+				)
+			),
+			'PP' => array(
+				array(
+					'condition' => array(),
+					'rule' => array(
+						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('type-1' => null, 'object-1' => null)))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('type-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem{object-1}' => null))),
+					)
+				),
+			)
 		);
 	}
 }

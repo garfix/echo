@@ -80,8 +80,8 @@ function testLabeledDAG()
 	$F19 = new LabeledDAG($tree10);
 	$F20 = new LabeledDAG($tree11);
 	$F21 = $F19->unify($F20);
-	$F21->setPathValue(array('b', 'head'), 1);
 
+	$F21->setPathValue(array('b', 'head'), 1);
 	$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
 
 	// check that a shared child is implemented correctly
@@ -117,4 +117,32 @@ function testLabeledDAG()
 	test(341, $F22->getPathValue(array('colour')), 'red');
 	$F22->setPathValue(array('colour'), 'blue');
 	test(341, $F22->getPathValue(array('color')), 'blue');
+
+	// bound
+//	$F23 = new LabeledDAG(array());
+//	test(351, $F23->isBound(), false);
+//	$F24 = new LabeledDAG(array('a' => null));
+//	test(352, $F24->isBound(), false);
+//	$F25 = new LabeledDAG(array('a' => array()));
+//	test(353, $F25->isBound(), false);
+//	$F26 = new LabeledDAG(array('a' => array('b' => null)));
+//	test(354, $F26->isBound(), false);
+//	$F27 = new LabeledDAG(array('a' => array('b' => 1)));
+//	test(355, $F27->isBound(), true);
+//	$F28 = new LabeledDAG(array('a' => 1));
+//	test(356, $F28->isBound(), true);
+
+	// match
+	$F28 = new LabeledDAG(array('a' => 1));
+	$F29 = new LabeledDAG(array('a' => 1, 'b' => null));
+	$F30 = new LabeledDAG(array('a' => 1, 'b' => array('c' => null, 'd' => 4)));
+	test(361, $F28->match(array('a' => 1)), true);
+	test(362, $F28->match(array('a' => 2)), false);
+	test(363, $F28->match(array('a' => 1, 'c' => null)), false);
+	test(364, $F29->match(array('a' => 1, 'b' => 2)), false);
+	test(365, $F29->match(array('a' => 1)), true);
+	test(365, $F29->match(array('b' => 2)), false);
+	test(366, $F30->match(array('b' => array('d' => 4))), true);
+	test(367, $F30->match(array('b' => array('c' => 3))), false);
+	test(367, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
 }

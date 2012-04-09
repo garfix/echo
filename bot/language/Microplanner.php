@@ -16,7 +16,7 @@ class Microplanner
 	 */
 	public function plan(array $phraseStructure, Grammar $Grammar)
 	{
-r($phraseStructure);exit;
+//r($phraseStructure);exit;
 		$this->removeIds($phraseStructure);
 
 		$FeatureDAG = new LabeledDAG(array(
@@ -24,6 +24,7 @@ r($phraseStructure);exit;
 		));
 
 		$sentence = $this->planPhrase('S', $FeatureDAG, $Grammar);
+
 		return $sentence;
 	}
 
@@ -40,96 +41,49 @@ r($phraseStructure);exit;
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
-		static $d = 0;
-
-		$d++;
-
-		if ($d == 4) {
-			$d--;
-			return '';
+		$result = $Grammar->getRuleForDAG($antecedent, $DAG);
+		if ($result === false) {
+			return false;
 		}
 
-// dit is niet eerlijk: als eenmaal een regel slaagt, wordt de rest niet meer geprobeerd; en misschien kan de hele zin
-// alleen maar slagen als hier een andere regel wordt geprobeerd
-
-		// go through all grammar rules to find a match for the feature set
-		foreach ($Grammar->getRulesForDAG($antecedent, $DAG) as $result) {
-
-			list ($rule, $UnifiedDAG) = $result;
-
-			$partialSentence = $this->planPhraseByRule($rule, $UnifiedDAG, $Grammar);
-			if ($partialSentence) {
-				break;
-			}
-
-		}
-
-		echo $partialSentence."\n";
-
-		$d--;
-
-		return $partialSentence ? $partialSentence : false;
-	}
-
-	private function planPhraseByRule($rule, $UnifiedDAG, $Grammar)
-	{
+		list ($rule, $UnifiedDAG) = $result;
+//r($UnifiedDAG);
 		$partialSentence = '';
 
 		for ($i = 1; $i < count($rule); $i++) {
 
 			$consequent = $rule[$i]['cat'];
-//r($consequent);
-			// restrict the unified DAG to this consequent
-			$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
-			//r($ConsequentDAG);
+echo "$consequent" . "\n";
 			if ($Grammar->isPartOfSpeech($consequent)) {
 
-				// generate word
 				// find matching entry in lexicon
-				$word = $Grammar->getWordForFeatures($consequent, $ConsequentDAG->getPathValue(array($consequent . '@0')));
-
-				if ($word !== false) {
-
-					//$name = $ConsequentDAG->getPathValue(array($consequent . '@0', 'head', 'sem', 'name'));
-					//echo '#>' . $consequent;
-
-					$partialSentence .= "[$word]";
-
-				} else {
-
-					if (!in_array($consequent, array('noun', 'propernoun', 'pronoun', 'determiner', 'preposition', 'aux'))) {
-						//r("-----\n");
-						//	r($consequent);
-						//	r($word);
-						//r($partialSentence);
-						//r("\n-----\n");
-						//exit;
-					}
-
-
+				$word = $Grammar->getWordForFeatures($consequent, $UnifiedDAG->getPathValue(array($consequent . '@' . $i)));
+				if ($word === false) {
 					return false;
-					$partialSentence = false;
-					break;
 				}
 
+				$partialSentence .= "[$word]";
 
 			} else {
-				// generate phrase
 
-				//r($consequent);
+				// restrict the unified DAG to this consequent
+				$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
+r($ConsequentDAG);
+				#at this point a part of $UnifiedDAG's feature structure should be extracted
+
+
+				// generate words for phrase
 				$phrase = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
-				if ($phrase !== false) {
-					$partialSentence .= ' ' . $phrase;
-				} else {
-					$partialSentence = false;
+				if ($phrase === false) {
 					return false;
-					break;
 				}
 
-
+				$partialSentence .= ' ' . $phrase;
 			}
 
+			echo $partialSentence."\n";
 		}
+
 		return $partialSentence;
 	}
 }

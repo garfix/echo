@@ -32,7 +32,7 @@ interface Grammar
 
 	public function generate(Sentence $Sentence);
 
-	public function getRulesForDAG($antecedent, LabeledDAG $DAG);
+	public function getRuleForDAG($antecedent, LabeledDAG $DAG);
 }
 
 ?>
