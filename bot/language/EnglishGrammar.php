@@ -1,6 +1,6 @@
 <?php
 /**
- * Provides all knowledge of the English language needed to parse English sentences.
+ * Provides all knowledge of the English language needed to parse and generate English sentences.
  *
  * Notes:
  *
@@ -9,7 +9,6 @@
  */
 
 require_once('SimpleGrammar.php');
-require_once('EarleyParser.php');
 
 class EnglishGrammar extends SimpleGrammar
 {
@@ -203,6 +202,7 @@ class EnglishGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
+							'tense' => 'past',
 							'sem' => array('predicate' => '*be'),
 						)
 					),
@@ -226,5 +226,3 @@ class EnglishGrammar extends SimpleGrammar
 		);
 	}
 }
-
-?>

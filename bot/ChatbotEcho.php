@@ -3,6 +3,11 @@
 require_once __DIR__ . '/ChatbotSettings.php';
 require_once __DIR__ . '/language/LanguageProcessor.php';
 
+/**
+ * Basic principles:
+ * - Easy to learn and use
+ * - Fast
+ */
 class ChatbotEcho
 {
 	/** There is only one agent */
@@ -11,6 +16,7 @@ class ChatbotEcho
 	/** Data structures */
 	private $declarativeMemory = array();
 	private $workingMemory = array();
+	private $knowledgeSources = array();
 
 	/** Modules */
 	private $LanguageProcessor;
@@ -29,6 +35,11 @@ class ChatbotEcho
 			self::$instance = new ChatbotEcho();
 		}
 		return self::$instance;
+	}
+
+	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
+	{
+		$this->knowledgeSources[] = $KnowledgeSource;
 	}
 
 	/**
@@ -135,24 +146,26 @@ class ChatbotEcho
 
 				$phraseStructure['act'] = $act;
 
-//r($act);
 				if ($act == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
 					$result = $this->check($phraseStructure);
-if (0) {
+
+					$features['head']['sentenceType'] = 'declarative';
 					if ($result) {
 						$answer = 'Yes.';
+
+						if (!$result) {
+							$features['head']['negate'] = true;
+						}
+						$s = $this->LanguageProcessor->generate($features, array());
+						if ($s) {
+							$answer .= ' ' . $s;
+						}
+
 					} else {
 						$answer = 'No.';
 					}
-} else {
-					$features['head']['sentenceType'] = 'declarative';
-	if (!$result) {
-		$features['head']['negate'] = true;
-	}
-	$answer = $this->LanguageProcessor->generate($features, array());
-}
 
 				} elseif ($act == 'wh-non-subject-question') {
 
@@ -186,18 +199,26 @@ if (0) {
 
 	private function check($phraseStructure)
 	{
-		require_once(__DIR__ . '/knowledge_source/DBPedia.php');
+		foreach ($this->knowledgeSources as $KnowledgeSource) {
+			$result = $KnowledgeSource->check($phraseStructure);
+			if ($result !== false) {
+				return $result;
+			}
+		}
 
-		$DBPedia = new DBPedia();
-		return $DBPedia->check($phraseStructure);
+		return false;
 	}
 
 	private function answerQuestionAboutObject($phraseStructure)
 	{
-		require_once(__DIR__ . '/knowledge_source/DBPedia.php');
+		foreach ($this->knowledgeSources as $KnowledgeSource) {
+			$result = $KnowledgeSource->answerQuestionAboutObject($phraseStructure);
+			if ($result !== false) {
+				return $result;
+			}
+		}
 
-		$DBPedia = new DBPedia();
-		return $DBPedia->answerQuestionAboutObject($phraseStructure);
+		return false;
 	}
 
 	/**

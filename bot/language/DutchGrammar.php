@@ -7,7 +7,9 @@ class DutchGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
-			'auteur' => 'noun',
+			'auteur' => array(
+				'noun' => array(),
+			),
 			'ben' => array(
 				'verb' => array('features' => array('person' => 1, 'number' => 's'))
 			),

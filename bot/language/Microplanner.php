@@ -3,7 +3,7 @@
 class Microplanner
 {
 	/**
-	 * Turns an intention (with meaning and speech act) into a syntax tree.
+	 * Turns phrase structure into a surface representation.
 	 *
 	 * This process consists of these context tasks (Building Natural Language Generation Systems, p. 49):
 	 * - Lexicalisation (choosing words and syntactic constructions)
@@ -11,8 +11,7 @@ class Microplanner
 	 * and this structure task:
 	 * - Aggregation (mapping semantic structures to linguistic structures)
 	 *
-	 * @param array $semantics
-	 * @return array A syntax tree
+	 * @return array|bool An array of words, or false.
 	 */
 	public function plan(array $phraseStructure, Grammar $Grammar)
 	{
@@ -23,9 +22,9 @@ class Microplanner
 			"S@0" => $phraseStructure
 		));
 
-		$sentence = $this->planPhrase('S', $FeatureDAG, $Grammar);
+		$words = $this->planPhrase('S', $FeatureDAG, $Grammar);
 
-		return $sentence;
+		return $words;
 	}
 
 	private function removeIds(array &$structure)
@@ -47,13 +46,12 @@ class Microplanner
 		}
 
 		list ($rule, $UnifiedDAG) = $result;
-//r($UnifiedDAG);
-		$partialSentence = '';
+		$words = array();
 
 		for ($i = 1; $i < count($rule); $i++) {
 
 			$consequent = $rule[$i]['cat'];
-echo "$consequent" . "\n";
+
 			if ($Grammar->isPartOfSpeech($consequent)) {
 
 				// find matching entry in lexicon
@@ -62,15 +60,12 @@ echo "$consequent" . "\n";
 					return false;
 				}
 
-				$partialSentence .= "[$word]";
+				$words[] = $word;
 
 			} else {
 
 				// restrict the unified DAG to this consequent
 				$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
-r($ConsequentDAG);
-				#at this point a part of $UnifiedDAG's feature structure should be extracted
-
 
 				// generate words for phrase
 				$phrase = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
@@ -78,12 +73,11 @@ r($ConsequentDAG);
 					return false;
 				}
 
-				$partialSentence .= ' ' . $phrase;
+				$words =  array_merge($words, $phrase);
 			}
 
-			echo $partialSentence."\n";
 		}
 
-		return $partialSentence;
+		return $words;
 	}
 }

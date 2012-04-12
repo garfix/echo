@@ -1,5 +1,8 @@
 <?php
-class DBPedia
+
+require_once __DIR__ . '/KnowledgeSource.php';
+
+class DBPedia extends KnowledgeSource
 {
 	static $cacheResults = true;
 	static $id = 0;
@@ -179,7 +182,7 @@ $triples = array_unique($triples);
 
 		if (ChatbotSettings::$debugKnowledge) r($query);
 
-		$result = false;// self::$cacheResults ? $this->getResultFromCache($query) : false;
+		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';

@@ -90,20 +90,22 @@ class SimpleGrammar implements Grammar
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$syntaxTree = $this->Microplanner->plan($Sentence->phraseStructure, $this);
-		if (!$syntaxTree) {
+		$words = $this->Microplanner->plan($Sentence->phraseStructure, $this);
+		if (!$words) {
 			return false;
 		}
 
-return $syntaxTree;
+		$Sentence->words = $words;
 
-		$Sentence->syntaxTree = $syntaxTree;
+		$Sentence->surfaceText = implode(' ', $words);
 
-		// create the output text from the syntactic structure
-		$output = $this->SurfaceRealiser->realise($syntaxTree);
-		$Sentence->surfaceText = $output;
+return $Sentence->surfaceText;
 
-		return $output;
+//		// create the output text from the syntactic structure
+//		$output = $this->SurfaceRealiser->realise($syntaxTree);
+//		$Sentence->surfaceText = $output;
+//
+//		return $output;
 	}
 
 	/**
@@ -345,41 +347,18 @@ return $syntaxTree;
 			if (isset($features['head']['sem']['name'])) {
 				$word = $features['head']['sem']['name'];
 			}
-
 		} elseif ($partOfSpeech == 'aux') {
-			$word = '?aux?';
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
-			$word = '?by?';
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
-			$word = '?det?';
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'noun') {
-			if (isset($features['head']['sem']['isa'])) {
-				$isa = $features['head']['sem']['isa'];
-				if ($findWord = $this->getNoun($isa)) {
-					$word = $findWord;
-				}
-			}
-
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'preposition') {
-			$word = '?of?';
-//r($features);exit;
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'verb') {
-
-			if (isset($features['head']['sem']['predicate'])) {
-				$predicate = $features['head']['sem']['predicate'];
-
-				if (isset($features['head']['tense'])) {
-					$tense = $features['head']['tense'];
-
-					if ($findWord = $this->getVerb($predicate, $tense)) {
-//die($findWord);
-						$word = $findWord;
-					}
-				}
-
-			}
-//			$word = '?aux?';
-//r($features);exit;
+			$word = $this->getWord($partOfSpeech, $features);
 		} else {
 			//r($partOfSpeech);exit;
 		}
@@ -390,36 +369,67 @@ return $syntaxTree;
 	/*
 	 * TODO: SLOW IMPLEMENTATION
 	 */
-	public function getVerb($predicate, $tense)
+	public function getWord($partOfSpeech, $features)
 	{
+		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
+		$tense = isset($features['head']['tense']) ? $features['head']['tense'] : null;
+		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
+		$type = isset($features['head']['sem']['type']) ? $features['head']['sem']['type'] : null;
+		$isa = isset($features['head']['sem']['isa']) ? $features['head']['sem']['isa'] : null;
+
 		foreach ($this->lexicon as $word => $data) {
-			if (!isset($data['verb'])) {
+
+			// check if the word belongs to this part of speech
+			if (!isset($data[$partOfSpeech])) {
 				continue;
 			}
-			$head = $data['verb']['features']['head'];
-			if (isset($head['tense'])) {
-				if ($head['tense'] == $tense && $head['sem']['predicate'] == $predicate) {
-					return $word;
+
+			if ($isa) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['isa'])) {
+					continue;
+				}
+				if ($data[$partOfSpeech]['features']['head']['sem']['isa'] != $isa) {
+					continue;
 				}
 			}
 
-		}
-
-		return false;
-	}
-
-	public function getNoun($isa)
-	{
-		foreach ($this->lexicon as $word => $data) {
-			if (!isset($data['noun'])) {
-				continue;
-			}
-			$head = $data['noun']['features']['head'];
-			if (isset($head['sem']['isa'])) {
-				if ($head['sem']['isa'] == $isa) {
-					return $word;
+			if ($predicate) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['predicate'])) {
+					continue;
+				}
+				if ($data[$partOfSpeech]['features']['head']['sem']['predicate'] != $predicate) {
+					continue;
 				}
 			}
+
+			if ($tense) {
+				if (!isset($data[$partOfSpeech]['features']['head']['tense'])) {
+					continue;
+				}
+				if ($data[$partOfSpeech]['features']['head']['tense'] != $tense) {
+					continue;
+				}
+			}
+
+			if ($determiner) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['determiner'])) {
+					continue;
+				}
+				if ($data[$partOfSpeech]['features']['head']['sem']['determiner'] != $determiner) {
+					continue;
+				}
+			}
+
+			if ($type) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['type'])) {
+					continue;
+				}
+				if ($data[$partOfSpeech]['features']['head']['sem']['type'] != $type) {
+					continue;
+				}
+			}
+
+			return $word;
 
 		}
 
@@ -447,8 +457,7 @@ return $syntaxTree;
 					$rule[$line['cat'] . '@' . $i] = $line['features'];
 					$i++;
 				}
-//r($antecedent);
-//r($rule);exit;
+
 				$Dag = new LabeledDAG($rule);
 				$UnifiedDag = $Dag->unify($FeatureDAG);
 
@@ -456,25 +465,20 @@ return $syntaxTree;
 					return array($rawRule, $UnifiedDag);
 				}
 			} else {
-//				echo $antecedent . "\n";
-//	r($FeatureDAG);
-//	r($pattern);
-//	exit;
 			}
 		}
-//echo count($matches);exit;
+
 		return false;
 	}
 
 	public function getSyntax()
 	{
-#todo: de regel-identifiers mogen weer weg
 		return array(
 			'S' => array(
 
 				// passive declarative
 				// The car was driven by John
-				'S NP aux VP psvPrep NP' => array(
+				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'aux'),
@@ -579,7 +583,7 @@ return $syntaxTree;
 			),
 			'VP' => array(
 				// drives
-				'verb' => array(
+				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
@@ -587,7 +591,7 @@ return $syntaxTree;
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb (object{sem-1})
-				'verb NP' => array(
+				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2{sem-2}' => null)), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
@@ -595,7 +599,7 @@ return $syntaxTree;
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb (object{sem-1})
-				'verb PP' => array(
+				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
@@ -616,41 +620,41 @@ return $syntaxTree;
 			),
 			'NP' => array(
 				// children
-				'noun' => array(
+				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'noun', 'features' => array('head-1' => null)),
 				),
 				// John
-				'propernoun' => array(
+				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
-				'pronoun' => array(
+				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
-				'determiner noun' => array(
+				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
 					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// the car in the lot
-//				'NP PP' => array(
-//					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-//					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
-//					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
-//				),
-				'NP PP' => array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem{sem-1}' => array('modifier{sem-2}' => null, 'id' => 1)))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
+				array(
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
+//				'NP PP' => array(
+//					array('cat' => 'NP', 'features' => array('head-1' => array('sem{sem-1}' => array('modifier{sem-2}' => null, 'id' => 1)))),
+//					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
+//					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
+//				),
 			),
 			'PP' => array(
 				// in the lot
-				'preposition NP' => array(
+				array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object{sem-1}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
@@ -665,6 +669,8 @@ return $syntaxTree;
 		// de volgorde van deze regels is namelijk die van meest restrictief naar minst restrictief
 		// de volgorde van de regels hierboven is die van aflopende trefkans
 
+		// merk op dat de sem juist niet gedeeld wordt met de head van de rule; ze worden juist gescheiden
+
 		// de 'rule's zijn nodig om te bepalen hoe de phrase structure verdeeld wordt over de syntactisch regel
 
 		return array(
@@ -674,7 +680,7 @@ return $syntaxTree;
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null, 'arg1-1' => null, 'arg2-1' => null)))),
 						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem{arg2-1}' => null))),
-						array('cat' => 'aux', 'features' => array()),
+						array('cat' => 'aux', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '*be')))),
 						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem{arg1-1}' => null))),
