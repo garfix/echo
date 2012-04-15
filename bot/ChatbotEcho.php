@@ -5,14 +5,13 @@ require_once __DIR__ . '/language/LanguageProcessor.php';
 
 /**
  * Basic principles:
- * - Easy to learn and use
- * - Fast
+ * - Easy to learn and use (the user should not need to add stuff that can be preprogrammed)
+ * - Fast (use the fastest algorithms known)
+ * - Testable (every function needs a unit test)
+ * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
  */
 class ChatbotEcho
 {
-	/** There is only one agent */
-	private static $instance = null;
-
 	/** Data structures */
 	private $declarativeMemory = array();
 	private $workingMemory = array();
@@ -21,7 +20,7 @@ class ChatbotEcho
 	/** Modules */
 	private $LanguageProcessor;
 
-	private function __construct()
+	public function __construct()
 	{
 		$this->LanguageProcessor = new LanguageProcessor();
 	}
@@ -127,29 +126,27 @@ class ChatbotEcho
 		$Sentence = $this->parseFirstLine($question);
 		if ($Sentence) {
 
-			$features = $Sentence->syntaxTree['features'];
+			$features = $Sentence->phraseStructure['features'];
 
 			$id = 0;
 
 			self::addIds($features, $id);
 
 
-			$tree = $features['head'];
-//			$phraseStructure = $Sentence->phraseStructure;
-			$phraseStructure = $tree['sem'];
+			$head = $features['head'];
+
+			$sem = $head['sem'];
 //r($phraseStructure);
 
-			//if (isset($phraseStructure['act'])) {
-			//	$act = $phraseStructure['act'];
-			if (isset($tree['sentenceType'])) {
-				$act = $tree['sentenceType'];
+			if (isset($head['sentenceType'])) {
+				$sentenceType = $head['sentenceType'];
 
-				$phraseStructure['act'] = $act;
+				$sem['act'] = $sentenceType;
 
-				if ($act == 'yes-no-question') {
+				if ($sentenceType == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
-					$result = $this->check($phraseStructure);
+					$result = $this->check($sem);
 
 					$features['head']['sentenceType'] = 'declarative';
 					if ($result) {
@@ -167,9 +164,9 @@ class ChatbotEcho
 						$answer = 'No.';
 					}
 
-				} elseif ($act == 'wh-non-subject-question') {
+				} elseif ($sentenceType == 'wh-non-subject-question') {
 
-					$answer = $this->answerQuestionAboutObject($phraseStructure);
+					$answer = $this->answerQuestionAboutObject($sem);
 
 				}
 			}
@@ -241,9 +238,4 @@ class ChatbotEcho
 
 		return $boundTriple;
 	}
-}
-
-function r($string, $return = false)
-{
-	return print_r($string, $return);
 }

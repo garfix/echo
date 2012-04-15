@@ -37,7 +37,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
 			'author' => array(
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('isa' => '*author')))
+					'features' => array('head' => array('sem' => array('category' => '*author')))
 				),
 			),
 			'book' => array(
@@ -51,7 +51,7 @@ class EnglishGrammar extends SimpleGrammar
 					),
 				),
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('isa' => '*book'))),
+					'features' => array('head' => array('sem' => array('category' => '*book'))),
 				),
 			),
 			'born' => array(
@@ -82,7 +82,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 'p'),
-							'sem' => array('isa' => '*child')
+							'sem' => array('category' => '*child')
 						)
 					),
 				),
@@ -92,7 +92,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 //							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('isa' => '*daughter')
+							'sem' => array('category' => '*daughter')
 						)
 					),
 				),
@@ -114,7 +114,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('isa' => '*flight'),
+							'sem' => array('category' => '*flight'),
 						)
 					)
 				),
@@ -147,7 +147,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 's'),
-							'sem' => array('isa' => '*firstPerson')
+							'sem' => array('category' => '*firstPerson')
 						)
 					)
 				),

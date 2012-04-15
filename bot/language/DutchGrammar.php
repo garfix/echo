@@ -37,7 +37,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 //							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('isa' => '*daughter')
+							'sem' => array('category' => '*daughter')
 						)
 					),
 				),
@@ -87,7 +87,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 'p'),
-							'sem' => array('isa' => '*child')
+							'sem' => array('category' => '*child')
 						)
 					),
 				)

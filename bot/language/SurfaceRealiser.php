@@ -12,12 +12,12 @@ class SurfaceRealiser
 	/**
 	 * Turns a syntax tree into surface text
 	 *
-	 * @param array $syntaxTree
+	 * @param array $phraseStructure
 	 * @return string|false A human readable string, or false
 	 */
-	public function realise(array $syntaxTree)
+	public function realise(array $phraseStructure)
 	{
-		$words = $this->realisePhrase($syntaxTree);
+		$words = $this->realisePhrase($phraseStructure);
 
 		$sentence = implode(' ', $words);
 

@@ -55,7 +55,12 @@ class Microplanner
 			if ($Grammar->isPartOfSpeech($consequent)) {
 
 				// find matching entry in lexicon
-				$word = $Grammar->getWordForFeatures($consequent, $UnifiedDAG->getPathValue(array($consequent . '@' . $i)));
+				$value = $UnifiedDAG->getPathValue(array($consequent . '@' . $i));
+				if (!$value) {
+					$value = array();
+				}
+
+				$word = $Grammar->getWordForFeatures($consequent, $value);
 				if ($word === false) {
 					return false;
 				}

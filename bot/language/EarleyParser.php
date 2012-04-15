@@ -87,7 +87,7 @@ class EarleyParser
 			'dotPosition' => self::CONSEQUENT,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
-			'dag' => self::createLabeledDag($rule),
+			'dag' => self::createLabeledDag($rule, true),
 		);
 
 		$this->enqueue($initialState, 0);
@@ -151,14 +151,14 @@ class EarleyParser
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
-		foreach ($this->Grammar->getRulesForConstituent($nextConsequent) as $newRule) {
+		foreach ($this->Grammar->getRulesForAntecedent($nextConsequent) as $newRule) {
 
 			$predictedState = array(
 				'rule' => $newRule,
 				'dotPosition' => self::CONSEQUENT,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
-				'dag' => self::createLabeledDag($newRule),
+				'dag' => self::createLabeledDag($newRule, true),
 			);
 			$this->enqueue($predictedState, $endWordIndex);
 		}
@@ -332,8 +332,7 @@ class EarleyParser
 		return $state['rule'][$state['dotPosition']]['cat'];
 	}
 
-#todo verplaats omdat hij ook elders gebruikt wordt
-	public static function createLabeledDag(array $rule)
+	public static function createLabeledDag(array $rule, $addIds = false)
 	{
 		static $id = 0;
 
@@ -344,19 +343,22 @@ class EarleyParser
 			}
 		}
 
-		// create unique id
-		$callback = function(&$item, $key) use ($tree, &$id)
-		{
-			$id++;
+		if ($addIds) {
 
-			if ($key == 'id') {
-				$item = array('id' . $id => null);
-			}
+			// create unique id
+			$callback = function(&$item, $key) use ($tree, &$id)
+			{
+				$id++;
 
-			return true;
-		};
+				if ($key == 'id') {
+					$item = array('id' . $id => null);
+				}
 
-		array_walk_recursive($tree, $callback);
+				return true;
+			};
+
+			array_walk_recursive($tree, $callback);
+		}
 
 		return new LabeledDAG($tree);
 	}

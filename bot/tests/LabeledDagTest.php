@@ -118,20 +118,6 @@ function testLabeledDAG()
 	$F22->setPathValue(array('colour'), 'blue');
 	test(341, $F22->getPathValue(array('color')), 'blue');
 
-	// bound
-//	$F23 = new LabeledDAG(array());
-//	test(351, $F23->isBound(), false);
-//	$F24 = new LabeledDAG(array('a' => null));
-//	test(352, $F24->isBound(), false);
-//	$F25 = new LabeledDAG(array('a' => array()));
-//	test(353, $F25->isBound(), false);
-//	$F26 = new LabeledDAG(array('a' => array('b' => null)));
-//	test(354, $F26->isBound(), false);
-//	$F27 = new LabeledDAG(array('a' => array('b' => 1)));
-//	test(355, $F27->isBound(), true);
-//	$F28 = new LabeledDAG(array('a' => 1));
-//	test(356, $F28->isBound(), true);
-
 	// match
 	$F28 = new LabeledDAG(array('a' => 1));
 	$F29 = new LabeledDAG(array('a' => 1, 'b' => null));

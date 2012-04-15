@@ -115,7 +115,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/author
 		if (
-			isset($s['isa']) && ($s['isa'] == '*author') &&
+			isset($s['category']) && ($s['category'] == '*author') &&
 			isset($s['of'])
 		) {
 			$objectId = $s['of']['id'];
@@ -138,7 +138,7 @@ class DBPedia extends KnowledgeSource
 			isset($s['predicate']) && ($s['predicate'] == '*have') &&
 			isset($s['arg1']) &&
 			isset($s['arg2']) &&
-			($s['arg2']['isa'] == '*child')
+			($s['arg2']['category'] == '*child')
 		) {
 			$possessor = $s['arg1']['id'];
 			$posession = $s['arg2']['id'];
@@ -150,7 +150,7 @@ class DBPedia extends KnowledgeSource
 			isset($s['predicate']) && ($s['predicate'] == '*be') &&
 			isset($s['arg1']) &&
 			isset($s['arg2']['of']) &&
-			($s['arg2']['isa'] == '*daughter')
+			($s['arg2']['category'] == '*daughter')
 		) {
 			$childId = $s['arg1']['id'];
 			$parentId = $s['arg2']['of']['id'];

@@ -12,5 +12,11 @@ function test($case, $got, $expected) {
 	}
 }
 
+
+function r($string, $return = false)
+{
+	return print_r($string, $return);
+}
+
 testLabeledDAG();
 testLanguage();

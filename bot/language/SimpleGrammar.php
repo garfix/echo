@@ -16,7 +16,7 @@ class SimpleGrammar implements Grammar
 	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR ***';
 
 	/** @var array An array of grammar rules, ordered by antecedent */
-	protected $syntax = null;
+	protected $parseRules = null;
 	protected $generationRules = null;
 	protected $lexicon = null;
 	protected $Microplanner = null;
@@ -26,19 +26,12 @@ class SimpleGrammar implements Grammar
 	{
 		// structure
 		$this->lexicon = $this->getLexicon();
-		$this->syntax = $this->getSyntax();
+		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
 
 		// output processing
 		$this->Microplanner = new Microplanner();
 		$this->SurfaceRealiser = new SurfaceRealiser();
-	}
-
-	private static function getUniqueId()
-	{
-		static $id = 0;
-
-		return ++$id;
 	}
 
 	/**
@@ -48,7 +41,7 @@ class SimpleGrammar implements Grammar
 	 * @param array $context The roles that are currently active.
 	 * @return bool Succesful parse?
 	 */
-	public function parse($input, $Sentence, $workingMemory)
+	public function parse($input, $Sentence, array $workingMemory)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($input, $Sentence);
@@ -57,43 +50,29 @@ class SimpleGrammar implements Grammar
 		$this->makeLexicalEntries($Sentence);
 
 		// create one or more parse trees from this sentence
-		$Sentence->syntaxTree = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
+		$Sentence->phraseStructure = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
 
-		return !empty($Sentence->syntaxTree);
-	}
-
-	protected function word2phraseStructure($word, $partOfSpeech)
-	{
-		if (isset($this->word2phraseStructure[$partOfSpeech][$word])) {
-			return $this->word2phraseStructure[$partOfSpeech][$word];
-		} else {
-			trigger_error('Word meaning not known: ' . $word . ' (' . $partOfSpeech . ')');
-			return null;
-		}
-	}
-
-	public function getFeatures($word, $partOfSpeech)
-	{
-		if (isset($this->lexicon[$word][$partOfSpeech]['features'])) {
-			return $this->lexicon[$word][$partOfSpeech]['features'];
-		} else {
-			return array();
-		}
+		return !empty($Sentence->phraseStructure);
 	}
 
 	/**
 	 * This function turns structured meaning into a line of text.
 	 *
 	 * @param Sentence $Sentence A sentence that contains a speech act, and meaning.
-	 * @return mixed Either a sentence in natural language, or false, in case of failure
+	 * @return string|false Either a sentence in natural language, or false, in case of failure
 	 */
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$words = $this->Microplanner->plan($Sentence->phraseStructure, $this);
-		if (!$words) {
+		$lexicalEntries = $this->Microplanner->plan($Sentence->phraseStructure, $this);
+		if (!$lexicalEntries) {
 			return false;
 		}
+
+		$Sentence->lexicalEntries = $lexicalEntries;
+
+		//$words = $this->turnLexicalEntriesIntoWords();
+$words = $lexicalEntries;
 
 		$Sentence->words = $words;
 
@@ -102,7 +81,7 @@ class SimpleGrammar implements Grammar
 return $Sentence->surfaceText;
 
 //		// create the output text from the syntactic structure
-//		$output = $this->SurfaceRealiser->realise($syntaxTree);
+//		$output = $this->SurfaceRealiser->realise($phraseStructure);
 //		$Sentence->surfaceText = $output;
 //
 //		return $output;
@@ -185,16 +164,10 @@ return $Sentence->surfaceText;
 		$Sentence->lexicalEntries = $lexicalEntries;
 	}
 
-	/**
-	 * Returns all grammar rules with $constituent as their antecedent.
-	 *
-	 * @param string $constituent
-	 * @return array A grammar rule.
-	 */
-	public function getRulesForConstituent($constituent)
+	public function getRulesForAntecedent($antecedent)
 	{
-		if (isset($this->syntax[$constituent])) {
-			return $this->syntax[$constituent];
+		if (isset($this->parseRules[$antecedent])) {
+			return $this->parseRules[$antecedent];
 		} else {
 			return array();
 		}
@@ -339,7 +312,7 @@ return $Sentence->surfaceText;
 		}
 	}
 
-	public function getWordForFeatures($partOfSpeech, $features)
+	public function getWordForFeatures($partOfSpeech, array $features)
 	{
 		$word = false;
 
@@ -359,8 +332,6 @@ return $Sentence->surfaceText;
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'verb') {
 			$word = $this->getWord($partOfSpeech, $features);
-		} else {
-			//r($partOfSpeech);exit;
 		}
 
 		return $word;
@@ -369,13 +340,13 @@ return $Sentence->surfaceText;
 	/*
 	 * TODO: SLOW IMPLEMENTATION
 	 */
-	public function getWord($partOfSpeech, $features)
+	private function getWord($partOfSpeech, $features)
 	{
 		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
 		$tense = isset($features['head']['tense']) ? $features['head']['tense'] : null;
 		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
 		$type = isset($features['head']['sem']['type']) ? $features['head']['sem']['type'] : null;
-		$isa = isset($features['head']['sem']['isa']) ? $features['head']['sem']['isa'] : null;
+		$isa = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
 
 		foreach ($this->lexicon as $word => $data) {
 
@@ -385,10 +356,10 @@ return $Sentence->surfaceText;
 			}
 
 			if ($isa) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['isa'])) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
 					continue;
 				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['isa'] != $isa) {
+				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $isa) {
 					continue;
 				}
 			}
@@ -439,7 +410,7 @@ return $Sentence->surfaceText;
 	/**
 	 * Returns the first rule that have $antecedent and that match $features.
 	 * @param $antecedent
-	 * @param $features
+	 * @param LabeledDAG $FeatureDAG
 	 */
 	public function getRuleForDAG($antecedent, LabeledDAG $FeatureDAG)
 	{
@@ -450,28 +421,19 @@ return $Sentence->surfaceText;
 			if ($FeatureDAG->match($pattern)) {
 
 				$rawRule = $generationRule['rule'];
-
-				$rule = array();
-				$i = 0;
-				foreach ($rawRule as $line) {
-					$rule[$line['cat'] . '@' . $i] = $line['features'];
-					$i++;
-				}
-
-				$Dag = new LabeledDAG($rule);
+				$Dag = EarleyParser::createLabeledDag($rawRule, false);
 				$UnifiedDag = $Dag->unify($FeatureDAG);
 
 				if ($UnifiedDag) {
 					return array($rawRule, $UnifiedDag);
 				}
-			} else {
 			}
 		}
 
 		return false;
 	}
 
-	public function getSyntax()
+	protected function getParseRules()
 	{
 		return array(
 			'S' => array(
@@ -646,11 +608,6 @@ return $Sentence->surfaceText;
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
-//				'NP PP' => array(
-//					array('cat' => 'NP', 'features' => array('head-1' => array('sem{sem-1}' => array('modifier{sem-2}' => null, 'id' => 1)))),
-//					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
-//					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
-//				),
 			),
 			'PP' => array(
 				// in the lot
@@ -663,7 +620,7 @@ return $Sentence->surfaceText;
 		);
 	}
 
-	public function getGenerationRules()
+	protected function getGenerationRules()
 	{
 		// de volgorde van deze regels wijkt waarschijnlijk af van de syntax regels hierboven;
 		// de volgorde van deze regels is namelijk die van meest restrictief naar minst restrictief
@@ -689,26 +646,26 @@ return $Sentence->surfaceText;
 			),
 			'NP' => array(
 				array(
-					'condition' => array('head' => array('sem' => array('isa' => null, 'modifier' => null))),
+					'condition' => array('head' => array('sem' => array('category' => null, 'modifier' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'modifier-1' => null, 'determiner-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'modifier-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'determiner-1' => null)))),
 						array('cat' => 'PP', 'features' => array('head' => array('sem{modifier-1}' => null)))
 					)
 				),
 				array(
-					'condition' => array('head' =>array('sem' =>  array('isa' => null, 'determiner' => null))),
+					'condition' => array('head' =>array('sem' =>  array('category' => null, 'determiner' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null, 'determiner-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'determiner-1' => null)))),
 						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('determiner-1' => null)))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category-1' => null)))),
 					)
 				),
 				array(
-					'condition' => array('head' => array('sem' => array('isa' => null))),
+					'condition' => array('head' => array('sem' => array('category' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('isa-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null)))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category-1' => null)))),
 					)
 				),
 				array(

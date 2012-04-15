@@ -14,20 +14,23 @@ class Sentence
 	/** @var An array of lower-case words */
 	public $words = null;
 
+	/** @var An array of words or word combinations that form the smallest possible group to receive a part-of-speech */
+	public $lexicalEntries = null;
+
 	/** @var The token that ends the sentence, like . ! ? or Sentence::INDIGNATION */
 	public $terminator = null;
 
-	/** @var The syntax tree  */
-	public $syntaxTree = null;
+	/** @var The syntax tree with added features */
+	public $phraseStructure = null;
 
 	/**
-	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpsyntaxtree/) of the parse tree.
+	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpphraseStructure/) of the parse tree.
 	 *
 	 * @return string
 	 */
 	public function getSyntaxString()
 	{
-		return $this->getBranchSyntax($this->syntaxTree);
+		return $this->getBranchSyntax($this->phraseStructure);
 	}
 
 	private function getBranchSyntax($branch)
@@ -49,7 +52,7 @@ class Sentence
 
 	public function getPhraseStructureString()
 	{
-		return $this->getPhraseStructureBranch($this->syntaxTree['features']);
+		return $this->getPhraseStructureBranch($this->phraseStructure['features']);
 	}
 
 	private function getPhraseStructureBranch($phraseStructure)
@@ -71,6 +74,6 @@ class Sentence
 
 	public function getStructure($treeIndex = 0)
 	{
-		return $this->syntaxTree['features']['head']['sentenceType'];
+		return $this->phraseStructure['features']['head']['sentenceType'];
 	}
 }
