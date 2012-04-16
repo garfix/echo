@@ -157,7 +157,7 @@ class ChatbotEcho
 						}
 						$s = $this->LanguageProcessor->generate($features, array());
 						if ($s) {
-							$answer .= ' ' . $s;
+							$answer .= ' ' . $s . '.';
 						}
 
 					} else {

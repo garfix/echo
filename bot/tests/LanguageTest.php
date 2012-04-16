@@ -27,7 +27,7 @@ function testLanguage()
 	// agreement success
 	// S => NP VP
 	$Sentence = $Echo->parseFirstLine('I am Patrick');
-	test(101, $Sentence->getSyntaxString(), '[S [NP [pronoun i]][VP [verb am][NP [propernoun patrick]]]]');
+	test(101, $Sentence->getSyntaxString(), '[S [NP [pronoun i]][VP [verb am][NP [propernoun Patrick]]]]');
 	test(102, $Sentence->phraseStructure['features']['head']['agreement']['person'], 1);
 	test(103, $Sentence->phraseStructure['features']['head']['agreement']['number'], 's');
 
@@ -45,19 +45,18 @@ function testLanguage()
 	// S => aux NP VP ; DBPedia
 	$answer = $Echo->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 	test(201, $answer, 'Yes. Lord Byron was influenced by the author of Paradise Lost.');
-//	test(201, $answer, 'Yes.');
-//return;
+
 	$answer = $Echo->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 	test(202, $answer, 'Yes.');
 
 	$Sentence = $Echo->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
-	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun lord byron]][VP [verb influenced]][passivisationPreposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun paradise lost]]]]]');
+	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]');
 	test(204, $Sentence->phraseStructure['features']['head']['agreement']['number'], 's');
 	test(205, $Sentence->phraseStructure['features']['head']['sem']['predicate'], '*influence');
-	test(206, $Sentence->phraseStructure['features']['head']['sem']['arg1']['modifier']['object']['name'], 'paradise lost');
-	test(206, $Sentence->phraseStructure['features']['head']['sem']['arg1']['category'], '*author');
-	test(206, $Sentence->phraseStructure['features']['head']['sem']['arg1']['determiner'], '*the');
-	test(209, $Sentence->phraseStructure['features']['head']['sem']['arg2']['name'], 'lord byron');
+	test(206, $Sentence->phraseStructure['features']['head']['sem']['arg1']['modifier']['object']['name'], 'Paradise Lost');
+	test(207, $Sentence->phraseStructure['features']['head']['sem']['arg1']['category'], '*author');
+	test(208, $Sentence->phraseStructure['features']['head']['sem']['arg1']['determiner'], '*the');
+	test(209, $Sentence->phraseStructure['features']['head']['sem']['arg2']['name'], 'Lord Byron');
 	test(210, $Sentence->phraseStructure['features']['head']['sentenceType'], 'yes-no-question');
 
 	// S => WhNP aux NP VP
@@ -92,6 +91,6 @@ function testLanguage()
 
 	// S => NP VP
 	$Sentence = $Echo->parseFirstLine('John sees the book');
-	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun john]][VP [verb sees][NP [determiner the][noun book]]]]');
-	test(255, $Sentence->getPhraseStructureString(), "[head: [tense: present, sem: [predicate: *see, arg2: [category: *book, determiner: *the], arg1: [name: john]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
+	test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun John]][VP [verb sees][NP [determiner the][noun book]]]]');
+	test(255, $Sentence->getPhraseStructureString(), "[head: [tense: present, sem: [predicate: *see, arg2: [category: *book, determiner: *the], arg1: [name: John]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
 }

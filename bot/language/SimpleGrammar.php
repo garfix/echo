@@ -47,10 +47,10 @@ class SimpleGrammar implements Grammar
 		$this->splitIntoWords($input, $Sentence);
 
 		// continue to work with words as they occur in the lexicon
-		$this->makeLexicalEntries($Sentence);
+		$this->makeLexicalItems($Sentence);
 
 		// create one or more parse trees from this sentence
-		$Sentence->phraseStructure = EarleyParser::getFirstTree($this, $Sentence->lexicalEntries);
+		$Sentence->phraseStructure = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
 
 		return !empty($Sentence->phraseStructure);
 	}
@@ -64,15 +64,15 @@ class SimpleGrammar implements Grammar
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$lexicalEntries = $this->Microplanner->plan($Sentence->phraseStructure, $this);
-		if (!$lexicalEntries) {
+		$lexicalItems = $this->Microplanner->plan($Sentence->phraseStructure, $this);
+		if (!$lexicalItems) {
 			return false;
 		}
 
-		$Sentence->lexicalEntries = $lexicalEntries;
+		$Sentence->lexicalItems = $lexicalItems;
 
-		//$words = $this->turnLexicalEntriesIntoWords();
-$words = $lexicalEntries;
+		//$words = $this->turnLexicalItemsIntoWords();
+$words = $lexicalItems;
 
 		$Sentence->words = $words;
 
@@ -127,41 +127,42 @@ return $Sentence->surfaceText;
 	 *
 	 * @param Sentence $Sentence
 	 */
-	private function makeLexicalEntries($Sentence)
+	private function makeLexicalItems($Sentence)
 	{
-		$lexicalEntries = array();
+		$lexicalItems = array();
 		$count = count($Sentence->words);
 		$store = '';
 
 		for ($i = 0; $i < $count; $i++) {
 
 			// lowercase
-			$lcWord = strtolower($Sentence->words[$i]);
+			$word = $Sentence->words[$i];
+			$lcWord = strtolower($word);
 
 			// word is recognized?
 			if (isset($this->lexicon[$lcWord])) {
 				// pending store?
 				if ($store != '') {
-					$lexicalEntries[] = $store;
+					$lexicalItems[] = $store;
 					$store = '';
 				}
-				$lexicalEntries[] = $lcWord;
+				$lexicalItems[] = $lcWord;
 			} else {
 				// glue together with previously unidentified words
 				if ($store == '') {
-					$store = $lcWord;
+					$store = $word;
 				} else {
-					$store .= ' ' . $lcWord;
+					$store .= ' ' . $word;
 				}
 			}
 		}
 
 		// pending store?
 		if ($store != '') {
-			$lexicalEntries[] = $store;
+			$lexicalItems[] = $store;
 		}
 
-		$Sentence->lexicalEntries = $lexicalEntries;
+		$Sentence->lexicalItems = $lexicalItems;
 	}
 
 	public function getRulesForAntecedent($antecedent)

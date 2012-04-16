@@ -14,8 +14,10 @@ class Sentence
 	/** @var An array of lower-case words */
 	public $words = null;
 
-	/** @var An array of words or word combinations that form the smallest possible group to receive a part-of-speech */
-	public $lexicalEntries = null;
+	/** @var An array of words or word combinations that form the smallest possible group to receive a part-of-speech
+	 * See also: http://en.wikipedia.org/wiki/Lexical_item
+	 */
+	public $lexicalItems = null;
 
 	/** @var The token that ends the sentence, like . ! ? or Sentence::INDIGNATION */
 	public $terminator = null;
