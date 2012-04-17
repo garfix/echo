@@ -43,6 +43,7 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
+
 	private function interpret($phraseStructure, &$triples, &$select, $parentId)
 	{
 		$s = $phraseStructure;
@@ -164,7 +165,6 @@ class DBPedia extends KnowledgeSource
 			}
 		}
 	}
-
 
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
