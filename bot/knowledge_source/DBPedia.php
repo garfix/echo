@@ -165,6 +165,7 @@ class DBPedia extends KnowledgeSource
 		}
 	}
 
+
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
 	 */
