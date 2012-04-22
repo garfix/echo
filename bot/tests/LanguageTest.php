@@ -10,7 +10,7 @@ function testLanguage()
 	// $Echo->addGrammar(new EnglishGrammar());
 	// $Echo->addGrammar(new DutchGrammar());
 
-
+if (true) {
 	// S => VP ; parse sentences in two languages in the same line
 	$sentences = $Echo->parse('Book that flight. Boek die vlucht');
 	test(1, $sentences[0]->language, 'english');
@@ -45,7 +45,6 @@ function testLanguage()
 	// S => aux NP VP ; DBPedia
 	$answer = $Echo->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 	test(201, $answer, 'Yes. Lord Byron was influenced by the author of Paradise Lost.');
-
 	$answer = $Echo->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 	test(202, $answer, 'Yes.');
 
@@ -58,10 +57,11 @@ function testLanguage()
 	test(208, $Sentence->phraseStructure['features']['head']['sem']['arg1']['determiner'], '*the');
 	test(209, $Sentence->phraseStructure['features']['head']['sem']['arg2']['name'], 'Lord Byron');
 	test(210, $Sentence->phraseStructure['features']['head']['sentenceType'], 'yes-no-question');
-
+}
 	// S => WhNP aux NP VP
 	$answer = $Echo->answer("How many children did Lord Byron have?");
-	test(211, $answer, '2');
+	test(211, $answer, 'Lord Byron had 2 children.');
+//return;
 	$answer = $Echo->answer("Hoeveel kinderen had Lord Byron?");
 	test(212, $answer, '2');
 	$Sentence = $Echo->parseFirstLine('How many children did Lord Byron have?');

@@ -8,7 +8,7 @@
  *    to a method that would first stem all words before proceeding with the next step.
  */
 
-require_once('SimpleGrammar.php');
+require_once(__DIR__ . '/SimpleGrammar.php');
 
 class EnglishGrammar extends SimpleGrammar
 {
@@ -125,6 +125,7 @@ class EnglishGrammar extends SimpleGrammar
 //						'arguments' => 1,
 						'head' => array(
 							'sem' => array('predicate' => '*have'),
+							//'progressive' => 0
 						)
 					),
 				),

@@ -7,7 +7,7 @@ class DBPedia extends KnowledgeSource
 	static $cacheResults = true;
 	static $id = 0;
 
-	public function check($phraseStructure)
+	public function check($phraseStructure, $sentenceType)
 	{
 		if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 
@@ -15,7 +15,7 @@ class DBPedia extends KnowledgeSource
 
 		$triples = array();
 		$select = '';
-		$this->interpret($phraseStructure, $triples, $select, null);
+		$this->interpret($phraseStructure, $sentenceType, $triples, $select, null);
 
 		if (ChatbotSettings::$debugKnowledge) r($triples);
 
@@ -26,13 +26,13 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	public function answerQuestionAboutObject($phraseStructure)
+	public function answerQuestionAboutObject($phraseStructure, $sentenceType)
 	{
 		if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
 
 		$triples = array();
 		$select = '';
-		$this->interpret($phraseStructure, $triples, $select, null);
+		$this->interpret($phraseStructure, $sentenceType, $triples, $select, null);
 
 		if (ChatbotSettings::$debugKnowledge) r($triples);
 
@@ -44,7 +44,7 @@ class DBPedia extends KnowledgeSource
 	}
 
 
-	private function interpret($phraseStructure, &$triples, &$select, $parentId)
+	private function interpret($phraseStructure, $sentenceType, &$triples, &$select, $parentId)
 	{
 		$s = $phraseStructure;
 
@@ -55,10 +55,8 @@ class DBPedia extends KnowledgeSource
 		}
 
 		// yes-no-question
-		if (isset($s['act'])) {
-			if ($s['act'] == 'yes-no-question') {
-				$select = '1';
-			}
+		if ($sentenceType == 'yes-no-question') {
+			$select = '1';
 		}
 
 		if (isset($s['question']) && isset($s['determiner'])) {
@@ -161,7 +159,7 @@ class DBPedia extends KnowledgeSource
 		// interpret child elements
 		foreach ($s as $key => $value) {
 			if (is_array($value)) {
-				$this->interpret($s[$key], $triples, $select, $subjectId);
+				$this->interpret($s[$key], $sentenceType, $triples, $select, $subjectId);
 			}
 		}
 	}

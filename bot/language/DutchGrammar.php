@@ -8,7 +8,9 @@ class DutchGrammar extends SimpleGrammar
 	{
 		return array(
 			'auteur' => array(
-				'noun' => array(),
+				'noun' => array(
+					'features' => array('head' => array('sem' => array('category' => '*author')))
+				),
 			),
 			'ben' => array(
 				'verb' => array('features' => array('person' => 1, 'number' => 's'))

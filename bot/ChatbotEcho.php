@@ -8,6 +8,7 @@ require_once __DIR__ . '/language/LanguageProcessor.php';
  * - Easy to learn and use (the user should not need to add stuff that can be preprogrammed)
  * - Fast (use the fastest algorithms known)
  * - Testable (every function needs a unit test)
+ * - Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
  */
 class ChatbotEcho
@@ -141,12 +142,10 @@ class ChatbotEcho
 			if (isset($head['sentenceType'])) {
 				$sentenceType = $head['sentenceType'];
 
-				$sem['act'] = $sentenceType;
-
 				if ($sentenceType == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
-					$result = $this->check($sem);
+					$result = $this->check($sem, $sentenceType);
 
 					$features['head']['sentenceType'] = 'declarative';
 					if ($result) {
@@ -166,7 +165,24 @@ class ChatbotEcho
 
 				} elseif ($sentenceType == 'wh-non-subject-question') {
 
-					$answer = $this->answerQuestionAboutObject($sem);
+					$answer = $this->answerQuestionAboutObject($sem, $sentenceType);
+
+					// incorporate the answer in the original question
+					if ($answer !== false) {
+
+						#todo: this should be made more generic
+
+						if (isset($features['head']['sem']['arg2']['question'])) {
+							unset($features['head']['sem']['arg2']['question']);
+							$features['head']['sem']['arg2']['determiner'] = $answer;
+//r($features);
+							$sentence = $this->LanguageProcessor->generate($features, array());
+							if ($sentence) {
+								$answer = $sentence;
+							}
+						}
+
+					}
 
 				}
 			}
@@ -194,10 +210,10 @@ class ChatbotEcho
 	}
 
 
-	private function check($phraseStructure)
+	private function check($phraseStructure, $sentenceType)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->check($phraseStructure);
+			$result = $KnowledgeSource->check($phraseStructure, $sentenceType);
 			if ($result !== false) {
 				return $result;
 			}
@@ -206,10 +222,10 @@ class ChatbotEcho
 		return false;
 	}
 
-	private function answerQuestionAboutObject($phraseStructure)
+	private function answerQuestionAboutObject($phraseStructure, $sentenceType)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject($phraseStructure);
+			$result = $KnowledgeSource->answerQuestionAboutObject($phraseStructure, $sentenceType);
 			if ($result !== false) {
 				return $result;
 			}
