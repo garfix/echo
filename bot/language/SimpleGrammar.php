@@ -50,9 +50,9 @@ class SimpleGrammar implements Grammar
 		$this->makeLexicalItems($Sentence);
 
 		// create one or more parse trees from this sentence
-		$Sentence->phraseStructure = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
+		$Sentence->phraseSpecification = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
 
-		return !empty($Sentence->phraseStructure);
+		return !empty($Sentence->phraseSpecification);
 	}
 
 	/**
@@ -64,27 +64,35 @@ class SimpleGrammar implements Grammar
 	public function generate(Sentence $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$lexicalItems = $this->Microplanner->plan($Sentence->phraseStructure, $this);
+		$lexicalItems = $this->Microplanner->plan($Sentence->phraseSpecification, $this);
 		if (!$lexicalItems) {
 			return false;
 		}
 
 		$Sentence->lexicalItems = $lexicalItems;
 
-		//$words = $this->turnLexicalItemsIntoWords();
 $words = $lexicalItems;
 
 		$Sentence->words = $words;
 
-		$Sentence->surfaceText = implode(' ', $words);
+		$Sentence->surfaceText = $this->createSurfaceText($Sentence);
 
 return $Sentence->surfaceText;
 
 //		// create the output text from the syntactic structure
-//		$output = $this->SurfaceRealiser->realise($phraseStructure);
+//		$output = $this->SurfaceRealiser->realise($phraseSpecification);
 //		$Sentence->surfaceText = $output;
 //
 //		return $output;
+	}
+
+	private function createSurfaceText($Sentence)
+	{
+		$words = $Sentence->words;
+
+		$words[0] = ucfirst($words[0]);
+
+		return implode(' ', $words) . '.';
 	}
 
 	/**
@@ -285,6 +293,8 @@ return $Sentence->surfaceText;
 			'whword', // WH-word that may not be followed by an NP
 			'whwordNP', // WH-word that may be followed by an NP
 			'aux',
+			'auxBe', // am, are, is, ...
+			'auxDo', // do, does, did, ...
 			'preposition',
 			'passivisationPreposition',
 		));
@@ -326,7 +336,11 @@ return $Sentence->surfaceText;
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
-			$word = $this->getWord($partOfSpeech, $features);
+			if (is_numeric($features['head']['sem']['determiner'])) {
+				$word = $features['head']['sem']['determiner'];
+			} else {
+				$word = $this->getWord($partOfSpeech, $features);
+			}
 		} elseif ($partOfSpeech == 'noun') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'preposition') {
@@ -444,7 +458,7 @@ return $Sentence->surfaceText;
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'aux'),
+					array('cat' => 'aux', 'features' => array('head-1' => null)),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('predicate' => null, 'arg1{sem-2}' => null, 'arg2{sem-1}' => null)))),
 					array('cat' => 'passivisationPreposition'),
 					array('cat' => 'NP', 'features' => array('head-3' => array('sem-2' => null))),
@@ -482,33 +496,30 @@ return $Sentence->surfaceText;
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 				),
-				// How many miles was John driving?
-				// progressive
-				// VP is the head constituent (head-1)
-				// aux, NP, and VP agree (agreement-2)
-				// WhNP semantics is passed directly to the VP (sem-1)
-				// NP forms the subject of VP's verb (subject{sem-2})
+
+				// How many children did John have?
+				// NP delivers arg1
 #todo alleen-engels constructie!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 1, 'agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
 				),
 				// Where was John born?
-				// perfect tense
+				// NP delivers arg2
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
+					array('cat' => 'auxBe', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('progressive' => 0, 'agreement-2' => null, 'sem-1' => array('arg2{sem-2}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg2{sem-2}' => null)))),
 				),
 
 				// yes-no questions
@@ -518,7 +529,7 @@ return $Sentence->surfaceText;
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb (object{sem-1})
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg2{sem-1}' => null)))),
@@ -538,7 +549,7 @@ return $Sentence->surfaceText;
 				// The verb is '*be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
 					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null, 'arg2{sem-2}' => null)))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
@@ -629,7 +640,7 @@ return $Sentence->surfaceText;
 
 		// merk op dat de sem juist niet gedeeld wordt met de head van de rule; ze worden juist gescheiden
 
-		// de 'rule's zijn nodig om te bepalen hoe de phrase structure verdeeld wordt over de syntactisch regel
+		// de 'rule's zijn nodig om te bepalen hoe de phrase specification verdeeld wordt over de syntactisch regel
 
 		return array(
 			'S' => array(
@@ -643,7 +654,16 @@ return $Sentence->surfaceText;
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem{arg1-1}' => null))),
 					)
-				)
+				),
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null, 'arg1-1' => null, 'arg2-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem{arg1-1}' => null))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem{arg2-1}' => null))),
+					),
+				),
 			),
 			'NP' => array(
 				array(
@@ -679,12 +699,20 @@ return $Sentence->surfaceText;
 			),
 			'VP' => array(
 				array(
+					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null, ''))),
+					'rule' => array(
+						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'verb', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'NP', 'features' => array())
+					)
+				),
+				array(
 					'condition' => array('head' => array('sem' => array('predicate' => null))),
 					'rule' => array(
 						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
 						array('cat' => 'verb', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
 					)
-				)
+				),
 			),
 			'PP' => array(
 				array(
@@ -695,7 +723,7 @@ return $Sentence->surfaceText;
 						array('cat' => 'NP', 'features' => array('head' => array('sem{object-1}' => null))),
 					)
 				),
-			)
+			),
 		);
 	}
 }

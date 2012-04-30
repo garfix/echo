@@ -23,16 +23,16 @@ class Sentence
 	public $terminator = null;
 
 	/** @var The syntax tree with added features */
-	public $phraseStructure = null;
+	public $phraseSpecification = null;
 
 	/**
-	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpphraseStructure/) of the parse tree.
+	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpphraseSpecification/) of the parse tree.
 	 *
 	 * @return string
 	 */
 	public function getSyntaxString()
 	{
-		return $this->getBranchSyntax($this->phraseStructure);
+		return $this->getBranchSyntax($this->phraseSpecification);
 	}
 
 	private function getBranchSyntax($branch)
@@ -52,19 +52,19 @@ class Sentence
 		return $string;
 	}
 
-	public function getPhraseStructureString()
+	public function getPhraseSpecificationString()
 	{
-		return $this->getPhraseStructureBranch($this->phraseStructure['features']);
+		return $this->getPhraseSpecificationBranch($this->phraseSpecification['features']);
 	}
 
-	private function getPhraseStructureBranch($phraseStructure)
+	private function getPhraseSpecificationBranch($phraseSpecification)
 	{
 		$parts = array();
-		foreach ($phraseStructure as $key => $val) {
+		foreach ($phraseSpecification as $key => $val) {
 			if ($key == 'id') {
 				continue;
 			} elseif (is_array($val)) {
-				$valString = $this->getPhraseStructureBranch($val);
+				$valString = $this->getPhraseSpecificationBranch($val);
 			} else {
 				$valString = $val;
 			}
@@ -76,6 +76,6 @@ class Sentence
 
 	public function getStructure($treeIndex = 0)
 	{
-		return $this->phraseStructure['features']['head']['sentenceType'];
+		return $this->phraseSpecification['features']['head']['sentenceType'];
 	}
 }

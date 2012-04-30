@@ -59,7 +59,6 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => '*bear'),
-							'progressive' => 0
 						)
 					),
 				),
@@ -98,7 +97,20 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 			'did' => array(
-				'aux' => array(),
+				'aux' => array(
+					'features' => array(
+						'head' => array(
+							'tense' => 'past',
+						)
+					),
+				),
+				'auxDo' => array(
+					'features' => array(
+						'head' => array(
+							'tense' => 'past',
+						)
+					),
+				),
 			),
 			'die' => array(
 				'verb' => array(
@@ -119,13 +131,22 @@ class EnglishGrammar extends SimpleGrammar
 					)
 				),
 			),
+			'had' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'tense' => 'past',
+							'sem' => array('predicate' => '*have'),
+						)
+					),
+				),
+			),
 			'have' => array(
 				'verb' => array(
 					'features' => array(
 //						'arguments' => 1,
 						'head' => array(
 							'sem' => array('predicate' => '*have'),
-							//'progressive' => 0
 						)
 					),
 				),
@@ -201,6 +222,14 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'was' => array(
 				'aux' => array(
+					'features' => array(
+						'head' => array(
+							'tense' => 'past',
+							'sem' => array('predicate' => '*be'),
+						)
+					),
+				),
+				'auxBe' => array(
 					'features' => array(
 						'head' => array(
 							'tense' => 'past',

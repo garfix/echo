@@ -3,7 +3,7 @@
 class Microplanner
 {
 	/**
-	 * Turns phrase structure into a surface representation.
+	 * Turns phrase specification into a surface representation.
 	 *
 	 * This process consists of these context tasks (Building Natural Language Generation Systems, p. 49):
 	 * - Lexicalisation (choosing words and syntactic constructions)
@@ -13,13 +13,13 @@ class Microplanner
 	 *
 	 * @return array|bool An array of words, or false.
 	 */
-	public function plan(array $phraseStructure, Grammar $Grammar)
+	public function plan(array $phraseSpecification, Grammar $Grammar)
 	{
-//r($phraseStructure);exit;
-		$this->removeIds($phraseStructure);
+//r($phraseSpecification);exit;
+		$this->removeIds($phraseSpecification);
 
 		$FeatureDAG = new LabeledDAG(array(
-			"S@0" => $phraseStructure
+			"S@0" => $phraseSpecification
 		));
 
 		$words = $this->planPhrase('S', $FeatureDAG, $Grammar);
@@ -40,6 +40,7 @@ class Microplanner
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
+#r($DAG);
 		$result = $Grammar->getRuleForDAG($antecedent, $DAG);
 		if ($result === false) {
 			return false;
@@ -51,6 +52,10 @@ class Microplanner
 		for ($i = 1; $i < count($rule); $i++) {
 
 			$consequent = $rule[$i]['cat'];
+
+			if (ChatbotSettings::$debugGenerator) {
+				echo $consequent . "\n";
+			}
 
 			if ($Grammar->isPartOfSpeech($consequent)) {
 

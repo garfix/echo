@@ -61,7 +61,6 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => '*bear'),
-							'progressive' => 0
 						)
 					),
 				)
@@ -122,6 +121,13 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'werd' => array(
 				'aux' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*be'),
+						)
+					),
+				),
+				'auxBe' => array(
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => '*be'),

@@ -95,17 +95,17 @@ class LanguageProcessor
 	 * @param $workingMemory - the DISCOURSE HISTORY
 	 * @return string A human readable sentence, or false if an error occurred
 	 */
-	public function generate(array $phraseStructure, $workingMemory)
+	public function generate(array $phraseSpecification, $workingMemory)
 	{
 		$language = $this->currentLanguage;
 
-		return $this->generateInLanguage($phraseStructure, $language, $workingMemory);
+		return $this->generateInLanguage($phraseSpecification, $language, $workingMemory);
 	}
 
-	protected function generateInLanguage($phraseStructure, $language, $workingMemory)
+	protected function generateInLanguage($phraseSpecification, $language, $workingMemory)
 	{
 		$Sentence = new Sentence();
-		$Sentence->phraseStructure = $phraseStructure;
+		$Sentence->phraseSpecification = $phraseSpecification;
 
 		return $this->getGrammar($language)->generate($Sentence);
 	}

@@ -7,15 +7,15 @@ class DBPedia extends KnowledgeSource
 	static $cacheResults = true;
 	static $id = 0;
 
-	public function check($phraseStructure, $sentenceType)
+	public function check($phraseSpecification, $sentenceType)
 	{
-		if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
+		if (ChatbotSettings::$debugKnowledge) r($phraseSpecification);
 
 //		$objectId = self::getVariableId();
 
 		$triples = array();
 		$select = '';
-		$this->interpret($phraseStructure, $sentenceType, $triples, $select, null);
+		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
 
 		if (ChatbotSettings::$debugKnowledge) r($triples);
 
@@ -26,13 +26,13 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	public function answerQuestionAboutObject($phraseStructure, $sentenceType)
+	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
 	{
-		if (ChatbotSettings::$debugKnowledge) r($phraseStructure);
+		if (ChatbotSettings::$debugKnowledge) r($phraseSpecification);
 
 		$triples = array();
 		$select = '';
-		$this->interpret($phraseStructure, $sentenceType, $triples, $select, null);
+		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
 
 		if (ChatbotSettings::$debugKnowledge) r($triples);
 
@@ -44,9 +44,9 @@ class DBPedia extends KnowledgeSource
 	}
 
 
-	private function interpret($phraseStructure, $sentenceType, &$triples, &$select, $parentId)
+	private function interpret($phraseSpecification, $sentenceType, &$triples, &$select, $parentId)
 	{
-		$s = $phraseStructure;
+		$s = $phraseSpecification;
 
 		if (isset($s['id'])) {
 			$subjectId = $s['id'];

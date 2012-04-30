@@ -10,6 +10,11 @@ require_once __DIR__ . '/language/LanguageProcessor.php';
  * - Testable (every function needs a unit test)
  * - Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
+ *
+ * TODO:
+ * sentenceType => mood
+ * 1st person (in artikel voorbeeld => 3rd person)
+ * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
  */
 class ChatbotEcho
 {
@@ -127,7 +132,7 @@ class ChatbotEcho
 		$Sentence = $this->parseFirstLine($question);
 		if ($Sentence) {
 
-			$features = $Sentence->phraseStructure['features'];
+			$features = $Sentence->phraseSpecification['features'];
 
 			$id = 0;
 
@@ -137,17 +142,18 @@ class ChatbotEcho
 			$head = $features['head'];
 
 			$sem = $head['sem'];
-//r($phraseStructure);
+//r($phraseSpecification);
 
 			if (isset($head['sentenceType'])) {
 				$sentenceType = $head['sentenceType'];
+
+				$features['head']['sentenceType'] = 'declarative';
 
 				if ($sentenceType == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
 					$result = $this->check($sem, $sentenceType);
 
-					$features['head']['sentenceType'] = 'declarative';
 					if ($result) {
 						$answer = 'Yes.';
 
@@ -156,7 +162,7 @@ class ChatbotEcho
 						}
 						$s = $this->LanguageProcessor->generate($features, array());
 						if ($s) {
-							$answer .= ' ' . $s . '.';
+							$answer .= ' ' . $s;
 						}
 
 					} else {
@@ -171,7 +177,7 @@ class ChatbotEcho
 					if ($answer !== false) {
 
 						#todo: this should be made more generic
-
+//r($features);
 						if (isset($features['head']['sem']['arg2']['question'])) {
 							unset($features['head']['sem']['arg2']['question']);
 							$features['head']['sem']['arg2']['determiner'] = $answer;
@@ -210,10 +216,10 @@ class ChatbotEcho
 	}
 
 
-	private function check($phraseStructure, $sentenceType)
+	private function check($phraseSpecification, $sentenceType)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->check($phraseStructure, $sentenceType);
+			$result = $KnowledgeSource->check($phraseSpecification, $sentenceType);
 			if ($result !== false) {
 				return $result;
 			}
@@ -222,10 +228,10 @@ class ChatbotEcho
 		return false;
 	}
 
-	private function answerQuestionAboutObject($phraseStructure, $sentenceType)
+	private function answerQuestionAboutObject($phraseSpecification, $sentenceType)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject($phraseStructure, $sentenceType);
+			$result = $KnowledgeSource->answerQuestionAboutObject($phraseSpecification, $sentenceType);
 			if ($result !== false) {
 				return $result;
 			}
