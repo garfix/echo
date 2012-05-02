@@ -12,6 +12,11 @@ require_once(__DIR__ . '/SimpleGrammar.php');
 
 class EnglishGrammar extends SimpleGrammar
 {
+	public function getLanguage()
+	{
+		return 'english';
+	}
+
 	public function getLexicon()
 	{
 #todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?

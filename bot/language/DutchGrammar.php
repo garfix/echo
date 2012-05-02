@@ -4,6 +4,11 @@ require_once(__DIR__ . '/SimpleGrammar.php');
 
 class DutchGrammar extends SimpleGrammar
 {
+	public function getLanguage()
+	{
+		return 'dutch';
+	}
+
 	public function getLexicon()
 	{
 		return array(

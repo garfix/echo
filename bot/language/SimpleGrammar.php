@@ -8,7 +8,7 @@ require_once(__DIR__ . '/EarleyParser.php');
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
  */
-class SimpleGrammar implements Grammar
+abstract class SimpleGrammar implements Grammar
 {
 	const END_OF_LINE = '** EOL **';
 	const INDIGNATION = '** INDIGNATION **';
@@ -49,10 +49,15 @@ class SimpleGrammar implements Grammar
 		// continue to work with words as they occur in the lexicon
 		$this->makeLexicalItems($Sentence);
 
-		// create one or more parse trees from this sentence
-		$Sentence->phraseSpecification = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
+		// create a sentence specification from this lexical items
+		$result = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
+		$Sentence->phraseSpecification = $result['tree'];
 
-		return !empty($Sentence->phraseSpecification);
+		if (!$result['success']) {
+			$Sentence->errorMessage = $result['errorMessage'];
+		}
+
+		return $result['success'];
 	}
 
 	/**
@@ -71,13 +76,14 @@ class SimpleGrammar implements Grammar
 
 		$Sentence->lexicalItems = $lexicalItems;
 
+# todo: split items into words
 $words = $lexicalItems;
 
 		$Sentence->words = $words;
 
 		$Sentence->surfaceText = $this->createSurfaceText($Sentence);
 
-return $Sentence->surfaceText;
+		return $Sentence->surfaceText;
 
 //		// create the output text from the syntactic structure
 //		$output = $this->SurfaceRealiser->realise($phraseSpecification);

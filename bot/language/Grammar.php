@@ -3,6 +3,12 @@
 interface Grammar
 {
 	/**
+	 * Returns the name of the language of this grammar.
+	 * @return string
+	 */
+	public function getLanguage();
+
+	/**
 	 * This function turns a line of text into a Sentence.
 	 *
 	 * @param string $text Raw input.

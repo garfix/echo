@@ -25,6 +25,9 @@ class Sentence
 	/** @var The syntax tree with added features */
 	public $phraseSpecification = null;
 
+	/** @var Describes what went wrong while processing this sentence */
+	public $errorMessage = null;
+
 	/**
 	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpphraseSpecification/) of the parse tree.
 	 *
@@ -77,5 +80,10 @@ class Sentence
 	public function getStructure($treeIndex = 0)
 	{
 		return $this->phraseSpecification['features']['head']['sentenceType'];
+	}
+
+	public function getErrorMessage()
+	{
+		return $this->errorMessage;
 	}
 }

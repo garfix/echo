@@ -53,7 +53,7 @@ class Microplanner
 
 			$consequent = $rule[$i]['cat'];
 
-			if (ChatbotSettings::$debugGenerator) {
+			if (Settings::$debugGenerator) {
 				echo $consequent . "\n";
 			}
 

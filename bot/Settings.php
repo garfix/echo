@@ -1,5 +1,5 @@
 <?php
-class ChatbotSettings
+class Settings
 {
 	public static $debugParser = false;
 	public static $debugGenerator = false;

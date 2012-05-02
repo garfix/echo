@@ -9,7 +9,7 @@ class DBPedia extends KnowledgeSource
 
 	public function check($phraseSpecification, $sentenceType)
 	{
-		if (ChatbotSettings::$debugKnowledge) r($phraseSpecification);
+		if (Settings::$debugKnowledge) r($phraseSpecification);
 
 //		$objectId = self::getVariableId();
 
@@ -17,28 +17,28 @@ class DBPedia extends KnowledgeSource
 		$select = '';
 		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
 
-		if (ChatbotSettings::$debugKnowledge) r($triples);
+		if (Settings::$debugKnowledge) r($triples);
 
 		$result = $this->query($triples, $select);
 
-		if (ChatbotSettings::$debugKnowledge) { r($result); echo "\n"; }
+		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
 
 		return $result;
 	}
 
 	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
 	{
-		if (ChatbotSettings::$debugKnowledge) r($phraseSpecification);
+		if (Settings::$debugKnowledge) r($phraseSpecification);
 
 		$triples = array();
 		$select = '';
 		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
 
-		if (ChatbotSettings::$debugKnowledge) r($triples);
+		if (Settings::$debugKnowledge) r($triples);
 
 		$result = $this->query($triples, $select);
 
-		if (ChatbotSettings::$debugKnowledge) { r($result); echo "\n"; }
+		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
 
 		return $result;
 	}
@@ -179,7 +179,7 @@ $triples = array_unique($triples);
 			$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $triples) . "\n}";
 		}
 
-		if (ChatbotSettings::$debugKnowledge) r($query);
+		if (Settings::$debugKnowledge) r($query);
 
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
 		if ($result === false) {
@@ -199,7 +199,7 @@ $triples = array_unique($triples);
 			}
 		}
 
-//if (ChatbotSettings::$debugKnowledge) r($result);
+//if (Settings::$debugKnowledge) r($result);
 
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 			$value = $result['results']['bindings'][0]['callret-0']['value'];

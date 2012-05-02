@@ -31,11 +31,19 @@ class EarleyParser
 		'sentences' => array()
 	);
 
+	/** @var A message that is created for the user when something goes wrong */
+	private $errorMessage = 'q';
+
 	private function __construct($Grammar, $words, $singleTree)
 	{
 		$this->Grammar = $Grammar;
 		$this->words = $words;
 		$this->singleTree = $singleTree;
+	}
+
+	public function getErrorMessage()
+	{
+		return $this->errorMessage;
 	}
 
 	/**
@@ -56,13 +64,24 @@ class EarleyParser
 
 	/**
 	 * Returns the first tree that can be parsed from $words, given a $Grammar.
+	 *
+	 * @return array A structure:
+	 * - success: boolean
+	 * - tree: either a tree, or null
+	 * - errorMessages: either null or a message
 	 */
 	public static function getFirstTree(Grammar $Grammar, array $words)
 	{
 		$Parser = new EarleyParser($Grammar, $words, true);
 		$Parser->parseWords($words);
+
 		$tree = $Parser->extractFirstTree();
-		return $tree;
+
+		return array(
+			'success' => $tree !== null,
+			'tree' => $tree,
+			'errorMessage' => $Parser->getErrorMessage()
+		);
 	}
 
 	private function parseWords()
@@ -181,7 +200,7 @@ class EarleyParser
 
 			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
 			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
-;
+
 			$scannedState = array(
 				'rule' => array(
 					array('cat' => $nextConsequent),
@@ -383,7 +402,7 @@ class EarleyParser
 
 	private function showDebug($function, array $state)
 	{
-		if (ChatbotSettings::$debugParser) {
+		if (Settings::$debugParser) {
 			$rule = $state['rule'];
 			$dotPosition = $state['dotPosition'];
 			$start = $state['startWordIndex'];
