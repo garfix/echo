@@ -16,7 +16,9 @@ class Microplanner
 	public function plan(array $phraseSpecification, Grammar $Grammar)
 	{
 //r($phraseSpecification);exit;
-		$this->removeIds($phraseSpecification);
+		if (Settings::$addIds) {
+			$this->removeIds($phraseSpecification);
+		}
 
 		$FeatureDAG = new LabeledDAG(array(
 			"S@0" => $phraseSpecification

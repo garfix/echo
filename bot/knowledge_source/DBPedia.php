@@ -7,6 +7,16 @@ class DBPedia extends KnowledgeSource
 	static $cacheResults = true;
 	static $id = 0;
 
+	public function isProperNoun($identifier)
+	{
+		$triples = array(
+			array('?object', 'rdfs:label', "'$identifier'@en")
+		);
+		$select = 'COUNT(?object)';
+		$result = $this->query($triples, $select);
+		return $result;
+	}
+
 	public function check($phraseSpecification, $sentenceType)
 	{
 		if (Settings::$debugKnowledge) r($phraseSpecification);
@@ -167,7 +177,7 @@ class DBPedia extends KnowledgeSource
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
 	 */
-	public function query($where, $select = '*')
+	private function query($where, $select = '*')
 	{
 		if (is_array($where)) {
 			$clauses = $where;
@@ -182,6 +192,7 @@ $triples = array_unique($triples);
 		if (Settings::$debugKnowledge) r($query);
 
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
+//r($query);exit;
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -221,13 +232,13 @@ $triples = array_unique($triples);
 		return $value;
 	}
 
-	public function querySingleRow($query)
+	private function querySingleRow($query)
 	{
 		$result = $this->query($query);
 		return $result ? $result[0] : null;
 	}
 
-	public function querySingleCell($query)
+	private function querySingleCell($query)
 	{
 		$result = $this->querySingleRow($query);
 		if ($result) {

@@ -13,10 +13,9 @@ interface Grammar
 	 *
 	 * @param string $text Raw input.
 	 * @param Sentence The sentence to create
-	 * @param array $workingMemory
 	 * @return bool Succesful parse?
 	 */
-	public function parse($text, $Sentence, array $workingMemory);
+	public function parse($text, $Sentence);
 
 	/**
 	 * Returns a surface representation for a given sentence,

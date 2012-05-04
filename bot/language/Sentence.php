@@ -5,6 +5,9 @@
  */
 class Sentence
 {
+	/** @var The Conversation in which this sentence took place */
+	public $Conversation = null;
+
 	/** @var The language of this sentence (english/dutch) */
 	public $language = null;
 
@@ -27,6 +30,16 @@ class Sentence
 
 	/** @var Describes what went wrong while processing this sentence */
 	public $errorMessage = null;
+
+	public function __construct(Conversation $Conversation)
+	{
+		$this->Conversation = $Conversation;
+	}
+
+	public function getConversation()
+	{
+		return $this->Conversation;
+	}
 
 	/**
 	 * Returns a "labeled bracket notation" (see http://ironcreek.net/phpphraseSpecification/) of the parse tree.

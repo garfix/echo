@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/Settings.php';
 require_once __DIR__ . '/language/Conversation.php';
+require_once __DIR__ . '/language/KnowledgeManager.php';
 
 /**
  * Echo is a conversational agent.
@@ -25,22 +26,24 @@ require_once __DIR__ . '/language/Conversation.php';
  * 1st person (in artikel voorbeeld => 3rd person)
  * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
  * namespaces
+ * errors: try / catch
  */
-class Echo1
+class AgentEcho
 {
-	/** @var Sources of information that are needed to answer questions */
-	private $knowledgeSources = array();
+	/** @var A manager for knowledge sources */
+	private $KnowledgeManager;
 
 	/** @var Available grammars */
 	private $availableGrammars = array();
 
 	public function __construct()
 	{
+		$this->KnowledgeManager = new KnowledgeManager();
 	}
 
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
-		$this->knowledgeSources[] = $KnowledgeSource;
+		$this->KnowledgeManager->addKnowledgeSource($KnowledgeSource);
 	}
 
 	public function addGrammar(Grammar $Grammar)
@@ -53,42 +56,15 @@ class Echo1
 		return $this->availableGrammars;
 	}
 
+	public function getKnowledgeManager()
+	{
+		return $this->KnowledgeManager;
+	}
+
 	public function startConversation()
 	{
 		$Conversation = new Conversation($this);
 
-		if (!empty($this->availableGrammars)) {
-			$Grammar = reset($this->availableGrammars);
-		} else {
-			$Grammar = null;
-		}
-
-		$Conversation->setCurrentGrammar($Grammar);
-
 		return $Conversation;
-	}
-
-	public function check($phraseSpecification, $sentenceType)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->check($phraseSpecification, $sentenceType);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
-	}
-
-	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject($phraseSpecification, $sentenceType);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
 	}
 }

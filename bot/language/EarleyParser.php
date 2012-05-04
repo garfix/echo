@@ -32,9 +32,9 @@ class EarleyParser
 	);
 
 	/** @var A message that is created for the user when something goes wrong */
-	private $errorMessage = 'q';
+	private $errorMessage = null;
 
-	private function __construct($Grammar, $words, $singleTree)
+	private function __construct(Grammar $Grammar, array $words, $singleTree)
 	{
 		$this->Grammar = $Grammar;
 		$this->words = $words;

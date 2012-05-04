@@ -1,13 +1,13 @@
 <?php
 
-require_once __DIR__ . '/../Echo.php';
+require_once __DIR__ . '/../AgentEcho.php';
 require_once __DIR__ . '/../knowledge_source/DBPedia.php';
 require_once __DIR__ . '/../language/DutchGrammar.php';
 require_once __DIR__ . '/../language/EnglishGrammar.php';
 
 function testLanguage()
 {
-	$Echo = new Echo1();
+	$Echo = new AgentEcho();
 	$Echo->addKnowledgeSource(new DBPedia());
 	$Echo->addGrammar(new EnglishGrammar());
 	$Echo->addGrammar(new DutchGrammar());
@@ -51,7 +51,7 @@ if (!$single) {
 	test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, arg2: [question: 1], arg1: [category: *firstPerson]], sentenceType: wh-non-subject-question, voice: active]]");
 	test(113, $Sentence->getStructure(), "wh-non-subject-question");
 	test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
-
+}
 	$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 	test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [NP [determiner the][noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]');
 	test(204, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
@@ -61,6 +61,7 @@ if (!$single) {
 	test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner'], '*the');
 	test(209, $Sentence->phraseSpecification['features']['head']['sem']['arg2']['name'], 'Lord Byron');
 	test(210, $Sentence->phraseSpecification['features']['head']['sentenceType'], 'yes-no-question');
+if (!$single) {
 
 	// S => NP VP
 	$Sentence = $Conversation->parseFirstLine('John sees the book');
@@ -75,17 +76,16 @@ if (!$single) {
 	// S => aux NP VP ; DBPedia
 	$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 	test(201, $answer, 'Yes. Lord Byron was influenced by the author of Paradise Lost.');
+
 	$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 	test(202, $answer, 'Yes.');
 
 	// S => WhNP aux NP VP
 	$answer = $Conversation->answer("How many children did Lord Byron have?");
 	test(211, $answer, 'Lord Byron had 2 children.');
-
-}
 	$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
-	test(212, $answer, '2');
-if (!$single) {
+	test(212, $answer, 'Lord Byron had 2 kinderen.');
+
 	$Sentence = $Conversation->parseFirstLine('How many children did Lord Byron have?');
 	test(213, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
 

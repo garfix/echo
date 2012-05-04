@@ -15,7 +15,8 @@ abstract class SimpleGrammar implements Grammar
 	const ELLIPSIS = '*** ELLIPSIS ***';
 	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR ***';
 
-	/** @var array An array of grammar rules, ordered by antecedent */
+	const LONGEST_PROPER_NOUN = 7;
+
 	protected $parseRules = null;
 	protected $generationRules = null;
 	protected $lexicon = null;
@@ -41,13 +42,16 @@ abstract class SimpleGrammar implements Grammar
 	 * @param array $context The roles that are currently active.
 	 * @return bool Succesful parse?
 	 */
-	public function parse($input, $Sentence, array $workingMemory)
+	public function parse($input, $Sentence)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($input, $Sentence);
 
 		// continue to work with words as they occur in the lexicon
-		$this->makeLexicalItems($Sentence);
+		$success = $this->makeLexicalItems($Sentence);
+		if (!$success) {
+			return false;
+		}
 
 		// create a sentence specification from this lexical items
 		$result = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
@@ -139,45 +143,96 @@ $words = $lexicalItems;
 	 * 1) words are put into lowercase
 	 * 2) unknown words are grouped together (so that 'john carpenter' becomes a single entry)
 	 *
+	 * todo coumpound words
+	 *
 	 * @param Sentence $Sentence
 	 */
-	private function makeLexicalItems($Sentence)
+	private function makeLexicalItems(Sentence $Sentence)
 	{
 		$lexicalItems = array();
+		$words = $Sentence->words;
 		$count = count($Sentence->words);
-		$store = '';
 
 		for ($i = 0; $i < $count; $i++) {
 
+			$word = $words[$i];
+
 			// lowercase
-			$word = $Sentence->words[$i];
 			$lcWord = strtolower($word);
 
 			// word is recognized?
 			if (isset($this->lexicon[$lcWord])) {
-				// pending store?
-				if ($store != '') {
-					$lexicalItems[] = $store;
-					$store = '';
-				}
 				$lexicalItems[] = $lcWord;
 			} else {
-				// glue together with previously unidentified words
-				if ($store == '') {
-					$store = $word;
+				$involvedWords = $this->findLongestProperNoun($Sentence, array_slice($words, $i, self::LONGEST_PROPER_NOUN));
+				if ($involvedWords === false) {
+					return false;
 				} else {
-					$store .= ' ' . $word;
+					$properNoun = implode(' ', $involvedWords);
+					$lexicalItems[] = $properNoun;
+					$i += count($involvedWords) - 1;
 				}
 			}
 		}
 
-		// pending store?
-		if ($store != '') {
-			$lexicalItems[] = $store;
+		$Sentence->lexicalItems = $lexicalItems;
+		return true;
+	}
+
+	private function findLongestProperNoun(Sentence $Sentence, $words)
+	{
+		while (count($words) > 0) {
+
+			$properNoun = implode(' ', $words);
+			if ($Sentence->getConversation()->isProperNoun($properNoun)) {
+				return $words;
+			}
+
+			// remove last word
+			array_pop($words);
 		}
 
-		$Sentence->lexicalItems = $lexicalItems;
+		return false;
 	}
+
+//	private function makeLexicalItems(Sentence $Sentence)
+//	{
+//		$lexicalItems = array();
+//		$count = count($Sentence->words);
+//		$store = '';
+//
+//		for ($i = 0; $i < $count; $i++) {
+//
+//			// lowercase
+//			$word = $Sentence->words[$i];
+//			$lcWord = strtolower($word);
+//
+//			// word is recognized?
+//			if (isset($this->lexicon[$lcWord])) {
+//				// pending store?
+//				if ($store != '') {
+//					$lexicalItems[] = $store;
+//					$store = '';
+//				}
+//				$lexicalItems[] = $lcWord;
+//			} else {
+//
+//				// glue together with previously unidentified words
+//				if ($store == '') {
+//					$store = $word;
+//				} else {
+//					$store .= ' ' . $word;
+//				}
+//			}
+//		}
+//
+//		// pending store?
+//		if ($store != '') {
+//			$lexicalItems[] = $store;
+//		}
+//
+//		$Sentence->lexicalItems = $lexicalItems;
+//	}
 
 	public function getRulesForAntecedent($antecedent)
 	{

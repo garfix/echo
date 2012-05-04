@@ -7,19 +7,41 @@ class Conversation
 	/** @var Local memory store for the roles in the conversation */
 	private $context = array();
 
-	private $Echo1;
+	/** @var \Echo The agent having the conversation */
+	private $Echo;
 
 	/** @var Start parsing in the last used grammar */
 	private $CurrentGrammar = null;
 
-	public function __construct(Echo1 $Echo1)
+	public function __construct(AgentEcho $Echo)
 	{
-		$this->Echo1 = $Echo1;
+		$this->Echo = $Echo;
+
+		// set current grammar
+		$availableGrammars = $Echo->getAvailableGrammars();
+
+		if (!empty($availableGrammars)) {
+			$Grammar = reset($availableGrammars);
+		} else {
+			$Grammar = null;
+		}
+
+		$this->setCurrentGrammar($Grammar);
 	}
 
 	public function setCurrentGrammar(Grammar $Grammar)
 	{
 		$this->CurrentGrammar = $Grammar;
+	}
+
+	public function isProperNoun($identifier)
+	{
+		// is $identifier a proper noun in the context?
+
+		// is $identifier a proper noun in one of the knowledge sources?
+		$success = $this->Echo->getKnowledgeManager()->isProperNoun($identifier);
+
+		return $success;
 	}
 
 	/**
@@ -33,13 +55,13 @@ class Conversation
 	public function parse($input)
 	{
 		$sentences = array();
-		$availableGrammars = $this->Echo1->getAvailableGrammars();
+		$availableGrammars = $this->Echo->getAvailableGrammars();
 
 		if (trim($input) == '') {
 			return $sentences;
 		}
 
-		if (empty($availableGrammars)) {
+		if ($this->CurrentGrammar === null) {
 			return array();
 		}
 
@@ -54,9 +76,9 @@ class Conversation
 		// try to parse the sentence in each of the available grammars
 		foreach ($grammars as $Grammar) {
 
-			$Sentence = new Sentence();
+			$Sentence = new Sentence($this);
 
-			if ($this->parseInLanguage($input, $Grammar, $Sentence, $this->context)) {
+			if ($this->parseInLanguage($input, $Grammar, $Sentence)) {
 
 				$sentences[] = $Sentence;
 				$Sentence->language = $Grammar->getLanguage();
@@ -75,17 +97,17 @@ class Conversation
 	}
 
 	/**
-	 * Parses a string assuming it is written in $language
+	 * Parses a string assuming it is written in the language of $Grammar
 	 *
 	 * @param string $input
-	 * @param string $language
+	 * @param Grammar $Grammar
 	 * @param Sentence $Sentence
-	 * @param array $context
+	 *
 	 * @return bool Parse successful?
 	 */
-	protected function parseInLanguage($input, Grammar $Grammar, $Sentence, $context)
+	protected function parseInLanguage($input, Grammar $Grammar, Sentence $Sentence)
 	{
-		$success = $Grammar->parse($input, $Sentence, $context);
+		$success = $Grammar->parse($input, $Sentence);
 
 		return $success;
 	}
@@ -103,14 +125,16 @@ class Conversation
 	 */
 	public function generate(array $phraseSpecification, $context)
 	{
-		$Grammar = $this->CurrentGrammar;
+		if ($this->CurrentGrammar === null) {
+			return false;
+		}
 
-		return $this->generateInLanguage($phraseSpecification, $Grammar, $context);
+		return $this->generateInLanguage($phraseSpecification, $this->CurrentGrammar, $context);
 	}
 
 	protected function generateInLanguage($phraseSpecification, Grammar $Grammar, $context)
 	{
-		$Sentence = new Sentence();
+		$Sentence = new Sentence($this);
 		$Sentence->phraseSpecification = $phraseSpecification;
 
 		return $Grammar->generate($Sentence);
@@ -136,6 +160,10 @@ class Conversation
 	 */
 	public function answer($question)
 	{
+		if ($this->CurrentGrammar === null) {
+			return false;
+		}
+
 		$answer = '';
 
 		$Sentence = $this->parseFirstLine($question);
@@ -145,8 +173,9 @@ class Conversation
 
 			$id = 0;
 
-			self::addIds($features, $id);
-
+			if (Settings::$addIds) {
+				self::addIds($features, $id);
+			}
 
 			$head = $features['head'];
 
@@ -161,7 +190,7 @@ class Conversation
 				if ($sentenceType == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
-					$result = $this->Echo1->check($sem, $sentenceType);
+					$result = $this->Echo->getKnowledgeManager()->check($sem, $sentenceType);
 
 					if ($result) {
 						$answer = 'Yes.';
@@ -180,7 +209,7 @@ class Conversation
 
 				} elseif ($sentenceType == 'wh-non-subject-question') {
 
-					$answer = $this->Echo1->answerQuestionAboutObject($sem, $sentenceType);
+					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($sem, $sentenceType);
 
 					// incorporate the answer in the original question
 					if ($answer !== false) {
