@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\later;
+
 /**
  * This class creates and plans a dialog structure for the conversation with the user.
  * A process called "Macroplanning" by Levelt.

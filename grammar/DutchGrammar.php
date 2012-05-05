@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . '/SimpleGrammar.php');
+namespace agentecho\grammar;
 
 class DutchGrammar extends SimpleGrammar
 {

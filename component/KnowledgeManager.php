@@ -1,5 +1,9 @@
 <?php
 
+namespace agentecho\component;
+
+use \agentecho\knowledge\KnowledgeSource;
+
 /**
  * This object provides a single interface for multiple KnowledgeSources.
  */

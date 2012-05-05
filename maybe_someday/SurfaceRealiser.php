@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\later;
+
 /**
  * A surface realiser turns a syntactic representation of a sentence into a single string of characters.
  * It applies these rules:

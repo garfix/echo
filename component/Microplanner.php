@@ -1,5 +1,11 @@
 <?php
 
+namespace agentecho\component;
+
+use \agentecho\grammar\Grammar;
+use \agentecho\Settings;
+use \agentecho\datastructure\LabeledDAG;
+
 class Microplanner
 {
 	/**

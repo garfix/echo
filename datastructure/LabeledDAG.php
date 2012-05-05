@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\datastructure;
+
 /**
  * This this an implementation of a Directed Acyclic Graph with labeled arcs.
  */

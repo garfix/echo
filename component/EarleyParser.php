@@ -1,7 +1,10 @@
 <?php
 
-require_once __DIR__ . '/LabeledDAG.php';
-require_once __DIR__ . '/Grammar.php';
+namespace agentecho\component;
+
+use \agentecho\grammar\Grammar;
+use \agentecho\datastructure\LabeledDAG;
+use \agentecho\Settings;
 
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in

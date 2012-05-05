@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\later;
+
 /**
  * Low-level: enters $statment into declarative memory.
  *

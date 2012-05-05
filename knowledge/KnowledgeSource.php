@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\knowledge;
+
 abstract class KnowledgeSource
 {
 	/**

@@ -1,4 +1,7 @@
 <?php
+
+namespace agentecho;
+
 class Settings
 {
 	public static $debugParser = false;

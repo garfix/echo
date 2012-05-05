@@ -1,9 +1,11 @@
 <?php
 
-require_once(__DIR__ . '/Grammar.php');
-require_once(__DIR__ . '/Microplanner.php');
-require_once(__DIR__ . '/SurfaceRealiser.php');
-require_once(__DIR__ . '/EarleyParser.php');
+namespace agentecho\grammar;
+
+use \agentecho\component\Microplanner;
+use \agentecho\component\EarleyParser;
+use \agentecho\datastructure\Sentence;
+use \agentecho\datastructure\LabeledDAG;
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -32,7 +34,6 @@ abstract class SimpleGrammar implements Grammar
 
 		// output processing
 		$this->Microplanner = new Microplanner();
-		$this->SurfaceRealiser = new SurfaceRealiser();
 	}
 
 	/**
@@ -42,7 +43,7 @@ abstract class SimpleGrammar implements Grammar
 	 * @param array $context The roles that are currently active.
 	 * @return bool Succesful parse?
 	 */
-	public function parse($input, $Sentence)
+	public function parse($input, Sentence $Sentence)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($input, $Sentence);

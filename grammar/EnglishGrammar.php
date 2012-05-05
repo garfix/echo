@@ -8,7 +8,7 @@
  *    to a method that would first stem all words before proceeding with the next step.
  */
 
-require_once(__DIR__ . '/SimpleGrammar.php');
+namespace agentecho\grammar;
 
 class EnglishGrammar extends SimpleGrammar
 {

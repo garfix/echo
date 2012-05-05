@@ -1,8 +1,12 @@
-#!/usr/bin/php
 <?php
 
-require_once __DIR__ . '/bot/tests/LabeledDagTest.php';
-require_once __DIR__ . '/bot/tests/LanguageTest.php';
+namespace agentecho\test;
+
+// start autoloading based on namespaces
+require_once __DIR__ . '/../component/Autoload.php';
+
+use \agentecho\test\LabeledDagTest;
+use \agentecho\test\LanguageTest;
 
 function test($case, $got, $expected) {
 	if ($expected !== $got) {
@@ -17,6 +21,9 @@ function r($string, $return = false)
 {
 	return print_r($string, $return);
 }
+$Test = new LabeledDagTest();
+$Test->test();
 
-testLabeledDAG();
-testLanguage();
+$Test = new LanguageTest();
+$Test->test();
+

@@ -1,8 +1,14 @@
 <?php
 
-require_once __DIR__ . '/Settings.php';
-require_once __DIR__ . '/language/Conversation.php';
-require_once __DIR__ . '/language/KnowledgeManager.php';
+namespace agentecho;
+
+// start autoloading based on namespaces
+require_once __DIR__ . '/component/Autoload.php';
+
+use \agentecho\component\KnowledgeManager;
+use \agentecho\component\Conversation;
+use \agentecho\knowledge\KnowledgeSource;
+use \agentecho\grammar\Grammar;
 
 /**
  * Echo is a conversational agent.
@@ -18,6 +24,7 @@ require_once __DIR__ . '/language/KnowledgeManager.php';
  * - Easy to learn and use (the user should not need to add stuff that can be preprogrammed)
  * - Fast (use the fastest algorithms known)
  * - Testable (every function needs a unit test)
+ * - Provide really helpful error messages
  * - Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
  *
@@ -25,7 +32,9 @@ require_once __DIR__ . '/language/KnowledgeManager.php';
  * sentenceType => mood
  * 1st person (in artikel voorbeeld => 3rd person)
  * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
+ * De zinseinde-detectie is te beperkt (zoeken naar een punt)
  * namespaces
+ * een "Conversation" is noch een datastructure noc een component, splits hem op in twee delen
  * errors: try / catch
  */
 class AgentEcho
@@ -34,7 +43,7 @@ class AgentEcho
 	private $KnowledgeManager;
 
 	/** @var Available grammars */
-	private $availableGrammars = array();
+	private $grammars = array();
 
 	public function __construct()
 	{
@@ -48,12 +57,12 @@ class AgentEcho
 
 	public function addGrammar(Grammar $Grammar)
 	{
-		$this->availableGrammars[] = $Grammar;
+		$this->grammars[] = $Grammar;
 	}
 
 	public function getAvailableGrammars()
 	{
-		return $this->availableGrammars;
+		return $this->grammars;
 	}
 
 	public function getKnowledgeManager()

@@ -1,7 +1,12 @@
 <?php
 
-require_once __DIR__ . '/KnowledgeSource.php';
+namespace agentecho\knowledge;
 
+use \agentecho\Settings;
+
+/**
+ *
+ */
 class DBPedia extends KnowledgeSource
 {
 	static $cacheResults = true;
@@ -210,11 +215,9 @@ $triples = array_unique($triples);
 			}
 		}
 
-//if (Settings::$debugKnowledge) r($result);
-
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 			$value = $result['results']['bindings'][0]['callret-0']['value'];
-		} else {
+		} elseif (isset($result['results']['bindings'])) {
 			$value = array();
 			foreach ($result['results']['bindings'] as $binding) {
 				foreach ($binding as $key => $data) {
@@ -227,6 +230,8 @@ $triples = array_unique($triples);
 			if (count($value) == 1) {
 				$value = reset($value);
 			}
+		} else {
+			$value = null;
 		}
 
 		return $value;
@@ -256,7 +261,7 @@ $triples = array_unique($triples);
 
 	private function getResultFromCache($query)
 	{
-		$dir = __DIR__ . '/../../../cache/';
+		$dir = __DIR__ . '/../../cache/';
 		$path = $dir . sha1($query);
 		if (file_exists($path)) {
 			$json = file_get_contents($path);
@@ -268,7 +273,7 @@ $triples = array_unique($triples);
 
 	private function cacheResult($query, $cache)
 	{
-		$dir = __DIR__ . '/../../../cache/';
+		$dir = __DIR__ . '/../../cache/';
 		$path = $dir . sha1($query);
 		if (!file_exists($dir)) {
 			mkdir($dir);

@@ -1,5 +1,10 @@
 <?php
 
+namespace agentecho\grammar;
+
+use \agentecho\datastructure\LabeledDAG;
+use \agentecho\datastructure\Sentence;
+
 interface Grammar
 {
 	/**
@@ -15,7 +20,7 @@ interface Grammar
 	 * @param Sentence The sentence to create
 	 * @return bool Succesful parse?
 	 */
-	public function parse($text, $Sentence);
+	public function parse($text, Sentence $Sentence);
 
 	/**
 	 * Returns a surface representation for a given sentence,

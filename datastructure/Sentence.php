@@ -1,5 +1,9 @@
 <?php
 
+namespace agentecho\datastructure;
+
+use \agentecho\component\Conversation;
+
 /**
  * A complete sentence in a text.
  */

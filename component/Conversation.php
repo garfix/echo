@@ -1,6 +1,11 @@
 <?php
 
-require_once __DIR__ . '/Sentence.php';
+namespace agentecho\component;
+
+use \agentecho\AgentEcho;
+use \agentecho\Settings;
+use \agentecho\grammar\Grammar;
+use \agentecho\datastructure\Sentence;
 
 class Conversation
 {
@@ -19,6 +24,10 @@ class Conversation
 
 		// set current grammar
 		$availableGrammars = $Echo->getAvailableGrammars();
+
+		if (empty($availableGrammars)) {
+			throw new ConfigurationException(ConfigurationException::NO_GRAMMAR);
+		}
 
 		if (!empty($availableGrammars)) {
 			$Grammar = reset($availableGrammars);
@@ -233,7 +242,7 @@ class Conversation
 				}
 			}
 		} else {
-			$answer = $Sentence->getErrorMessage();
+			$answer = 'Could not parse.';
 		}
 
 		return $answer;
