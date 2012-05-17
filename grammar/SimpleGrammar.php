@@ -3,6 +3,7 @@
 namespace agentecho\grammar;
 
 use \agentecho\component\Microplanner;
+use \agentecho\component\Lexer;
 use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\Sentence;
 use \agentecho\datastructure\LabeledDAG;
@@ -12,18 +13,11 @@ use \agentecho\datastructure\LabeledDAG;
  */
 abstract class SimpleGrammar implements Grammar
 {
-	const END_OF_LINE = '** EOL **';
-	const INDIGNATION = '** INDIGNATION **';
-	const ELLIPSIS = '*** ELLIPSIS ***';
-	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR ***';
-
-	const LONGEST_PROPER_NOUN = 7;
-
 	protected $parseRules = null;
 	protected $generationRules = null;
 	protected $lexicon = null;
 	protected $Microplanner = null;
-	protected $SurfaceRealiser = null;
+	protected $Lexer = null;
 
 	public function __construct()
 	{
@@ -32,37 +26,39 @@ abstract class SimpleGrammar implements Grammar
 		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
 
+		// input processing
+		$this->Lexer = new Lexer();
+
 		// output processing
 		$this->Microplanner = new Microplanner();
 	}
 
-	/**
-	 * This function turns a line of text into structured meaning.
-	 *
-	 * @param string $text Raw input.
-	 * @param array $context The roles that are currently active.
-	 * @return bool Succesful parse?
-	 */
-	public function parse($input, Sentence $Sentence)
+	public function wordExists($word)
 	{
-		// turns $input into $Sentence->words
-		$this->splitIntoWords($input, $Sentence);
+		return isset($this->lexicon[$word]);
+	}
 
-		// continue to work with words as they occur in the lexicon
-		$success = $this->makeLexicalItems($Sentence);
-		if (!$success) {
-			return false;
-		}
+	/**
+	 * Returns true if $words for a proper noun.
+	 * @param $words
+	 * @return bool
+	 */
+	public function isProperNoun($words)
+	{
+		// Sjaak
+		// Sjaak Zwart
+		// Sjaak (de|van|van de|van der) Zwart
+		$exp = '/^([A-Z][a-z]+)( (de |van |van de |van der )?[A-Z][a-z]+)?$/';
 
-		// create a sentence specification from this lexical items
-		$result = EarleyParser::getFirstTree($this, $Sentence->lexicalItems);
-		$Sentence->phraseSpecification = $result['tree'];
+		return preg_match($exp, implode(' ', $words));
+	}
 
-		if (!$result['success']) {
-			$Sentence->errorMessage = $result['errorMessage'];
-		}
-
-		return $result['success'];
+	/**
+	 * Analyses a raw $string and places the result in $Sentence.
+	 */
+	public function analyze($input, Sentence $Sentence)
+	{
+		return $this->Lexer->analyze($input, $Sentence, $this);
 	}
 
 	/**
@@ -89,12 +85,6 @@ $words = $lexicalItems;
 		$Sentence->surfaceText = $this->createSurfaceText($Sentence);
 
 		return $Sentence->surfaceText;
-
-//		// create the output text from the syntactic structure
-//		$output = $this->SurfaceRealiser->realise($phraseSpecification);
-//		$Sentence->surfaceText = $output;
-//
-//		return $output;
 	}
 
 	private function createSurfaceText($Sentence)
@@ -105,135 +95,6 @@ $words = $lexicalItems;
 
 		return implode(' ', $words) . '.';
 	}
-
-	/**
-	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase from the value of $input
-	 * @param string $input
-	 * @param Sentence $Sentence
-	 */
-	private function splitIntoWords($input, $Sentence)
-	{
-		$terminator = null;
-
-		$index = 0;
-		$words = array();
-		while (($word = $this->getNextWord($input, $index)) != self::END_OF_LINE) {
-
-			// sentence terminators
-			if (in_array($word, array('.', '!', '?', self::INDIGNATION, self::UNKNOWN_TERMINATOR))) {
-				$terminator = $word;
-				break;
-			}
-
-			// skip comma's for now
-			if ($word == ',') {
-				continue;
-			}
-
-			$words[] = $word;
-		}
-
-		$Sentence->words = $words;
-		$Sentence->surfaceText = substr($input, 0, $index);
-		$Sentence->terminator = $terminator;
-	}
-
-	/**
-	 * Turns words into "lexical entries" (words that can be used by the parser).
-	 * This means:
-	 * 1) words are put into lowercase
-	 * 2) unknown words are grouped together (so that 'john carpenter' becomes a single entry)
-	 *
-	 * todo coumpound words
-	 *
-	 * @param Sentence $Sentence
-	 */
-	private function makeLexicalItems(Sentence $Sentence)
-	{
-		$lexicalItems = array();
-		$words = $Sentence->words;
-		$count = count($Sentence->words);
-
-		for ($i = 0; $i < $count; $i++) {
-
-			$word = $words[$i];
-
-			// lowercase
-			$lcWord = strtolower($word);
-
-			// word is recognized?
-			if (isset($this->lexicon[$lcWord])) {
-				$lexicalItems[] = $lcWord;
-			} else {
-				$involvedWords = $this->findLongestProperNoun($Sentence, array_slice($words, $i, self::LONGEST_PROPER_NOUN));
-				if ($involvedWords === false) {
-					return false;
-				} else {
-					$properNoun = implode(' ', $involvedWords);
-					$lexicalItems[] = $properNoun;
-					$i += count($involvedWords) - 1;
-				}
-			}
-		}
-
-		$Sentence->lexicalItems = $lexicalItems;
-		return true;
-	}
-
-	private function findLongestProperNoun(Sentence $Sentence, $words)
-	{
-		while (count($words) > 0) {
-
-			$properNoun = implode(' ', $words);
-			if ($Sentence->getConversation()->isProperNoun($properNoun)) {
-				return $words;
-			}
-
-			// remove last word
-			array_pop($words);
-		}
-
-		return false;
-	}
-
-//	private function makeLexicalItems(Sentence $Sentence)
-//	{
-//		$lexicalItems = array();
-//		$count = count($Sentence->words);
-//		$store = '';
-//
-//		for ($i = 0; $i < $count; $i++) {
-//
-//			// lowercase
-//			$word = $Sentence->words[$i];
-//			$lcWord = strtolower($word);
-//
-//			// word is recognized?
-//			if (isset($this->lexicon[$lcWord])) {
-//				// pending store?
-//				if ($store != '') {
-//					$lexicalItems[] = $store;
-//					$store = '';
-//				}
-//				$lexicalItems[] = $lcWord;
-//			} else {
-//
-//				// glue together with previously unidentified words
-//				if ($store == '') {
-//					$store = $word;
-//				} else {
-//					$store .= ' ' . $word;
-//				}
-//			}
-//		}
-//
-//		// pending store?
-//		if ($store != '') {
-//			$lexicalItems[] = $store;
-//		}
-//
-//		$Sentence->lexicalItems = $lexicalItems;
-//	}
 
 	public function getRulesForAntecedent($antecedent)
 	{
@@ -270,68 +131,6 @@ $words = $lexicalItems;
 		}
 
 		return $result;
-	}
-
-	private function getNextWord($string, &$index)
-	{
-		$word = '';
-		$length = strlen($string);
-
-		if ($index == $length) {
-			return self::END_OF_LINE;
-		}
-
-		// parse the actual characters
-		while ($index < $length) {
-			$c = $string[$index];
-			if (strpos('.,?! ', $c) !== false) {
-				break;
-			}
-			$word .= $c;
-			$index++;
-		}
-
-		// parse comma's, points, etc
-		if ($word === '') {
-			while ($index < $length) {
-				$c = $string[$index];
-				if (strpos('.,?!', $c) === false) {
-					break;
-				}
-				$word .= $c;
-				$index++;
-			}
-
-			// turn combinations into tokens
-			$len = strlen($word);
-			if ($len > 1) {
-		 		if (substr_count($word, '.') == $len) {
-		 			$word = self::ELLIPSIS;
-		 		} elseif (substr_count($word, ',') == $len) {
-		 			$word = ',';
-		 		} else {
-					$apoCount = substr_count($word, '!');
-					$questionCount = substr_count($word, '?');
-					if ($apoCount > 1 || $questionCount > 1 || ($apoCount && $questionCount)) {
-						$word = self::INDIGNATION;
-					} else {
-						$word = self::UNKNOWN_TERMINATOR;
-					}
-		 		}
-			}
-		}
-
-		// strip whitespace
-		while ($index < $length) {
-			$c = $string[$index];
-			if ($c == ' ') {
-				$index++;
-			} else {
-				break;
-			}
-		}
-
-		return $word;
 	}
 
 	/**

@@ -37,6 +37,9 @@ class EarleyParser
 	/** @var A message that is created for the user when something goes wrong */
 	private $errorMessage = null;
 
+	/** @var The index of the last successfully parsed index */
+	private $lastParsedIndex = null;
+
 	private function __construct(Grammar $Grammar, array $words, $singleTree)
 	{
 		$this->Grammar = $Grammar;
@@ -47,6 +50,11 @@ class EarleyParser
 	public function getErrorMessage()
 	{
 		return $this->errorMessage;
+	}
+
+	public function getLastParsedIndex()
+	{
+		return $this->lastParsedIndex;
 	}
 
 	/**
@@ -83,7 +91,8 @@ class EarleyParser
 		return array(
 			'success' => $tree !== null,
 			'tree' => $tree,
-			'errorMessage' => $Parser->getErrorMessage()
+			'errorMessage' => $Parser->getErrorMessage(),
+			'lastParsedIndex' => $Parser->getLastParsedIndex()
 		);
 	}
 
@@ -116,7 +125,7 @@ class EarleyParser
 	}
 
 	/**
-	 * Performs Earley's algorithm to turn $this->words into a parse forest.
+	 * Performs Earley's algorithm to turn $this->words into a packed forest.
 	 */
 	private function doTopDownChartParse()
 	{
@@ -150,6 +159,8 @@ class EarleyParser
 						$this->scan($state);
 					}
 				} else {
+
+					$this->lastParsedIndex = $i;
 
 					// proceed all other entries in the chart that have this entry's antecedent as their next consequent
 					$treeComplete = $this->complete($state);

@@ -2,11 +2,12 @@
 
 namespace agentecho\test;
 
+use \agentecho\test\Test;
 use \agentecho\datastructure\LabeledDAG;
 
-class LabeledDagTest
+class LabeledDagTest extends Test
 {
-	function test()
+	function execute()
 	{
 		$tree1 = array(
 			'aaa' => array('head-1' => null),
@@ -89,28 +90,28 @@ class LabeledDagTest
 		$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
 
 		// check that a shared child is implemented correctly
-		test(300, $F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
-		test(301, $F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
-		test(302, $F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
+		$this->test(300, $F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
+		$this->test(301, $F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
+		$this->test(302, $F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
 		// check that $F2 is not changed by the unification
-		test(310, $F2->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->test(310, $F2->getPathValue(array('ccc', 'head', 'agreement')), null);
 		// check that $F3 is not changed by the unification
-		test(311, $F3->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->test(311, $F3->getPathValue(array('ccc', 'head', 'agreement')), null);
 		// check that $F4 shows unification
-		test(312, $F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
-		test(313, $F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
+		$this->test(312, $F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
+		$this->test(313, $F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
 		// check that $F6 contains the followed path
-		test(320, $F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
+		$this->test(320, $F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
 		// check that $F6 does not contain removed paths from $F5
-		test(321, $F5->getPathValue(array('dogs', 'blackie')), 3);
-		test(322, $F6->getPathValue(array('dogs', 'blackie')), null);
+		$this->test(321, $F5->getPathValue(array('dogs', 'blackie')), 3);
+		$this->test(322, $F6->getPathValue(array('dogs', 'blackie')), null);
 		// check for failing unifications
-		test(330, $F9, false);
-		test(331, $F12->getPathValue(array('color', 'a')), 1);
-		test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
+		$this->test(330, $F9, false);
+		$this->test(331, $F12->getPathValue(array('color', 'a')), 1);
+		$this->test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
 		// regression test
-		test(333, $F18->getPathValue(array('NP', 'person')), null);
-		test(334, $F21->getPathValue(array('a', 'head')), 1);
+		$this->test(333, $F18->getPathValue(array('NP', 'person')), null);
+		$this->test(334, $F21->getPathValue(array('a', 'head')), 1);
 		// alias
 		$tree = array(
 			'color-1' => null,
@@ -118,22 +119,22 @@ class LabeledDagTest
 		);
 		$F22 = new LabeledDAG($tree);
 		$F22->setPathValue(array('color'), 'red');
-		test(341, $F22->getPathValue(array('colour')), 'red');
+		$this->test(341, $F22->getPathValue(array('colour')), 'red');
 		$F22->setPathValue(array('colour'), 'blue');
-		test(341, $F22->getPathValue(array('color')), 'blue');
+		$this->test(341, $F22->getPathValue(array('color')), 'blue');
 
 		// match
 		$F28 = new LabeledDAG(array('a' => 1));
 		$F29 = new LabeledDAG(array('a' => 1, 'b' => null));
 		$F30 = new LabeledDAG(array('a' => 1, 'b' => array('c' => null, 'd' => 4)));
-		test(361, $F28->match(array('a' => 1)), true);
-		test(362, $F28->match(array('a' => 2)), false);
-		test(363, $F28->match(array('a' => 1, 'c' => null)), false);
-		test(364, $F29->match(array('a' => 1, 'b' => 2)), false);
-		test(365, $F29->match(array('a' => 1)), true);
-		test(365, $F29->match(array('b' => 2)), false);
-		test(366, $F30->match(array('b' => array('d' => 4))), true);
-		test(367, $F30->match(array('b' => array('c' => 3))), false);
-		test(367, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
+		$this->test(361, $F28->match(array('a' => 1)), true);
+		$this->test(362, $F28->match(array('a' => 2)), false);
+		$this->test(363, $F28->match(array('a' => 1, 'c' => null)), false);
+		$this->test(364, $F29->match(array('a' => 1, 'b' => 2)), false);
+		$this->test(365, $F29->match(array('a' => 1)), true);
+		$this->test(365, $F29->match(array('b' => 2)), false);
+		$this->test(366, $F30->match(array('b' => array('d' => 4))), true);
+		$this->test(367, $F30->match(array('b' => array('c' => 3))), false);
+		$this->test(367, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
 	}
 }

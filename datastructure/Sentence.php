@@ -32,9 +32,6 @@ class Sentence
 	/** @var The syntax tree with added features */
 	public $phraseSpecification = null;
 
-	/** @var Describes what went wrong while processing this sentence */
-	public $errorMessage = null;
-
 	public function __construct(Conversation $Conversation)
 	{
 		$this->Conversation = $Conversation;
@@ -94,13 +91,8 @@ class Sentence
 		return '[' . implode(', ', $parts) . ']';
 	}
 
-	public function getStructure($treeIndex = 0)
+	public function getStructure()
 	{
 		return $this->phraseSpecification['features']['head']['sentenceType'];
-	}
-
-	public function getErrorMessage()
-	{
-		return $this->errorMessage;
 	}
 }

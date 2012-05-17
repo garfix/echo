@@ -6,18 +6,24 @@ use \agentecho\AgentEcho;
 use \agentecho\Settings;
 use \agentecho\grammar\Grammar;
 use \agentecho\datastructure\Sentence;
+use \agentecho\exception\ConfigurationException;
+use \agentecho\exception\ParseException;
 
 class Conversation
 {
 	/** @var Local memory store for the roles in the conversation */
 	private $context = array();
 
-	/** @var \Echo The agent having the conversation */
+	/** @var \AgentEcho The agent having the conversation */
 	private $Echo;
 
 	/** @var Start parsing in the last used grammar */
 	private $CurrentGrammar = null;
 
+	/**
+	 * @param \agentecho\AgentEcho $Echo
+	 * @throws ConfigurationException
+	 */
 	public function __construct(AgentEcho $Echo)
 	{
 		$this->Echo = $Echo;
@@ -29,12 +35,7 @@ class Conversation
 			throw new ConfigurationException(ConfigurationException::NO_GRAMMAR);
 		}
 
-		if (!empty($availableGrammars)) {
-			$Grammar = reset($availableGrammars);
-		} else {
-			$Grammar = null;
-		}
-
+		$Grammar = reset($availableGrammars);
 		$this->setCurrentGrammar($Grammar);
 	}
 
@@ -60,6 +61,8 @@ class Conversation
 	 *
 	 * @param string $input This input may consist of several sentences, if they are properly separated.
 	 * @return array an array of Sentence objects
+	 * @throws LexicalItemException
+	 * @throws ParseException
 	 */
 	public function parse($input)
 	{
@@ -70,10 +73,6 @@ class Conversation
 			return $sentences;
 		}
 
-		if ($this->CurrentGrammar === null) {
-			return array();
-		}
-
 		// create an array of grammars in which the current one is in the front
 		$grammars = array($this->CurrentGrammar);
 		foreach ($availableGrammars as $Grammar) {
@@ -82,12 +81,16 @@ class Conversation
 			}
 		}
 
+		$Exception = null;
+
 		// try to parse the sentence in each of the available grammars
 		foreach ($grammars as $Grammar) {
 
 			$Sentence = new Sentence($this);
 
-			if ($this->parseInLanguage($input, $Grammar, $Sentence)) {
+			try {
+
+				$this->parseSentence($input, $Sentence, $Grammar);
 
 				$sentences[] = $Sentence;
 				$Sentence->language = $Grammar->getLanguage();
@@ -99,26 +102,51 @@ class Conversation
 				// this code works either in ltr and rtl languages (not that i tried ;)
 				$restInput = str_replace($Sentence->surfaceText, '', $input);
 				return array_merge($sentences, $this->parse($restInput, $this->context));
+
+			} catch (\Exception $E) {
+
+				// save the first exception
+				if (!$Exception) {
+					$Exception = $E;
+				}
+
 			}
 		}
+
+		// all grammars failed; throw the first exception
+		throw $Exception;
 
 		return $sentences;
 	}
 
-	/**
-	 * Parses a string assuming it is written in the language of $Grammar
-	 *
-	 * @param string $input
-	 * @param Grammar $Grammar
-	 * @param Sentence $Sentence
-	 *
-	 * @return bool Parse successful?
-	 */
-	protected function parseInLanguage($input, Grammar $Grammar, Sentence $Sentence)
-	{
-		$success = $Grammar->parse($input, $Sentence);
 
-		return $success;
+	/**
+	 * This function turns a line of text into structured meaning.
+	 *
+	 * @param string $text Raw input.
+	 * @param array $context The roles that are currently active.
+	 * @return bool Succesful parse?
+	 * @throws LexicalItemException
+	 * @throws ParseException
+	 */
+	private function parseSentence($input, Sentence $Sentence, Grammar $Grammar)
+	{
+		// analyze words
+		$Grammar->analyze($input, $Sentence);
+
+		// create a phrase specification from these lexical items
+		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
+		$Sentence->phraseSpecification = $result['tree'];
+//r($result);
+		if (!$result['success']) {
+
+			$E = new ParseException();
+			$E->setLexicalItems($Sentence->lexicalItems, $result['lastParsedIndex'] - 1);
+
+			throw $E;
+		}
+
+		return $result['success'];
 	}
 
 	/**
@@ -134,19 +162,10 @@ class Conversation
 	 */
 	public function generate(array $phraseSpecification, $context)
 	{
-		if ($this->CurrentGrammar === null) {
-			return false;
-		}
-
-		return $this->generateInLanguage($phraseSpecification, $this->CurrentGrammar, $context);
-	}
-
-	protected function generateInLanguage($phraseSpecification, Grammar $Grammar, $context)
-	{
 		$Sentence = new Sentence($this);
 		$Sentence->phraseSpecification = $phraseSpecification;
 
-		return $Grammar->generate($Sentence);
+		return $this->CurrentGrammar->generate($Sentence);
 	}
 
 	/**
@@ -154,6 +173,8 @@ class Conversation
 	 *
 	 * @param string $input
 	 * @return Sentence
+	 * @throws LexicalItemException
+	 * @throws ParseException
 	 */
 	public function parseFirstLine($input)
 	{
@@ -169,17 +190,12 @@ class Conversation
 	 */
 	public function answer($question)
 	{
-		if ($this->CurrentGrammar === null) {
-			return false;
-		}
-
 		$answer = '';
 
-		$Sentence = $this->parseFirstLine($question);
-		if ($Sentence) {
+		try {
 
+			$Sentence = $this->parseFirstLine($question);
 			$features = $Sentence->phraseSpecification['features'];
-
 			$id = 0;
 
 			if (Settings::$addIds) {
@@ -187,7 +203,6 @@ class Conversation
 			}
 
 			$head = $features['head'];
-
 			$sem = $head['sem'];
 
 			if (isset($head['sentenceType'])) {
@@ -241,8 +256,10 @@ class Conversation
 					$answer = 'ok.';
 				}
 			}
-		} else {
-			$answer = 'Could not parse.';
+		} catch (\Exception $E) {
+
+			$answer = $E->getMessage();
+
 		}
 
 		return $answer;

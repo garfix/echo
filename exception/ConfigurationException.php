@@ -2,7 +2,9 @@
 
 namespace agentecho\exception;
 
-class ConfigurationException
+use \Exception;
+
+class ConfigurationException extends Exception
 {
 	const NO_GRAMMAR = 'No grammar defined';
 }

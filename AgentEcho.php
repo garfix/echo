@@ -27,6 +27,7 @@ use \agentecho\grammar\Grammar;
  * - Provide really helpful error messages
  * - Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
+ * - Create independent functions that could be used without the context of the agent (i.e. getPlural($word)
  *
  * TODO:
  * sentenceType => mood

@@ -5,6 +5,10 @@ namespace agentecho\grammar;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\datastructure\Sentence;
 
+/**
+ * A grammar should describe the rules of a language.
+ * If possible, it should not contain any processing functions.
+ */
 interface Grammar
 {
 	/**
@@ -14,13 +18,9 @@ interface Grammar
 	public function getLanguage();
 
 	/**
-	 * This function turns a line of text into a Sentence.
-	 *
-	 * @param string $text Raw input.
-	 * @param Sentence The sentence to create
-	 * @return bool Succesful parse?
+	 * Analyses a raw $string and places the result in $Sentence.
 	 */
-	public function parse($text, Sentence $Sentence);
+	public function analyze($input, Sentence $Sentence);
 
 	/**
 	 * Returns a surface representation for a given sentence,
@@ -73,4 +73,18 @@ interface Grammar
 	 * @return string
 	 */
 	public function getWordForFeatures($partOfSpeech, array $features);
+
+	/**
+	 * Returns true if $word is a word in the lexicon.
+	 * @param $word
+	 * @return bool
+	 */
+	public function wordExists($word);
+
+	/**
+	 * Returns true if $words is a proper noun according to the rules of the grammar.
+	 * @param $string
+	 * @return bool
+	 */
+	public function isProperNoun($words);
 }
