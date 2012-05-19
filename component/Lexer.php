@@ -13,11 +13,12 @@ use \agentecho\grammar\Grammar;
  */
 class Lexer
 {
-	const END_OF_LINE = '** EOL **';
-	const INDIGNATION = '** INDIGNATION **';
-	const ELLIPSIS = '*** ELLIPSIS ***';
-	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR ***';
+	const END_OF_LINE = '** EOL';
+	const INDIGNATION = '** INDIGNATION';
+	const ELLIPSIS = '*** ELLIPSIS';
+	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR';
 
+	/** The maximum number of words that a proper noun may take */
 	const LONGEST_PROPER_NOUN = 7;
 
 	/**
@@ -32,13 +33,19 @@ class Lexer
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($string, $Sentence);
 
-		// continue to work with words as they occur in the lexicon
-		$this->makeLexicalItems($Sentence, $Grammar);
+		// split words that should be treated as separate lexical items
+		// since these glued-together words have different parts-of-speech
+		$Sentence->words = $this->unglue($Sentence->words, $Grammar);
+
+		// make words lowercase
+		// glue together words that should form a single lexical item
+#todo: split lowercasing and gluing
+		$this->glue($Sentence, $Grammar);
 	}
 
 	/**
 	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase from the value of $input
-	 * @param string $input
+	 * @param string $input This input can contain more than one natural language sentence.
 	 * @param Sentence $Sentence
 	 */
 	private function splitIntoWords($input, Sentence $Sentence)
@@ -47,20 +54,20 @@ class Lexer
 
 		$index = 0;
 		$words = array();
-		while (($word = $this->getNextWord($input, $index)) != self::END_OF_LINE) {
+		while (($token = $this->getNextToken($input, $index)) != self::END_OF_LINE) {
 
 			// sentence terminators
-			if (in_array($word, array('.', '!', '?', self::INDIGNATION, self::UNKNOWN_TERMINATOR))) {
-				$terminator = $word;
+			if (in_array($token, array('.', '!', '?', self::INDIGNATION, self::UNKNOWN_TERMINATOR))) {
+				$terminator = $token;
 				break;
 			}
 
 			// skip comma's for now
-			if ($word == ',') {
+			if ($token == ',') {
 				continue;
 			}
 
-			$words[] = $word;
+			$words[] = $token;
 		}
 
 		$Sentence->words = $words;
@@ -69,10 +76,30 @@ class Lexer
 	}
 
 	/**
-	 * Turns words into "lexical entries" (words that can be used by the parser).
+	 * Split up words that contain different parts-of-speech
+	 * and should therefore be treated as separate lexical items
+	 *
+	 * @param array $words An array of words
+	 * @return array Unglued words
+	 */
+	private function unglue(array $words, Grammar $Grammar)
+	{
+		$ungluedWords = array();
+
+		foreach ($words as $word) {
+
+			$ungluedWords = array_merge($ungluedWords, $Grammar->unglue($word));
+
+		}
+
+		return $ungluedWords;
+	}
+
+	/**
+	 * Turns words into "lexical items" (words that can be used by the parser).
 	 * This means:
 	 * 1) words are put into lowercase
-	 * 2) unknown words are grouped together (so that 'john carpenter' becomes a single entry)
+	 * 2) unknown words are grouped together (so that 'john carpenter' becomes a single item)
 	 *
 	 * Words are looked up (in this order)
 	 * - in the current conversation context
@@ -84,7 +111,7 @@ class Lexer
 	 * @param Sentence $Sentence
 	 * @throws LexicalItemException
 	 */
-	private function makeLexicalItems(Sentence $Sentence, Grammar $Grammar)
+	private function glue(Sentence $Sentence, Grammar $Grammar)
 	{
 		$lexicalItems = array();
 		$words = $Sentence->words;
@@ -106,7 +133,7 @@ class Lexer
 
 				if ($involvedWords === false) {
 
-					$E = new LexicalItemException('Word not found: ' . $word);
+					$E = new LexicalItemException();
 					$E->setWord($word);
 					throw $E;
 
@@ -142,9 +169,9 @@ class Lexer
 		return false;
 	}
 
-	private function getNextWord($string, &$index)
+	private function getNextToken($string, &$index)
 	{
-		$word = '';
+		$token = '';
 		$length = strlen($string);
 
 		if ($index == $length) {
@@ -157,35 +184,35 @@ class Lexer
 			if (strpos('.,?! ', $c) !== false) {
 				break;
 			}
-			$word .= $c;
+			$token .= $c;
 			$index++;
 		}
 
 		// parse comma's, points, etc
-		if ($word === '') {
+		if ($token === '') {
 			while ($index < $length) {
 				$c = $string[$index];
 				if (strpos('.,?!', $c) === false) {
 					break;
 				}
-				$word .= $c;
+				$token .= $c;
 				$index++;
 			}
 
 			// turn combinations into tokens
-			$len = strlen($word);
+			$len = strlen($token);
 			if ($len > 1) {
-		 		if (substr_count($word, '.') == $len) {
-		 			$word = self::ELLIPSIS;
-		 		} elseif (substr_count($word, ',') == $len) {
-		 			$word = ',';
+		 		if (substr_count($token, '.') == $len) {
+		 			$token = self::ELLIPSIS;
+		 		} elseif (substr_count($token, ',') == $len) {
+		 			$token = ',';
 		 		} else {
-					$apoCount = substr_count($word, '!');
-					$questionCount = substr_count($word, '?');
+					$apoCount = substr_count($token, '!');
+					$questionCount = substr_count($token, '?');
 					if ($apoCount > 1 || $questionCount > 1 || ($apoCount && $questionCount)) {
-						$word = self::INDIGNATION;
+						$token = self::INDIGNATION;
 					} else {
-						$word = self::UNKNOWN_TERMINATOR;
+						$token = self::UNKNOWN_TERMINATOR;
 					}
 		 		}
 			}
@@ -201,6 +228,6 @@ class Lexer
 			}
 		}
 
-		return $word;
+		return $token;
 	}
 }

@@ -17,4 +17,9 @@ class LexicalItemException extends Exception
 	{
 		return $this->word;
 	}
+
+	public function __toString()
+	{
+		return 'Word not found: ' . $this->word;
+	}
 }

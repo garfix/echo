@@ -87,4 +87,12 @@ interface Grammar
 	 * @return bool
 	 */
 	public function isProperNoun($words);
+
+	/**
+	 * Split up words that contain different parts-of-speech
+	 * and should therefore be treated as separate lexical items
+	 * @param $word
+	 * @return array
+	 */
+	public function unglue($word);
 }

@@ -21,6 +21,9 @@ class EnglishGrammar extends SimpleGrammar
 	{
 #todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?
 		return array(
+			'\'s' => array(
+				'genitiveMarker'
+			),
 			'a' => array(
 				'determiner' => array(),
 			),
@@ -197,6 +200,15 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('determiner' => '*many')))
 				),
 			),
+			'name' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => '*name'),
+						)
+					)
+				)
+			),
 			'of' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
@@ -260,4 +272,40 @@ class EnglishGrammar extends SimpleGrammar
 			),
 		);
 	}
+
+	public function unglue($word)
+	{
+		// $word ends with 's or '
+		if (preg_match('/(^[^\']+)(\'s?)$/', $word, $matches)) {
+			// split the 's part (and turn ' into 's)
+			return array($matches[1], "'s");
+		}
+
+		// $word ends with 're
+		if (preg_match('/(^[^\']+)(\'re)$/', $word, $matches)) {
+			// turn the 're part into 'are'
+			return array($matches[1], "are");
+		}
+
+		// $word ends with n't
+		if (preg_match('/(.+)(n\'t)$/', $word, $matches)) {
+			if ($word == "won't") {
+				return array("will", "not");
+			} elseif (self::isVocal(substr($matches[1], -1, 1))) {
+				// add an extra 'n' for "can't"
+				return array($matches[1] . 'n', "not");
+			} else {
+				return array($matches[1], "not");
+			}
+		}
+
+		// default: no action
+		return array($word);
+	}
+
+	public function isVocal($letter)
+	{
+		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
+	}
+
 }

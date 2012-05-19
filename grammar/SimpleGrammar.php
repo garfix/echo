@@ -61,6 +61,11 @@ abstract class SimpleGrammar implements Grammar
 		return $this->Lexer->analyze($input, $Sentence, $this);
 	}
 
+	public function unglue($word)
+	{
+		return array($word);
+	}
+
 	/**
 	 * This function turns structured meaning into a line of text.
 	 *
@@ -158,6 +163,7 @@ $words = $lexicalItems;
 			'auxDo', // do, does, did, ...
 			'preposition',
 			'passivisationPreposition',
+			'genitiveMarker' // 's
 		));
 	}
 
@@ -311,6 +317,10 @@ $words = $lexicalItems;
 
 	protected function getParseRules()
 	{
+		// Find parse rules:
+		//
+		// http://nlp.stanford.edu:8080/parser/index.jsp
+
 		return array(
 			'S' => array(
 
@@ -454,11 +464,6 @@ $words = $lexicalItems;
 				),
 			),
 			'NP' => array(
-				// children
-				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
-					array('cat' => 'noun', 'features' => array('head-1' => null)),
-				),
 				// John
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
@@ -473,15 +478,29 @@ $words = $lexicalItems;
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
 					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 				),
-				// the car in the lot
+				// (large) car (in the lot)
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
+				),
+			),
+			// For N-bar, see 'The structure of modern english' - Brinton (2000) - p. 175
+			'NBar' => array(
+				// car
+				array(
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
+				),
+				// car in the lot
+				array(
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
+
 			'PP' => array(
 				// in the lot
 				array(

@@ -258,7 +258,7 @@ class Conversation
 			}
 		} catch (\Exception $E) {
 
-			$answer = $E->getMessage();
+			$answer = (string)$E;
 
 		}
 

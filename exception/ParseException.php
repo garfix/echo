@@ -17,11 +17,9 @@ class ParseException extends Exception
 
 	public function __toString()
 	{
-		return $this->lexicalItems[$this->lastParsedIndex];
-
 		return
-			implode(' ', array_splice($this->lexicalItems, 0, $this->lastParsedIndex)) .
-			' ^ ' .
-			implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex));
+			'Could not parse the part that starts with "' .
+			implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)) .
+			'"';
 	}
 }
