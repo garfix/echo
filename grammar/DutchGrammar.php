@@ -28,10 +28,14 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
 			),
 			'de' => array(
-				'determiner' => array()
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('type' => '*the')))
+				)
 			),
 			'die' => array(
-				'determiner' => array()
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('type' => '*that')))
+				)
 			),
 			'door' => array(
 				'preposition' => array(),
@@ -50,7 +54,9 @@ class DutchGrammar extends SimpleGrammar
 				),
 			),
 			'een' => array(
-				'determiner' => array()
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('type' => '*a')))
+				)
 			),
 			'had' => array(
 				'verb' => array(
@@ -78,7 +84,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem-1' => array(
-								'arg2-1' => array('question' => '*extent', 'determiner' => '*many'),
+								'arg2-1' => array('determiner' => array('question' => '*extent', 'type' => '*many')),
 							),
 							'variables' => array('role{arg2-1}' => null)
 						)

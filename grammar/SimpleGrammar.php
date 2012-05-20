@@ -203,8 +203,8 @@ $words = $lexicalItems;
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['sem']['determiner'])) {
-				$word = $features['head']['sem']['determiner'];
+			if (is_numeric($features['head']['sem']['determiner']['type'])) {
+				$word = $features['head']['sem']['determiner']['type'];
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}
@@ -265,10 +265,10 @@ $words = $lexicalItems;
 			}
 
 			if ($determiner) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['determiner'])) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['type'])) {
 					continue;
 				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['determiner'] != $determiner) {
+				if ($data[$partOfSpeech]['features']['head']['sem']['type'] != $determiner['type']) {
 					continue;
 				}
 			}
@@ -477,8 +477,8 @@ $words = $lexicalItems;
 				// the car
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'DP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'DP', 'features' => array('head' => array('sem-2' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner{sem-2}' => null)))),
 				),
 				// (large) car (in the lot)
 				array(
@@ -515,13 +515,13 @@ $words = $lexicalItems;
 				// the
 				array(
 					array('cat' => 'DP', 'features' => array('head-1' => null)),
-					array('cat' => 'determiner', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'determiner', 'features' => array('head-1' => null)),
 				),
 				// Byron's
 				array(
 					array('cat' => 'DP', 'features' => array('head-1' => null)),
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
+					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object{sem-2}' => null)))),
 				),
 			)
 		);

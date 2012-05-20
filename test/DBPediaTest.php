@@ -22,7 +22,7 @@ class DBPediaTest extends Test
 
 		$Conversation = $Echo->startConversation();
 
-	$single = 0;
+	$single = 1;
 
 	if (!$single) {
 
@@ -37,10 +37,11 @@ class DBPediaTest extends Test
 
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 		$this->test(202, $answer, 'Yes.');
-
+//	}
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
 		$this->test(211, $answer, 'Lord Byron had 2 children.');
+//if (!$single) {
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
 		$this->test(212, $answer, 'Lord Byron had 2 kinderen.');
 
@@ -70,7 +71,7 @@ class DBPediaTest extends Test
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->test(251, $answer, "Ada Lovelace and Allegra Byron");
 
-# De error die hij moet geven is "starting at "'s Children""
+
 
 	//	$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 	//	$this->test(252, $answer, "Ada Lovelace en Allegra Byron");

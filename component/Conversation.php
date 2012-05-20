@@ -196,6 +196,7 @@ class Conversation
 
 			$Sentence = $this->parseFirstLine($question);
 			$features = $Sentence->phraseSpecification['features'];
+r($features);
 			$id = 0;
 
 			if (Settings::$addIds) {
@@ -240,9 +241,9 @@ class Conversation
 
 						#todo: this should be made more generic
 //r($features);
-						if (isset($features['head']['sem']['arg2']['question'])) {
-							unset($features['head']['sem']['arg2']['question']);
-							$features['head']['sem']['arg2']['determiner'] = $answer;
+						if (isset($features['head']['sem']['arg2']['determiner']['question'])) {
+							unset($features['head']['sem']['arg2']['determiner']['question']);
+							$features['head']['sem']['arg2']['determiner']['type'] = $answer;
 //r($features);
 							$sentence = $this->generate($features, array());
 							if ($sentence) {

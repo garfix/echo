@@ -24,15 +24,19 @@ class EnglishGrammar extends SimpleGrammar
 			'\'s' => array(
 				'possessiveMarker' => array(
 					'features' => array('head' => array(
-						'sem' => array('type' => 'possession'),
+						'sem' => array('type' => 'possessive'),
 					))
 				)
 			),
 			'a' => array(
-				'determiner' => array(),
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('type' => '*a')))
+				),
 			),
 			'an' => array(
-				'determiner' => array(),
+				'determiner' => array(
+					'features' => array('head' => array('sem' => array('type' => '*a')))
+				),
 			),
 			'am' => array(
 				'verb' => array(
@@ -170,7 +174,7 @@ class EnglishGrammar extends SimpleGrammar
 				'whwordNP' => array(
 					'features' => array(
 						'head' => array(
-							'sem-1' => array('arg2-1' => array('question' => '*extent')),
+							'sem-1' => array('arg2-1' => array('determiner' => array('question' => '*extent'))),
 							'variables' => array('role{arg2-1}' => null)
 						)
 					)
@@ -201,7 +205,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'many' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('determiner' => '*many')))
+					'features' => array('head' => array('sem' => array('type' => '*many')))
 				),
 			),
 			'name' => array(
@@ -233,12 +237,12 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'the' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('determiner' => '*the')))
+					'features' => array('head' => array('sem' => array('type' => '*the')))
 				)
 			),
 			'that' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('determiner' => '*that')))
+					'features' => array('head' => array('sem' => array('type' => '*that')))
 				),
 			),
 			'was' => array(

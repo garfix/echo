@@ -74,8 +74,8 @@ class DBPedia extends KnowledgeSource
 			$select = '1';
 		}
 
-		if (isset($s['question']) && isset($s['determiner'])) {
-			if (($s['question'] == true) && ($s['determiner'] == '*many')) {
+		if (isset($s['determiner']['question'])) {
+			if (($s['determiner']['question'] == true) && ($s['determiner']['type'] == '*many')) {
 				$select = 'COUNT(?' . $s['id'] . ')';
 			}
 		}
