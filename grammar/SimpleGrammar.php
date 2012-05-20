@@ -163,7 +163,7 @@ $words = $lexicalItems;
 			'auxDo', // do, does, did, ...
 			'preposition',
 			'passivisationPreposition',
-			'genitiveMarker' // 's
+			'possessiveMarker' // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
 		));
 	}
 
@@ -477,7 +477,7 @@ $words = $lexicalItems;
 				// the car
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'determiner', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'DP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// (large) car (in the lot)
@@ -500,7 +500,7 @@ $words = $lexicalItems;
 					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
 				),
 			),
-
+			// Prepositional Phrase
 			'PP' => array(
 				// in the lot
 				array(
@@ -509,6 +509,21 @@ $words = $lexicalItems;
 					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
 				),
 			),
+			// Determiner Phrase
+			// See 'The structure of modern english' - Brinton (2000) - p. 170
+			'DP' => array(
+				// the
+				array(
+					array('cat' => 'DP', 'features' => array('head-1' => null)),
+					array('cat' => 'determiner', 'features' => array('head-1' => array('sem-1' => null))),
+				),
+				// Byron's
+				array(
+					array('cat' => 'DP', 'features' => array('head-1' => null)),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => null))),
+				),
+			)
 		);
 	}
 
