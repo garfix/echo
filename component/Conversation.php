@@ -196,7 +196,7 @@ class Conversation
 
 			$Sentence = $this->parseFirstLine($question);
 			$features = $Sentence->phraseSpecification['features'];
-r($features);
+//r($features);
 			$id = 0;
 
 			if (Settings::$addIds) {

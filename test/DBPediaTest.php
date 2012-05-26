@@ -22,7 +22,7 @@ class DBPediaTest extends Test
 
 		$Conversation = $Echo->startConversation();
 
-	$single = 1;
+	$single = 0;
 
 	if (!$single) {
 

@@ -328,11 +328,11 @@ $words = $lexicalItems;
 				// The car was driven by John
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
-					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'aux', 'features' => array('head-1' => null)),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('predicate' => null, 'arg1{sem-2}' => null, 'arg2{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
 					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head-3' => array('sem-2' => null))),
+					array('cat' => 'NP', 'features' => array('head-3' => array('sem' => '?sem-2'))),
 				),
 
 				// active declarative
@@ -343,15 +343,15 @@ $words = $lexicalItems;
 				// NP forms the subject of VP's verb (subject{sem-1})
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null)))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg1' => '?sem')))),
 				),
 				// John was driving
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
 					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null)))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg1' => '?sem')))),
 				),
 
 				// imperative
@@ -369,8 +369,8 @@ $words = $lexicalItems;
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
 
 				// How many children did John have?
@@ -379,18 +379,18 @@ $words = $lexicalItems;
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg1{sem-2}' => null)))),
+					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
 				),
 				// Where was John born?
 				// NP delivers arg2
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'auxBe', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem-1' => array('arg2{sem-2}' => null)))),
+					array('cat' => 'auxBe', 'features' => array('head' => array('agreement' => '?agr'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg2' => '?sem-2')))),
 				),
 
 				// yes-no questions
@@ -401,19 +401,19 @@ $words = $lexicalItems;
 				// NP forms the object of VP's verb (object{sem-1})
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement-2' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg2{sem-1}' => null)))),
+					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg2' => '?sem-1')))),
 				),
 
 				// Was the car driven by John?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive'))),
 					array('cat' => 'aux'),
-					array('cat' => 'NP', 'features' => array('head-2' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('predicate' => null, 'arg1{sem-2}' => null, 'arg2{sem-1}' => null)))),
+					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
 					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head-3' => array('sem-2' => null))),
+					array('cat' => 'NP', 'features' => array('head-3' => array('sem' => '?sem-2'))),
 				),
 
 				// Was John a fool?
@@ -421,16 +421,16 @@ $words = $lexicalItems;
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1{sem-1}' => null, 'arg2{sem-2}' => null)))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
 			),
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => null)),
+					array('cat' => 'VP', 'features' => array('head' => '?head')),
+					array('cat' => 'verb', 'features' => array('head' => '?head')),
 				),
 				// book that flight! / sees the book
 				// verb is the head constituent (head-1)
@@ -438,29 +438,29 @@ $words = $lexicalItems;
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2{sem-2}' => null)), 'arguments' => 1)),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2' => '?sem')), 'arguments' => 1)),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb (object{sem-1})
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier{sem-2}' => null)))),
-					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier' => '?sem')))),
+					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),
 			'WhNP' => array(
 				// where, who
 				array(
-					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whword', 'features' => array('head-1' => null)),
+					array('cat' => 'WhNP', 'features' => array('head' => '?head')),
+					array('cat' => 'whword', 'features' => array('head' => '?head')),
 				),
 				// which car, how many children
 				array(
 					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role{sem-1}' => null)))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?sem')))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),
 			'NP' => array(
@@ -477,8 +477,8 @@ $words = $lexicalItems;
 				// the car
 				array(
 					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'DP', 'features' => array('head' => array('sem-2' => null))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner{sem-2}' => null)))),
+					array('cat' => 'DP', 'features' => array('head' => array('sem' => '?sem-2'))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner' => '?sem-2')))),
 				),
 				// (large) car (in the lot)
 				array(
@@ -496,8 +496,8 @@ $words = $lexicalItems;
 				// car in the lot
 				array(
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('modifier{sem-2}' => null)))),
-					array('cat' => 'PP', 'features' => array('head' => array('sem-2' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('modifier' => '?sem-2')))),
+					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
 			),
 			// Prepositional Phrase
@@ -505,8 +505,8 @@ $words = $lexicalItems;
 				// in the lot
 				array(
 					array('cat' => 'PP', 'features' => array('head-1' => null)),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object{sem-1}' => null)))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object' => '?sem')))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),
 			// Determiner Phrase
@@ -514,14 +514,14 @@ $words = $lexicalItems;
 			'DP' => array(
 				// the
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => null)),
-					array('cat' => 'determiner', 'features' => array('head-1' => null)),
+					array('cat' => 'DP', 'features' => array('head' => '?head')),
+					array('cat' => 'determiner', 'features' => array('head' => '?head')),
 				),
 				// Byron's
 				array(
 					array('cat' => 'DP', 'features' => array('head-1' => null)),
-					array('cat' => 'NP', 'features' => array('head' => array('sem-2' => null))),
-					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object{sem-2}' => null)))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
+					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
 				),
 			)
 		);
@@ -542,21 +542,21 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null, 'arg1-1' => null, 'arg2-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem{arg2-1}' => null))),
+						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem' => '?sem-2'))),
 						array('cat' => 'aux', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '*be')))),
-						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
-						array('cat' => 'NP', 'features' => array('head' => array('sem{arg1-1}' => null))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
 					)
 				),
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null, 'arg1-1' => null, 'arg2-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem{arg1-1}' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => array('predicate-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem{arg2-1}' => null))),
+						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => '?sem-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					),
 				),
 			),
@@ -564,31 +564,31 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sem' => array('category' => null, 'modifier' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'modifier-1' => null, 'determiner-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'determiner-1' => null)))),
-						array('cat' => 'PP', 'features' => array('head' => array('sem{modifier-1}' => null)))
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'modifier' => '?sem', 'determiner' => '?det')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => '?det')))),
+						array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem')))
 					)
 				),
 				array(
 					'condition' => array('head' =>array('sem' =>  array('category' => null, 'determiner' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null, 'determiner-1' => null)))),
-						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('determiner-1' => null)))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => '?det')))),
+						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('determiner' => '?det')))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 					)
 				),
 				array(
 					'condition' => array('head' => array('sem' => array('category' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category-1' => null)))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 					)
 				),
 				array(
 					'condition' => array('head' => array('sem' => array('name' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('name-1' => null)))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('sem' => array('name-1' => null)))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('name' => '?name')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('sem' => array('name' => '?name')))),
 					)
 				),
 			),
@@ -596,16 +596,16 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null, ''))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
-						array('cat' => 'verb', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array())
 					)
 				),
 				array(
 					'condition' => array('head' => array('sem' => array('predicate' => null))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
-						array('cat' => 'verb', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
 					)
 				),
 			),
@@ -613,9 +613,9 @@ $words = $lexicalItems;
 				array(
 					'condition' => array(),
 					'rule' => array(
-						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('type-1' => null, 'object-1' => null)))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('type-1' => null)))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem{object-1}' => null))),
+						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('type' => '?type', 'object' => '?obj')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('type' => '?type')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?obj'))),
 					)
 				),
 			),

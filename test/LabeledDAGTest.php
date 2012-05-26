@@ -132,9 +132,23 @@ class LabeledDAGTest extends Test
 		$this->test(363, $F28->match(array('a' => 1, 'c' => null)), false);
 		$this->test(364, $F29->match(array('a' => 1, 'b' => 2)), false);
 		$this->test(365, $F29->match(array('a' => 1)), true);
-		$this->test(365, $F29->match(array('b' => 2)), false);
-		$this->test(366, $F30->match(array('b' => array('d' => 4))), true);
-		$this->test(367, $F30->match(array('b' => array('c' => 3))), false);
-		$this->test(367, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
+		$this->test(366, $F29->match(array('b' => 2)), false);
+		$this->test(367, $F30->match(array('b' => array('d' => 4))), true);
+		$this->test(368, $F30->match(array('b' => array('c' => 3))), false);
+		$this->test(369, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
+
+		// simpler syntax
+		$F40 = new LabeledDAG(array(
+			'aap' => '?var',
+			'mies' => 2,
+			'wim' => '?var',
+			'zus' => array('jet' => '?var', 'schapen' => '?var2')
+		));
+//r($F40);
+		$F40->setPathValue(array('aap'), 3);
+		$this->test(370, $F40->getPathValue(array('wim')), 3);
+		$this->test(371, $F40->getPathValue(array('zus', 'jet')), 3);
+		$this->test(372, $F40->getPathValue(array('zus', 'schapen')), null);
+
 	}
 }

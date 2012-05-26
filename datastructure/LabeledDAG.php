@@ -45,8 +45,19 @@ class LabeledDAG
 
 			foreach ($tree as $label => $subTree) {
 
-				// create a $name for the user and $internalLabel for internal node management
-				list($name, $internalSubLabel) = $this->extractLabel($label);
+				if (is_string($subTree) && substr($subTree, 0, 1) == '?') {
+
+					// $subTree is a variable (like '?sem1')
+					$name = $label;
+					$internalSubLabel = substr($subTree, 1);
+					$subTree = null;
+
+				} else {
+
+					// create a $name for the user and $internalLabel for internal node management
+					list($name, $internalSubLabel) = $this->extractLabel($label);
+
+				}
 
 				// traverse the subtree
 				$this->createNode($internalSubLabel, $subTree);
