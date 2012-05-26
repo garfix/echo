@@ -2,7 +2,7 @@
 
 namespace agentecho\test;
 
-class Test
+class TestBase
 {
 	protected function test($case, $got, $expected) {
 		if ($expected !== $got) {

@@ -3,7 +3,7 @@
 namespace agentecho\test;
 
 use \agentecho\AgentEcho;
-use \agentecho\test\Test;
+use \agentecho\test\TestBase;
 use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
@@ -11,7 +11,7 @@ use \agentecho\grammar\DutchGrammar;
 /**
  * Lord Byron facts: http://dbpedia.org/page/Lord_Byron
  */
-class DBPediaTest extends Test
+class DBPediaTest extends TestBase
 {
 	function execute()
 	{

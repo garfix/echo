@@ -2,10 +2,10 @@
 
 namespace agentecho\test;
 
-use \agentecho\test\Test;
+use \agentecho\test\TestBase;
 use \agentecho\datastructure\LabeledDAG;
 
-class LabeledDAGTest extends Test
+class LabeledDAGTest extends TestBase
 {
 	function execute()
 	{

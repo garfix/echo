@@ -3,12 +3,12 @@
 namespace agentecho\test;
 
 use \agentecho\AgentEcho;
-use \agentecho\test\Test;
+use \agentecho\test\TestBase;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\exception\ParseException;
 
-class ParseTest extends Test
+class ParseTest extends TestBase
 {
 	function execute()
 	{
