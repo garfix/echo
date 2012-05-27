@@ -328,11 +328,11 @@ $words = $lexicalItems;
 				// The car was driven by John
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
-					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'aux', 'features' => array('head-1' => null)),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
 					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head-3' => array('sem' => '?sem-2'))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
 
 				// active declarative
@@ -340,7 +340,7 @@ $words = $lexicalItems;
 				// John drives
 				// VP is the head constituent (head-1)
 				// VP and NP agree (agreement-2)
-				// NP forms the subject of VP's verb (subject{sem-1})
+				// NP forms the subject of VP's verb
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
@@ -398,7 +398,7 @@ $words = $lexicalItems;
 				// Was John driving?
 				// VP is the head constituent (head-1)
 				// aux, NP, and VP agree (agreement-2)
-				// NP forms the object of VP's verb (object{sem-1})
+				// NP forms the object of VP's verb
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
@@ -435,7 +435,7 @@ $words = $lexicalItems;
 				// book that flight! / sees the book
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
-				// NP forms the object of verb (object{sem-1})
+				// NP forms the object of verb
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2' => '?sem')), 'arguments' => 1)),
@@ -443,7 +443,7 @@ $words = $lexicalItems;
 				),
 				// driven by John
 				// verb is the head constituent (head-1)
-				// NP forms the object of verb (object{sem-1})
+				// NP forms the object of verb
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => null)),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier' => '?sem')))),

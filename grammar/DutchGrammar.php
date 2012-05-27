@@ -83,10 +83,10 @@ class DutchGrammar extends SimpleGrammar
 				'whwordNP' => array(
 					'features' => array(
 						'head' => array(
-							'sem-1' => array(
-								'arg2-1' => array('determiner' => array('question' => '*extent', 'type' => '*many')),
+							'sem' => array(
+								'arg2{?arg}' => array('determiner' => array('question' => '*extent', 'type' => '*many')),
 							),
-							'variables' => array('role{arg2-1}' => null)
+							'variables' => array('role' => '?arg')
 						)
 					)
 				),

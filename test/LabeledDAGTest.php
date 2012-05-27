@@ -114,14 +114,17 @@ class LabeledDAGTest extends TestBase
 		$this->test(334, $F21->getPathValue(array('a', 'head')), 1);
 		// alias
 		$tree = array(
-			'color-1' => null,
-			'colour{color-1}' => null,
+			'color' => '?c',
+			'colour{?c}' => null,
+			'couleur' => '?c',
 		);
 		$F22 = new LabeledDAG($tree);
 		$F22->setPathValue(array('color'), 'red');
 		$this->test(341, $F22->getPathValue(array('colour')), 'red');
 		$F22->setPathValue(array('colour'), 'blue');
 		$this->test(341, $F22->getPathValue(array('color')), 'blue');
+		$F22->setPathValue(array('couleur'), 'yellow');
+		$this->test(341, $F22->getPathValue(array('color')), 'yellow');
 
 		// match
 		$F28 = new LabeledDAG(array('a' => 1));
@@ -144,7 +147,7 @@ class LabeledDAGTest extends TestBase
 			'wim' => '?var',
 			'zus' => array('jet' => '?var', 'schapen' => '?var2')
 		));
-//r($F40);
+
 		$F40->setPathValue(array('aap'), 3);
 		$this->test(370, $F40->getPathValue(array('wim')), 3);
 		$this->test(371, $F40->getPathValue(array('zus', 'jet')), 3);

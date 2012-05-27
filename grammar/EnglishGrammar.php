@@ -174,8 +174,8 @@ class EnglishGrammar extends SimpleGrammar
 				'whwordNP' => array(
 					'features' => array(
 						'head' => array(
-							'sem-1' => array('arg2-1' => array('determiner' => array('question' => '*extent'))),
-							'variables' => array('role{arg2-1}' => null)
+							'sem' => array('arg2{?arg}' => array('determiner' => array('question' => '*extent'))),
+							'variables' => array('role' => '?arg')
 						)
 					)
 				),

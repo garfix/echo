@@ -12,15 +12,36 @@ class LabeledDAG
 
 	/**
 	 * Creates the DAG based on a description in a tree.
-	 * An example description:
+	 * Example descriptions:
+	 *
+	 * Example 1:
+	 * Using indexes to denote that different names point to the same location
+	 * In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node.
 	 *
 	 * 	$tree = array(
-	 *	    'noun' => array('head-1' => array('tense-2' => 'past', 'person' => 1)),
-	 *	    'verb' => array('head-1' => null),
-	 *	    'VP' => array('head' => array('tense-2' => null)),
+	 *	    'noun' => array('head-1' => array('tense' => null, 'person' => null)),
+	 *	    'verb' => array('head-1' => array('tense' => null, 'person' => null)),
 	 *	);
 	 *
-	 *  In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node. 'tense-2' is similar.
+	 * Example 2:
+	 * Using variables to denote that different names point to the same location.
+	 * In this example '?t' is the name of the location that both 'tense' labels point to.
+	 *
+	 * 	$tree = array(
+	 *	    'noun' => array('head' => array('tense' => '?t', 'person' => 1)),
+	 *	    'verb' => array('head' => array('tense' => '?t')),
+	 *	);
+	 *
+	 * Example 3:
+	 * Using variables in a situation where no free value is available.
+	 * In this example '?sem1' is in both cases the name of the location.
+	 * In "'sem{?sem1}'" '?sem' is the name of the array that immediately follows it,
+	 *
+	 * 	$tree = array(
+	 *	    'noun' => array('head' => array('sem{?sem1}' => array('role' => null))),
+	 *	    'verb' => array('head' => array('sem' => array('arg1' => '?sem1'))),
+	 *	);
+	 *
 	 */
 	public function __construct($tree = null)
 	{
@@ -108,7 +129,7 @@ class LabeledDAG
 		$regexp =
 			'/^' .
 			'(?P<name1>[a-z][a-z@_0-9]*)(-(?P<id1>\d+))?' .
-			'(\{(?P<name2>[a-z][a-z@_0-9]*)(-(?P<id2>\d+))?\})?' .
+			'(\{\?(?P<name2>[a-z][a-z@_0-9]*)\})?' .
 			'$/i';
 
 		if (!preg_match($regexp, $label, $matches)) {
@@ -116,13 +137,8 @@ class LabeledDAG
 		}
 
 		if (!empty($matches['name2'])) {
-			$id = isset($matches['id2']) ? $matches['id2'] : self::createUniqueId();
-			$internalLabel = $matches['name2'] . '-' . $id;
+			$internalLabel = $matches['name2'];
 			$externalLabel = $matches['name1'];
-
-			if (!empty($matches['id1'])) {
-				trigger_error('The alias may not contain an id: ' . $label, E_USER_ERROR);
-			}
 		} else {
 			$id = isset($matches['id1']) ? $matches['id1'] : self::createUniqueId();
 			$internalLabel = $matches['name1'] . '-' . $id;

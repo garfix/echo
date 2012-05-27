@@ -29,6 +29,9 @@ use \agentecho\grammar\Grammar;
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
  * - Create independent functions that could be used without the context of the agent (i.e. getPlural($word)
  *
+ * Preconditions:
+ * - We can ask of the user that he enters grammatically and lexically correct sentences.
+ *
  * TODO:
  * sentenceType => mood
  * 1st person (in artikel voorbeeld => 3rd person)
