@@ -53,6 +53,24 @@ class DBPedia extends KnowledgeSource
 
 		$result = $this->query($triples, $select);
 
+		if ($sentenceType == 'wh-question') {
+			if (count($result == 1)) {
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+			}
+		}
+		if ($sentenceType == 'imperative') {
+			$values = array();
+			foreach ($result as $resultVal) {
+				$values[] = reset($resultVal);
+			}
+			$result = $values;
+		}
+
 		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
 
 		return $result;
@@ -72,6 +90,16 @@ class DBPedia extends KnowledgeSource
 		// yes-no-question
 		if ($sentenceType == 'yes-no-question') {
 			$select = '1';
+		}
+
+		// imperative 'name'
+		if ($sentenceType == 'imperative' &&
+			isset($s['predicate']) && ($s['predicate'] == '*name')) {
+
+			$select = '?name';
+			$arg2id = $s['arg2']['id'];
+			$triples[] = array('?' . $arg2id, 'rdfs:label', '?name');
+			$triples[] = array('FILTER(lang(?name) = "en")');
 		}
 
 		if (isset($s['determiner']['question'])) {
@@ -136,6 +164,15 @@ class DBPedia extends KnowledgeSource
 			$triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
 		}
 
+		// http://dbpedia.org/property/children
+		if (
+			isset($s['category']) && ($s['category'] == '*child') &&
+			isset($s['determiner']['object'])
+		) {
+			$objectId = $s['determiner']['object']['id'];
+			$triples[] = array('?' . $objectId, '<http://dbpedia.org/property/children>', '?' . $subjectId);
+		}
+
 		// http://dbpedia.org/ontology/influencedBy
 		if (
 			isset($s['predicate']) && ($s['predicate'] == '*influence') &&
@@ -197,7 +234,8 @@ $triples = array_unique($triples);
 		if (Settings::$debugKnowledge) r($query);
 
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
-//r($query);exit;
+//r($query);
+//r($result);
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -220,16 +258,13 @@ $triples = array_unique($triples);
 		} elseif (isset($result['results']['bindings'])) {
 			$value = array();
 			foreach ($result['results']['bindings'] as $binding) {
+				$row = array();
 				foreach ($binding as $key => $data) {
-					$value[$key] = $data['value'];
+					$row[$key] = $data['value'];
 				}
-				// only use the first answer
-				break;
+				$value[] = $row;
 			}
 
-			if (count($value) == 1) {
-				$value = reset($value);
-			}
 		} else {
 			$value = null;
 		}

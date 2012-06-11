@@ -37,9 +37,12 @@ use \agentecho\grammar\Grammar;
  * 1st person (in artikel voorbeeld => 3rd person)
  * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
- * namespaces
  * een "Conversation" is noch een datastructure noc een component, splits hem op in twee delen
- * errors: try / catch
+ * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
+ * language production: sigma => NP ?
+ * zorg ervoor dat de excepties in de huidige taal gezet zijn
+ * Bouw een OOP laag om de phrase specification array structuur heen. De gebruiker werkt alleen met objecten
+ * Proper names worden nu 7x ge-preg matched, steeds met kortere groepen woorden. dit is niet nodig. 1x is genoeg
  */
 class AgentEcho
 {

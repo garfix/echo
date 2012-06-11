@@ -7,6 +7,7 @@ use \agentecho\component\Lexer;
 use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\Sentence;
 use \agentecho\datastructure\LabeledDAG;
+use \agentecho\exception\GenerationException;
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -190,6 +191,12 @@ $words = $lexicalItems;
 		}
 	}
 
+	/**
+	 * @param $partOfSpeech
+	 * @param array $features
+	 * @return bool|int|string
+	 * @throws \agentecho\exception\GenerationException
+	 */
 	public function getWordForFeatures($partOfSpeech, array $features)
 	{
 		$word = false;
@@ -214,6 +221,13 @@ $words = $lexicalItems;
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'verb') {
 			$word = $this->getWord($partOfSpeech, $features);
+		} elseif ($partOfSpeech == 'conjunction') {
+			$word = $this->getWord($partOfSpeech, $features);
+		} else {
+			$E = new GenerationException();
+			$E->setType(GenerationException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
+			$E->setValue($partOfSpeech);
+			throw $E;
 		}
 
 		return $word;
@@ -293,9 +307,17 @@ $words = $lexicalItems;
 	 * Returns the first rule that have $antecedent and that match $features.
 	 * @param $antecedent
 	 * @param LabeledDAG $FeatureDAG
+	 * @throws GenerationException
 	 */
 	public function getRuleForDAG($antecedent, LabeledDAG $FeatureDAG)
 	{
+		if (!isset($this->generationRules[$antecedent])) {
+			$E = new GenerationException();
+			$E->setType(GenerationException::TYPE_UNKNOWN_CONSTITUENT);
+			$E->setValue($antecedent);
+			throw $E;
+		}
+
 		foreach ($this->generationRules[$antecedent] as $generationRule) {
 
 			$pattern = array($antecedent . '@0' => $generationRule['condition']);
@@ -367,7 +389,7 @@ $words = $lexicalItems;
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -377,7 +399,7 @@ $words = $lexicalItems;
 				// NP delivers arg1
 #todo alleen-engels constructie!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -386,7 +408,7 @@ $words = $lexicalItems;
 				// Where was John born?
 				// NP delivers arg2
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-non-subject-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'auxBe', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -616,6 +638,17 @@ $words = $lexicalItems;
 						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('type' => '?type', 'object' => '?obj')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('type' => '?type')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?obj'))),
+					)
+				),
+			),
+			'CP' => array(
+				array(
+					'condition' => array(),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'conjunction'),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
 					)
 				),
 			),

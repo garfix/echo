@@ -6,6 +6,7 @@ use \agentecho\AgentEcho;
 use \agentecho\Settings;
 use \agentecho\grammar\Grammar;
 use \agentecho\datastructure\Sentence;
+use \agentecho\datastructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\exception\ParseException;
 
@@ -146,7 +147,19 @@ class Conversation
 			throw $E;
 		}
 
+		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification);
+
 		return $result['success'];
+	}
+
+	/**
+	 * This function turns a phrase specification into an object structure.
+	 * @param $phraseSpecification
+	 * @return
+	 */
+	private function buildObjectStructure($phraseSpecification)
+	{
+
 	}
 
 	/**
@@ -232,7 +245,7 @@ class Conversation
 						$answer = 'No.';
 					}
 
-				} elseif ($sentenceType == 'wh-non-subject-question') {
+				} elseif ($sentenceType == 'wh-question') {
 
 					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($sem, $sentenceType);
 
@@ -251,6 +264,35 @@ class Conversation
 							}
 						}
 
+					}
+
+				} elseif ($sentenceType == 'imperative') {
+
+					#todo Imperatives are not always questions
+					$isQuestion = true;
+
+					if ($isQuestion) {
+
+//						r($sem);
+						$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($sem, $sentenceType);
+
+						$values = array();
+
+						foreach ($answer as $name) {
+							$values[] = array(
+								'name' => $name
+							);
+						}
+
+						$features = array();
+						$features['head']['sem'] = SentenceBuilder::buildConjunction($values);
+
+//						r($features);
+
+						$sentence = $this->generate($features, array());
+						if ($sentence) {
+							$answer = $sentence;
+						}
 					}
 
 				} else {

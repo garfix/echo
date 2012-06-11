@@ -38,6 +38,11 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('type' => '*a')))
 				),
 			),
+			'and' => array(
+				'conjunction' => array(
+					//'features' => array('head' => array('sem' => array('type' => '*and')))
+				),
+			),
 			'am' => array(
 				'verb' => array(
 					'features' => array(

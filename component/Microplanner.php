@@ -26,11 +26,22 @@ class Microplanner
 			$this->removeIds($phraseSpecification);
 		}
 
+		$constituent = 'S';
+
+#todo: algemener maken
+		if (!empty($phraseSpecification['head']['sem']['type'])) {
+			if ($phraseSpecification['head']['sem']['type'] == 'conjunction') {
+
+				$constituent = 'CP';
+
+			}
+		}
+//r($phraseSpecification);
 		$FeatureDAG = new LabeledDAG(array(
-			"S@0" => $phraseSpecification
+			$constituent . "@0" => $phraseSpecification
 		));
 
-		$words = $this->planPhrase('S', $FeatureDAG, $Grammar);
+		$words = $this->planPhrase($constituent, $FeatureDAG, $Grammar);
 
 		return $words;
 	}
@@ -48,12 +59,12 @@ class Microplanner
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
-#r($DAG);
+//r($DAG);
 		$result = $Grammar->getRuleForDAG($antecedent, $DAG);
 		if ($result === false) {
 			return false;
 		}
-
+//r($result);
 		list ($rule, $UnifiedDAG) = $result;
 		$words = array();
 

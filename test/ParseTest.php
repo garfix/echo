@@ -34,8 +34,8 @@ class ParseTest extends TestBase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Conversation->parseFirstLine('Who am I?');
 		$this->test(111, $Sentence->getSyntaxString(), '[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]');
-		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, arg2: [question: 1], arg1: [category: *firstPerson]], sentenceType: wh-non-subject-question, voice: active]]");
-		$this->test(113, $Sentence->getStructure(), "wh-non-subject-question");
+		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, arg2: [question: 1], arg1: [category: *firstPerson]], sentenceType: wh-question, voice: active]]");
+		$this->test(113, $Sentence->getStructure(), "wh-question");
 		$this->test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
 
 		$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');

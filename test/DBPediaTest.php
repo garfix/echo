@@ -22,7 +22,7 @@ class DBPediaTest extends TestBase
 
 		$Conversation = $Echo->startConversation();
 
-	$single = 0;
+	$single = 1;
 
 	if (!$single) {
 
@@ -67,7 +67,6 @@ class DBPediaTest extends TestBase
 	}
 
 		// S => VP
-// http://www.grammarbook.com/punctuation/apostro.asp
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->test(251, $answer, "Ada Lovelace and Allegra Byron");
 

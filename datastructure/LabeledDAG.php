@@ -15,15 +15,6 @@ class LabeledDAG
 	 * Example descriptions:
 	 *
 	 * Example 1:
-	 * Using indexes to denote that different names point to the same location
-	 * In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node.
-	 *
-	 * 	$tree = array(
-	 *	    'noun' => array('head-1' => array('tense' => null, 'person' => null)),
-	 *	    'verb' => array('head-1' => array('tense' => null, 'person' => null)),
-	 *	);
-	 *
-	 * Example 2:
 	 * Using variables to denote that different names point to the same location.
 	 * In this example '?t' is the name of the location that both 'tense' labels point to.
 	 *
@@ -32,14 +23,23 @@ class LabeledDAG
 	 *	    'verb' => array('head' => array('tense' => '?t')),
 	 *	);
 	 *
-	 * Example 3:
-	 * Using variables in a situation where no free value is available.
+	 * Example 2:
+	 * Using variables in cases where the location is an array.
 	 * In this example '?sem1' is in both cases the name of the location.
-	 * In "'sem{?sem1}'" '?sem' is the name of the array that immediately follows it,
+	 * Here, in "'sem{?sem1}'" '?sem' is the name of the array that immediately follows it,
 	 *
 	 * 	$tree = array(
 	 *	    'noun' => array('head' => array('sem{?sem1}' => array('role' => null))),
 	 *	    'verb' => array('head' => array('sem' => array('arg1' => '?sem1'))),
+	 *	);
+	 *
+	 * Example 3:
+	 * Using indexes to solve the same problem as in example 2. It is a shortcut that can be used in some cases.
+	 * In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node.
+	 *
+	 * 	$tree = array(
+	 *	    'noun' => array('head-1' => array('tense' => null, 'person' => null)),
+	 *	    'verb' => array('head-1' => array('tense' => null, 'person' => null)),
 	 *	);
 	 *
 	 */
