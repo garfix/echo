@@ -24,23 +24,23 @@ class EnglishGrammar extends SimpleGrammar
 			'\'s' => array(
 				'possessiveMarker' => array(
 					'features' => array('head' => array(
-						'sem' => array('type' => 'possessive'),
+						'sem' => array('category' => 'possessive'),
 					))
 				)
 			),
 			'a' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => '*a')))
 				),
 			),
 			'an' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => '*a')))
 				),
 			),
 			'and' => array(
 				'conjunction' => array(
-					//'features' => array('head' => array('sem' => array('type' => '*and')))
+					//'features' => array('head' => array('sem' => array('category' => '*and')))
 				),
 			),
 			'am' => array(
@@ -87,7 +87,7 @@ class EnglishGrammar extends SimpleGrammar
 			'by' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('type' => 'by'),
+						'sem' => array('category' => 'by'),
 					))
 				),
 
@@ -210,7 +210,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'many' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*many')))
+					'features' => array('head' => array('sem' => array('category' => '*many')))
 				),
 			),
 			'name' => array(
@@ -225,7 +225,7 @@ class EnglishGrammar extends SimpleGrammar
 			'of' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('type' => 'of'),
+						'sem' => array('category' => 'of'),
 					))
 				),
 			),
@@ -242,12 +242,12 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'the' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*the')))
+					'features' => array('head' => array('sem' => array('category' => '*the')))
 				)
 			),
 			'that' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*that')))
+					'features' => array('head' => array('sem' => array('category' => '*that')))
 				),
 			),
 			'was' => array(

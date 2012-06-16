@@ -103,7 +103,7 @@ class DBPedia extends KnowledgeSource
 		}
 
 		if (isset($s['determiner']['question'])) {
-			if (($s['determiner']['question'] == true) && ($s['determiner']['type'] == '*many')) {
+			if (($s['determiner']['question'] == true) && ($s['determiner']['category'] == '*many')) {
 				$select = 'COUNT(?' . $s['id'] . ')';
 			}
 		}

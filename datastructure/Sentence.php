@@ -32,6 +32,9 @@ class Sentence
 	/** @var The syntax tree with added features */
 	public $phraseSpecification = null;
 
+	/** @var The root object of the object structure. */
+	public $RootObject = null;
+
 	public function __construct(Conversation $Conversation)
 	{
 		$this->Conversation = $Conversation;

@@ -34,7 +34,7 @@ class ParseTest extends TestBase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Conversation->parseFirstLine('Who am I?');
 		$this->test(111, $Sentence->getSyntaxString(), '[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]');
-		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, arg2: [question: 1], arg1: [category: *firstPerson]], sentenceType: wh-question, voice: active]]");
+		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, type: event, arg2: [question: 1], arg1: [category: *firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
 		$this->test(113, $Sentence->getStructure(), "wh-question");
 		$this->test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
 
@@ -45,7 +45,7 @@ class ParseTest extends TestBase
 		$this->test(206, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['modifier']['object']['name'], 'Paradise Lost');
 		$this->test(207, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['category'], '*author');
 //r($Sentence->phraseSpecification);
-		$this->test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner']['type'], '*the');
+		$this->test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner']['category'], '*the');
 		$this->test(209, $Sentence->phraseSpecification['features']['head']['sem']['arg2']['name'], 'Lord Byron');
 		$this->test(210, $Sentence->phraseSpecification['features']['head']['sentenceType'], 'yes-no-question');
 
@@ -55,7 +55,7 @@ class ParseTest extends TestBase
 		// S => NP VP
 		$Sentence = $Conversation->parseFirstLine('John sees the book');
 		$this->test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]');
-		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: *see, arg2: [category: *book, determiner: [type: *the]], arg1: [name: John]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
+		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: *see, type: event, arg2: [category: *book, type: entity, determiner: [category: *the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
 
 		// agreement success
 		// S => NP VP

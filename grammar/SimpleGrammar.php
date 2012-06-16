@@ -210,8 +210,8 @@ $words = $lexicalItems;
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['sem']['determiner']['type'])) {
-				$word = $features['head']['sem']['determiner']['type'];
+			if (is_numeric($features['head']['sem']['determiner']['category'])) {
+				$word = $features['head']['sem']['determiner']['category'];
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}
@@ -241,7 +241,7 @@ $words = $lexicalItems;
 		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
 		$tense = isset($features['head']['tense']) ? $features['head']['tense'] : null;
 		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
-		$type = isset($features['head']['sem']['type']) ? $features['head']['sem']['type'] : null;
+		$category = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
 		$isa = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
 
 		foreach ($this->lexicon as $word => $data) {
@@ -279,19 +279,19 @@ $words = $lexicalItems;
 			}
 
 			if ($determiner) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['type'])) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
 					continue;
 				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['type'] != $determiner['type']) {
+				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $determiner['category']) {
 					continue;
 				}
 			}
 
-			if ($type) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['type'])) {
+			if ($category) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
 					continue;
 				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['type'] != $type) {
+				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $category) {
 					continue;
 				}
 			}
@@ -451,24 +451,24 @@ $words = $lexicalItems;
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head' => '?head')),
-					array('cat' => 'verb', 'features' => array('head' => '?head')),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'event')))),
+					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('arg2' => '?sem')), 'arguments' => 1)),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'event')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('arg2' => '?sem')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => null)),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem' => array('modifier' => '?sem')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'event')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('modifier' => '?sem')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),
@@ -488,23 +488,23 @@ $words = $lexicalItems;
 			'NP' => array(
 				// John
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity', 'id' => 1)))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity', 'id' => 1)))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity', 'id' => 1)))),
 					array('cat' => 'DP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner' => '?sem-2')))),
 				),
 				// (large) car (in the lot)
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity', 'id' => 1)))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 			),
@@ -536,12 +536,12 @@ $words = $lexicalItems;
 			'DP' => array(
 				// the
 				array(
-					array('cat' => 'DP', 'features' => array('head' => '?head')),
-					array('cat' => 'determiner', 'features' => array('head' => '?head')),
+					array('cat' => 'DP', 'features' => array('head-1' => array('sem-1' => array('type' => 'determiner')))),
+					array('cat' => 'determiner', 'features' => array('head-1' => null)),
 				),
 				// Byron's
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => null)),
+					array('cat' => 'DP', 'features' => array('head-1' => array('sem-1' => array('type' => 'determiner')))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
 				),
@@ -635,8 +635,8 @@ $words = $lexicalItems;
 				array(
 					'condition' => array(),
 					'rule' => array(
-						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('type' => '?type', 'object' => '?obj')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('type' => '?type')))),
+						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('category' => '?category', 'object' => '?obj')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?category')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?obj'))),
 					)
 				),

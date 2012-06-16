@@ -29,12 +29,12 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'de' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*the')))
+					'features' => array('head' => array('sem' => array('category' => '*the')))
 				)
 			),
 			'die' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*that')))
+					'features' => array('head' => array('sem' => array('category' => '*that')))
 				)
 			),
 			'door' => array(
@@ -55,7 +55,7 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'een' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('type' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => '*a')))
 				)
 			),
 			'had' => array(
@@ -84,7 +84,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array(
-								'arg2{?arg}' => array('determiner' => array('question' => '*extent', 'type' => '*many')),
+								'arg2{?arg}' => array('determiner' => array('question' => '*extent', 'category' => '*many')),
 							),
 							'variables' => array('role' => '?arg')
 						)
@@ -107,7 +107,7 @@ class DutchGrammar extends SimpleGrammar
 			'van' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
-						'sem' => array('type' => 'of'),
+						'sem' => array('category' => 'of'),
 					))
 				),
 			),

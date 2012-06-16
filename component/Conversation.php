@@ -9,6 +9,9 @@ use \agentecho\datastructure\Sentence;
 use \agentecho\datastructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\exception\ParseException;
+use \agentecho\phrasestructure\Entity;
+use \agentecho\phrasestructure\Event;
+use \agentecho\phrasestructure\Determiner;
 
 class Conversation
 {
@@ -146,20 +149,61 @@ class Conversation
 
 			throw $E;
 		}
-
-		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification);
-
+//r($Sentence->phraseSpecification['features']['head']['sem']);
+//		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']['sem']);
+//r($Sentence->RootObject);exit;
 		return $result['success'];
 	}
 
 	/**
 	 * This function turns a phrase specification into an object structure.
 	 * @param $phraseSpecification
-	 * @return
+	 * @return Entity
 	 */
-	private function buildObjectStructure($phraseSpecification)
+	private function buildObjectStructure(array $phraseSpecification)
 	{
+		switch ($phraseSpecification['type']) {
+			case 'event':
+				$E = new Event();
 
+				$E->setPredicate($phraseSpecification['predicate']);
+
+				$arguments = array();
+				for ($i = 1; $i < 5; $i++) {
+					if (isset($phraseSpecification['arg' . $i])) {
+						$arguments[$i] = $this->buildObjectStructure($phraseSpecification['arg' . $i]);
+					}
+				}
+				$E->setArguments($arguments);
+
+				break;
+
+			case 'entity':
+				$E = new Entity();
+
+				if (isset($phraseSpecification['category'])) {
+					$E->setCategory($phraseSpecification['category']);
+				}
+
+				if (isset($phraseSpecification['determiner'])) {
+					$E->setDeterminer($this->buildObjectStructure($phraseSpecification['determiner']));
+				}
+
+				break;
+
+			case 'determiner':
+				$E = new Determiner();
+				$E->setCategory($phraseSpecification['category']);
+
+				break;
+
+			default:
+
+				$E = null;
+
+		}
+
+		return $E;
 	}
 
 	/**
@@ -256,7 +300,7 @@ class Conversation
 //r($features);
 						if (isset($features['head']['sem']['arg2']['determiner']['question'])) {
 							unset($features['head']['sem']['arg2']['determiner']['question']);
-							$features['head']['sem']['arg2']['determiner']['type'] = $answer;
+							$features['head']['sem']['arg2']['determiner']['category'] = $answer;
 //r($features);
 							$sentence = $this->generate($features, array());
 							if ($sentence) {
