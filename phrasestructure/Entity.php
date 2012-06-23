@@ -7,8 +7,8 @@ use \agentecho\phrasestructure\Determiner;
 
 class Entity implements PhraseStructure
 {
-	const SINGULAR = 's';
-	const PLURAL = 'p';
+	const SINGULAR = 'singular';
+	const PLURAL = 'plural';
 
 	private $category = null;
 	private $name = null;

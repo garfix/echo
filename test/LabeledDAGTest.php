@@ -38,7 +38,7 @@ class LabeledDAGTest extends TestBase
 		);
 
 		$tree6 = array(
-			'pronoun' => array('head' => array('agreement' => array('person' => 1, 'number' => 's')))
+			'pronoun' => array('head' => array('agreement' => array('person' => 1, 'number' => 'singular')))
 		);
 
 		$tree7 = array(
@@ -47,7 +47,7 @@ class LabeledDAGTest extends TestBase
 		);
 
 		$tree8 = array(
-			'verb' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')))
+			'verb' => array('head' => array('agreement' => array('person' => 1, 'number' => 'plural')))
 		);
 
 		$tree9 = array(

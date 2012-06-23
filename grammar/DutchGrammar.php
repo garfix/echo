@@ -18,7 +18,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 			),
 			'ben' => array(
-				'verb' => array('features' => array('person' => 1, 'number' => 's'))
+				'verb' => array('features' => array('person' => 1, 'number' => 'singular'))
 			),
 			'beïnvloed' => array(
 				'verb' => array()
@@ -26,7 +26,7 @@ class DutchGrammar extends SimpleGrammar
 			'boek' => array(
 				'verb' => array(
 					'features' => array('head' => array(
-						'agreement' => array('person' => 2, 'number' => 's'),
+						'agreement' => array('person' => 2, 'number' => 'singular'),
 						'sem' => array('predicate' => 'book'),
 					))
 				),
@@ -51,7 +51,7 @@ class DutchGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-//							'agreement' => array('person' => 3, 'number' => 's'),
+//							'agreement' => array('person' => 3, 'number' => 'singular'),
 							'sem' => array('category' => 'daughter')
 						)
 					),
@@ -96,13 +96,13 @@ class DutchGrammar extends SimpleGrammar
 				),
 			),
 			'ik' => array(
-				'pronoun' => array('features' => array('person' => 1, 'number' => 's'))
+				'pronoun' => array('features' => array('person' => 1, 'number' => 'singular'))
 			),
 			'kinderen' => array(
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'p'),
+							'agreement' => array('person' => 3, 'number' => 'plural'),
 							'sem' => array('category' => 'child')
 						)
 					),
@@ -117,7 +117,7 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'vlucht' => array(
 				'noun' => array('features' => array('head' => array(
-					'agreement' => array('person' => 3, 'number' => 's'),
+					'agreement' => array('person' => 3, 'number' => 'singular'),
 					'sem' => array('category' => 'flight')
 				))),
 			),

@@ -47,7 +47,7 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 1, 'number' => 's'),
+							'agreement' => array('person' => 1, 'number' => 'singular'),
 							'sem' => array('predicate' => 'be'),
 							),
 						)//'arguments' => 2)
@@ -55,7 +55,7 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			'are' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
+					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'plural')), 'arguments' => 1))),
 			'author' => array(
 				'noun' => array(
 					'features' => array('head' => array('sem' => array('category' => 'author')))
@@ -66,7 +66,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'agreement' => array('person' => 2, 'number' => 's'),
+							'agreement' => array('person' => 2, 'number' => 'singular'),
 							'sem' => array('predicate' => 'book'),
 						)
 					),
@@ -101,7 +101,7 @@ class EnglishGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'p'),
+							'agreement' => array('person' => 3, 'number' => 'plural'),
 							'sem' => array('category' => 'child')
 						)
 					),
@@ -111,7 +111,7 @@ class EnglishGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-//							'agreement' => array('person' => 3, 'number' => 's'),
+//							'agreement' => array('person' => 3, 'number' => 'singular'),
 							'sem' => array('category' => 'daughter')
 						)
 					),
@@ -146,7 +146,7 @@ class EnglishGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 's'),
+							'agreement' => array('person' => 3, 'number' => 'singular'),
 							'sem' => array('category' => 'flight'),
 						)
 					)
@@ -156,7 +156,7 @@ class EnglishGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'p'),
+							'agreement' => array('person' => 3, 'number' => 'plural'),
 							'sem' => array('category' => 'flower'),
 						)
 					)
@@ -209,7 +209,7 @@ class EnglishGrammar extends SimpleGrammar
 				'pronoun' => array(
 					'features' => array(
 						'head' => array(
-							'agreement' => array('person' => 1, 'number' => 's'),
+							'agreement' => array('person' => 1, 'number' => 'singular'),
 							'sem' => array('category' => 'firstPerson')
 						)
 					)

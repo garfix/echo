@@ -184,7 +184,7 @@ $words = $lexicalItems;
 			// presume proper noun
 			return array(
 				'head' => array(
-					'agreement' => array('number' => 's', 'person' => 1),
+					'agreement' => array('number' => 'singular', 'person' => 1),
 					'sem' => array('name' => $word)
 				)
 			);
