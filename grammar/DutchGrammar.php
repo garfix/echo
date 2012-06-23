@@ -25,7 +25,11 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'boek' => array(
 				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 2, 'number' => 's')))),
+					'features' => array('head' => array(
+						'agreement' => array('person' => 2, 'number' => 's'),
+						'sem' => array('predicate' => '*book'),
+					))
+				),
 			),
 			'de' => array(
 				'determiner' => array(
@@ -84,7 +88,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array(
-								'arg2{?arg}' => array('determiner' => array('question' => '*extent', 'category' => '*many')),
+								'arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => '*extent', 'category' => '*many')),
 							),
 							'variables' => array('role' => '?arg')
 						)
@@ -112,7 +116,10 @@ class DutchGrammar extends SimpleGrammar
 				),
 			),
 			'vlucht' => array(
-				'noun' => array('features' => array('head' => array('agreement' => array('person' => 3, 'number' => 's')))),
+				'noun' => array('features' => array('head' => array(
+					'agreement' => array('person' => 3, 'number' => 's'),
+					'sem' => array('category' => '*flight')
+				))),
 			),
 			'was' => array(
 				'auxPsv' => array(

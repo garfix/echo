@@ -5,7 +5,7 @@ namespace agentecho\grammar;
 use \agentecho\component\Microplanner;
 use \agentecho\component\Lexer;
 use \agentecho\component\EarleyParser;
-use \agentecho\datastructure\Sentence;
+use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\exception\GenerationException;
 
@@ -57,7 +57,7 @@ abstract class SimpleGrammar implements Grammar
 	/**
 	 * Analyses a raw $string and places the result in $Sentence.
 	 */
-	public function analyze($input, Sentence $Sentence)
+	public function analyze($input, SentenceContext $Sentence)
 	{
 		return $this->Lexer->analyze($input, $Sentence, $this);
 	}
@@ -70,10 +70,10 @@ abstract class SimpleGrammar implements Grammar
 	/**
 	 * This function turns structured meaning into a line of text.
 	 *
-	 * @param Sentence $Sentence A sentence that contains a speech act, and meaning.
+	 * @param SentenceContext $Sentence A sentence that contains a speech act, and meaning.
 	 * @return string|false Either a sentence in natural language, or false, in case of failure
 	 */
-	public function generate(Sentence $Sentence)
+	public function generate(SentenceContext $Sentence)
 	{
 		// turn the intention of the sentence into a syntactic structure
 		$lexicalItems = $this->Microplanner->plan($Sentence->phraseSpecification, $this);
@@ -317,23 +317,25 @@ $words = $lexicalItems;
 			$E->setValue($antecedent);
 			throw $E;
 		}
-
+//r($FeatureDAG);
 		foreach ($this->generationRules[$antecedent] as $generationRule) {
 
 			$pattern = array($antecedent . '@0' => $generationRule['condition']);
-
+//r($pattern);
 			if ($FeatureDAG->match($pattern)) {
 
 				$rawRule = $generationRule['rule'];
 				$Dag = EarleyParser::createLabeledDag($rawRule, false);
+//r($Dag);
 				$UnifiedDag = $Dag->unify($FeatureDAG);
-
+//r($UnifiedDag);
+//echo '################################' . "\n";
 				if ($UnifiedDag) {
 					return array($rawRule, $UnifiedDag);
 				}
 			}
 		}
-
+//exit;
 		return false;
 	}
 
@@ -443,7 +445,7 @@ $words = $lexicalItems;
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('type' => 'relation', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
@@ -451,7 +453,7 @@ $words = $lexicalItems;
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'event')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'relation')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
@@ -459,15 +461,22 @@ $words = $lexicalItems;
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'event')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('arg2' => '?sem')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
+				),
+				// John gives Mary flowers
+				array(
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('arg2' => '?sem-3', 'arg3' => '?sem-2')), 'arguments' => 1)),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
 				),
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'event')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('modifier' => '?sem')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
@@ -536,7 +545,7 @@ $words = $lexicalItems;
 			'DP' => array(
 				// the
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => array('sem-1' => array('type' => 'determiner')))),
+					array('cat' => 'DP', 'features' => array('head-1' => array('sem' => array('type' => 'determiner')))),
 					array('cat' => 'determiner', 'features' => array('head-1' => null)),
 				),
 				// Byron's
@@ -571,6 +580,17 @@ $words = $lexicalItems;
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
 					)
+				),
+				// John gives Mary flowers
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'sem' => array('arg3' => null))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'arg3' => '?sem-3')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem' => '?sem-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+					),
 				),
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
@@ -615,8 +635,18 @@ $words = $lexicalItems;
 				),
 			),
 			'VP' => array(
+//				// gives Mary flowers
+//				array(
+//					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null, 'arg3' => null))),
+//					'rule' => array(
+//						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred', 'arg2' => '?sem-2', 'arg3' => '?sem-3')))),
+//						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2')))
+//					)
+//				),
 				array(
-					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null, ''))),
+					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null))),
 					'rule' => array(
 						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),

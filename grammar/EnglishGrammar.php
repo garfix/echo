@@ -152,6 +152,26 @@ class EnglishGrammar extends SimpleGrammar
 					)
 				),
 			),
+			'flowers' => array(
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+							'agreement' => array('person' => 3, 'number' => 'p'),
+							'sem' => array('category' => '*flower'),
+						)
+					)
+				),
+			),
+			'gives' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'tense' => 'present',
+							'sem' => array('predicate' => '*give'),
+						)
+					),
+				),
+			),
 			'had' => array(
 				'verb' => array(
 					'features' => array(
@@ -280,7 +300,7 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'who' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('arg2' => array('question' => true))))
+					'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
 				),
 			),
 		);

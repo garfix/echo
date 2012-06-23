@@ -3,7 +3,7 @@
 namespace agentecho\grammar;
 
 use \agentecho\datastructure\LabeledDAG;
-use \agentecho\datastructure\Sentence;
+use \agentecho\datastructure\SentenceContext;
 
 /**
  * A grammar should describe the rules of a language.
@@ -20,14 +20,14 @@ interface Grammar
 	/**
 	 * Analyses a raw $string and places the result in $Sentence.
 	 */
-	public function analyze($input, Sentence $Sentence);
+	public function analyze($input, SentenceContext $Sentence);
 
 	/**
 	 * Returns a surface representation for a given sentence,
-	 * @param Sentence $Sentence
+	 * @param SentenceContext $Sentence
 	 * @return string
 	 */
-	public function generate(Sentence $Sentence);
+	public function generate(SentenceContext $Sentence);
 
 	/**
 	 * Returns all grammar rules with $antecedent as their antecedent.

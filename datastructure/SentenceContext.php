@@ -7,7 +7,7 @@ use \agentecho\component\Conversation;
 /**
  * A complete sentence in a text.
  */
-class Sentence
+class SentenceContext
 {
 	/** @var The Conversation in which this sentence took place */
 	public $Conversation = null;
@@ -26,7 +26,7 @@ class Sentence
 	 */
 	public $lexicalItems = null;
 
-	/** @var The token that ends the sentence, like . ! ? or Sentence::INDIGNATION */
+	/** @var The token that ends the sentence, like . ! ? or SentenceContext::INDIGNATION */
 	public $terminator = null;
 
 	/** @var The syntax tree with added features */

@@ -34,7 +34,7 @@ class ParseTest extends TestBase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Conversation->parseFirstLine('Who am I?');
 		$this->test(111, $Sentence->getSyntaxString(), '[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]');
-		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, type: event, arg2: [question: 1], arg1: [category: *firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
+		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, type: relation, arg2: [type: entity, question: 1], arg1: [category: *firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
 		$this->test(113, $Sentence->getStructure(), "wh-question");
 		$this->test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
 
@@ -55,7 +55,7 @@ class ParseTest extends TestBase
 		// S => NP VP
 		$Sentence = $Conversation->parseFirstLine('John sees the book');
 		$this->test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]');
-		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: *see, type: event, arg2: [category: *book, type: entity, determiner: [category: *the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
+		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: *see, type: relation, arg2: [category: *book, type: entity, determiner: [category: *the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
 
 		// agreement success
 		// S => NP VP
@@ -80,5 +80,8 @@ class ParseTest extends TestBase
 		$answer = $Conversation->answer('We rwyrwur born');
 		$this->test(271, $answer, "Word not found: rwyrwur");
 
+		// S => NP VP NP NP
+		$S = $Conversation->parseFirstLine("John gives Mary flowers.");
+		$this->test(280, $S->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: *give, type: relation, arg2: [category: *flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]');
 	}
 }

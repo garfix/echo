@@ -43,6 +43,8 @@ use \agentecho\grammar\Grammar;
  * zorg ervoor dat de excepties in de huidige taal gezet zijn
  * Bouw een OOP laag om de phrase specification array structuur heen. De gebruiker werkt alleen met objecten
  * Proper names worden nu 7x ge-preg matched, steeds met kortere groepen woorden. dit is niet nodig. 1x is genoeg
+ * Verander 's' en 'p' in 'singular' en 'plural'
+ * Haal de * weg bij categorieen e.d.
  */
 class AgentEcho
 {

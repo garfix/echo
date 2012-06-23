@@ -5,13 +5,15 @@ namespace agentecho\component;
 use \agentecho\AgentEcho;
 use \agentecho\Settings;
 use \agentecho\grammar\Grammar;
-use \agentecho\datastructure\Sentence;
+use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\exception\ParseException;
+use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Event;
+use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Determiner;
+use \agentecho\phrasestructure\Sentence;
 
 class Conversation
 {
@@ -90,7 +92,7 @@ class Conversation
 		// try to parse the sentence in each of the available grammars
 		foreach ($grammars as $Grammar) {
 
-			$Sentence = new Sentence($this);
+			$Sentence = new SentenceContext($this);
 
 			try {
 
@@ -133,7 +135,7 @@ class Conversation
 	 * @throws LexicalItemException
 	 * @throws ParseException
 	 */
-	private function parseSentence($input, Sentence $Sentence, Grammar $Grammar)
+	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
 	{
 		// analyze words
 		$Grammar->analyze($input, $Sentence);
@@ -149,9 +151,10 @@ class Conversation
 
 			throw $E;
 		}
-//r($Sentence->phraseSpecification['features']['head']['sem']);
-//		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']['sem']);
-//r($Sentence->RootObject);exit;
+#r($input);echo "\n";
+#r($Sentence->phraseSpecification['features']['head']);
+		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']);
+#r($Sentence->RootObject);exit;
 		return $result['success'];
 	}
 
@@ -162,45 +165,60 @@ class Conversation
 	 */
 	private function buildObjectStructure(array $phraseSpecification)
 	{
-		switch ($phraseSpecification['type']) {
-			case 'event':
-				$E = new Event();
+		if (isset($phraseSpecification['sentenceType'])) {
+			$E = new Sentence();
+			$type = $phraseSpecification['sentenceType'];
+			$E->setType($type);
 
-				$E->setPredicate($phraseSpecification['predicate']);
+			if (isset($phraseSpecification['sem'])) {
+				$E->setRelation($this->buildObjectStructure($phraseSpecification['sem']));
+			}
+		}
 
-				$arguments = array();
-				for ($i = 1; $i < 5; $i++) {
-					if (isset($phraseSpecification['arg' . $i])) {
-						$arguments[$i] = $this->buildObjectStructure($phraseSpecification['arg' . $i]);
+		if (isset($phraseSpecification['type'])) {
+			switch ($phraseSpecification['type']) {
+				case 'relation':
+					$E = new Relation();
+					$E->setPredicate($phraseSpecification['predicate']);
+
+					$arguments = array();
+					for ($i = 1; $i < 5; $i++) {
+						if (isset($phraseSpecification['arg' . $i])) {
+							$arguments[$i] = $this->buildObjectStructure($phraseSpecification['arg' . $i]);
+						}
 					}
-				}
-				$E->setArguments($arguments);
+					$E->setArguments($arguments);
 
-				break;
+					break;
 
-			case 'entity':
-				$E = new Entity();
+				case 'entity':
+					$E = new Entity();
 
-				if (isset($phraseSpecification['category'])) {
+					if (isset($phraseSpecification['category'])) {
+						$E->setCategory($phraseSpecification['category']);
+					}
+
+					if (isset($phraseSpecification['determiner'])) {
+						$E->setDeterminer($this->buildObjectStructure($phraseSpecification['determiner']));
+					}
+
+					if (isset($phraseSpecification['name'])) {
+						$E->setName($phraseSpecification['name']);
+					}
+
+					break;
+
+				case 'determiner':
+					$E = new Determiner();
 					$E->setCategory($phraseSpecification['category']);
-				}
 
-				if (isset($phraseSpecification['determiner'])) {
-					$E->setDeterminer($this->buildObjectStructure($phraseSpecification['determiner']));
-				}
+					break;
 
-				break;
+				default:
 
-			case 'determiner':
-				$E = new Determiner();
-				$E->setCategory($phraseSpecification['category']);
+					$E = null;
 
-				break;
-
-			default:
-
-				$E = null;
-
+			}
 		}
 
 		return $E;
@@ -219,17 +237,73 @@ class Conversation
 	 */
 	public function generate(array $phraseSpecification, $context)
 	{
-		$Sentence = new Sentence($this);
+		$Sentence = new SentenceContext($this);
 		$Sentence->phraseSpecification = $phraseSpecification;
 
 		return $this->CurrentGrammar->generate($Sentence);
+	}
+
+	public function produce(PhraseStructure $Sentence)
+	{
+		$phraseStructure = $this->buildPhraseStructure($Sentence);
+//r($phraseStructure);
+		$line = $this->generate($phraseStructure, null);
+		return $line;
+	}
+
+	/**
+	 * @param object $Sentence
+	 * @return array
+	 */
+	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
+	{
+		$structure = array();
+
+		if ($PhraseStructure instanceof Sentence) {
+
+			/** @var Sentence $Sentence */
+			$Sentence = $PhraseStructure;
+
+			$structure['head']['sentenceType'] = $Sentence->getType();
+			$structure['head']['voice'] = $Sentence->getVoice();
+			$structure['head']['sem'] = $this->buildPhraseStructure($Sentence->getRelation());
+
+		} elseif ($PhraseStructure instanceof Relation) {
+
+			/** @var Relation $Relation */
+			$Relation = $PhraseStructure;
+
+			$structure['predicate'] = $Relation->getPredicate();
+
+			foreach ($Relation->getArguments() as $index => $Argument) {
+				if ($Argument) {
+					$structure['arg' . $index] = $this->buildPhraseStructure($Argument);
+				}
+			}
+		} elseif ($PhraseStructure instanceof Entity) {
+
+			/** @var Entity $Entity */
+			$Entity = $PhraseStructure;
+
+			$name = $Entity->getName();
+			if ($name !== null) {
+				$structure['name'] = $name;
+			}
+
+			$category = $Entity->getCategory();
+			if ($category !== null) {
+				$structure['category'] = $category;
+			}
+		}
+
+		return $structure;
 	}
 
 	/**
 	 * Parses $input into a series of Sentences, but returns only the first of these,
 	 *
 	 * @param string $input
-	 * @return Sentence
+	 * @return SentenceContext
 	 * @throws LexicalItemException
 	 * @throws ParseException
 	 */

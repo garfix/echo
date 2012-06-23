@@ -2,7 +2,7 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Sentence;
+use agentecho\datastructure\SentenceContext;
 use \agentecho\exception\LexicalItemException;
 use \agentecho\grammar\Grammar;
 
@@ -28,7 +28,7 @@ class Lexer
 	 * @param $Sentence
 	 * @throws LexicalItemException
 	 */
-	public function analyze($string, Sentence $Sentence, Grammar $Grammar)
+	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($string, $Sentence);
@@ -46,9 +46,9 @@ class Lexer
 	/**
 	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase from the value of $input
 	 * @param string $input This input can contain more than one natural language sentence.
-	 * @param Sentence $Sentence
+	 * @param SentenceContext $Sentence
 	 */
-	private function splitIntoWords($input, Sentence $Sentence)
+	private function splitIntoWords($input, SentenceContext $Sentence)
 	{
 		$terminator = null;
 
@@ -108,10 +108,10 @@ class Lexer
 	 *
 	 * todo coumpound words
 	 *
-	 * @param Sentence $Sentence
+	 * @param SentenceContext $Sentence
 	 * @throws LexicalItemException
 	 */
-	private function glue(Sentence $Sentence, Grammar $Grammar)
+	private function glue(SentenceContext $Sentence, Grammar $Grammar)
 	{
 		$lexicalItems = array();
 		$words = $Sentence->words;
@@ -149,7 +149,7 @@ class Lexer
 		return true;
 	}
 
-	private function findLongestProperNoun(Sentence $Sentence, $words, Grammar $Grammar)
+	private function findLongestProperNoun(SentenceContext $Sentence, $words, Grammar $Grammar)
 	{
 		while (count($words) > 0) {
 

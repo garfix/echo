@@ -2,10 +2,12 @@
 
 namespace agentecho\phrasestructure;
 
+use \agentecho\phrasestructure\PhraseStructure;
+
 /**
  * A determiner
  */
-class Determiner
+class Determiner implements PhraseStructure
 {
 	private $category = null;
 
