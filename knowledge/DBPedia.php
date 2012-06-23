@@ -94,7 +94,7 @@ class DBPedia extends KnowledgeSource
 
 		// imperative 'name'
 		if ($sentenceType == 'imperative' &&
-			isset($s['predicate']) && ($s['predicate'] == '*name')) {
+			isset($s['predicate']) && ($s['predicate'] == 'name')) {
 
 			$select = '?name';
 			$arg2id = $s['arg2']['id'];
@@ -103,7 +103,7 @@ class DBPedia extends KnowledgeSource
 		}
 
 		if (isset($s['determiner']['question'])) {
-			if (($s['determiner']['question'] == true) && ($s['determiner']['category'] == '*many')) {
+			if (($s['determiner']['question'] == true) && ($s['determiner']['category'] == 'many')) {
 				$select = 'COUNT(?' . $s['id'] . ')';
 			}
 		}
@@ -119,7 +119,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/birthPlace
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
+			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
 			isset($s['location']) &&
 			isset($s['arg2'])
 		) {
@@ -130,7 +130,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/deathPlace
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*die') &&
+			isset($s['predicate']) && ($s['predicate'] == 'die') &&
 			isset($s['location']) &&
 			isset($s['arg1'])
 		) {
@@ -141,7 +141,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/birthDate
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*bear') &&
+			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
 			isset($s['time']) &&
 			isset($s['arg2'])
 		) {
@@ -157,7 +157,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/author
 		if (
-			isset($s['category']) && ($s['category'] == '*author') &&
+			isset($s['category']) && ($s['category'] == 'author') &&
 			isset($s['of'])
 		) {
 			$objectId = $s['of']['id'];
@@ -166,7 +166,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/property/children
 		if (
-			isset($s['category']) && ($s['category'] == '*child') &&
+			isset($s['category']) && ($s['category'] == 'child') &&
 			isset($s['determiner']['object'])
 		) {
 			$objectId = $s['determiner']['object']['id'];
@@ -175,7 +175,7 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/influencedBy
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*influence') &&
+			isset($s['predicate']) && ($s['predicate'] == 'influence') &&
 			isset($s['agent']) &&
 			isset($s['experiencer'])
 		) {
@@ -186,10 +186,10 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/child (1)
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*have') &&
+			isset($s['predicate']) && ($s['predicate'] == 'have') &&
 			isset($s['arg1']) &&
 			isset($s['arg2']) &&
-			($s['arg2']['category'] == '*child')
+			($s['arg2']['category'] == 'child')
 		) {
 			$possessor = $s['arg1']['id'];
 			$posession = $s['arg2']['id'];
@@ -198,10 +198,10 @@ class DBPedia extends KnowledgeSource
 
 		// http://dbpedia.org/ontology/child (2)
 		if (
-			isset($s['predicate']) && ($s['predicate'] == '*be') &&
+			isset($s['predicate']) && ($s['predicate'] == 'be') &&
 			isset($s['arg1']) &&
 			isset($s['arg2']['of']) &&
-			($s['arg2']['category'] == '*daughter')
+			($s['arg2']['category'] == 'daughter')
 		) {
 			$childId = $s['arg1']['id'];
 			$parentId = $s['arg2']['of']['id'];

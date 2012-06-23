@@ -202,7 +202,7 @@ class LabeledDAG
 
 	/**
 	 * Merges the node specified with $thisDagInternalLabel of this dag with
-	 *the node specified with $newDagInternalLabel of $newDag into the existing $dag.
+	 * the node specified with $newDagInternalLabel of $newDag into the existing $dag.
 	 * Fails if both dags contain incompatible scalar values.
 	 *
 	 * @param array $dag

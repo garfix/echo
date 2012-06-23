@@ -23,15 +23,16 @@ class ProductionTest extends TestBase
 		$Mary = new Entity();
 			$Mary->setName('Mary');
 		$Flowers = new Entity();
-			$Flowers->setCategory('*flower');
+			$Flowers->setCategory('flower');
 			$Flowers->setNumber(Entity::PLURAL);
 		$Relation = new Relation();
-			$Relation->setPredicate('*give');
+			$Relation->setPredicate('give');
 			$Relation->setSubject($John);
 			$Relation->setObject($Flowers);
 			$Relation->setIndirectObject($Mary);
 		$Sentence = new Sentence();
 			$Sentence->setRelation($Relation);
+
 		$line = $Conversation->produce($Sentence);
 		$this->test(401, $line, 'John gives Mary flowers.');
 	}

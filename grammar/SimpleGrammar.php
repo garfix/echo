@@ -441,7 +441,7 @@ $words = $lexicalItems;
 				),
 
 				// Was John a fool?
-				// The verb is '*be'
+				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
@@ -575,7 +575,7 @@ $words = $lexicalItems;
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
 						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem' => '?sem-2'))),
-						array('cat' => 'aux', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '*be')))),
+						array('cat' => 'aux', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => 'be')))),
 						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),

@@ -14,7 +14,7 @@ class DutchGrammar extends SimpleGrammar
 		return array(
 			'auteur' => array(
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('category' => '*author')))
+					'features' => array('head' => array('sem' => array('category' => 'author')))
 				),
 			),
 			'ben' => array(
@@ -27,18 +27,18 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array('head' => array(
 						'agreement' => array('person' => 2, 'number' => 's'),
-						'sem' => array('predicate' => '*book'),
+						'sem' => array('predicate' => 'book'),
 					))
 				),
 			),
 			'de' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*the')))
+					'features' => array('head' => array('sem' => array('category' => 'the')))
 				)
 			),
 			'die' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*that')))
+					'features' => array('head' => array('sem' => array('category' => 'that')))
 				)
 			),
 			'door' => array(
@@ -52,21 +52,21 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 //							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('category' => '*daughter')
+							'sem' => array('category' => 'daughter')
 						)
 					),
 				),
 			),
 			'een' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => 'a')))
 				)
 			),
 			'had' => array(
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*have'),
+							'sem' => array('predicate' => 'have'),
 						)
 					)
 				)
@@ -75,7 +75,7 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear'),
+							'sem' => array('predicate' => 'bear'),
 						)
 					),
 				)
@@ -88,7 +88,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array(
-								'arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => '*extent', 'category' => '*many')),
+								'arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => 'extent', 'category' => 'many')),
 							),
 							'variables' => array('role' => '?arg')
 						)
@@ -103,7 +103,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 'p'),
-							'sem' => array('category' => '*child')
+							'sem' => array('category' => 'child')
 						)
 					),
 				)
@@ -118,21 +118,21 @@ class DutchGrammar extends SimpleGrammar
 			'vlucht' => array(
 				'noun' => array('features' => array('head' => array(
 					'agreement' => array('person' => 3, 'number' => 's'),
-					'sem' => array('category' => '*flight')
+					'sem' => array('category' => 'flight')
 				))),
 			),
 			'was' => array(
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),
@@ -141,14 +141,14 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),
 				'auxBe' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),

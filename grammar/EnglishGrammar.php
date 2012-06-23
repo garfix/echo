@@ -30,17 +30,17 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'a' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => 'a')))
 				),
 			),
 			'an' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*a')))
+					'features' => array('head' => array('sem' => array('category' => 'a')))
 				),
 			),
 			'and' => array(
 				'conjunction' => array(
-					//'features' => array('head' => array('sem' => array('category' => '*and')))
+					//'features' => array('head' => array('sem' => array('category' => 'and')))
 				),
 			),
 			'am' => array(
@@ -48,7 +48,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 's'),
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 							),
 						)//'arguments' => 2)
 					)
@@ -58,7 +58,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'p')), 'arguments' => 1))),
 			'author' => array(
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('category' => '*author')))
+					'features' => array('head' => array('sem' => array('category' => 'author')))
 				),
 			),
 			'book' => array(
@@ -67,19 +67,19 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'agreement' => array('person' => 2, 'number' => 's'),
-							'sem' => array('predicate' => '*book'),
+							'sem' => array('predicate' => 'book'),
 						)
 					),
 				),
 				'noun' => array(
-					'features' => array('head' => array('sem' => array('category' => '*book'))),
+					'features' => array('head' => array('sem' => array('category' => 'book'))),
 				),
 			),
 			'born' => array(
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*bear'),
+							'sem' => array('predicate' => 'bear'),
 						)
 					),
 				),
@@ -102,7 +102,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 'p'),
-							'sem' => array('category' => '*child')
+							'sem' => array('category' => 'child')
 						)
 					),
 				),
@@ -112,7 +112,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 //							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('category' => '*daughter')
+							'sem' => array('category' => 'daughter')
 						)
 					),
 				),
@@ -138,7 +138,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 0,
 						'head' => array(
-							'sem' => array('predicate' => '*die'),
+							'sem' => array('predicate' => 'die'),
 						)
 					)),
 			),
@@ -147,7 +147,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 's'),
-							'sem' => array('category' => '*flight'),
+							'sem' => array('category' => 'flight'),
 						)
 					)
 				),
@@ -157,7 +157,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 3, 'number' => 'p'),
-							'sem' => array('category' => '*flower'),
+							'sem' => array('category' => 'flower'),
 						)
 					)
 				),
@@ -167,7 +167,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'tense' => 'present',
-							'sem' => array('predicate' => '*give'),
+							'sem' => array('predicate' => 'give'),
 						)
 					),
 				),
@@ -177,7 +177,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'tense' => 'past',
-							'sem' => array('predicate' => '*have'),
+							'sem' => array('predicate' => 'have'),
 						)
 					),
 				),
@@ -187,19 +187,19 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 //						'arguments' => 1,
 						'head' => array(
-							'sem' => array('predicate' => '*have'),
+							'sem' => array('predicate' => 'have'),
 						)
 					),
 				),
 			),
 			'how' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('manner' => array('question' => '*object'))))
+					'features' => array('head' => array('sem' => array('manner' => array('question' => 'object'))))
 				),
 				'whwordNP' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('arg2{?arg}' => array('determiner' => array('question' => '*extent'))),
+							'sem' => array('arg2{?arg}' => array('determiner' => array('question' => 'extent'))),
 							'variables' => array('role' => '?arg')
 						)
 					)
@@ -210,7 +210,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 's'),
-							'sem' => array('category' => '*firstPerson')
+							'sem' => array('category' => 'firstPerson')
 						)
 					)
 				),
@@ -223,21 +223,21 @@ class EnglishGrammar extends SimpleGrammar
 							'tense' => 'past',
 							// possible forms: simple, participle, infinitive
 							'form' => 'participle',
-							'sem' => array('predicate' => '*influence'),
+							'sem' => array('predicate' => 'influence'),
 						)
 					),
 				)
 			),
 			'many' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*many')))
+					'features' => array('head' => array('sem' => array('category' => 'many')))
 				),
 			),
 			'name' => array(
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => '*name'),
+							'sem' => array('predicate' => 'name'),
 						)
 					)
 				)
@@ -255,19 +255,19 @@ class EnglishGrammar extends SimpleGrammar
 						'arguments' => 1,
 						'head' => array(
 							'tense' => 'present',
-							'sem' => array('predicate' => '*see'),
+							'sem' => array('predicate' => 'see'),
 						)
 					),
 				)
 			),
 			'the' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*the')))
+					'features' => array('head' => array('sem' => array('category' => 'the')))
 				)
 			),
 			'that' => array(
 				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => '*that')))
+					'features' => array('head' => array('sem' => array('category' => 'that')))
 				),
 			),
 			'was' => array(
@@ -275,7 +275,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'tense' => 'past',
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),
@@ -283,7 +283,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'tense' => 'past',
-							'sem' => array('predicate' => '*be'),
+							'sem' => array('predicate' => 'be'),
 						)
 					),
 				),

@@ -34,18 +34,18 @@ class ParseTest extends TestBase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Conversation->parseFirstLine('Who am I?');
 		$this->test(111, $Sentence->getSyntaxString(), '[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]');
-		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: *be, type: relation, arg2: [type: entity, question: 1], arg1: [category: *firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
+		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: s], sem: [predicate: be, type: relation, arg2: [type: entity, question: 1], arg1: [category: firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
 		$this->test(113, $Sentence->getStructure(), "wh-question");
 		$this->test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
 
 		$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 		$this->test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]');
 		$this->test(204, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 's');
-		$this->test(205, $Sentence->phraseSpecification['features']['head']['sem']['predicate'], '*influence');
+		$this->test(205, $Sentence->phraseSpecification['features']['head']['sem']['predicate'], 'influence');
 		$this->test(206, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['modifier']['object']['name'], 'Paradise Lost');
-		$this->test(207, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['category'], '*author');
+		$this->test(207, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['category'], 'author');
 //r($Sentence->phraseSpecification);
-		$this->test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner']['category'], '*the');
+		$this->test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner']['category'], 'the');
 		$this->test(209, $Sentence->phraseSpecification['features']['head']['sem']['arg2']['name'], 'Lord Byron');
 		$this->test(210, $Sentence->phraseSpecification['features']['head']['sentenceType'], 'yes-no-question');
 
@@ -55,7 +55,7 @@ class ParseTest extends TestBase
 		// S => NP VP
 		$Sentence = $Conversation->parseFirstLine('John sees the book');
 		$this->test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]');
-		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: *see, type: relation, arg2: [category: *book, type: entity, determiner: [category: *the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
+		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: see, type: relation, arg2: [category: book, type: entity, determiner: [category: the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]");
 
 		// agreement success
 		// S => NP VP
@@ -82,6 +82,6 @@ class ParseTest extends TestBase
 
 		// S => NP VP NP NP
 		$S = $Conversation->parseFirstLine("John gives Mary flowers.");
-		$this->test(280, $S->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: *give, type: relation, arg2: [category: *flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]');
+		$this->test(280, $S->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: give, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: s, person: 1]]]');
 	}
 }
