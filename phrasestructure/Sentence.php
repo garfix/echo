@@ -10,7 +10,7 @@ use \agentecho\exception\SentenceException;
  * A syntactic-semantic construction that results from a parse process and
  * serves as input for a production process.
  */
-class Sentence implements PhraseStructure
+class Sentence extends PhraseStructure
 {
 	/**
 	 * Types of sentences
@@ -28,17 +28,15 @@ class Sentence implements PhraseStructure
 	const PASSIVE = 'passive';
 	const ACTIVE = 'active';
 
-	/** @var Type of sentence */
-	private $type = self::DECLARATIVE;
-
-	/** @var Relation The relation this sentence is about */
-	private $Relation = null;
-
-	private $voice = self::ACTIVE;
+	protected $data = array(
+		'type' => self::DECLARATIVE,
+		'Relation' => null,
+		'voice' => self::ACTIVE
+	);
 
 	/**
 	 * Set this type's sentence. Use one of the class constants.
-	 * @param int $type
+	 * @param string $type
 	 */
 	public function setType($type)
 	{
@@ -46,31 +44,31 @@ class Sentence implements PhraseStructure
 			throw new SentenceException('Invalid type given');
 		}
 
-		$this->type = $type;
+		$this->data['type'] = $type;
 	}
 
 	public function getType()
 	{
-		return $this->type;
+		return $this->data['type'];
 	}
 
 	public function setRelation(Relation $Relation)
 	{
-		$this->Relation = $Relation;
+		$this->data['Relation'] = $Relation;
 	}
 
 	public function getRelation()
 	{
-		return $this->Relation;
+		return $this->data['Relation'];
 	}
 
 	public function setVoice($voice)
 	{
-		$this->voice = $voice;
+		$this->data['voice'] = $voice;
 	}
 
 	public function getVoice()
 	{
-		return $this->voice;
+		return $this->data['voice'];
 	}
 }

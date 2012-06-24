@@ -20,48 +20,64 @@ use \agentecho\phrasestructure\Entity;
  * - predicate: be
  *
  */
-class Relation implements PhraseStructure
+class Relation extends PhraseStructure
 {
-	private $predicate = null;
-	private $arguments = array();
-
-	public function __constuct($predicate = null)
-	{
-		$this->predicate = $predicate;
-	}
+	protected $data = array(
+		'predicate' => null,
+		'arguments' => array(
+			1 => null,
+			2 => null,
+			3 => null
+		)
+	);
 
 	public function setPredicate($predicate)
 	{
-		$this->predicate = $predicate;
+		$this->data['predicate'] = $predicate;
 	}
 
 	public function getPredicate()
 	{
-		return $this->predicate;
+		return $this->data['predicate'];
 	}
 
 	public function setArguments(array $arguments)
 	{
-		$this->arguments = $arguments;
+		$this->data['arguments'] = $arguments;
 	}
 
 	public function getArguments()
 	{
-		return $this->arguments;
+		return $this->data['arguments'];
+	}
+
+	public function getArgument1()
+	{
+		return $this->data['arguments'][1];
+	}
+
+	public function getArgument2()
+	{
+		return $this->data['arguments'][2];
+	}
+
+	public function getArgument3()
+	{
+		return $this->data['arguments'][3];
 	}
 
 	public function setSubject(Entity $Subject)
 	{
-		$this->arguments[1] = $Subject;
+		$this->data['arguments'][1] = $Subject;
 	}
 
 	public function setObject(Entity $Object)
 	{
-		$this->arguments[2] = $Object;
+		$this->data['arguments'][2] = $Object;
 	}
 
 	public function setIndirectObject(Entity $IndirectObject)
 	{
-		$this->arguments[3] = $IndirectObject;
+		$this->data['arguments'][3] = $IndirectObject;
 	}
 }

@@ -3,6 +3,7 @@
 namespace agentecho\datastructure;
 
 use \agentecho\component\Conversation;
+use \agentecho\phrasestructure\PhraseStructure;
 
 /**
  * A complete sentence in a text.
@@ -43,6 +44,11 @@ class SentenceContext
 	public function getConversation()
 	{
 		return $this->Conversation;
+	}
+
+	public function getRootObject()
+	{
+		return $this->RootObject;
 	}
 
 	/**
@@ -97,5 +103,10 @@ class SentenceContext
 	public function getStructure()
 	{
 		return $this->phraseSpecification['features']['head']['sentenceType'];
+	}
+
+	public function getObjectString()
+	{
+		return (string)$this->RootObject;
 	}
 }

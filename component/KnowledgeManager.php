@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use \agentecho\knowledge\KnowledgeSource;
+use \agentecho\phrasestructure\Sentence;
 
 /**
  * This object provides a single interface for multiple KnowledgeSources.
@@ -33,6 +34,18 @@ class KnowledgeManager
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
 			$result = $KnowledgeSource->answerQuestionAboutObject($phraseSpecification, $sentenceType);
+			if ($result !== false) {
+				return $result;
+			}
+		}
+
+		return false;
+	}
+
+	public function answerQuestion(Sentence $Sentence)
+	{
+		foreach ($this->knowledgeSources as $KnowledgeSource) {
+			$result = $KnowledgeSource->answerQuestion($Sentence);
 			if ($result !== false) {
 				return $result;
 			}

@@ -8,6 +8,10 @@ use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\exception\ParseException;
 
+/**
+ * This is suite of tests that tests the intermediate representation of parsed sentences.
+ * It tests the SentenceContext.
+ */
 class ParseTest extends TestBase
 {
 	function execute()
@@ -40,14 +44,7 @@ class ParseTest extends TestBase
 
 		$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 		$this->test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]');
-		$this->test(204, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 'singular');
-		$this->test(205, $Sentence->phraseSpecification['features']['head']['sem']['predicate'], 'influence');
-		$this->test(206, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['modifier']['object']['name'], 'Paradise Lost');
-		$this->test(207, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['category'], 'author');
-//r($Sentence->phraseSpecification);
-		$this->test(208, $Sentence->phraseSpecification['features']['head']['sem']['arg1']['determiner']['category'], 'the');
-		$this->test(209, $Sentence->phraseSpecification['features']['head']['sem']['arg2']['name'], 'Lord Byron');
-		$this->test(210, $Sentence->phraseSpecification['features']['head']['sentenceType'], 'yes-no-question');
+		$this->test(204, $Sentence->getPhraseSpecificationString(), '[head: [tense: past, form: participle, sem: [predicate: influence, type: relation, arg1: [category: author, modifier: [category: of, type: , object: [name: Paradise Lost, type: entity]], type: entity, determiner: [category: the, type: determiner]], arg2: [name: Lord Byron, type: entity]], sentenceType: yes-no-question, voice: passive, agreement: [number: singular, person: 1]]]');
 
 		$Sentence = $Conversation->parseFirstLine('How many children did Lord Byron have?');
 		$this->test(213, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 'singular');
@@ -81,7 +78,8 @@ class ParseTest extends TestBase
 		$this->test(271, $answer, "Word not found: rwyrwur");
 
 		// S => NP VP NP NP
-		$S = $Conversation->parseFirstLine("John gives Mary flowers.");
-		$this->test(280, $S->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: give, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]');
+		$Sentence = $Conversation->parseFirstLine("John gives Mary flowers.");
+		$this->test(280, $Sentence->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: give, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]');
+		$this->test(281, $Sentence->getObjectString(), 'Sentence {type: declarative, Relation: Relation {predicate: give, arguments: [1 = Entity {name: John, number: singular}, 2 = Entity {category: flower, number: singular}, 3 = Entity {name: Mary, number: singular}]}, voice: active}');
 	}
 }

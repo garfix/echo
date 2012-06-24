@@ -3,9 +3,13 @@
 namespace agentecho\knowledge;
 
 use \agentecho\Settings;
+use \agentecho\phrasestructure\PhraseStructure;
+use \agentecho\phrasestructure\Sentence;
+use \agentecho\phrasestructure\Determiner;
+use \agentecho\phrasestructure\Entity;
 
 /**
- *
+ * An adapter for DBPedia.
  */
 class DBPedia extends KnowledgeSource
 {
@@ -37,6 +41,36 @@ class DBPedia extends KnowledgeSource
 		$result = $this->query($triples, $select);
 
 		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
+
+		return $result;
+	}
+
+	public function answerQuestion(Sentence $Sentence)
+	{
+		$triples = array();
+		$select = '';
+		$sentenceType = $Sentence->getType();
+		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+
+		$result = $this->query($triples, $select);
+
+		if ($sentenceType == 'wh-question') {
+			if (count($result == 1)) {
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+			}
+		}
+		if ($sentenceType == 'imperative') {
+			$values = array();
+			foreach ($result as $resultVal) {
+				$values[] = reset($resultVal);
+			}
+			$result = $values;
+		}
 
 		return $result;
 	}
@@ -76,6 +110,169 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
+	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$triples, &$select, $parentId)
+	{
+		$subjectId = $Phrase->getHashCode();
+
+		// yes-no-question
+		if ($sentenceType == 'yes-no-question') {
+			$select = '1';
+		}
+
+		// imperative 'name'
+		if ($Phrase instanceof Sentence) {
+
+			/** @var Sentence $Sentence */
+			$Sentence = $Phrase;
+
+			if ($sentenceType == 'imperative') {
+
+				/** @var Relation $Relation  */
+				$Relation = $Sentence->getRelation();
+
+                if ($Relation->getPredicate() == 'name') {
+
+                    $select = '?name';
+                    $arg2id = $Relation->getArgument2()->getHashCode();
+                    $triples[] = array('?' . $arg2id, 'rdfs:label', '?name');
+                    $triples[] = array('FILTER(lang(?name) = "en")');
+                }
+			}
+		}
+
+		// how many?
+		if ($Phrase instanceof Determiner) {
+
+            /** @var Determiner $Determiner */
+       		$Determiner = $Phrase;
+
+			if ($Determiner->isQuestion()) {
+				if ($Determiner->getCategory() == 'many') {
+#todo: probably needs some parent id
+					$select = 'COUNT(?' . $subjectId . ')';
+				}
+			}
+		}
+
+#todo: needs rewrite: i am not going to make a class for Location, but for Modifier, or some such
+//		if (isset($s['location']['question'])) {
+//			$triples[] = array('?' . $s['location']['id'], 'rdfs:label', '?location');
+//			$select = '?location';
+//		}
+#todo may we combine these, or is this similarity just an exception?
+//		if (isset($s['time']['question'])) {
+//			$select = '?' . $s['time']['id'];
+//		}
+
+		// http://dbpedia.org/ontology/birthPlace
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
+//			isset($s['location']) &&
+//			isset($s['arg2'])
+//		) {
+//			$themeId = $s['arg2']['id'];
+//			$locationId = $s['location']['id'];
+//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
+//		}
+
+		// http://dbpedia.org/ontology/deathPlace
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'die') &&
+//			isset($s['location']) &&
+//			isset($s['arg1'])
+//		) {
+//			$themeId = $s['arg1']['id'];
+//			$locationId = $s['location']['id'];
+//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
+//		}
+
+		// http://dbpedia.org/ontology/birthDate
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
+//			isset($s['time']) &&
+//			isset($s['arg2'])
+//		) {
+//			$themeId = $s['arg2']['id'];
+//			$timeId = $s['time']['id'];
+//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
+//		}
+
+		// rdfs:label
+        if ($Phrase instanceof Entity) {
+
+            /** @var Entity $Entity */
+       		$Entity = $Phrase;
+
+            if ($name = $Entity->getName()) {
+                $triples[] = array('?' . $subjectId, 'rdfs:label', "'" . ucwords($name) . "'@en");
+            }
+
+    		// http://dbpedia.org/property/children
+            if ($Entity->getCategory() == 'child') {
+                if ($Determiner = $Entity->getDeterminer()) {
+                    if ($Object = $Determiner->getObject()) {
+                        $objectId = $Object->getHashCode();
+                        $triples[] = array('?' . $objectId, '<http://dbpedia.org/property/children>', '?' . $subjectId);
+                    }
+                }
+            }
+
+
+        }
+
+//		// http://dbpedia.org/ontology/author
+//		if (
+//			isset($s['category']) && ($s['category'] == 'author') &&
+//			isset($s['of'])
+//		) {
+//			$objectId = $s['of']['id'];
+//			$triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
+//		}
+
+
+
+
+
+//		// http://dbpedia.org/ontology/influencedBy
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'influence') &&
+//			isset($s['agent']) &&
+//			isset($s['experiencer'])
+//		) {
+//			$actorId = $s['agent']['id'];
+//			$patientId = $s['experiencer']['id'];
+//			$triples[] = array('?' . $patientId, '<http://dbpedia.org/ontology/influencedBy>', '?' . $actorId);
+//		}
+//
+//		// http://dbpedia.org/ontology/child (1)
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'have') &&
+//			isset($s['arg1']) &&
+//			isset($s['arg2']) &&
+//			($s['arg2']['category'] == 'child')
+//		) {
+//			$possessor = $s['arg1']['id'];
+//			$posession = $s['arg2']['id'];
+//			$triples[] = array('?' . $possessor, '<http://dbpedia.org/ontology/child>', '?' . $posession);
+//		}
+//
+//		// http://dbpedia.org/ontology/child (2)
+//		if (
+//			isset($s['predicate']) && ($s['predicate'] == 'be') &&
+//			isset($s['arg1']) &&
+//			isset($s['arg2']['of']) &&
+//			($s['arg2']['category'] == 'daughter')
+//		) {
+//			$childId = $s['arg1']['id'];
+//			$parentId = $s['arg2']['of']['id'];
+//			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
+//		}
+
+		// interpret child elements
+        foreach ($Phrase->getChildPhrases() as $ChildPhrase) {
+            $this->interpretPhrase($ChildPhrase, $sentenceType, $triples, $select, $subjectId);
+        }
+	}
 
 	private function interpret($phraseSpecification, $sentenceType, &$triples, &$select, $parentId)
 	{

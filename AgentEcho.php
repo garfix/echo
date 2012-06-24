@@ -7,6 +7,7 @@ require_once __DIR__ . '/component/Autoload.php';
 
 use \agentecho\component\KnowledgeManager;
 use \agentecho\component\Conversation;
+use \agentecho\component\Parser;
 use \agentecho\knowledge\KnowledgeSource;
 use \agentecho\grammar\Grammar;
 
@@ -33,16 +34,15 @@ use \agentecho\grammar\Grammar;
  * - We can ask of the user that he enters grammatically and lexically correct sentences.
  *
  * TODO:
- * sentenceType => mood
+ * sentenceType => mood (later een keer; ben er nog niet uit wat ik hiermee doe)
  * 1st person (in artikel voorbeeld => 3rd person)
  * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
  * een "Conversation" is noch een datastructure noc een component, splits hem op in twee delen
  * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
- * language production: sigma => NP ?
  * zorg ervoor dat de excepties in de huidige taal gezet zijn
  * Bouw een OOP laag om de phrase specification array structuur heen. De gebruiker werkt alleen met objecten
- * Proper names worden nu 7x ge-preg matched, steeds met kortere groepen woorden. dit is niet nodig. 1x is genoeg
+ * Een Parser (moet een interface worden) moet een Sentence object teruggeven; verder niets.
  */
 class AgentEcho
 {
@@ -55,6 +55,7 @@ class AgentEcho
 	public function __construct()
 	{
 		$this->KnowledgeManager = new KnowledgeManager();
+		$this->Parser = new Parser($this);
 	}
 
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
@@ -75,6 +76,11 @@ class AgentEcho
 	public function getKnowledgeManager()
 	{
 		return $this->KnowledgeManager;
+	}
+
+	public function getParser()
+	{
+		return $this->Parser;
 	}
 
 	public function startConversation()

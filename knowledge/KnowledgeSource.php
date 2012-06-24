@@ -2,6 +2,8 @@
 
 namespace agentecho\knowledge;
 
+use \agentecho\phrasestructure\Sentence;
+
 abstract class KnowledgeSource
 {
 	/**
@@ -10,4 +12,9 @@ abstract class KnowledgeSource
 	 * @return bool
 	 */
 	public abstract function isProperNoun($identifier);
+
+#todo: uitfaseren
+	public abstract function answerQuestionAboutObject($phraseSpecification, $sentenceType);
+
+	public abstract function answerQuestion(Sentence $Sentence);
 }

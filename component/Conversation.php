@@ -9,11 +9,11 @@ use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\exception\ParseException;
+use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Determiner;
-use \agentecho\phrasestructure\Sentence;
 
 class Conversation
 {
@@ -95,8 +95,7 @@ class Conversation
 			$Sentence = new SentenceContext($this);
 
 			try {
-
-				$this->parseSentence($input, $Sentence, $Grammar);
+				$this->Echo->getParser()->parseSentence($input, $Sentence, $Grammar);
 
 				$sentences[] = $Sentence;
 				$Sentence->language = $Grammar->getLanguage();
@@ -125,105 +124,6 @@ class Conversation
 		return $sentences;
 	}
 
-
-	/**
-	 * This function turns a line of text into structured meaning.
-	 *
-	 * @param string $text Raw input.
-	 * @param array $context The roles that are currently active.
-	 * @return bool Succesful parse?
-	 * @throws LexicalItemException
-	 * @throws ParseException
-	 */
-	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
-	{
-		// analyze words
-		$Grammar->analyze($input, $Sentence);
-
-		// create a phrase specification from these lexical items
-		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
-		$Sentence->phraseSpecification = $result['tree'];
-//r($result);
-		if (!$result['success']) {
-
-			$E = new ParseException();
-			$E->setLexicalItems($Sentence->lexicalItems, $result['lastParsedIndex'] - 1);
-
-			throw $E;
-		}
-#r($input);echo "\n";
-#r($Sentence->phraseSpecification['features']['head']);
-		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']);
-#r($Sentence->RootObject);exit;
-		return $result['success'];
-	}
-
-	/**
-	 * This function turns a phrase specification into an object structure.
-	 * @param $phraseSpecification
-	 * @return Entity
-	 */
-	private function buildObjectStructure(array $phraseSpecification)
-	{
-		if (isset($phraseSpecification['sentenceType'])) {
-			$E = new Sentence();
-			$type = $phraseSpecification['sentenceType'];
-			$E->setType($type);
-
-			if (isset($phraseSpecification['sem'])) {
-				$E->setRelation($this->buildObjectStructure($phraseSpecification['sem']));
-			}
-		}
-
-		if (isset($phraseSpecification['type'])) {
-			switch ($phraseSpecification['type']) {
-				case 'relation':
-					$E = new Relation();
-					$E->setPredicate($phraseSpecification['predicate']);
-
-					$arguments = array();
-					for ($i = 1; $i < 5; $i++) {
-						if (isset($phraseSpecification['arg' . $i])) {
-							$arguments[$i] = $this->buildObjectStructure($phraseSpecification['arg' . $i]);
-						}
-					}
-					$E->setArguments($arguments);
-
-					break;
-
-				case 'entity':
-					$E = new Entity();
-
-					if (isset($phraseSpecification['category'])) {
-						$E->setCategory($phraseSpecification['category']);
-					}
-
-					if (isset($phraseSpecification['determiner'])) {
-						$E->setDeterminer($this->buildObjectStructure($phraseSpecification['determiner']));
-					}
-
-					if (isset($phraseSpecification['name'])) {
-						$E->setName($phraseSpecification['name']);
-					}
-
-					break;
-
-				case 'determiner':
-					$E = new Determiner();
-					$E->setCategory($phraseSpecification['category']);
-
-					break;
-
-				default:
-
-					$E = null;
-
-			}
-		}
-
-		return $E;
-	}
-
 	/**
 	 * Turns an array of meaning representations into a sentence, in the current language.
 	 *
@@ -246,7 +146,7 @@ class Conversation
 	public function produce(PhraseStructure $Sentence)
 	{
 		$phraseStructure = $this->buildPhraseStructure($Sentence);
-//r($phraseStructure);
+
 		$line = $this->generate($phraseStructure, null);
 		return $line;
 	}
@@ -325,8 +225,12 @@ class Conversation
 
 		try {
 
-			$Sentence = $this->parseFirstLine($question);
-			$features = $Sentence->phraseSpecification['features'];
+			$SentenceContext = $this->parseFirstLine($question);
+			$features = $SentenceContext->phraseSpecification['features'];
+
+			/** @var Sentence $Sentence  */
+			$Sentence = $SentenceContext->getRootObject();
+
 //r($features);
 			$id = 0;
 
@@ -384,15 +288,14 @@ class Conversation
 
 					}
 
-				} elseif ($sentenceType == 'imperative') {
+				} elseif ($Sentence->getType() == 'imperative') {
 
 					#todo Imperatives are not always questions
 					$isQuestion = true;
 
 					if ($isQuestion) {
 
-//						r($sem);
-						$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($sem, $sentenceType);
+						$answer = $this->Echo->getKnowledgeManager()->answerQuestion($Sentence);
 
 						$values = array();
 
