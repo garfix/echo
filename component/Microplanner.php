@@ -29,10 +29,11 @@ class Microplanner
 		$constituent = 'S';
 
 #todo: algemener maken
-		if (!empty($phraseSpecification['head']['sem']['type'])) {
-			if ($phraseSpecification['head']['sem']['type'] == 'conjunction') {
+		if (!empty($phraseSpecification['type'])) {
+			if ($phraseSpecification['type'] == 'conjunction') {
 
 				$constituent = 'CP';
+                $phraseSpecification['head']['sem'] = $phraseSpecification;
 
 			}
 		}

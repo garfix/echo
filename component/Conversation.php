@@ -14,6 +14,7 @@ use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Determiner;
+use \agentecho\phrasestructure\Conjunction;
 
 class Conversation
 {
@@ -145,10 +146,12 @@ class Conversation
 
 	public function produce(PhraseStructure $Sentence)
 	{
-		$phraseStructure = $this->buildPhraseStructure($Sentence);
+        $phraseSpecification = $this->buildPhraseStructure($Sentence);
+        $SentenceContext = new SentenceContext($this);
+        $SentenceContext->phraseSpecification = $phraseSpecification;
+        $SentenceContext->RootObject = $Sentence;
 
-		$line = $this->generate($phraseStructure, null);
-		return $line;
+        return $this->CurrentGrammar->generate($SentenceContext);
 	}
 
 	/**
@@ -194,7 +197,19 @@ class Conversation
 			if ($category !== null) {
 				$structure['category'] = $category;
 			}
-		}
+		} elseif ($PhraseStructure instanceof Conjunction) {
+
+            /** @var Conjunction $Conjunction */
+   			$Conjunction = $PhraseStructure;
+
+            $structure['type'] = 'conjunction';
+
+            $Left = $Conjunction->getLeftEntity();
+            $structure['left'] = $this->buildPhraseStructure($Left);
+
+            $Right = $Conjunction->getRightEntity();
+            $structure['right'] = $this->buildPhraseStructure($Right);
+        }
 
 		return $structure;
 	}
@@ -297,20 +312,20 @@ class Conversation
 
 						$answer = $this->Echo->getKnowledgeManager()->answerQuestion($Sentence);
 
-						$values = array();
+						$entities = array();
 
 						foreach ($answer as $name) {
-							$values[] = array(
-								'name' => $name
-							);
+
+                            $Entity = new Entity();
+                            $Entity->setName($name);
+
+                            $entities[] = $Entity;
 						}
 
-						$features = array();
-						$features['head']['sem'] = SentenceBuilder::buildConjunction($values);
+                        $Phrase = SentenceBuilder::buildConjunction($entities);
 
-//						r($features);
+                        $sentence = $this->produce($Phrase);
 
-						$sentence = $this->generate($features, array());
 						if ($sentence) {
 							$answer = $sentence;
 						}

@@ -8,6 +8,7 @@ use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\exception\GenerationException;
+use \agentecho\phrasestructure\Sentence;
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -73,33 +74,43 @@ abstract class SimpleGrammar implements Grammar
 	 * @param SentenceContext $Sentence A sentence that contains a speech act, and meaning.
 	 * @return string|false Either a sentence in natural language, or false, in case of failure
 	 */
-	public function generate(SentenceContext $Sentence)
+	public function generate(SentenceContext $SentenceContext)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$lexicalItems = $this->Microplanner->plan($Sentence->phraseSpecification, $this);
+		$lexicalItems = $this->Microplanner->plan($SentenceContext->phraseSpecification, $this);
 		if (!$lexicalItems) {
 			return false;
 		}
 
-		$Sentence->lexicalItems = $lexicalItems;
+        $SentenceContext->lexicalItems = $lexicalItems;
 
 # todo: split items into words
 $words = $lexicalItems;
 
-		$Sentence->words = $words;
+        $SentenceContext->words = $words;
 
-		$Sentence->surfaceText = $this->createSurfaceText($Sentence);
+        $SentenceContext->surfaceText = $this->createSurfaceText($SentenceContext);
 
-		return $Sentence->surfaceText;
+		return $SentenceContext->surfaceText;
 	}
 
-	private function createSurfaceText($Sentence)
+	private function createSurfaceText(SentenceContext $SentenceContext)
 	{
-		$words = $Sentence->words;
+		$words = $SentenceContext->words;
 
 		$words[0] = ucfirst($words[0]);
 
-		return implode(' ', $words) . '.';
+		$text = implode(' ', $words);
+        if ($SentenceContext->getRootObject() instanceof Sentence) {
+            $text .= '.';
+        }
+
+#todo remove this if possible
+        if ($SentenceContext->getRootObject() === null) {
+            $text .= '.';
+        }
+
+        return $text;
 	}
 
 	public function getRulesForAntecedent($antecedent)
