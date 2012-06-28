@@ -15,6 +15,8 @@ abstract class KnowledgeSource
 
 #todo: uitfaseren
 	public abstract function answerQuestionAboutObject($phraseSpecification, $sentenceType);
+	public abstract function answerQuestionAboutObject2(Sentence $Sentence);
 
 	public abstract function answerQuestion(Sentence $Sentence);
+    public abstract function checkQuestion(Sentence $Sentence);
 }

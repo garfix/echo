@@ -44,7 +44,7 @@ class ParseTest extends TestBase
 
 		$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 		$this->test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]');
-		$this->test(204, $Sentence->getPhraseSpecificationString(), '[head: [tense: past, form: participle, sem: [predicate: influence, type: relation, arg1: [category: author, modifier: [category: of, type: , object: [name: Paradise Lost, type: entity]], type: entity, determiner: [category: the, type: determiner]], arg2: [name: Lord Byron, type: entity]], sentenceType: yes-no-question, voice: passive, agreement: [number: singular, person: 1]]]');
+		$this->test(204, $Sentence->getPhraseSpecificationString(), '[head: [tense: past, form: participle, sem: [predicate: influence, type: relation, arg1: [category: author, modifier: [category: of, type: modifier, object: [name: Paradise Lost, type: entity]], type: entity, determiner: [category: the, type: determiner]], arg2: [name: Lord Byron, type: entity]], sentenceType: yes-no-question, voice: passive, agreement: [number: singular, person: 1]]]');
 
 		$Sentence = $Conversation->parseFirstLine('How many children did Lord Byron have?');
 		$this->test(213, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 'singular');

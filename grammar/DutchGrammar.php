@@ -12,6 +12,13 @@ class DutchGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
+			'\'s' => array(
+				'possessiveMarker' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'possessive'),
+					))
+				)
+			),
 			'auteur' => array(
 				'noun' => array(
 					'features' => array('head' => array('sem' => array('category' => 'author')))
@@ -21,7 +28,17 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array('features' => array('person' => 1, 'number' => 'singular'))
 			),
 			'beïnvloed' => array(
-				'verb' => array()
+				'verb' => array(
+					'features' => array(
+						'arguments' => 1,
+						'head' => array(
+							'tense' => 'past',
+							// possible forms: simple, participle, infinitive
+							'form' => 'participle',
+							'sem' => array('predicate' => 'influence'),
+						)
+					),
+				)
 			),
 			'boek' => array(
 				'verb' => array(
@@ -42,7 +59,11 @@ class DutchGrammar extends SimpleGrammar
 				)
 			),
 			'door' => array(
-				'preposition' => array(),
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'by'),
+					))
+				),
 				'passivisationPreposition' => array(
 					'features' => array('head' => array())
 				)
@@ -61,6 +82,10 @@ class DutchGrammar extends SimpleGrammar
 				'determiner' => array(
 					'features' => array('head' => array('sem' => array('category' => 'a')))
 				)
+			),
+			'and' => array(
+				'conjunction' => array(
+				),
 			),
 			'had' => array(
 				'verb' => array(
@@ -108,6 +133,15 @@ class DutchGrammar extends SimpleGrammar
 					),
 				)
 			),
+			'noem' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'name'),
+						)
+					)
+				)
+			),
 			'van' => array(
 				'preposition' => array(
 					'features' => array('head' => array(
@@ -141,6 +175,7 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
+							'tense' => 'past',
 							'sem' => array('predicate' => 'be'),
 						)
 					),
@@ -148,6 +183,7 @@ class DutchGrammar extends SimpleGrammar
 				'auxBe' => array(
 					'features' => array(
 						'head' => array(
+							'tense' => 'past',
 							'sem' => array('predicate' => 'be'),
 						)
 					),
@@ -156,14 +192,34 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'waar' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('location' => array('question' => true))))
-				)
+					//'features' => array('head' => array('sem' => array('location' => array('question' => true))))
+					'features' => array('head' => array('sem' => array(
+						'modifier' => array(
+							'type' => 'modifier', 'category' => 'location', 'object' => array(
+								'type' => 'entity', 'question' => true)))))
+				),
 			),
 			'wanneer' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('time' => array('question' => true))))
-				)
+					'features' => array('head' => array('sem' => array(
+						'modifier' => array(
+							'type' => 'modifier', 'category' => 'time', 'object' => array(
+								'type' => 'entity', 'question' => true)))))
+				),
 			),
 		);
 	}
+
+	public function unglue($word)
+	{
+		// $word ends with 's or '
+		if (preg_match('/(^[^\']+)(\'s?)$/', $word, $matches)) {
+			// split the 's part (and turn ' into 's)
+			return array($matches[1], "'s");
+		}
+
+		// default: no action
+		return array($word);
+	}
+
 }

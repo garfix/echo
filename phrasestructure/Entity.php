@@ -4,6 +4,7 @@ namespace agentecho\phrasestructure;
 
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Determiner;
+use \agentecho\phrasestructure\Preposition;
 use \agentecho\exception\SentenceException;
 
 class Entity extends PhraseStructure
@@ -15,7 +16,9 @@ class Entity extends PhraseStructure
 		'category' => null,
 		'name' => null,
 		'Determiner' => null,
-		'number' => self::SINGULAR
+		'number' => self::SINGULAR,
+		'Modifier' => null,
+		'question' => false
 	);
 
 	public function setCategory($category)
@@ -36,6 +39,16 @@ class Entity extends PhraseStructure
     public function getDeterminer()
     {
         return $this->data['Determiner'];
+    }
+
+	public function setPreposition(Preposition $Preposition)
+	{
+		$this->data['Preposition'] = $Preposition;
+	}
+
+    public function getPreposition()
+    {
+        return $this->data['Preposition'];
     }
 
 	public function setName($name)
@@ -60,5 +73,18 @@ class Entity extends PhraseStructure
 	public function getNumber()
 	{
 		return $this->data['numbers'];
+	}
+
+	/**
+	 * Mark this determiner as an unknown that needs to be resolved (a question).
+	 */
+	public function setQuestion()
+	{
+		$this->data['question'] = true;
+	}
+
+	public function isQuestion()
+	{
+	    return $this->data['question'];
 	}
 }

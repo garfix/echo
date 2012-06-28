@@ -10,6 +10,7 @@ use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Determiner;
+use \agentecho\phrasestructure\Preposition;
 
 class Parser
 {
@@ -37,7 +38,7 @@ class Parser
 
 			throw $E;
 		}
-
+//r($Sentence->phraseSpecification['features']['head']);
 		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']);
 	}
 
@@ -48,6 +49,7 @@ class Parser
 	 */
 	private function buildObjectStructure(array $phraseSpecification)
 	{
+#todo: geef sentence ook gewoon een 'type'
 		if (isset($phraseSpecification['sentenceType'])) {
 			$E = new Sentence();
 			$type = $phraseSpecification['sentenceType'];
@@ -72,6 +74,10 @@ class Parser
 					}
 					$E->setArguments($arguments);
 
+					if (isset($phraseSpecification['modifier'])) {
+						$E->setPreposition($this->buildObjectStructure($phraseSpecification['modifier']));
+					}
+
 					break;
 
 				case 'entity':
@@ -88,6 +94,14 @@ class Parser
 					if (isset($phraseSpecification['name'])) {
 						$E->setName($phraseSpecification['name']);
 					}
+//r($phraseSpecification);exit;
+					if (isset($phraseSpecification['modifier'])) {
+						$E->setPreposition($this->buildObjectStructure($phraseSpecification['modifier']));
+					}
+
+					if (isset($phraseSpecification['question'])) {
+                        $E->setQuestion();
+                    }
 
 					break;
 
@@ -99,6 +113,16 @@ class Parser
                         $E->setQuestion();
                     }
                     if (isset($phraseSpecification['object'])) {
+                        $E->setObject($this->buildObjectStructure($phraseSpecification['object']));
+                    }
+
+					break;
+
+				case 'modifier':
+					$E = new Preposition();
+//r($phraseSpecification);exit;
+					$E->setCategory($phraseSpecification['category']);
+					if (isset($phraseSpecification['object'])) {
                         $E->setObject($this->buildObjectStructure($phraseSpecification['object']));
                     }
 

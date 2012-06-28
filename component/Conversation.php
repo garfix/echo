@@ -265,7 +265,7 @@ class Conversation
 				if ($sentenceType == 'yes-no-question') {
 
 					// since this is a yes-no question, check the statement
-					$result = $this->Echo->getKnowledgeManager()->check($sem, $sentenceType);
+					$result = $this->Echo->getKnowledgeManager()->checkQuestion($Sentence);
 
 					if ($result) {
 						$answer = 'Yes.';
@@ -284,7 +284,7 @@ class Conversation
 
 				} elseif ($sentenceType == 'wh-question') {
 
-					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($sem, $sentenceType);
+					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject2($Sentence);
 
 					// incorporate the answer in the original question
 					if ($answer !== false) {

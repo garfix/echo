@@ -43,6 +43,7 @@ use \agentecho\grammar\Grammar;
  * zorg ervoor dat de excepties in de huidige taal gezet zijn
  * Bouw een OOP laag om de phrase specification array structuur heen. De gebruiker werkt alleen met objecten
  * Een Parser (moet een interface worden) moet een Sentence object teruggeven; verder niets.
+ * Veel DBPedia testen slaagden ten onrechte, omdat restricties die niet goed worden gematched gewoon worden weggelaten. Vooral bij yes/no vragen is die een probleem.
  */
 class AgentEcho
 {

@@ -28,7 +28,8 @@ class Relation extends PhraseStructure
 			1 => null,
 			2 => null,
 			3 => null
-		)
+		),
+		'Preposition' => null
 	);
 
 	public function setPredicate($predicate)
@@ -51,16 +52,25 @@ class Relation extends PhraseStructure
 		return $this->data['arguments'];
 	}
 
+	/**
+	 * @return Entity
+	 */
 	public function getArgument1()
 	{
 		return $this->data['arguments'][1];
 	}
 
+	/**
+	 * @return Entity
+	 */
 	public function getArgument2()
 	{
 		return $this->data['arguments'][2];
 	}
 
+	/**
+	 * @return Entity
+	 */
 	public function getArgument3()
 	{
 		return $this->data['arguments'][3];
@@ -80,4 +90,14 @@ class Relation extends PhraseStructure
 	{
 		$this->data['arguments'][3] = $IndirectObject;
 	}
+
+	public function setPreposition(Preposition $Preposition)
+	{
+		$this->data['Preposition'] = $Preposition;
+	}
+
+    public function getPreposition()
+    {
+        return $this->data['Preposition'];
+    }
 }

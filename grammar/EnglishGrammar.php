@@ -40,7 +40,6 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'and' => array(
 				'conjunction' => array(
-					//'features' => array('head' => array('sem' => array('category' => 'and')))
 				),
 			),
 			'am' => array(
@@ -290,12 +289,18 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'when' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('time' => array('question' => true))))
+					'features' => array('head' => array('sem' => array(
+						'modifier' => array(
+							'type' => 'modifier', 'category' => 'time', 'object' => array(
+								'type' => 'entity', 'question' => true)))))
 				),
 			),
 			'where' => array(
 				'whword' => array(
-					'features' => array('head' => array('sem' => array('location' => array('question' => true))))
+					'features' => array('head' => array('sem' => array(
+						'modifier' => array(
+							'type' => 'modifier', 'category' => 'location', 'object' => array(
+								'type' => 'entity', 'question' => true)))))
 				),
 			),
 			'who' => array(

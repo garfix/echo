@@ -546,8 +546,8 @@ $words = $lexicalItems;
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP', 'features' => array('head-1' => null)),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('sem' => array('type' => null, 'object' => '?sem')))),
+					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'modifier', 'id' => 1)))),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),

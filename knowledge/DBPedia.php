@@ -7,6 +7,8 @@ use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Entity;
+use \agentecho\phrasestructure\Relation;
+use \agentecho\phrasestructure\Preposition;
 
 /**
  * An adapter for DBPedia.
@@ -45,8 +47,26 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
+    public function checkQuestion(Sentence $Sentence)
+   	{
+//r($Sentence);
+   		$triples = array();
+   		$select = '';
+        $sentenceType = $Sentence->getType();
+		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+
+   		if (Settings::$debugKnowledge) r($triples);
+
+   		$result = $this->query($triples, $select);
+
+   		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
+
+   		return $result;
+   	}
+
 	public function answerQuestion(Sentence $Sentence)
 	{
+//r($Sentence);exit;
 		$triples = array();
 		$select = '';
 		$sentenceType = $Sentence->getType();
@@ -110,13 +130,44 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
+	public function answerQuestionAboutObject2(Sentence $Sentence)
+	{
+//r($Sentence);exit;
+		$triples = array();
+		$select = '';
+		$sentenceType = $Sentence->getType();
+		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+
+		$result = $this->query($triples, $select);
+
+		if ($sentenceType == 'wh-question') {
+			if (count($result == 1)) {
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+				if (is_array($result)) {
+					$result = reset($result);
+				}
+			}
+		}
+		if ($sentenceType == 'imperative') {
+			$values = array();
+			foreach ($result as $resultVal) {
+				$values[] = reset($resultVal);
+			}
+			$result = $values;
+		}
+
+		return $result;
+	}
+
 	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$triples, &$select, $parentId)
 	{
 		$subjectId = $Phrase->getHashCode();
 
 		// yes-no-question
 		if ($sentenceType == 'yes-no-question') {
-			$select = '1';
+			$select = 'COUNT(*)';
 		}
 
 		// imperative 'name'
@@ -149,53 +200,33 @@ class DBPedia extends KnowledgeSource
 			if ($Determiner->isQuestion()) {
 				if ($Determiner->getCategory() == 'many') {
 #todo: probably needs some parent id
-					$select = 'COUNT(?' . $subjectId . ')';
+					$select = 'COUNT(?' . $parentId . ')';
 				}
 			}
 		}
 
-#todo: needs rewrite: i am not going to make a class for Location, but for Modifier, or some such
-//		if (isset($s['location']['question'])) {
-//			$triples[] = array('?' . $s['location']['id'], 'rdfs:label', '?location');
-//			$select = '?location';
-//		}
-#todo may we combine these, or is this similarity just an exception?
-//		if (isset($s['time']['question'])) {
-//			$select = '?' . $s['time']['id'];
-//		}
+		if ($Phrase instanceof Preposition) {
 
-		// http://dbpedia.org/ontology/birthPlace
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
-//			isset($s['location']) &&
-//			isset($s['arg2'])
-//		) {
-//			$themeId = $s['arg2']['id'];
-//			$locationId = $s['location']['id'];
-//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
-//		}
+			/** @var Preposition $Preposition */
+			$Preposition = $Phrase;
 
-		// http://dbpedia.org/ontology/deathPlace
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'die') &&
-//			isset($s['location']) &&
-//			isset($s['arg1'])
-//		) {
-//			$themeId = $s['arg1']['id'];
-//			$locationId = $s['location']['id'];
-//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
-//		}
+			$category = $Preposition->getCategory();
+			$Object = $Preposition->getObject();
 
-		// http://dbpedia.org/ontology/birthDate
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
-//			isset($s['time']) &&
-//			isset($s['arg2'])
-//		) {
-//			$themeId = $s['arg2']['id'];
-//			$timeId = $s['time']['id'];
-//			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
-//		}
+			if ($category == 'location') {
+				if ($Object->isQuestion()) {
+					$triples[] = array('?' . $Object->getHashCode(), 'rdfs:label', '?location');
+					$triples[] = array('FILTER(lang(?location) = "en")');
+					$select = '?location';
+				}
+			}
+			if ($category == 'time') {
+				if ($Object->isQuestion()) {
+					$select = '?' . $Object->getHashCode();
+				}
+			}
+
+		}
 
 		// rdfs:label
         if ($Phrase instanceof Entity) {
@@ -217,56 +248,103 @@ class DBPedia extends KnowledgeSource
                 }
             }
 
+	        // http://dbpedia.org/ontology/author
+	        if ($Entity->getCategory() == 'author') {
 
+		        /** @var Preposition $Preposition */
+		        $Preposition = $Entity->getPreposition();
+
+		        $objectId = $Preposition->getObject()->getHashCode();
+
+		        $triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
+	        }
         }
 
-//		// http://dbpedia.org/ontology/author
-//		if (
-//			isset($s['category']) && ($s['category'] == 'author') &&
-//			isset($s['of'])
-//		) {
-//			$objectId = $s['of']['id'];
-//			$triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
-//		}
 
 
+		// http://dbpedia.org/ontology/influencedBy
+		if ($Phrase instanceof Relation) {
+
+            /** @var Relation $Relation */
+            $Relation = $Phrase;
+
+			$predicate = $Relation->getPredicate();
+
+			// http://dbpedia.org/ontology/influencedBy
+			if ($predicate == 'influence') {
+				$arg1 = $Relation->getArgument1()->getHashCode();
+				$arg2 = $Relation->getArgument2()->getHashCode();
+
+				$triples[] = array('?' . $arg2, '<http://dbpedia.org/ontology/influencedBy>', '?' . $arg1);
+			}
+
+			// http://dbpedia.org/ontology/child (1)
+			if ($predicate == 'have') {
+				$arg1 = $Relation->getArgument1()->getHashCode();
+				$arg2 = $Relation->getArgument2()->getHashCode();
+
+				if ($Relation->getArgument2()->getCategory() == 'child') {
+					$triples[] = array('?' . $arg1, '<http://dbpedia.org/ontology/child>', '?' . $arg2);
+				}
+			}
+
+			// http://dbpedia.org/ontology/birthPlace
+			if ($predicate == 'bear') {
+				$Preposition = $Relation->getPreposition();
+				if ($Preposition->getCategory() == 'location') {
+					$locationId = $Preposition->getObject()->getHashCode();
+					$arg2id = $Relation->getArgument2()->getHashCode();
+					$triples[] = array('?' . $arg2id, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
+				}
+
+				if ($Preposition->getCategory() == 'time') {
+					$timeId = $Preposition->getObject()->getHashCode();
+					$arg2id = $Relation->getArgument2()->getHashCode();
+					$triples[] = array('?' . $arg2id, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
+				}
+
+			}
+
+			// http://dbpedia.org/ontology/deathPlace
+			if ($predicate == 'die') {
+				$Preposition = $Relation->getPreposition();
+				if ($Preposition->getCategory() == 'location') {
+					$locationId = $Preposition->getObject()->getHashCode();
+					$arg1id = $Relation->getArgument1()->getHashCode();
+					$triples[] = array('?' . $arg1id, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
+				}
+			}
+
+			// http://dbpedia.org/ontology/child (2)
+			if ($predicate == 'be') {
+				$childId = $Relation->getArgument1()->getHashCode();
+				$Arg2 = $Relation->getArgument2();
+				$Preposition = $Arg2->getPreposition();
+				$Object = $Preposition->getObject();
+				$parentId = $Object->getHashCode();
+
+				if ($Relation->getArgument2()->getCategory() == 'daughter') {
+					$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
+				}
+
+			}
 
 
+						//
+			//		// http://dbpedia.org/ontology/child (2)
+			//		if (
+			//			isset($s['predicate']) && ($s['predicate'] == 'be') &&
+			//			isset($s['arg1']) &&
+			//			isset($s['arg2']['of']) &&
+			//			($s['arg2']['category'] == 'daughter')
+			//		) {
+			//			$childId = $s['arg1']['id'];
+			//			$parentId = $s['arg2']['of']['id'];
+			//			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
+			//		}
 
-//		// http://dbpedia.org/ontology/influencedBy
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'influence') &&
-//			isset($s['agent']) &&
-//			isset($s['experiencer'])
-//		) {
-//			$actorId = $s['agent']['id'];
-//			$patientId = $s['experiencer']['id'];
-//			$triples[] = array('?' . $patientId, '<http://dbpedia.org/ontology/influencedBy>', '?' . $actorId);
-//		}
-//
-//		// http://dbpedia.org/ontology/child (1)
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'have') &&
-//			isset($s['arg1']) &&
-//			isset($s['arg2']) &&
-//			($s['arg2']['category'] == 'child')
-//		) {
-//			$possessor = $s['arg1']['id'];
-//			$posession = $s['arg2']['id'];
-//			$triples[] = array('?' . $possessor, '<http://dbpedia.org/ontology/child>', '?' . $posession);
-//		}
-//
-//		// http://dbpedia.org/ontology/child (2)
-//		if (
-//			isset($s['predicate']) && ($s['predicate'] == 'be') &&
-//			isset($s['arg1']) &&
-//			isset($s['arg2']['of']) &&
-//			($s['arg2']['category'] == 'daughter')
-//		) {
-//			$childId = $s['arg1']['id'];
-//			$parentId = $s['arg2']['of']['id'];
-//			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
-//		}
+
+		}
 
 		// interpret child elements
         foreach ($Phrase->getChildPhrases() as $ChildPhrase) {
@@ -431,8 +509,7 @@ $triples = array_unique($triples);
 		if (Settings::$debugKnowledge) r($query);
 
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
-//r($query);
-//r($result);
+
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -442,14 +519,18 @@ $triples = array_unique($triples);
 				'format' => 'application/json',
 			);
 
-			$json = file_get_contents($url . '?' . http_build_query($params));
-			$result = json_decode($json, true);
+			$json = @file_get_contents($url . '?' . http_build_query($params));
 
-			if (self::$cacheResults) {
-				$this->cacheResult($query, $result);
+			if ($json !== false) {
+				$result = json_decode($json, true);
+
+				if (self::$cacheResults) {
+					$this->cacheResult($query, $result);
+				}
 			}
 		}
-
+//r($query);
+//r($result);
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 			$value = $result['results']['bindings'][0]['callret-0']['value'];
 		} elseif (isset($result['results']['bindings'])) {

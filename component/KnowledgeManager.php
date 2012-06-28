@@ -30,10 +30,34 @@ class KnowledgeManager
 		return false;
 	}
 
+    public function checkQuestion(Sentence $Sentence)
+   	{
+   		foreach ($this->knowledgeSources as $KnowledgeSource) {
+   			$result = $KnowledgeSource->checkQuestion($Sentence);
+   			if ($result !== false) {
+   				return $result;
+   			}
+   		}
+
+   		return false;
+   	}
+
 	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
 			$result = $KnowledgeSource->answerQuestionAboutObject($phraseSpecification, $sentenceType);
+			if ($result !== false) {
+				return $result;
+			}
+		}
+
+		return false;
+	}
+
+	public function answerQuestionAboutObject2(Sentence $Sentence)
+	{
+		foreach ($this->knowledgeSources as $KnowledgeSource) {
+			$result = $KnowledgeSource->answerQuestionAboutObject2($Sentence);
 			if ($result !== false) {
 				return $result;
 			}
