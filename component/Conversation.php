@@ -103,6 +103,7 @@ class Conversation
 	{
         $phraseSpecification = $this->buildPhraseStructure($Sentence);
 //r($Sentence);
+//r($phraseSpecification);
         $SentenceContext = new SentenceContext($this);
         $SentenceContext->phraseSpecification = $phraseSpecification;
         $SentenceContext->RootObject = $Sentence;
@@ -134,6 +135,7 @@ class Conversation
 
 			$structure['predicate'] = $Relation->getPredicate();
 			$structure['tense'] = $Relation->getTense();
+			$structure['type'] = 'relation';
 
 			foreach ($Relation->getArguments() as $index => $Argument) {
 				if ($Argument) {
@@ -144,6 +146,8 @@ class Conversation
 
 			/** @var Entity $Entity */
 			$Entity = $PhraseStructure;
+
+			$structure['type'] = 'entity';
 
 			$name = $Entity->getName();
 			if ($name !== null) {
@@ -225,95 +229,93 @@ class Conversation
 		try {
 
 			$SentenceContext = $this->parseFirstLine($question);
-			$features = $SentenceContext->phraseSpecification['features'];
 
 			/** @var Sentence $Sentence  */
 			$Sentence = $SentenceContext->getRootObject();
 
-			$head = $features['head'];
+			$sentenceType = $Sentence->getType();
 
-			if (isset($head['sentenceType'])) {
-				$sentenceType = $head['sentenceType'];
+			if ($sentenceType == 'yes-no-question') {
 
-				// turn the question into an answer
-				$features['head']['sentenceType'] = 'declarative';
+				// since this is a yes-no question, check the statement
+				$result = $this->Echo->getKnowledgeManager()->checkQuestion($Sentence);
 
-				if ($sentenceType == 'yes-no-question') {
+				if ($result) {
+					$answer = 'Yes.';
 
-					// since this is a yes-no question, check the statement
-					$result = $this->Echo->getKnowledgeManager()->checkQuestion($Sentence);
 
-					if ($result) {
-						$answer = 'Yes.';
+					$Sentence->setType(Sentence::DECLARATIVE);
+					$s = $this->produce($Sentence);
 
-						if (!$result) {
-							$features['head']['negate'] = true;
-						}
-
-						$Sentence->setType(Sentence::DECLARATIVE);
-						$s = $this->produce($Sentence);
-
-						if ($s) {
-							$answer .= ' ' . $s;
-						}
-
-					} else {
-						$answer = 'No.';
-					}
-
-				} elseif ($sentenceType == 'wh-question') {
-
-					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($Sentence);
-
-					// incorporate the answer in the original question
-					if ($answer !== false) {
-
-						#todo: this should be made more generic
-//r($features);
-						if (isset($features['head']['sem']['arg2']['determiner']['question'])) {
-							unset($features['head']['sem']['arg2']['determiner']['question']);
-							$features['head']['sem']['arg2']['determiner']['category'] = $answer;
-//r($features);
-							$sentence = $this->generate($features, array());
-							if ($sentence) {
-								$answer = $sentence;
-							}
-						}
-
-					}
-
-				} elseif ($Sentence->getType() == 'imperative') {
-
-					#todo Imperatives are not always questions
-					$isQuestion = true;
-
-					if ($isQuestion) {
-
-						$answer = $this->Echo->getKnowledgeManager()->answerQuestion($Sentence);
-
-						$entities = array();
-
-						foreach ($answer as $name) {
-
-                            $Entity = new Entity();
-                            $Entity->setName($name);
-
-                            $entities[] = $Entity;
-						}
-
-                        $Phrase = SentenceBuilder::buildConjunction($entities);
-
-                        $sentence = $this->produce($Phrase);
-
-						if ($sentence) {
-							$answer = $sentence;
-						}
+					if ($s) {
+						$answer .= ' ' . $s;
 					}
 
 				} else {
-					$answer = 'ok.';
+					$answer = 'No.';
 				}
+
+			} elseif ($sentenceType == 'wh-question') {
+
+				$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($Sentence);
+
+				// incorporate the answer in the original question
+				if ($answer !== false) {
+
+					#todo: this should be made more generic
+//r($Sentence);
+					if ($Relation = $Sentence->getRelation()) {
+						if ($Argument2 = $Relation->getArgument2()) {
+							if ($Determiner = $Argument2->getDeterminer()) {
+								if ($Determiner->isQuestion()) {
+									$Sentence->setType(Sentence::DECLARATIVE);
+									$Determiner->setQuestion(false);
+									$Determiner->setCategory($answer);
+//r($Sentence);
+//r($phraseSpecification = $this->buildPhraseStructure($Sentence));
+									$sentence = $this->produce($Sentence);
+									if ($sentence) {
+										$answer = $sentence;
+									}
+								}
+							}
+						}
+					}
+
+				}
+
+			} elseif ($Sentence->getType() == 'imperative') {
+
+				#todo Imperatives are not always questions
+				$isQuestion = true;
+
+				if ($isQuestion) {
+
+					$answer = $this->Echo->getKnowledgeManager()->answerQuestion($Sentence);
+
+					$entities = array();
+
+					foreach ($answer as $name) {
+
+                        $Entity = new Entity();
+                        $Entity->setName($name);
+
+                        $entities[] = $Entity;
+					}
+
+                    $Phrase = SentenceBuilder::buildConjunction($entities);
+
+                    $sentence = $this->produce($Phrase);
+
+					if ($sentence) {
+						$answer = $sentence;
+					}
+				}
+
+			} else {
+				$answer = 'ok.';
 			}
+
 		} catch (\Exception $E) {
 
 			$answer = (string)$E;

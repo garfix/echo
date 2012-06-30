@@ -125,13 +125,11 @@ class Parser
 					$E = new Relation();
 					$E->setPredicate($phraseSpecification['predicate']);
 
-					$arguments = array();
 					for ($i = 1; $i < 5; $i++) {
 						if (isset($phraseSpecification['arg' . $i])) {
-							$arguments[$i] = $this->buildObjectStructure($phraseSpecification['arg' . $i]);
+							$E->setArgument($i, $this->buildObjectStructure($phraseSpecification['arg' . $i]));
 						}
 					}
-					$E->setArguments($arguments);
 
 					if (isset($phraseSpecification['modifier'])) {
 						$E->setPreposition($this->buildObjectStructure($phraseSpecification['modifier']));

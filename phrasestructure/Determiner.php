@@ -35,9 +35,9 @@ class Determiner extends PhraseStructure
     /**
      * Mark this determiner as an unknown that needs to be resolved (a question).
      */
-    public function setQuestion()
+    public function setQuestion($question = true)
     {
-        $this->data['question'] = true;
+        $this->data['question'] = $question;
     }
 
     public function isQuestion()

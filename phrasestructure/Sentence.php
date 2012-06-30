@@ -57,6 +57,9 @@ class Sentence extends PhraseStructure
 		$this->data['Relation'] = $Relation;
 	}
 
+	/**
+	 * @return Relation
+	 */
 	public function getRelation()
 	{
 		return $this->data['Relation'];

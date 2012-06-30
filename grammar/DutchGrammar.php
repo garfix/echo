@@ -88,7 +88,7 @@ class DutchGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('predicate' => 'have'),
+							'sem' => array('predicate' => 'have', 'tense' => 'past'),
 						)
 					)
 				)

@@ -37,7 +37,10 @@ class Entity extends PhraseStructure
 		$this->data['Determiner'] = $Determiner;
 	}
 
-    public function getDeterminer()
+	/**
+	 * @return Determiner
+	 */
+	public function getDeterminer()
     {
         return $this->data['Determiner'];
     }

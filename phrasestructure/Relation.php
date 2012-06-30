@@ -46,9 +46,9 @@ class Relation extends PhraseStructure
 		return $this->data['predicate'];
 	}
 
-	public function setArguments(array $arguments)
+	public function setArgument($index, $value)
 	{
-		$this->data['arguments'] = $arguments;
+		$this->data['arguments'][$index] = $value;
 	}
 
 	public function getArguments()
