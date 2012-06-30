@@ -83,7 +83,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('category' => 'a')))
 				)
 			),
-			'and' => array(
+			'en' => array(
 				'conjunction' => array(
 				),
 			),

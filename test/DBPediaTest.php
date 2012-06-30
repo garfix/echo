@@ -29,16 +29,12 @@ class DBPediaTest extends TestBase
 		// S => aux NP VP ; DBPedia
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->test(301, $answer, 'Yes. Lord Byron was influenced by the author of Paradise Lost.');
-
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 		$this->test(302, $answer, 'Yes. Lord Byron werd beïnvloed door de auteur van Paradise Lost.');
 
-//	}
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
 		$this->test(311, $answer, 'Lord Byron had 2 children.');
-
-//if (!$single) {
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
 		$this->test(312, $answer, 'Lord Byron had 2 kinderen.');
 
