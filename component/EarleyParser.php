@@ -118,7 +118,7 @@ class EarleyParser
 			'dotPosition' => self::CONSEQUENT,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
-			'dag' => self::createLabeledDag($rule, true),
+			'dag' => self::createLabeledDag($rule),
 		);
 
 		$this->enqueue($initialState, 0);
@@ -191,7 +191,7 @@ class EarleyParser
 				'dotPosition' => self::CONSEQUENT,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
-				'dag' => self::createLabeledDag($newRule, true),
+				'dag' => self::createLabeledDag($newRule),
 			);
 			$this->enqueue($predictedState, $endWordIndex);
 		}
@@ -365,32 +365,13 @@ class EarleyParser
 		return $state['rule'][$state['dotPosition']]['cat'];
 	}
 
-	public static function createLabeledDag(array $rule, $addIds = false)
+	public static function createLabeledDag(array $rule)
 	{
-		static $id = 0;
-
 		$tree = array();
 		foreach ($rule as $index => $line) {
 			if (isset($line['features'])) {
 				$tree[$line['cat'] . '@' . $index] = $line['features'];
 			}
-		}
-
-		if ($addIds) {
-
-			// create unique id
-			$callback = function(&$item, $key) use ($tree, &$id)
-			{
-				$id++;
-
-				if ($key == 'id') {
-					$item = array('id' . $id => null);
-				}
-
-				return true;
-			};
-
-			array_walk_recursive($tree, $callback);
 		}
 
 		return new LabeledDAG($tree);

@@ -250,7 +250,7 @@ $words = $lexicalItems;
 	private function getWord($partOfSpeech, $features)
 	{
 		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
-		$tense = isset($features['head']['tense']) ? $features['head']['tense'] : null;
+		$tense = isset($features['head']['sem']['tense']) ? $features['head']['sem']['tense'] : null;
 		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
 		$category = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
 		$isa = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
@@ -281,10 +281,10 @@ $words = $lexicalItems;
 			}
 
 			if ($tense) {
-				if (!isset($data[$partOfSpeech]['features']['head']['tense'])) {
+				if (!isset($data[$partOfSpeech]['features']['head']['sem']['tense'])) {
 					continue;
 				}
-				if ($data[$partOfSpeech]['features']['head']['tense'] != $tense) {
+				if ($data[$partOfSpeech]['features']['head']['sem']['tense'] != $tense) {
 					continue;
 				}
 			}
@@ -336,11 +336,10 @@ $words = $lexicalItems;
 			if ($FeatureDAG->match($pattern)) {
 
 				$rawRule = $generationRule['rule'];
-				$Dag = EarleyParser::createLabeledDag($rawRule, false);
+				$Dag = EarleyParser::createLabeledDag($rawRule);
 //r($Dag);
 				$UnifiedDag = $Dag->unify($FeatureDAG);
 //r($UnifiedDag);
-//echo '################################' . "\n";
 				if ($UnifiedDag) {
 					return array($rawRule, $UnifiedDag);
 				}
@@ -584,10 +583,10 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
-						array('cat' => 'NP', 'features' => array('head' => array('tense-1' => null, 'sem' => '?sem-2'))),
-						array('cat' => 'aux', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => 'be')))),
-						array('cat' => 'VP', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'S', 'features' => array('head' => array('sem' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+						array('cat' => 'aux', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
 					)
@@ -606,9 +605,9 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('tense-1' => null, 'sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => '?sem-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'tense-1' => null, 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'S', 'features' => array('head' => array('sem' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					),
 				),
@@ -659,16 +658,16 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array())
 					)
 				),
 				array(
 					'condition' => array('head' => array('sem' => array('predicate' => null))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
+						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
 					)
 				),
 			),

@@ -28,25 +28,6 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	public function check($phraseSpecification, $sentenceType)
-	{
-		if (Settings::$debugKnowledge) r($phraseSpecification);
-
-//		$objectId = self::getVariableId();
-
-		$triples = array();
-		$select = '';
-		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
-
-		if (Settings::$debugKnowledge) r($triples);
-
-		$result = $this->query($triples, $select);
-
-		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
-
-		return $result;
-	}
-
     public function checkQuestion(Sentence $Sentence)
    	{
 //r($Sentence);
@@ -95,42 +76,7 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
-	{
-		if (Settings::$debugKnowledge) r($phraseSpecification);
-
-		$triples = array();
-		$select = '';
-		$this->interpret($phraseSpecification, $sentenceType, $triples, $select, null);
-
-		if (Settings::$debugKnowledge) r($triples);
-
-		$result = $this->query($triples, $select);
-
-		if ($sentenceType == 'wh-question') {
-			if (count($result == 1)) {
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-			}
-		}
-		if ($sentenceType == 'imperative') {
-			$values = array();
-			foreach ($result as $resultVal) {
-				$values[] = reset($resultVal);
-			}
-			$result = $values;
-		}
-
-		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
-
-		return $result;
-	}
-
-	public function answerQuestionAboutObject2(Sentence $Sentence)
+	public function answerQuestionAboutObject(Sentence $Sentence)
 	{
 //r($Sentence);exit;
 		$triples = array();
@@ -199,7 +145,6 @@ class DBPedia extends KnowledgeSource
 
 			if ($Determiner->isQuestion()) {
 				if ($Determiner->getCategory() == 'many') {
-#todo: probably needs some parent id
 					$select = 'COUNT(?' . $parentId . ')';
 				}
 			}
@@ -328,167 +273,12 @@ class DBPedia extends KnowledgeSource
 				}
 
 			}
-
-
-						//
-			//		// http://dbpedia.org/ontology/child (2)
-			//		if (
-			//			isset($s['predicate']) && ($s['predicate'] == 'be') &&
-			//			isset($s['arg1']) &&
-			//			isset($s['arg2']['of']) &&
-			//			($s['arg2']['category'] == 'daughter')
-			//		) {
-			//			$childId = $s['arg1']['id'];
-			//			$parentId = $s['arg2']['of']['id'];
-			//			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
-			//		}
-
-
 		}
 
 		// interpret child elements
         foreach ($Phrase->getChildPhrases() as $ChildPhrase) {
             $this->interpretPhrase($ChildPhrase, $sentenceType, $triples, $select, $subjectId);
         }
-	}
-
-	private function interpret($phraseSpecification, $sentenceType, &$triples, &$select, $parentId)
-	{
-		$s = $phraseSpecification;
-
-		if (isset($s['id'])) {
-			$subjectId = $s['id'];
-		} else {
-			$subjectId = $parentId;
-		}
-
-		// yes-no-question
-		if ($sentenceType == 'yes-no-question') {
-			$select = '1';
-		}
-
-		// imperative 'name'
-		if ($sentenceType == 'imperative' &&
-			isset($s['predicate']) && ($s['predicate'] == 'name')) {
-
-			$select = '?name';
-			$arg2id = $s['arg2']['id'];
-			$triples[] = array('?' . $arg2id, 'rdfs:label', '?name');
-			$triples[] = array('FILTER(lang(?name) = "en")');
-		}
-
-		if (isset($s['determiner']['question'])) {
-			if (($s['determiner']['question'] == true) && ($s['determiner']['category'] == 'many')) {
-				$select = 'COUNT(?' . $s['id'] . ')';
-			}
-		}
-
-		if (isset($s['location']['question'])) {
-			$triples[] = array('?' . $s['location']['id'], 'rdfs:label', '?location');
-			$select = '?location';
-		}
-#todo may we combine these, or is this similarity just an exception?
-		if (isset($s['time']['question'])) {
-			$select = '?' . $s['time']['id'];
-		}
-
-		// http://dbpedia.org/ontology/birthPlace
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
-			isset($s['location']) &&
-			isset($s['arg2'])
-		) {
-			$themeId = $s['arg2']['id'];
-			$locationId = $s['location']['id'];
-			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
-		}
-
-		// http://dbpedia.org/ontology/deathPlace
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'die') &&
-			isset($s['location']) &&
-			isset($s['arg1'])
-		) {
-			$themeId = $s['arg1']['id'];
-			$locationId = $s['location']['id'];
-			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
-		}
-
-		// http://dbpedia.org/ontology/birthDate
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'bear') &&
-			isset($s['time']) &&
-			isset($s['arg2'])
-		) {
-			$themeId = $s['arg2']['id'];
-			$timeId = $s['time']['id'];
-			$triples[] = array('?' . $themeId, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
-		}
-
-		// rdfs:label
-		if (isset($s['name'])) {
-			$triples[] = array('?' . $subjectId, 'rdfs:label', "'" . ucwords($s['name']) . "'@en");
-		}
-
-		// http://dbpedia.org/ontology/author
-		if (
-			isset($s['category']) && ($s['category'] == 'author') &&
-			isset($s['of'])
-		) {
-			$objectId = $s['of']['id'];
-			$triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
-		}
-
-		// http://dbpedia.org/property/children
-		if (
-			isset($s['category']) && ($s['category'] == 'child') &&
-			isset($s['determiner']['object'])
-		) {
-			$objectId = $s['determiner']['object']['id'];
-			$triples[] = array('?' . $objectId, '<http://dbpedia.org/property/children>', '?' . $subjectId);
-		}
-
-		// http://dbpedia.org/ontology/influencedBy
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'influence') &&
-			isset($s['agent']) &&
-			isset($s['experiencer'])
-		) {
-			$actorId = $s['agent']['id'];
-			$patientId = $s['experiencer']['id'];
-			$triples[] = array('?' . $patientId, '<http://dbpedia.org/ontology/influencedBy>', '?' . $actorId);
-		}
-
-		// http://dbpedia.org/ontology/child (1)
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'have') &&
-			isset($s['arg1']) &&
-			isset($s['arg2']) &&
-			($s['arg2']['category'] == 'child')
-		) {
-			$possessor = $s['arg1']['id'];
-			$posession = $s['arg2']['id'];
-			$triples[] = array('?' . $possessor, '<http://dbpedia.org/ontology/child>', '?' . $posession);
-		}
-
-		// http://dbpedia.org/ontology/child (2)
-		if (
-			isset($s['predicate']) && ($s['predicate'] == 'be') &&
-			isset($s['arg1']) &&
-			isset($s['arg2']['of']) &&
-			($s['arg2']['category'] == 'daughter')
-		) {
-			$childId = $s['arg1']['id'];
-			$parentId = $s['arg2']['of']['id'];
-			$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
-		}
-
-		// interpret child elements
-		foreach ($s as $key => $value) {
-			if (is_array($value)) {
-				$this->interpret($s[$key], $sentenceType, $triples, $select, $subjectId);
-			}
-		}
 	}
 
 	/**

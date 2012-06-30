@@ -21,11 +21,6 @@ class Microplanner
 	 */
 	public function plan(array $phraseSpecification, Grammar $Grammar)
 	{
-//r($phraseSpecification);exit;
-		if (Settings::$addIds) {
-			$this->removeIds($phraseSpecification);
-		}
-
 		$constituent = 'S';
 
 #todo: algemener maken
@@ -45,17 +40,6 @@ class Microplanner
 		$words = $this->planPhrase($constituent, $FeatureDAG, $Grammar);
 
 		return $words;
-	}
-
-	private function removeIds(array &$structure)
-	{
-		foreach ($structure as $key => &$value) {
-			if (preg_match('/id[\d]*/', $key)) {
-				unset($structure[$key]);
-			} elseif (is_array($value)) {
-				$this->removeIds($value);
-			}
-		}
 	}
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)

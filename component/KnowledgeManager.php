@@ -18,18 +18,6 @@ class KnowledgeManager
 		$this->knowledgeSources[] = $KnowledgeSource;
 	}
 
-	public function check($phraseSpecification, $sentenceType)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->check($phraseSpecification, $sentenceType);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
-	}
-
     public function checkQuestion(Sentence $Sentence)
    	{
    		foreach ($this->knowledgeSources as $KnowledgeSource) {
@@ -42,22 +30,10 @@ class KnowledgeManager
    		return false;
    	}
 
-	public function answerQuestionAboutObject($phraseSpecification, $sentenceType)
+	public function answerQuestionAboutObject(Sentence $Sentence)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject($phraseSpecification, $sentenceType);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
-	}
-
-	public function answerQuestionAboutObject2(Sentence $Sentence)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject2($Sentence);
+			$result = $KnowledgeSource->answerQuestionAboutObject($Sentence);
 			if ($result !== false) {
 				return $result;
 			}
@@ -78,6 +54,11 @@ class KnowledgeManager
 		return false;
 	}
 
+	/**
+	 * Is $identifier a proper noun in any of the knowledge sources?
+	 * @param $identifier
+	 * @return bool
+	 */
 	public function isProperNoun($identifier)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {

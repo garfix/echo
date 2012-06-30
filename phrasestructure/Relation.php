@@ -22,6 +22,9 @@ use \agentecho\phrasestructure\Entity;
  */
 class Relation extends PhraseStructure
 {
+	const PRESENT = 'present';
+	const PAST = 'past';
+
 	protected $data = array(
 		'predicate' => null,
 		'arguments' => array(
@@ -29,7 +32,8 @@ class Relation extends PhraseStructure
 			2 => null,
 			3 => null
 		),
-		'Preposition' => null
+		'Preposition' => null,
+		'tense' => self::PRESENT
 	);
 
 	public function setPredicate($predicate)
@@ -100,4 +104,14 @@ class Relation extends PhraseStructure
     {
         return $this->data['Preposition'];
     }
+
+	public function setTense($tense)
+	{
+		$this->data['tense'] = $tense;
+	}
+
+	public function getTense()
+	{
+		return $this->data['tense'];
+	}
 }

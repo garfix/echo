@@ -47,7 +47,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'agreement' => array('person' => 1, 'number' => 'singular'),
-							'sem' => array('predicate' => 'be'),
+							'sem' => array('predicate' => 'be', 'tense' => 'present'),
 							),
 						)//'arguments' => 2)
 					)
@@ -120,14 +120,14 @@ class EnglishGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
+							'sem' => array('tense' => 'past'),
 						)
 					),
 				),
 				'auxDo' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
+							'sem' => array('tense' => 'past'),
 						)
 					),
 				),
@@ -165,8 +165,7 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'present',
-							'sem' => array('predicate' => 'give'),
+							'sem' => array('predicate' => 'give', 'tense' => 'present'),
 						)
 					),
 				),
@@ -175,8 +174,7 @@ class EnglishGrammar extends SimpleGrammar
 				'verb' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
-							'sem' => array('predicate' => 'have'),
+							'sem' => array('predicate' => 'have', 'tense' => 'past'),
 						)
 					),
 				),
@@ -219,10 +217,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'tense' => 'past',
-							// possible forms: simple, participle, infinitive
-							'form' => 'participle',
-							'sem' => array('predicate' => 'influence'),
+							'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
 						)
 					),
 				)
@@ -253,8 +248,7 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'tense' => 'present',
-							'sem' => array('predicate' => 'see'),
+							'sem' => array('predicate' => 'see', 'tense' => 'present'),
 						)
 					),
 				)
@@ -273,16 +267,14 @@ class EnglishGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
-							'sem' => array('predicate' => 'be'),
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
 						)
 					),
 				),
 				'auxBe' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
-							'sem' => array('predicate' => 'be'),
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
 						)
 					),
 				),

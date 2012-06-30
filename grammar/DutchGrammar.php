@@ -32,10 +32,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'arguments' => 1,
 						'head' => array(
-							'tense' => 'past',
-							// possible forms: simple, participle, infinitive
-							'form' => 'participle',
-							'sem' => array('predicate' => 'influence'),
+							'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
 						)
 					),
 				)
@@ -175,16 +172,14 @@ class DutchGrammar extends SimpleGrammar
 				'aux' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
-							'sem' => array('predicate' => 'be'),
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
 						)
 					),
 				),
 				'auxBe' => array(
 					'features' => array(
 						'head' => array(
-							'tense' => 'past',
-							'sem' => array('predicate' => 'be'),
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
 						)
 					),
 				),

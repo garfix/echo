@@ -15,7 +15,11 @@ use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Conjunction;
+use \agentecho\phrasestructure\Preposition;
 
+/**
+ * This class implements a discourse between a user and Echo.
+ */
 class Conversation
 {
 	/** @var Local memory store for the roles in the conversation */
@@ -73,56 +77,7 @@ class Conversation
 	 */
 	public function parse($input)
 	{
-		$sentences = array();
-		$availableGrammars = $this->Echo->getAvailableGrammars();
-
-		if (trim($input) == '') {
-			return $sentences;
-		}
-
-		// create an array of grammars in which the current one is in the front
-		$grammars = array($this->CurrentGrammar);
-		foreach ($availableGrammars as $Grammar) {
-			if ($Grammar != $this->CurrentGrammar) {
-				$grammars[] = $Grammar;
-			}
-		}
-
-		$Exception = null;
-
-		// try to parse the sentence in each of the available grammars
-		foreach ($grammars as $Grammar) {
-
-			$Sentence = new SentenceContext($this);
-
-			try {
-				$this->Echo->getParser()->parseSentence($input, $Sentence, $Grammar);
-
-				$sentences[] = $Sentence;
-				$Sentence->language = $Grammar->getLanguage();
-
-				// update current language
-				$this->CurrentGrammar = $Grammar;
-
-				// now parse the rest of the input, if there is one
-				// this code works either in ltr and rtl languages (not that i tried ;)
-				$restInput = str_replace($Sentence->surfaceText, '', $input);
-				return array_merge($sentences, $this->parse($restInput, $this->context));
-
-			} catch (\Exception $E) {
-
-				// save the first exception
-				if (!$Exception) {
-					$Exception = $E;
-				}
-
-			}
-		}
-
-		// all grammars failed; throw the first exception
-		throw $Exception;
-
-		return $sentences;
+		return $this->Echo->getParser()->parseSentenceGivenMultipleGrammars($input, $this, $this->CurrentGrammar, $this->Echo->getAvailableGrammars());
 	}
 
 	/**
@@ -147,6 +102,7 @@ class Conversation
 	public function produce(PhraseStructure $Sentence)
 	{
         $phraseSpecification = $this->buildPhraseStructure($Sentence);
+//r($Sentence);
         $SentenceContext = new SentenceContext($this);
         $SentenceContext->phraseSpecification = $phraseSpecification;
         $SentenceContext->RootObject = $Sentence;
@@ -177,6 +133,7 @@ class Conversation
 			$Relation = $PhraseStructure;
 
 			$structure['predicate'] = $Relation->getPredicate();
+			$structure['tense'] = $Relation->getTense();
 
 			foreach ($Relation->getArguments() as $index => $Argument) {
 				if ($Argument) {
@@ -197,6 +154,14 @@ class Conversation
 			if ($category !== null) {
 				$structure['category'] = $category;
 			}
+			$Determiner = $Entity->getDeterminer();
+			if ($Determiner !== null) {
+				$structure['determiner'] = $this->buildPhraseStructure($Determiner);
+			}
+			$Preposition = $Entity->getPreposition();
+			if ($Preposition !== null) {
+				$structure['modifier'] = $this->buildPhraseStructure($Preposition);
+			}
 		} elseif ($PhraseStructure instanceof Conjunction) {
 
             /** @var Conjunction $Conjunction */
@@ -209,7 +174,26 @@ class Conversation
 
             $Right = $Conjunction->getRightEntity();
             $structure['right'] = $this->buildPhraseStructure($Right);
-        }
+        } elseif ($PhraseStructure instanceof Determiner) {
+
+			/** @var Determiner $Determiner  */
+			$Determiner = $PhraseStructure;
+
+			$structure['type'] = 'determiner';
+			$structure['category'] = $Determiner->getCategory();
+
+#todo object
+
+		} elseif ($PhraseStructure instanceof Preposition) {
+
+			/** @var Preposition $Preposition  */
+			$Preposition = $PhraseStructure;
+
+			$structure['type'] = 'modifier';
+			$structure['category'] = $Preposition->getCategory();
+
+			$structure['object'] = $this->buildPhraseStructure($Preposition->getObject());
+		}
 
 		return $structure;
 	}
@@ -246,15 +230,7 @@ class Conversation
 			/** @var Sentence $Sentence  */
 			$Sentence = $SentenceContext->getRootObject();
 
-//r($features);
-			$id = 0;
-
-			if (Settings::$addIds) {
-				self::addIds($features, $id);
-			}
-
 			$head = $features['head'];
-			$sem = $head['sem'];
 
 			if (isset($head['sentenceType'])) {
 				$sentenceType = $head['sentenceType'];
@@ -273,7 +249,10 @@ class Conversation
 						if (!$result) {
 							$features['head']['negate'] = true;
 						}
-						$s = $this->generate($features, array());
+
+						$Sentence->setType(Sentence::DECLARATIVE);
+						$s = $this->produce($Sentence);
+
 						if ($s) {
 							$answer .= ' ' . $s;
 						}
@@ -284,7 +263,7 @@ class Conversation
 
 				} elseif ($sentenceType == 'wh-question') {
 
-					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject2($Sentence);
+					$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($Sentence);
 
 					// incorporate the answer in the original question
 					if ($answer !== false) {
@@ -342,23 +321,5 @@ class Conversation
 		}
 
 		return $answer;
-	}
-
-	private static function addIds(&$structure, &$id)
-	{
-		if (!isset($structure['id'])) {
-			$structure['id'] = ++$id;
-		} else {
-			foreach ($structure['id'] as $k => $v) {
-				$id = $k;
-				break;
-			}
-			$structure['id'] = $id;
-		}
-		foreach ($structure as &$value) {
-			if (is_array(($value))) {
-				self::addIds($value, $id);
-			}
-		}
 	}
 }

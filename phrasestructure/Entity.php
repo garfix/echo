@@ -16,6 +16,7 @@ class Entity extends PhraseStructure
 		'category' => null,
 		'name' => null,
 		'Determiner' => null,
+		'Preposition' => null,
 		'number' => self::SINGULAR,
 		'Modifier' => null,
 		'question' => false

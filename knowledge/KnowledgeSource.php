@@ -13,10 +13,9 @@ abstract class KnowledgeSource
 	 */
 	public abstract function isProperNoun($identifier);
 
-#todo: uitfaseren
-	public abstract function answerQuestionAboutObject($phraseSpecification, $sentenceType);
-	public abstract function answerQuestionAboutObject2(Sentence $Sentence);
+	public abstract function answerQuestionAboutObject(Sentence $Sentence);
 
 	public abstract function answerQuestion(Sentence $Sentence);
+
     public abstract function checkQuestion(Sentence $Sentence);
 }
