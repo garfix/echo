@@ -487,7 +487,7 @@ $words = $lexicalItems;
 				// NP forms the object of verb
 				array(
 					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('modifier' => '?sem')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 			),
@@ -537,7 +537,7 @@ $words = $lexicalItems;
 				// car in the lot
 				array(
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('modifier' => '?sem-2')))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem-2')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
 			),
@@ -545,7 +545,7 @@ $words = $lexicalItems;
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'modifier', 'id' => 1)))),
+					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'preposition', 'id' => 1)))),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
@@ -614,9 +614,9 @@ $words = $lexicalItems;
 			),
 			'NP' => array(
 				array(
-					'condition' => array('head' => array('sem' => array('category' => null, 'modifier' => null))),
+					'condition' => array('head' => array('sem' => array('category' => null, 'preposition' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'modifier' => '?sem', 'determiner' => '?det')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'preposition' => '?sem', 'determiner' => '?det')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => '?det')))),
 						array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem')))
 					)

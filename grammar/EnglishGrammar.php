@@ -282,16 +282,16 @@ class EnglishGrammar extends SimpleGrammar
 			'when' => array(
 				'whword' => array(
 					'features' => array('head' => array('sem' => array(
-						'modifier' => array(
-							'type' => 'modifier', 'category' => 'time', 'object' => array(
+						'preposition' => array(
+							'type' => 'preposition', 'category' => 'time', 'object' => array(
 								'type' => 'entity', 'question' => true)))))
 				),
 			),
 			'where' => array(
 				'whword' => array(
 					'features' => array('head' => array('sem' => array(
-						'modifier' => array(
-							'type' => 'modifier', 'category' => 'location', 'object' => array(
+						'preposition' => array(
+							'type' => 'preposition', 'category' => 'location', 'object' => array(
 								'type' => 'entity', 'question' => true)))))
 				),
 			),

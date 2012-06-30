@@ -131,8 +131,8 @@ class Parser
 						}
 					}
 
-					if (isset($phraseSpecification['modifier'])) {
-						$E->setPreposition($this->buildObjectStructure($phraseSpecification['modifier']));
+					if (isset($phraseSpecification['preposition'])) {
+						$E->setPreposition($this->buildObjectStructure($phraseSpecification['preposition']));
 					}
 
 					if (isset($phraseSpecification['tense'])) {
@@ -155,8 +155,8 @@ class Parser
 						$E->setName($phraseSpecification['name']);
 					}
 //r($phraseSpecification);exit;
-					if (isset($phraseSpecification['modifier'])) {
-						$E->setPreposition($this->buildObjectStructure($phraseSpecification['modifier']));
+					if (isset($phraseSpecification['preposition'])) {
+						$E->setPreposition($this->buildObjectStructure($phraseSpecification['preposition']));
 					}
 
 					if (isset($phraseSpecification['question'])) {
@@ -178,7 +178,7 @@ class Parser
 
 					break;
 
-				case 'modifier':
+				case 'preposition':
 					$E = new Preposition();
 //r($phraseSpecification);exit;
 					$E->setCategory($phraseSpecification['category']);

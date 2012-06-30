@@ -145,7 +145,7 @@ class Conversation
 			}
 			$Preposition = $Entity->getPreposition();
 			if ($Preposition !== null) {
-				$structure['modifier'] = $this->buildPhraseStructure($Preposition);
+				$structure['preposition'] = $this->buildPhraseStructure($Preposition);
 			}
 		} elseif ($PhraseStructure instanceof Conjunction) {
 
@@ -176,7 +176,7 @@ class Conversation
 			/** @var Preposition $Preposition  */
 			$Preposition = $PhraseStructure;
 
-			$structure['type'] = 'modifier';
+			$structure['type'] = 'preposition';
 			$structure['category'] = $Preposition->getCategory();
 
 			$structure['object'] = $this->buildPhraseStructure($Preposition->getObject());

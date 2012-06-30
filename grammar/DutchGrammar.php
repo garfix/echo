@@ -189,16 +189,16 @@ class DutchGrammar extends SimpleGrammar
 				'whword' => array(
 					//'features' => array('head' => array('sem' => array('location' => array('question' => true))))
 					'features' => array('head' => array('sem' => array(
-						'modifier' => array(
-							'type' => 'modifier', 'category' => 'location', 'object' => array(
+						'preposition' => array(
+							'type' => 'preposition', 'category' => 'location', 'object' => array(
 								'type' => 'entity', 'question' => true)))))
 				),
 			),
 			'wanneer' => array(
 				'whword' => array(
 					'features' => array('head' => array('sem' => array(
-						'modifier' => array(
-							'type' => 'modifier', 'category' => 'time', 'object' => array(
+						'preposition' => array(
+							'type' => 'preposition', 'category' => 'time', 'object' => array(
 								'type' => 'entity', 'question' => true)))))
 				),
 			),
