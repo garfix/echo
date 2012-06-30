@@ -80,25 +80,6 @@ class Conversation
 		return $this->Echo->getParser()->parseSentenceGivenMultipleGrammars($input, $this, $this->CurrentGrammar, $this->Echo->getAvailableGrammars());
 	}
 
-	/**
-	 * Turns an array of meaning representations into a sentence, in the current language.
-	 *
-	 * "We can characterize the input to a single invocation of an NLG system as a four-tuple <k, c, u, d>
-	 * where k is the KNOWLEDGE SOURCE, c is the COMMUNICATIVE GOAL, u is the USER MODEL, and
-	 * d is the DISCOURSE HISTORY" - Building natural language systems (p. 43)
-	 *
-	 * @param array $semantics - (part of the) COMMUNICATIVE GOAL
-	 * @param $context - the DISCOURSE HISTORY
-	 * @return string A human readable sentence, or false if an error occurred
-	 */
-	public function generate(array $phraseSpecification, $context)
-	{
-		$Sentence = new SentenceContext($this);
-		$Sentence->phraseSpecification = $phraseSpecification;
-
-		return $this->CurrentGrammar->generate($Sentence);
-	}
-
 	public function produce(PhraseStructure $Sentence)
 	{
         $phraseSpecification = $this->buildPhraseStructure($Sentence);
@@ -186,7 +167,9 @@ class Conversation
 			$structure['type'] = 'determiner';
 			$structure['category'] = $Determiner->getCategory();
 
-#todo object
+			if ($Object = $Determiner->getObject()) {
+				$structure['object'] = $this->buildPhraseStructure($Object);
+			}
 
 		} elseif ($PhraseStructure instanceof Preposition) {
 
