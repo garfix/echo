@@ -80,6 +80,6 @@ class ParseTest extends TestBase
 		// S => NP VP NP NP
 		$Sentence = $Conversation->parseFirstLine("John gives Mary flowers.");
 		$this->test(280, $Sentence->getPhraseSpecificationString(), '[head: [sem: [predicate: give, tense: present, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]');
-		$this->test(281, $Sentence->getObjectString(), 'Sentence {type: declarative, Relation: Relation {predicate: give, arguments: [1 = Entity {name: John, number: singular}, 2 = Entity {category: flower, number: singular}, 3 = Entity {name: Mary, number: singular}], tense: present}, voice: active}');
+		$this->test(281, $Sentence->getObjectString(), 'Sentence {type: declarative, Relation: Relation {predicate: give, arg1: Entity {name: John, number: singular}, arg2: Entity {category: flower, number: singular}, arg3: Entity {name: Mary, number: singular}, tense: present}, voice: active}');
 	}
 }

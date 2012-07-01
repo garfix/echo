@@ -103,19 +103,6 @@ class Conversation
 		foreach ($PhraseStructure->getAttributes() as $name => $value) {
 			if ($value instanceof PhraseStructure) {
 				$structure[strtolower($name)] = $this->buildPhraseStructure2($value);
-			} elseif (is_array($value)) {
-
-				foreach ($value as $k => $v) {
-
-					if ($v instanceof PhraseStructure) {
-						$proc = $this->buildPhraseStructure2($v);
-					} else {
-						$proc = $v;
-					}
-
-					$structure[strtolower($name)][$k] = $proc;
-				}
-
 			} else {
 				$structure[strtolower($name)] = $value;
 			}
@@ -150,11 +137,16 @@ class Conversation
 			$structure['tense'] = $Relation->getTense();
 			$structure['type'] = 'relation';
 
-			foreach ($Relation->getArguments() as $index => $Argument) {
-				if ($Argument) {
-					$structure['arg' . $index] = $this->buildPhraseStructure($Argument);
-				}
+			if ($Argument = $Relation->getArgument1()) {
+				$structure['arg1'] = $this->buildPhraseStructure($Argument);
 			}
+			if ($Argument = $Relation->getArgument2()) {
+				$structure['arg2'] = $this->buildPhraseStructure($Argument);
+			}
+			if ($Argument = $Relation->getArgument3()) {
+				$structure['arg3'] = $this->buildPhraseStructure($Argument);
+			}
+
 		} elseif ($PhraseStructure instanceof Entity) {
 
 			/** @var Entity $Entity */
