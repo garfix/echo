@@ -38,13 +38,13 @@ class ParseTest extends TestBase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Conversation->parseFirstLine('Who am I?');
 		$this->test(111, $Sentence->getSyntaxString(), '[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]');
-		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: singular], sem: [predicate: be, type: relation, arg2: [type: entity, question: 1], arg1: [category: firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
+		$this->test(112, $Sentence->getPhraseSpecificationString(), "[head: [agreement: [person: 1, number: singular], sem: [predicate: be, tense: present, type: relation, arg2: [type: entity, question: 1], arg1: [category: firstPerson, type: entity]], sentenceType: wh-question, voice: active]]");
 		$this->test(113, $Sentence->getStructure(), "wh-question");
 		$this->test(114, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 'singular');
 
 		$Sentence = $Conversation->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 		$this->test(203, $Sentence->getSyntaxString(), '[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]');
-		$this->test(204, $Sentence->getPhraseSpecificationString(), '[head: [tense: past, form: participle, sem: [predicate: influence, type: relation, arg1: [category: author, modifier: [category: of, type: modifier, object: [name: Paradise Lost, type: entity]], type: entity, determiner: [category: the, type: determiner]], arg2: [name: Lord Byron, type: entity]], sentenceType: yes-no-question, voice: passive, agreement: [number: singular, person: 1]]]');
+		$this->test(204, $Sentence->getPhraseSpecificationString(), '[head: [sem: [predicate: influence, tense: past, form: participle, type: relation, arg1: [category: author, preposition: [category: of, type: preposition, object: [name: Paradise Lost, type: entity]], type: entity, determiner: [category: the, type: determiner]], arg2: [name: Lord Byron, type: entity]], sentenceType: yes-no-question, voice: passive, agreement: [number: singular, person: 1]]]');
 
 		$Sentence = $Conversation->parseFirstLine('How many children did Lord Byron have?');
 		$this->test(213, $Sentence->phraseSpecification['features']['head']['agreement']['number'], 'singular');
@@ -52,7 +52,7 @@ class ParseTest extends TestBase
 		// S => NP VP
 		$Sentence = $Conversation->parseFirstLine('John sees the book');
 		$this->test(251, $Sentence->getSyntaxString(), '[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]');
-		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [tense: present, sem: [predicate: see, type: relation, arg2: [category: book, type: entity, determiner: [category: the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]");
+		$this->test(255, $Sentence->getPhraseSpecificationString(), "[head: [sem: [predicate: see, tense: present, type: relation, arg2: [category: book, type: entity, determiner: [category: the, type: determiner]], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]");
 
 		// agreement success
 		// S => NP VP
@@ -79,7 +79,7 @@ class ParseTest extends TestBase
 
 		// S => NP VP NP NP
 		$Sentence = $Conversation->parseFirstLine("John gives Mary flowers.");
-		$this->test(280, $Sentence->getPhraseSpecificationString(), '[head: [tense: present, sem: [predicate: give, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]');
-		$this->test(281, $Sentence->getObjectString(), 'Sentence {type: declarative, Relation: Relation {predicate: give, arguments: [1 = Entity {name: John, number: singular}, 2 = Entity {category: flower, number: singular}, 3 = Entity {name: Mary, number: singular}]}, voice: active}');
+		$this->test(280, $Sentence->getPhraseSpecificationString(), '[head: [sem: [predicate: give, tense: present, type: relation, arg2: [category: flower, type: entity], arg3: [name: Mary, type: entity], arg1: [name: John, type: entity]], sentenceType: declarative, voice: active, agreement: [number: singular, person: 1]]]');
+		$this->test(281, $Sentence->getObjectString(), 'Sentence {type: declarative, Relation: Relation {predicate: give, arguments: [1 = Entity {name: John, number: singular}, 2 = Entity {category: flower, number: singular}, 3 = Entity {name: Mary, number: singular}], tense: present}, voice: active}');
 	}
 }

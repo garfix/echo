@@ -15,15 +15,15 @@ function r($string, $return = false)
 	return print_r($string, $return);
 }
 
-//$Test = new LabeledDAGTest();
-//$Test->execute();
-//
-//$Test = new ParseTest();
-//$Test->execute();
+$Test = new LabeledDAGTest();
+$Test->execute();
+
+$Test = new ParseTest();
+$Test->execute();
 
 $Test = new DBPediaTest();
 $Test->execute();
 
-//$Test = new ProductionTest();
-//$Test->execute();
+$Test = new ProductionTest();
+$Test->execute();
 

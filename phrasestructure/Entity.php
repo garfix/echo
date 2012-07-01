@@ -18,8 +18,7 @@ class Entity extends PhraseStructure
 		'Determiner' => null,
 		'Preposition' => null,
 		'number' => self::SINGULAR,
-		'Modifier' => null,
-		'question' => false
+		'question' => null
 	);
 
 	public function setCategory($category)

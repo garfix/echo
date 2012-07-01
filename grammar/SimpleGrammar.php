@@ -507,23 +507,23 @@ $words = $lexicalItems;
 			'NP' => array(
 				// John
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity', 'id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity')))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity', 'id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity')))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity', 'id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity')))),
 					array('cat' => 'DP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner' => '?sem-2')))),
 				),
 				// (large) car (in the lot)
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity', 'id' => 1)))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity')))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 			),
@@ -531,12 +531,12 @@ $words = $lexicalItems;
 			'NBar' => array(
 				// car
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 				// car in the lot
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('id' => 1)))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem-2')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
@@ -545,7 +545,7 @@ $words = $lexicalItems;
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'preposition', 'id' => 1)))),
+					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'preposition')))),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),

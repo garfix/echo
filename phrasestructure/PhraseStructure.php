@@ -68,4 +68,9 @@ abstract class PhraseStructure
 
         return $children;
     }
+
+	public function getAttributes()
+	{
+		return $this->data;
+	}
 }

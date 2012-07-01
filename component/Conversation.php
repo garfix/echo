@@ -83,13 +83,45 @@ class Conversation
 	public function produce(PhraseStructure $Sentence)
 	{
         $phraseSpecification = $this->buildPhraseStructure($Sentence);
-//r($Sentence);
+//$phraseSpecification2 = $this->buildPhraseStructure2($Sentence);
+////r($Sentence);
 //r($phraseSpecification);
+//r($phraseSpecification2);
+//r('=====');
         $SentenceContext = new SentenceContext($this);
         $SentenceContext->phraseSpecification = $phraseSpecification;
         $SentenceContext->RootObject = $Sentence;
 
         return $this->CurrentGrammar->generate($SentenceContext);
+	}
+
+	private function buildPhraseStructure2(PhraseStructure $PhraseStructure)
+	{
+		$structure = array();
+		$structure['type'] = strtolower(basename(str_replace('\\', '/', get_class($PhraseStructure))));
+
+		foreach ($PhraseStructure->getAttributes() as $name => $value) {
+			if ($value instanceof PhraseStructure) {
+				$structure[strtolower($name)] = $this->buildPhraseStructure2($value);
+			} elseif (is_array($value)) {
+
+				foreach ($value as $k => $v) {
+
+					if ($v instanceof PhraseStructure) {
+						$proc = $this->buildPhraseStructure2($v);
+					} else {
+						$proc = $v;
+					}
+
+					$structure[strtolower($name)][$k] = $proc;
+				}
+
+			} else {
+				$structure[strtolower($name)] = $value;
+			}
+		}
+
+		return $structure;
 	}
 
 	/**
