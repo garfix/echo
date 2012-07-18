@@ -41,7 +41,6 @@ class DBPediaTest extends TestBase
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("Where was Lord Byron born?");
 		$this->test(321, $answer, 'Dover');
-
 		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
 		$this->test(322, $answer, 'Dover');
 

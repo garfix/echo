@@ -110,7 +110,7 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array(
-								'arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => 'extent', 'category' => 'many')),
+								'arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true, 'category' => 'many')),
 							),
 							'variables' => array('role' => '?arg')
 						)

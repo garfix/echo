@@ -27,9 +27,9 @@ class Relation extends PhraseStructure
 
 	protected $data = array(
 		'predicate' => null,
-		'arg1' => null,
-		'arg2' => null,
-		'arg3' => null,
+		'Arg1' => null,
+		'Arg2' => null,
+		'Arg3' => null,
 		'Preposition' => null,
 		'tense' => self::PRESENT
 	);
@@ -46,7 +46,20 @@ class Relation extends PhraseStructure
 
 	public function setArgument($index, $value)
 	{
-		$this->data['arg' . $index] = $value;
+		$this->data['Arg' . $index] = $value;
+	}
+
+	public function setArg1($arg)
+	{
+		$this->data['Arg1'] = $arg;
+	}
+	public function setArg2($arg)
+	{
+		$this->data['Arg2'] = $arg;
+	}
+	public function setArg3($arg)
+	{
+		$this->data['Arg3'] = $arg;
 	}
 
 	/**
@@ -54,7 +67,7 @@ class Relation extends PhraseStructure
 	 */
 	public function getArgument1()
 	{
-		return $this->data['arg1'];
+		return $this->data['Arg1'];
 	}
 
 	/**
@@ -62,7 +75,7 @@ class Relation extends PhraseStructure
 	 */
 	public function getArgument2()
 	{
-		return $this->data['arg2'];
+		return $this->data['Arg2'];
 	}
 
 	/**
@@ -70,22 +83,22 @@ class Relation extends PhraseStructure
 	 */
 	public function getArgument3()
 	{
-		return $this->data['arg3'];
+		return $this->data['Arg3'];
 	}
 
 	public function setSubject(Entity $Subject)
 	{
-		$this->data['arg1'] = $Subject;
+		$this->data['Arg1'] = $Subject;
 	}
 
 	public function setObject(Entity $Object)
 	{
-		$this->data['arg2'] = $Object;
+		$this->data['Arg2'] = $Object;
 	}
 
 	public function setIndirectObject(Entity $IndirectObject)
 	{
-		$this->data['arg3'] = $IndirectObject;
+		$this->data['Arg3'] = $IndirectObject;
 	}
 
 	public function setPreposition(Preposition $Preposition)

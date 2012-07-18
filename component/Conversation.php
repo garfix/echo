@@ -82,21 +82,15 @@ class Conversation
 
 	public function produce(PhraseStructure $Sentence)
 	{
-//        $phraseSpecification = $this->buildPhraseStructure($Sentence);
+#todo: generalize
+		if ($Sentence instanceof Conjunction) {
+			$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Sentence)));
+		} else {
+			$phraseSpecification = array('head' => $this->buildPhraseStructure($Sentence));
+		}
 
-if ($Sentence instanceof Conjunction) {
-	$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Sentence)));
-} else {
-	$phraseSpecification = array('head' => $this->buildPhraseStructure($Sentence));
-}
-////r($Sentence);
-//r($phraseSpecification);
-//r($phraseSpecification2);
-//exit;
-//r('=====');
         $SentenceContext = new SentenceContext($this);
-//        $SentenceContext->phraseSpecification = $phraseSpecification;
-$SentenceContext->phraseSpecification = $phraseSpecification;
+		$SentenceContext->phraseSpecification = $phraseSpecification;
         $SentenceContext->RootObject = $Sentence;
 
         return $this->CurrentGrammar->generate($SentenceContext);

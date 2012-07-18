@@ -392,8 +392,8 @@ $words = $lexicalItems;
 
 				// Drive! / Book that flight.
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative'))),
-					array('cat' => 'VP', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'relation' => '?sem-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 
 				// non-subject questions
@@ -401,7 +401,7 @@ $words = $lexicalItems;
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -411,7 +411,7 @@ $words = $lexicalItems;
 				// NP delivers arg1
 #todo alleen-engels constructie!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -420,7 +420,7 @@ $words = $lexicalItems;
 				// Where was John born?
 				// NP delivers arg2
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'auxBe', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -434,18 +434,18 @@ $words = $lexicalItems;
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'relation' => '?sem-3'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg2' => '?sem-1')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('arg2' => '?sem-1')))),
 				),
 
 				// Was the car driven by John?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'relation' => '?sem-3'))),
 					array('cat' => 'aux'),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
 					array('cat' => 'passivisationPreposition'),
 					array('cat' => 'NP', 'features' => array('head-3' => array('sem' => '?sem-2'))),
 				),
@@ -454,8 +454,8 @@ $words = $lexicalItems;
 				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem' => array('type' => 'relation', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'relation' => '?sem-3'))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem-3' => array('type' => 'relation', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
