@@ -33,7 +33,7 @@ class DBPedia extends KnowledgeSource
 //r($Sentence);
    		$triples = array();
    		$select = '';
-        $sentenceType = $Sentence->getType();
+        $sentenceType = $Sentence->getSentenceType();
 		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
 
    		if (Settings::$debugKnowledge) r($triples);
@@ -50,7 +50,7 @@ class DBPedia extends KnowledgeSource
 //r($Sentence);exit;
 		$triples = array();
 		$select = '';
-		$sentenceType = $Sentence->getType();
+		$sentenceType = $Sentence->getSentenceType();
 		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
 
 		$result = $this->query($triples, $select);
@@ -81,7 +81,7 @@ class DBPedia extends KnowledgeSource
 //r($Sentence);exit;
 		$triples = array();
 		$select = '';
-		$sentenceType = $Sentence->getType();
+		$sentenceType = $Sentence->getSentenceType();
 		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
 
 		$result = $this->query($triples, $select);

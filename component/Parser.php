@@ -107,7 +107,7 @@ class Parser
 		if (isset($phraseSpecification['sentenceType'])) {
 			$E = new Sentence();
 			$type = $phraseSpecification['sentenceType'];
-			$E->setType($type);
+			$E->setSentenceType($type);
 
 			if (isset($phraseSpecification['sem'])) {
 				$E->setRelation($this->buildObjectStructure($phraseSpecification['sem']));
@@ -154,7 +154,7 @@ class Parser
 					if (isset($phraseSpecification['name'])) {
 						$E->setName($phraseSpecification['name']);
 					}
-//r($phraseSpecification);exit;
+
 					if (isset($phraseSpecification['preposition'])) {
 						$E->setPreposition($this->buildObjectStructure($phraseSpecification['preposition']));
 					}
@@ -180,7 +180,6 @@ class Parser
 
 				case 'preposition':
 					$E = new Preposition();
-//r($phraseSpecification);exit;
 					$E->setCategory($phraseSpecification['category']);
 					if (isset($phraseSpecification['object'])) {
                         $E->setObject($this->buildObjectStructure($phraseSpecification['object']));
@@ -193,6 +192,8 @@ class Parser
 					$E = null;
 
 			}
+		} else {
+			$a = 0;
 		}
 
 		return $E;

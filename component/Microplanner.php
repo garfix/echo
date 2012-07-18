@@ -22,16 +22,22 @@ class Microplanner
 	public function plan(array $phraseSpecification, Grammar $Grammar)
 	{
 		$constituent = 'S';
-
+//r($phraseSpecification);
 #todo: algemener maken
-		if (!empty($phraseSpecification['type'])) {
-			if ($phraseSpecification['type'] == 'conjunction') {
 
-				$constituent = 'CP';
-                $phraseSpecification['head']['sem'] = $phraseSpecification;
+if (!empty($phraseSpecification['head']['sem']['type'])) {
+	if ($phraseSpecification['head']['sem']['type'] == 'conjunction') {
+		$constituent = 'CP';
+	}
+}
 
-			}
-		}
+//		if (!empty($phraseSpecification['type'])) {
+//			if ($phraseSpecification['type'] == 'conjunction') {
+//
+//				$constituent = 'CP';
+//                $phraseSpecification['head']['sem'] = $phraseSpecification;
+//			}
+//		}
 //r($phraseSpecification);
 		$FeatureDAG = new LabeledDAG(array(
 			$constituent . "@0" => $phraseSpecification

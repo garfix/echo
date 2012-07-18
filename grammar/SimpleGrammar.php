@@ -334,7 +334,7 @@ $words = $lexicalItems;
 			$pattern = array($antecedent . '@0' => $generationRule['condition']);
 //r($pattern);
 			if ($FeatureDAG->match($pattern)) {
-
+//echo 'qq';
 				$rawRule = $generationRule['rule'];
 				$Dag = EarleyParser::createLabeledDag($rawRule);
 //r($Dag);
@@ -376,9 +376,9 @@ $words = $lexicalItems;
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg1' => '?sem')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem')))),
 				),
 				// John was driving
 				array(
@@ -583,7 +583,7 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('sem' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 						array('cat' => 'aux', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
 						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('predicate' => '?pred')))),
@@ -593,9 +593,9 @@ $words = $lexicalItems;
 				),
 				// John gives Mary flowers
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'sem' => array('arg3' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('arg3' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('sem' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'arg3' => '?sem-3')))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'arg3' => '?sem-3')))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem' => '?sem-1'))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
@@ -605,7 +605,7 @@ $words = $lexicalItems;
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('sem' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),

@@ -29,7 +29,7 @@ class Sentence extends PhraseStructure
 	const ACTIVE = 'active';
 
 	protected $data = array(
-		'type' => self::DECLARATIVE,
+		'sentenceType' => self::DECLARATIVE,
 		'Relation' => null,
 		'voice' => self::ACTIVE
 	);
@@ -38,18 +38,18 @@ class Sentence extends PhraseStructure
 	 * Set this type's sentence. Use one of the class constants.
 	 * @param string $type
 	 */
-	public function setType($type)
+	public function setSentenceType($type)
 	{
 		if (!in_array($type, array(self::DECLARATIVE, self::IMPERATIVE, self::INTERROGATIVE_WH, self::INTERROGATIVE_YES_NO, self::EXCLAMATORY))) {
 			throw new SentenceException('Invalid type given');
 		}
 
-		$this->data['type'] = $type;
+		$this->data['sentenceType'] = $type;
 	}
 
-	public function getType()
+	public function getSentenceType()
 	{
-		return $this->data['type'];
+		return $this->data['sentenceType'];
 	}
 
 	public function setRelation(Relation $Relation)

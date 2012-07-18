@@ -82,132 +82,139 @@ class Conversation
 
 	public function produce(PhraseStructure $Sentence)
 	{
-        $phraseSpecification = $this->buildPhraseStructure($Sentence);
-//$phraseSpecification2 = $this->buildPhraseStructure2($Sentence);
+//        $phraseSpecification = $this->buildPhraseStructure($Sentence);
+
+if ($Sentence instanceof Conjunction) {
+	$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Sentence)));
+} else {
+	$phraseSpecification = array('head' => $this->buildPhraseStructure($Sentence));
+}
 ////r($Sentence);
 //r($phraseSpecification);
 //r($phraseSpecification2);
+//exit;
 //r('=====');
         $SentenceContext = new SentenceContext($this);
-        $SentenceContext->phraseSpecification = $phraseSpecification;
+//        $SentenceContext->phraseSpecification = $phraseSpecification;
+$SentenceContext->phraseSpecification = $phraseSpecification;
         $SentenceContext->RootObject = $Sentence;
 
         return $this->CurrentGrammar->generate($SentenceContext);
 	}
 
-	private function buildPhraseStructure2(PhraseStructure $PhraseStructure)
+	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
 	{
 		$structure = array();
 		$structure['type'] = strtolower(basename(str_replace('\\', '/', get_class($PhraseStructure))));
 
 		foreach ($PhraseStructure->getAttributes() as $name => $value) {
 			if ($value instanceof PhraseStructure) {
-				$structure[strtolower($name)] = $this->buildPhraseStructure2($value);
+				$structure[strtolower($name)] = $this->buildPhraseStructure($value);
 			} else {
-				$structure[strtolower($name)] = $value;
+				$structure[$name] = $value;
 			}
 		}
 
 		return $structure;
 	}
 
-	/**
-	 * @param object $Sentence
-	 * @return array
-	 */
-	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
-	{
-		$structure = array();
-
-		if ($PhraseStructure instanceof Sentence) {
-
-			/** @var Sentence $Sentence */
-			$Sentence = $PhraseStructure;
-
-			$structure['head']['sentenceType'] = $Sentence->getType();
-			$structure['head']['voice'] = $Sentence->getVoice();
-			$structure['head']['sem'] = $this->buildPhraseStructure($Sentence->getRelation());
-
-		} elseif ($PhraseStructure instanceof Relation) {
-
-			/** @var Relation $Relation */
-			$Relation = $PhraseStructure;
-
-			$structure['predicate'] = $Relation->getPredicate();
-			$structure['tense'] = $Relation->getTense();
-			$structure['type'] = 'relation';
-
-			if ($Argument = $Relation->getArgument1()) {
-				$structure['arg1'] = $this->buildPhraseStructure($Argument);
-			}
-			if ($Argument = $Relation->getArgument2()) {
-				$structure['arg2'] = $this->buildPhraseStructure($Argument);
-			}
-			if ($Argument = $Relation->getArgument3()) {
-				$structure['arg3'] = $this->buildPhraseStructure($Argument);
-			}
-
-		} elseif ($PhraseStructure instanceof Entity) {
-
-			/** @var Entity $Entity */
-			$Entity = $PhraseStructure;
-
-			$structure['type'] = 'entity';
-
-			$name = $Entity->getName();
-			if ($name !== null) {
-				$structure['name'] = $name;
-			}
-
-			$category = $Entity->getCategory();
-			if ($category !== null) {
-				$structure['category'] = $category;
-			}
-			$Determiner = $Entity->getDeterminer();
-			if ($Determiner !== null) {
-				$structure['determiner'] = $this->buildPhraseStructure($Determiner);
-			}
-			$Preposition = $Entity->getPreposition();
-			if ($Preposition !== null) {
-				$structure['preposition'] = $this->buildPhraseStructure($Preposition);
-			}
-		} elseif ($PhraseStructure instanceof Conjunction) {
-
-            /** @var Conjunction $Conjunction */
-   			$Conjunction = $PhraseStructure;
-
-            $structure['type'] = 'conjunction';
-
-            $Left = $Conjunction->getLeftEntity();
-            $structure['left'] = $this->buildPhraseStructure($Left);
-
-            $Right = $Conjunction->getRightEntity();
-            $structure['right'] = $this->buildPhraseStructure($Right);
-        } elseif ($PhraseStructure instanceof Determiner) {
-
-			/** @var Determiner $Determiner  */
-			$Determiner = $PhraseStructure;
-
-			$structure['type'] = 'determiner';
-			$structure['category'] = $Determiner->getCategory();
-
-			if ($Object = $Determiner->getObject()) {
-				$structure['object'] = $this->buildPhraseStructure($Object);
-			}
-
-		} elseif ($PhraseStructure instanceof Preposition) {
-
-			/** @var Preposition $Preposition  */
-			$Preposition = $PhraseStructure;
-
-			$structure['type'] = 'preposition';
-			$structure['category'] = $Preposition->getCategory();
-
-			$structure['object'] = $this->buildPhraseStructure($Preposition->getObject());
-		}
-
-		return $structure;
-	}
+//	/**
+//	 * @param object $Sentence
+//	 * @return array
+//	 */
+//	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
+//	{
+//		$structure = array();
+//
+//		if ($PhraseStructure instanceof Sentence) {
+//
+//			/** @var Sentence $Sentence */
+//			$Sentence = $PhraseStructure;
+//
+//			$structure['head']['sentenceType'] = $Sentence->getSentenceType();
+//			$structure['head']['voice'] = $Sentence->getVoice();
+//			$structure['head']['sem'] = $this->buildPhraseStructure($Sentence->getRelation());
+//
+//		} elseif ($PhraseStructure instanceof Relation) {
+//
+//			/** @var Relation $Relation */
+//			$Relation = $PhraseStructure;
+//
+//			$structure['predicate'] = $Relation->getPredicate();
+//			$structure['tense'] = $Relation->getTense();
+//			$structure['type'] = 'relation';
+//
+//			if ($Argument = $Relation->getArgument1()) {
+//				$structure['arg1'] = $this->buildPhraseStructure($Argument);
+//			}
+//			if ($Argument = $Relation->getArgument2()) {
+//				$structure['arg2'] = $this->buildPhraseStructure($Argument);
+//			}
+//			if ($Argument = $Relation->getArgument3()) {
+//				$structure['arg3'] = $this->buildPhraseStructure($Argument);
+//			}
+//
+//		} elseif ($PhraseStructure instanceof Entity) {
+//
+//			/** @var Entity $Entity */
+//			$Entity = $PhraseStructure;
+//
+//			$structure['type'] = 'entity';
+//
+//			$name = $Entity->getName();
+//			if ($name !== null) {
+//				$structure['name'] = $name;
+//			}
+//
+//			$category = $Entity->getCategory();
+//			if ($category !== null) {
+//				$structure['category'] = $category;
+//			}
+//			$Determiner = $Entity->getDeterminer();
+//			if ($Determiner !== null) {
+//				$structure['determiner'] = $this->buildPhraseStructure($Determiner);
+//			}
+//			$Preposition = $Entity->getPreposition();
+//			if ($Preposition !== null) {
+//				$structure['preposition'] = $this->buildPhraseStructure($Preposition);
+//			}
+//		} elseif ($PhraseStructure instanceof Conjunction) {
+//
+//            /** @var Conjunction $Conjunction */
+//   			$Conjunction = $PhraseStructure;
+//
+//            $structure['type'] = 'conjunction';
+//
+//            $Left = $Conjunction->getLeftEntity();
+//            $structure['left'] = $this->buildPhraseStructure($Left);
+//
+//            $Right = $Conjunction->getRightEntity();
+//            $structure['right'] = $this->buildPhraseStructure($Right);
+//        } elseif ($PhraseStructure instanceof Determiner) {
+//
+//			/** @var Determiner $Determiner  */
+//			$Determiner = $PhraseStructure;
+//
+//			$structure['type'] = 'determiner';
+//			$structure['category'] = $Determiner->getCategory();
+//
+//			if ($Object = $Determiner->getObject()) {
+//				$structure['object'] = $this->buildPhraseStructure($Object);
+//			}
+//
+//		} elseif ($PhraseStructure instanceof Preposition) {
+//
+//			/** @var Preposition $Preposition  */
+//			$Preposition = $PhraseStructure;
+//
+//			$structure['type'] = 'preposition';
+//			$structure['category'] = $Preposition->getCategory();
+//
+//			$structure['object'] = $this->buildPhraseStructure($Preposition->getObject());
+//		}
+//
+//		return $structure;
+//	}
 
 	/**
 	 * Parses $input into a series of Sentences, but returns only the first of these,
@@ -240,7 +247,7 @@ class Conversation
 			/** @var Sentence $Sentence  */
 			$Sentence = $SentenceContext->getRootObject();
 
-			$sentenceType = $Sentence->getType();
+			$sentenceType = $Sentence->getSentenceType();
 
 			if ($sentenceType == 'yes-no-question') {
 
@@ -251,7 +258,7 @@ class Conversation
 					$answer = 'Yes.';
 
 
-					$Sentence->setType(Sentence::DECLARATIVE);
+					$Sentence->setSentenceType(Sentence::DECLARATIVE);
 					$s = $this->produce($Sentence);
 
 					if ($s) {
@@ -275,7 +282,7 @@ class Conversation
 						if ($Argument2 = $Relation->getArgument2()) {
 							if ($Determiner = $Argument2->getDeterminer()) {
 								if ($Determiner->isQuestion()) {
-									$Sentence->setType(Sentence::DECLARATIVE);
+									$Sentence->setSentenceType(Sentence::DECLARATIVE);
 									$Determiner->setQuestion(false);
 									$Determiner->setCategory($answer);
 //r($Sentence);
@@ -291,7 +298,7 @@ class Conversation
 
 				}
 
-			} elseif ($Sentence->getType() == 'imperative') {
+			} elseif ($Sentence->getSentenceType() == 'imperative') {
 
 				#todo Imperatives are not always questions
 				$isQuestion = true;
