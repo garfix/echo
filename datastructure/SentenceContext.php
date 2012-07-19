@@ -78,27 +78,27 @@ class SentenceContext
 		return $string;
 	}
 
-	public function getPhraseSpecificationString()
-	{
-		return $this->getPhraseSpecificationBranch($this->phraseSpecification['features']);
-	}
-
-	private function getPhraseSpecificationBranch($phraseSpecification)
-	{
-		$parts = array();
-		foreach ($phraseSpecification as $key => $val) {
-			if ($key == 'id') {
-				continue;
-			} elseif (is_array($val)) {
-				$valString = $this->getPhraseSpecificationBranch($val);
-			} else {
-				$valString = $val;
-			}
-
-			$parts[] = $key . ': ' . $valString;
-		}
-		return '[' . implode(', ', $parts) . ']';
-	}
+//	public function getPhraseSpecificationString()
+//	{
+//		return $this->getPhraseSpecificationBranch($this->phraseSpecification['features']);
+//	}
+//
+//	private function getPhraseSpecificationBranch($phraseSpecification)
+//	{
+//		$parts = array();
+//		foreach ($phraseSpecification as $key => $val) {
+//			if ($key == 'id') {
+//				continue;
+//			} elseif (is_array($val)) {
+//				$valString = $this->getPhraseSpecificationBranch($val);
+//			} else {
+//				$valString = $val;
+//			}
+//
+//			$parts[] = $key . ': ' . $valString;
+//		}
+//		return '[' . implode(', ', $parts) . ']';
+//	}
 
 	public function getStructure()
 	{

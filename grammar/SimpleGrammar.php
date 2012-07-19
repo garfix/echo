@@ -360,11 +360,12 @@ $words = $lexicalItems;
 
 				// passive declarative
 				// The car was driven by John
+				#todo Deze regel wordt niet gebruikt!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => '?sem-3'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'aux', 'features' => array('head-1' => null)),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'arg1' => '?sem-2', 'arg2' => '?sem-1')))),
 					array('cat' => 'passivisationPreposition'),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
@@ -381,11 +382,12 @@ $words = $lexicalItems;
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem')))),
 				),
 				// John was driving
+				#todo Deze regel wordt niet gebruikt!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => '?sem-2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
 					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem' => array('arg1' => '?sem')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('arg1' => '?sem')))),
 				),
 
 				// imperative
