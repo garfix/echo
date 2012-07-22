@@ -7,7 +7,7 @@ use \agentecho\datastructure\SentenceContext;
 
 /**
  * A grammar should describe the rules of a language.
- * If possible, it should not contain any processing functions.
+ * It contains the smallest set of callbacks required to implement the language-specific elements of a language.
  */
 interface Grammar
 {
@@ -16,11 +16,6 @@ interface Grammar
 	 * @return string
 	 */
 	public function getLanguage();
-
-	/**
-	 * Analyses a raw $string and places the result in $Sentence.
-	 */
-	public function analyze($input, SentenceContext $Sentence);
 
 	/**
 	 * Returns a surface representation for a given sentence,

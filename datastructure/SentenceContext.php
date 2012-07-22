@@ -2,19 +2,19 @@
 
 namespace agentecho\datastructure;
 
-use \agentecho\component\Conversation;
+//use \agentecho\component\Conversation;
 use \agentecho\phrasestructure\PhraseStructure;
 
 /**
- * A complete sentence in a text.
+ * A sentence-in-progress.
  */
 class SentenceContext
 {
-	/** @var The Conversation in which this sentence took place */
-	public $Conversation = null;
+//	/** @var The Conversation in which this sentence took place */
+//	private $Conversation = null;
 
 	/** @var The language of this sentence (english/dutch) */
-	public $language = null;
+	private $language = null;
 
 	/** @var Raw textual input of this sentence */
 	public $surfaceText = null;
@@ -31,24 +31,44 @@ class SentenceContext
 	public $terminator = null;
 
 	/** @var The syntax tree with added features */
-	public $phraseSpecification = null;
+	private $phraseSpecification = null;
 
 	/** @var The root object of the object structure. */
 	public $RootObject = null;
 
-	public function __construct(Conversation $Conversation)
-	{
-		$this->Conversation = $Conversation;
-	}
+//	public function __construct(Conversation $Conversation)
+//	{
+//		$this->Conversation = $Conversation;
+//	}
 
-	public function getConversation()
-	{
-		return $this->Conversation;
-	}
+//	public function getConversation()
+//	{
+//		return $this->Conversation;
+//	}
 
 	public function getRootObject()
 	{
 		return $this->RootObject;
+	}
+
+	public function setPhraseSpecification($specification)
+	{
+		$this->phraseSpecification = $specification;
+	}
+
+	public function getPhraseSpecification()
+	{
+		return $this->phraseSpecification;
+	}
+
+	public function setLanguage($language)
+	{
+		$this->language = $language;
+	}
+
+	public function getLanguage()
+	{
+		return $this->language;
 	}
 
 	/**
@@ -77,28 +97,6 @@ class SentenceContext
 
 		return $string;
 	}
-
-//	public function getPhraseSpecificationString()
-//	{
-//		return $this->getPhraseSpecificationBranch($this->phraseSpecification['features']);
-//	}
-//
-//	private function getPhraseSpecificationBranch($phraseSpecification)
-//	{
-//		$parts = array();
-//		foreach ($phraseSpecification as $key => $val) {
-//			if ($key == 'id') {
-//				continue;
-//			} elseif (is_array($val)) {
-//				$valString = $this->getPhraseSpecificationBranch($val);
-//			} else {
-//				$valString = $val;
-//			}
-//
-//			$parts[] = $key . ': ' . $valString;
-//		}
-//		return '[' . implode(', ', $parts) . ']';
-//	}
 
 	public function getStructure()
 	{

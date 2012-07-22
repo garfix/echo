@@ -8,7 +8,7 @@ use \agentecho\phrasestructure\Sentence;
 /**
  * This object provides a single interface for multiple KnowledgeSources.
  */
-class KnowledgeManager
+class KnowledgeManager implements ProperNounIdentifier
 {
 	/** @var Sources of information that are needed to answer questions */
 	private $knowledgeSources = array();

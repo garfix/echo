@@ -3,7 +3,6 @@
 namespace agentecho\grammar;
 
 use \agentecho\component\Microplanner;
-use \agentecho\component\Lexer;
 use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
@@ -19,7 +18,6 @@ abstract class SimpleGrammar implements Grammar
 	protected $generationRules = null;
 	protected $lexicon = null;
 	protected $Microplanner = null;
-	protected $Lexer = null;
 
 	public function __construct()
 	{
@@ -27,9 +25,6 @@ abstract class SimpleGrammar implements Grammar
 		$this->lexicon = $this->getLexicon();
 		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
-
-		// input processing
-		$this->Lexer = new Lexer();
 
 		// output processing
 		$this->Microplanner = new Microplanner();
@@ -55,14 +50,6 @@ abstract class SimpleGrammar implements Grammar
 		return preg_match($exp, implode(' ', $words));
 	}
 
-	/**
-	 * Analyses a raw $string and places the result in $Sentence.
-	 */
-	public function analyze($input, SentenceContext $Sentence)
-	{
-		return $this->Lexer->analyze($input, $Sentence, $this);
-	}
-
 	public function unglue($word)
 	{
 		return array($word);
@@ -77,7 +64,7 @@ abstract class SimpleGrammar implements Grammar
 	public function generate(SentenceContext $SentenceContext)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$lexicalItems = $this->Microplanner->plan($SentenceContext->phraseSpecification, $this);
+		$lexicalItems = $this->Microplanner->plan($SentenceContext->getPhraseSpecification(), $this);
 		if (!$lexicalItems) {
 			return false;
 		}

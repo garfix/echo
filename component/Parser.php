@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use \agentecho\grammar\Grammar;
+use \agentecho\component\Lexer;
 use \agentecho\component\Conversation;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\exception\ParseException;
@@ -10,7 +11,41 @@ use \agentecho\phrasestructure\Sentence;
 
 class Parser
 {
-	public function parseSentenceGivenMultipleGrammars($input, Conversation $Conversation, Grammar &$CurrentGrammar, array $availableGrammars)
+	/** @var array $grammars A list of grammars that are used to parse a sentence */
+	private $grammars = array();
+
+	/** @var Grammar $CurrentGrammar The grammar that will be tried first,
+	 * and the grammar that was last used to successfully parse a sentence */
+	private $CurrentGrammar = null;
+
+	/** @var array $properNounIdentifiers A list of ProperNounIdentifier objects that are used to determine if a piece of text is a proper noun */
+	private $properNounIdentifiers = array();
+
+	public function setGrammars(array $grammars)
+	{
+		$this->grammars = $grammars;
+	}
+
+	public function setCurrentGrammar(Grammar $Grammar)
+	{
+		$this->CurrentGrammar = $Grammar;
+	}
+
+	/**
+	 * @return Grammar The grammar that was last used to successfully parse a sentence.
+	 */
+	public function getCurrentGrammar()
+	{
+		return $this->CurrentGrammar;
+	}
+
+	public function setProperNounIdentifiers()
+	{
+		$this->properNounIdentifiers = array();
+	}
+
+	//public function parseSentenceGivenMultipleGrammars($input)
+	public function parse($input)
 	{
 		$sentences = array();
 
@@ -19,9 +54,11 @@ class Parser
 		}
 
 		// create an array of grammars in which the current one is in the front
-		$grammars = array($CurrentGrammar);
-		foreach ($availableGrammars as $Grammar) {
-			if ($Grammar != $CurrentGrammar) {
+		if ($this->CurrentGrammar) {
+			$grammars = array($this->CurrentGrammar);
+		}
+		foreach ($this->grammars as $Grammar) {
+			if ($Grammar != $this->CurrentGrammar) {
 				$grammars[] = $Grammar;
 			}
 		}
@@ -31,21 +68,22 @@ class Parser
 		// try to parse the sentence in each of the available grammars
 		foreach ($grammars as $Grammar) {
 
-			$Sentence = new SentenceContext($Conversation);
+			$Sentence = new SentenceContext();
 
 			try {
 				$this->parseSentence($input, $Sentence, $Grammar);
 
 				$sentences[] = $Sentence;
-				$Sentence->language = $Grammar->getLanguage();
+				$Sentence->setLanguage($Grammar->getLanguage());
 
 				// update current language
-				$CurrentGrammar = $Grammar;
+				$this->CurrentGrammar = $Grammar;
 
 				// now parse the rest of the input, if there is one
 				// this code works either in ltr and rtl languages (not that i tried ;)
 				$restInput = str_replace($Sentence->surfaceText, '', $input);
-				return array_merge($sentences, $this->parseSentenceGivenMultipleGrammars($restInput, $Conversation, $CurrentGrammar, $grammars));
+//				return array_merge($sentences, $this->parseSentenceGivenMultipleGrammars($restInput, $Conversation, $CurrentGrammar, $grammars));
+				return array_merge($sentences, $this->parse($restInput));
 
 			} catch (\Exception $E) {
 
@@ -64,6 +102,20 @@ class Parser
 	}
 
 	/**
+	 * Parses $input into a series of Sentences, but returns only the first of these,
+	 *
+	 * @param string $input
+	 * @return SentenceContext
+	 * @throws LexicalItemException
+	 * @throws ParseException
+	 */
+	public function parseFirstLine($input)
+	{
+		$sentences = $this->parse($input);
+		return $sentences ? $sentences[0] : false;
+	}
+
+	/**
 	 * This function turns a line of text into structured meaning.
 	 *
 	 * @param string $text Raw input.
@@ -71,14 +123,15 @@ class Parser
 	 * @throws LexicalItemException
 	 * @throws ParseException
 	 */
-	public function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
+	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
 	{
 		// analyze words
-		$Grammar->analyze($input, $Sentence);
+		$Lexer = new Lexer();
+		$Lexer->analyze($input, $Sentence, $Grammar, $this->properNounIdentifiers);
 
 		// create a phrase specification from these lexical items
 		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
-		$Sentence->phraseSpecification = $result['tree'];
+		$Sentence->setPhraseSpecification($result['tree']);
 
 		if (!$result['success']) {
 
@@ -87,14 +140,9 @@ class Parser
 
 			throw $E;
 		}
-//r($Sentence->phraseSpecification['features']['head']);
-//
-//r($this->buildObjectStructure($Sentence->phraseSpecification['features']['head']));
-//r($this->buildObjectStructure2($Sentence->phraseSpecification['features']['head']));
-//exit;
 
-//		$Sentence->RootObject =
-		$Sentence->RootObject = $this->buildObjectStructure($Sentence->phraseSpecification['features']['head']);
+		$phraseSpecification = $Sentence->getPhraseSpecification();
+		$Sentence->RootObject = $this->buildObjectStructure($phraseSpecification['features']['head']);
 	}
 
 	/**

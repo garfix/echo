@@ -8,14 +8,14 @@ use \agentecho\grammar\Grammar;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
-use \agentecho\exception\ParseException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Conjunction;
 
 /**
  * This class implements a discourse between a user and Echo.
+ *
+ * It contains functions that allow the user to interact with the agent at the topmost level: surface text in, surface text out.
  */
 class Conversation
 {
@@ -52,31 +52,6 @@ class Conversation
 		$this->CurrentGrammar = $Grammar;
 	}
 
-	public function isProperNoun($identifier)
-	{
-		// is $identifier a proper noun in the context?
-
-		// is $identifier a proper noun in one of the knowledge sources?
-		$success = $this->Echo->getKnowledgeManager()->isProperNoun($identifier);
-
-		return $success;
-	}
-
-	/**
-	 * The raw input is parsed into a syntactic / semantic structure.
-	 * and these can only be corrected if the most likely grammatical class is known.
-	 * The input may be from any of the known languages. While parsing we detect which one.
-	 *
-	 * @param string $input This input may consist of several sentences, if they are properly separated.
-	 * @return array an array of Sentence objects
-	 * @throws LexicalItemException
-	 * @throws ParseException
-	 */
-	public function parse($input)
-	{
-		return $this->Echo->getParser()->parseSentenceGivenMultipleGrammars($input, $this, $this->CurrentGrammar, $this->Echo->getAvailableGrammars());
-	}
-
 	/**
 	 * Turns an object structure of a phrase or sentence into surface text,
 	 *
@@ -92,7 +67,7 @@ class Conversation
 		}
 
         $SentenceContext = new SentenceContext($this);
-		$SentenceContext->phraseSpecification = $phraseSpecification;
+		$SentenceContext->setPhraseSpecification($phraseSpecification);
         $SentenceContext->RootObject = $Structure;
 
         return $this->CurrentGrammar->generate($SentenceContext);
@@ -121,20 +96,6 @@ class Conversation
 	}
 
 	/**
-	 * Parses $input into a series of Sentences, but returns only the first of these,
-	 *
-	 * @param string $input
-	 * @return SentenceContext
-	 * @throws LexicalItemException
-	 * @throws ParseException
-	 */
-	public function parseFirstLine($input)
-	{
-		$sentences = $this->parse($input);
-		return $sentences ? $sentences[0] : false;
-	}
-
-	/**
 	 * High-level: reply to the human readable $question with a human readable sentence
 	 *
 	 * @param string $question
@@ -146,7 +107,13 @@ class Conversation
 
 		try {
 
-			$SentenceContext = $this->parseFirstLine($question);
+			$Parser = new Parser();
+			$Parser->setGrammars($this->Echo->getAvailableGrammars());
+			$Parser->setCurrentGrammar($this->CurrentGrammar);
+			$Parser->setProperNounIdentifiers($this->Echo->getKnowledgeManager());
+
+			$SentenceContext = $Parser->parseFirstLine($question);
+			$this->CurrentGrammar = $Parser->getCurrentGrammar();
 
 			/** @var Sentence $Sentence  */
 			$Sentence = $SentenceContext->getRootObject();

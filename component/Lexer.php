@@ -28,7 +28,7 @@ class Lexer
 	 * @param $Sentence
 	 * @throws LexicalItemException
 	 */
-	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar)
+	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar, array $properNounIdentifiers)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($string, $Sentence);
@@ -40,7 +40,7 @@ class Lexer
 		// make words lowercase
 		// glue together words that should form a single lexical item
 #todo: split lowercasing and gluing
-		$this->glue($Sentence, $Grammar);
+		$this->glue($Sentence, $Grammar, $properNounIdentifiers);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Lexer
 	 * @param SentenceContext $Sentence
 	 * @throws LexicalItemException
 	 */
-	private function glue(SentenceContext $Sentence, Grammar $Grammar)
+	private function glue(SentenceContext $Sentence, Grammar $Grammar, array $properNounIdentifiers)
 	{
 		$lexicalItems = array();
 		$words = $Sentence->words;
@@ -129,7 +129,7 @@ class Lexer
 
 			} else {
 
-				$involvedWords = $this->findLongestProperNoun($Sentence, array_slice($words, $i, self::LONGEST_PROPER_NOUN), $Grammar);
+				$involvedWords = $this->findLongestProperNoun($Sentence, array_slice($words, $i, self::LONGEST_PROPER_NOUN), $Grammar, $properNounIdentifiers);
 
 				if ($involvedWords === false) {
 
@@ -149,13 +149,16 @@ class Lexer
 		return true;
 	}
 
-	private function findLongestProperNoun(SentenceContext $Sentence, $words, Grammar $Grammar)
+	private function findLongestProperNoun(SentenceContext $Sentence, $words, Grammar $Grammar, array $properNounIdentifiers)
 	{
 		while (count($words) > 0) {
 
 			$properNoun = implode(' ', $words);
-			if ($Sentence->getConversation()->isProperNoun($properNoun)) {
-				return $words;
+
+			foreach ($properNounIdentifiers as $Identifier) {
+				if ($Identifier->isProperNoun($properNoun)) {
+					return $words;
+				}
 			}
 
 			if ($Grammar->isProperNoun($words)) {
