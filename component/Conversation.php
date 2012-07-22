@@ -6,16 +6,13 @@ use \agentecho\AgentEcho;
 use \agentecho\Settings;
 use \agentecho\grammar\Grammar;
 use \agentecho\datastructure\SentenceContext;
-use \agentecho\datastructure\SentenceBuilder;
+use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\exception\ParseException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Relation;
-use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Conjunction;
-use \agentecho\phrasestructure\Preposition;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -80,22 +77,33 @@ class Conversation
 		return $this->Echo->getParser()->parseSentenceGivenMultipleGrammars($input, $this, $this->CurrentGrammar, $this->Echo->getAvailableGrammars());
 	}
 
-	public function produce(PhraseStructure $Sentence)
+	/**
+	 * Turns an object structure of a phrase or sentence into surface text,
+	 *
+	 * @param PhraseStructure $Structure
+	 * @return string
+	 */
+	public function produce(PhraseStructure $Structure)
 	{
-#todo: generalize
-		if ($Sentence instanceof Conjunction) {
-			$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Sentence)));
+		if ($Structure instanceof Sentence) {
+			$phraseSpecification = array('head' => $this->buildPhraseStructure($Structure));
 		} else {
-			$phraseSpecification = array('head' => $this->buildPhraseStructure($Sentence));
+			$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Structure)));
 		}
 
         $SentenceContext = new SentenceContext($this);
 		$SentenceContext->phraseSpecification = $phraseSpecification;
-        $SentenceContext->RootObject = $Sentence;
+        $SentenceContext->RootObject = $Structure;
 
         return $this->CurrentGrammar->generate($SentenceContext);
 	}
 
+	/**
+	 * Turns a phrase object structure into an array structure.
+	 *
+	 * @param PhraseStructure $PhraseStructure
+	 * @return array
+	 */
 	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
 	{
 		$structure = array();
@@ -111,104 +119,6 @@ class Conversation
 
 		return $structure;
 	}
-
-//	/**
-//	 * @param object $Sentence
-//	 * @return array
-//	 */
-//	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
-//	{
-//		$structure = array();
-//
-//		if ($PhraseStructure instanceof Sentence) {
-//
-//			/** @var Sentence $Sentence */
-//			$Sentence = $PhraseStructure;
-//
-//			$structure['head']['sentenceType'] = $Sentence->getSentenceType();
-//			$structure['head']['voice'] = $Sentence->getVoice();
-//			$structure['head']['sem'] = $this->buildPhraseStructure($Sentence->getRelation());
-//
-//		} elseif ($PhraseStructure instanceof Relation) {
-//
-//			/** @var Relation $Relation */
-//			$Relation = $PhraseStructure;
-//
-//			$structure['predicate'] = $Relation->getPredicate();
-//			$structure['tense'] = $Relation->getTense();
-//			$structure['type'] = 'relation';
-//
-//			if ($Argument = $Relation->getArgument1()) {
-//				$structure['arg1'] = $this->buildPhraseStructure($Argument);
-//			}
-//			if ($Argument = $Relation->getArgument2()) {
-//				$structure['arg2'] = $this->buildPhraseStructure($Argument);
-//			}
-//			if ($Argument = $Relation->getArgument3()) {
-//				$structure['arg3'] = $this->buildPhraseStructure($Argument);
-//			}
-//
-//		} elseif ($PhraseStructure instanceof Entity) {
-//
-//			/** @var Entity $Entity */
-//			$Entity = $PhraseStructure;
-//
-//			$structure['type'] = 'entity';
-//
-//			$name = $Entity->getName();
-//			if ($name !== null) {
-//				$structure['name'] = $name;
-//			}
-//
-//			$category = $Entity->getCategory();
-//			if ($category !== null) {
-//				$structure['category'] = $category;
-//			}
-//			$Determiner = $Entity->getDeterminer();
-//			if ($Determiner !== null) {
-//				$structure['determiner'] = $this->buildPhraseStructure($Determiner);
-//			}
-//			$Preposition = $Entity->getPreposition();
-//			if ($Preposition !== null) {
-//				$structure['preposition'] = $this->buildPhraseStructure($Preposition);
-//			}
-//		} elseif ($PhraseStructure instanceof Conjunction) {
-//
-//            /** @var Conjunction $Conjunction */
-//   			$Conjunction = $PhraseStructure;
-//
-//            $structure['type'] = 'conjunction';
-//
-//            $Left = $Conjunction->getLeftEntity();
-//            $structure['left'] = $this->buildPhraseStructure($Left);
-//
-//            $Right = $Conjunction->getRightEntity();
-//            $structure['right'] = $this->buildPhraseStructure($Right);
-//        } elseif ($PhraseStructure instanceof Determiner) {
-//
-//			/** @var Determiner $Determiner  */
-//			$Determiner = $PhraseStructure;
-//
-//			$structure['type'] = 'determiner';
-//			$structure['category'] = $Determiner->getCategory();
-//
-//			if ($Object = $Determiner->getObject()) {
-//				$structure['object'] = $this->buildPhraseStructure($Object);
-//			}
-//
-//		} elseif ($PhraseStructure instanceof Preposition) {
-//
-//			/** @var Preposition $Preposition  */
-//			$Preposition = $PhraseStructure;
-//
-//			$structure['type'] = 'preposition';
-//			$structure['category'] = $Preposition->getCategory();
-//
-//			$structure['object'] = $this->buildPhraseStructure($Preposition->getObject());
-//		}
-//
-//		return $structure;
-//	}
 
 	/**
 	 * Parses $input into a series of Sentences, but returns only the first of these,

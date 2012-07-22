@@ -7,11 +7,6 @@ use \agentecho\component\Conversation;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\exception\ParseException;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Relation;
-use \agentecho\phrasestructure\Determiner;
-use \agentecho\phrasestructure\Preposition;
 
 class Parser
 {
@@ -139,100 +134,4 @@ class Parser
 
 		return $E;
 	}
-
-//	private function buildObjectStructure(array $phraseSpecification)
-//	{
-//#todo: geef sentence ook gewoon een 'type'
-//		if (isset($phraseSpecification['sentenceType'])) {
-//			$E = new Sentence();
-//			$type = $phraseSpecification['sentenceType'];
-//			$E->setSentenceType($type);
-//
-//			if (isset($phraseSpecification['sem'])) {
-//				$E->setRelation($this->buildObjectStructure($phraseSpecification['sem']));
-//			}
-//
-//			if (isset($phraseSpecification['voice'])) {
-//				$E->setVoice($phraseSpecification['voice']);
-//			}
-//		}
-//
-//		if (isset($phraseSpecification['type'])) {
-//			switch ($phraseSpecification['type']) {
-//				case 'relation':
-//
-//					$E = new Relation();
-//					$E->setPredicate($phraseSpecification['predicate']);
-//
-//					for ($i = 1; $i < 5; $i++) {
-//						if (isset($phraseSpecification['arg' . $i])) {
-//							$E->setArgument($i, $this->buildObjectStructure($phraseSpecification['arg' . $i]));
-//						}
-//					}
-//
-//					if (isset($phraseSpecification['preposition'])) {
-//						$E->setPreposition($this->buildObjectStructure($phraseSpecification['preposition']));
-//					}
-//
-//					if (isset($phraseSpecification['tense'])) {
-//						$E->setTense($phraseSpecification['tense']);
-//					}
-//					break;
-//
-//				case 'entity':
-//					$E = new Entity();
-//
-//					if (isset($phraseSpecification['category'])) {
-//						$E->setCategory($phraseSpecification['category']);
-//					}
-//
-//					if (isset($phraseSpecification['determiner'])) {
-//						$E->setDeterminer($this->buildObjectStructure($phraseSpecification['determiner']));
-//					}
-//
-//					if (isset($phraseSpecification['name'])) {
-//						$E->setName($phraseSpecification['name']);
-//					}
-//
-//					if (isset($phraseSpecification['preposition'])) {
-//						$E->setPreposition($this->buildObjectStructure($phraseSpecification['preposition']));
-//					}
-//
-//					if (isset($phraseSpecification['question'])) {
-//                        $E->setQuestion();
-//                    }
-//
-//					break;
-//
-//				case 'determiner':
-//					$E = new Determiner();
-//					$E->setCategory($phraseSpecification['category']);
-//
-//					if (isset($phraseSpecification['question'])) {
-//                        $E->setQuestion();
-//                    }
-//                    if (isset($phraseSpecification['object'])) {
-//                        $E->setObject($this->buildObjectStructure($phraseSpecification['object']));
-//                    }
-//
-//					break;
-//
-//				case 'preposition':
-//					$E = new Preposition();
-//					$E->setCategory($phraseSpecification['category']);
-//					if (isset($phraseSpecification['object'])) {
-//                        $E->setObject($this->buildObjectStructure($phraseSpecification['object']));
-//                    }
-//
-//					break;
-//
-//				default:
-//
-//					$E = null;
-//
-//			}
-//		}
-//
-//		return $E;
-//	}
 }

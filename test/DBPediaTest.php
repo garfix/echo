@@ -9,6 +9,7 @@ use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 
 /**
+ * Question answering
  * Lord Byron facts: http://dbpedia.org/page/Lord_Byron
  */
 class DBPediaTest extends TestBase
@@ -21,10 +22,6 @@ class DBPediaTest extends TestBase
 		$Echo->addGrammar(new DutchGrammar());
 
 		$Conversation = $Echo->startConversation();
-
-		/**
-		 * Question answering
-		 */
 
 		// S => aux NP VP ; DBPedia
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");

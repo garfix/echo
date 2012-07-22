@@ -12,6 +12,11 @@ class DutchGrammar extends SimpleGrammar
 	public function getLexicon()
 	{
 		return array(
+			',' => array(
+				'punctuationMark' => array(
+					'features' => array('head' => array('sem' => array('category' => 'comma')))
+				)
+			),
 			'\'s' => array(
 				'possessiveMarker' => array(
 					'features' => array('head' => array(
@@ -217,4 +222,52 @@ class DutchGrammar extends SimpleGrammar
 		return array($word);
 	}
 
+	protected function getGenerationRules()
+	{
+		return parent::getGenerationRules() + array(
+
+			'CP' => array(
+				// CP, NP ; non-toplevel conjunction with conjunction at the left hand
+				array(
+					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+				// NP, NP, ; non-toplevel conjunction with entity at the left hand
+				array(
+					'condition' => array('head' => array('subconjunction' => true)),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+				// CP en NP ; toplevel conjunction with conjunction at the left hand
+				array(
+					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')))),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'conjunction'),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+				// NP en NP ; toplevel conjunction with entity at the left hand
+				array(
+					'condition' => array(),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'conjunction'),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+			),
+		);
+	}
 }

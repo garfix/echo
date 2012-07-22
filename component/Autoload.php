@@ -4,7 +4,9 @@ spl_autoload_register(
 
 	function ($className)
 	{
-		include __DIR__ . '/../../' . strtr($className, '\\', '/') . '.php';
+		if (file_exists($file = __DIR__ . '/../../' . strtr($className, '\\', '/') . '.php')) {
+			require_once $file;
+		}
 	}
 
 );

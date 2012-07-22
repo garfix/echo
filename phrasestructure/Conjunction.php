@@ -8,14 +8,14 @@ use \agentecho\phrasestructure\Entity;
 /**
  * A conjunction of two entities.
  */
-class Conjunction extends PhraseStructure
+class Conjunction extends PhraseStructure implements EntityStructure
 {
 	protected $data = array(
         'Left' => null,
         'Right' => null
     );
 
-    public function setLeftEntity(Entity $Left)
+    public function setLeftEntity(EntityStructure $Left)
     {
         $this->data['Left'] = $Left;
     }

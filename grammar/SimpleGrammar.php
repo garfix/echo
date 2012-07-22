@@ -100,13 +100,20 @@ $words = $lexicalItems;
 
 		$words[0] = ucfirst($words[0]);
 
-		$text = implode(' ', $words);
-        if ($SentenceContext->getRootObject() instanceof Sentence) {
-            $text .= '.';
-        }
+		$text = '';
 
-#todo remove this if possible
-        if ($SentenceContext->getRootObject() === null) {
+		// add all words and preceed each one with a space,
+		// except the first word, and comma's
+		foreach ($words as $index => $word) {
+			if ($index > 0) {
+				if ($word != ',') {
+					$text .= ' ';
+				}
+			}
+			$text .= $word;
+		}
+
+        if ($SentenceContext->getRootObject() instanceof Sentence) {
             $text .= '.';
         }
 
@@ -175,7 +182,8 @@ $words = $lexicalItems;
 			'auxDo', // do, does, did, ...
 			'preposition',
 			'passivisationPreposition',
-			'possessiveMarker' // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
+			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
+			'punctuationMark',
 		));
 	}
 
@@ -233,6 +241,8 @@ $words = $lexicalItems;
 		} elseif ($partOfSpeech == 'verb') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'conjunction') {
+			$word = $this->getWord($partOfSpeech, $features);
+		} elseif ($partOfSpeech == 'punctuationMark') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} else {
 			$E = new GenerationException();
@@ -335,6 +345,7 @@ $words = $lexicalItems;
 //r($pattern);
 			if ($FeatureDAG->match($pattern)) {
 //echo 'qq';
+//r($pattern);
 				$rawRule = $generationRule['rule'];
 				$Dag = EarleyParser::createLabeledDag($rawRule);
 //r($Dag);
@@ -683,17 +694,7 @@ $words = $lexicalItems;
 					)
 				),
 			),
-			'CP' => array(
-				array(
-					'condition' => array(),
-					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
-						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
-					)
-				),
-			),
+
 		);
 	}
 }

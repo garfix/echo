@@ -38,12 +38,12 @@ use \agentecho\grammar\Grammar;
  * 1st person (in artikel voorbeeld => 3rd person)
  * als je de parse niet kunt maken, geef dan terug wat "waar de fout zit" in de zin
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
- * een "Conversation" is noch een datastructure noc een component, splits hem op in twee delen
+ * een "Conversation" is noch een datastructure noch een component, splits hem op in twee delen
  * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
  * zorg ervoor dat de excepties in de huidige taal gezet zijn
- * Bouw een OOP laag om de phrase specification array structuur heen. De gebruiker werkt alleen met objecten
  * Een Parser (moet een interface worden) moet een Sentence object teruggeven; verder niets.
  * Veel DBPedia testen slaagden ten onrechte, omdat restricties die niet goed worden gematched gewoon worden weggelaten. Vooral bij yes/no vragen is die een probleem.
+ * Welke mogen weg? features / head / sem?
  */
 class AgentEcho
 {

@@ -21,6 +21,11 @@ class EnglishGrammar extends SimpleGrammar
 	{
 #todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?
 		return array(
+			',' => array(
+				'punctuationMark' => array(
+					'features' => array('head' => array('sem' => array('category' => 'comma')))
+				)
+			),
 			'\'s' => array(
 				'possessiveMarker' => array(
 					'features' => array('head' => array(
@@ -338,4 +343,53 @@ class EnglishGrammar extends SimpleGrammar
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
 	}
 
+	protected function getGenerationRules()
+	{
+		return parent::getGenerationRules() + array(
+
+			'CP' => array(
+				// CP NP, ; non-toplevel conjunction with conjunction at the left hand
+				array(
+					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+					)
+				),
+				// NP, NP, ; non-toplevel conjunction with entity at the left hand
+				array(
+					'condition' => array('head' => array('subconjunction' => true)),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+					)
+				),
+				// CP and NP ; toplevel conjunction with conjunction at the left hand
+				array(
+					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')))),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'conjunction'),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+				// NP and NP ; toplevel conjunction with entity at the left hand
+				array(
+					'condition' => array(),
+					'rule' => array(
+						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'conjunction'),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+					)
+				),
+			),
+		);
+	}
 }

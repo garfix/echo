@@ -7,7 +7,7 @@ use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Preposition;
 use \agentecho\exception\SentenceException;
 
-class Entity extends PhraseStructure
+class Entity extends PhraseStructure implements EntityStructure
 {
 	const SINGULAR = 'singular';
 	const PLURAL = 'plural';
