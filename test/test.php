@@ -5,6 +5,7 @@ require_once __DIR__ . '/../component/Autoload.php';
 
 use \agentecho\test\LabeledDAGTest;
 use \agentecho\test\ParserTest;
+use \agentecho\test\ConversationTest;
 use \agentecho\test\DBPediaTest;
 use \agentecho\test\ProductionTest;
 
@@ -16,6 +17,9 @@ function r($string, $return = false)
 }
 
 $Test = new LabeledDAGTest();
+$Test->execute();
+
+$Test = new ConversationTest();
 $Test->execute();
 
 $Test = new ParserTest();
