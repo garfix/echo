@@ -2,7 +2,6 @@
 
 namespace agentecho\grammar;
 
-use \agentecho\component\Microplanner;
 use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
@@ -17,7 +16,6 @@ abstract class SimpleGrammar implements Grammar
 	protected $parseRules = null;
 	protected $generationRules = null;
 	protected $lexicon = null;
-	protected $Microplanner = null;
 
 	public function __construct()
 	{
@@ -25,9 +23,6 @@ abstract class SimpleGrammar implements Grammar
 		$this->lexicon = $this->getLexicon();
 		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
-
-		// output processing
-		$this->Microplanner = new Microplanner();
 	}
 
 	public function wordExists($word)
@@ -53,58 +48,6 @@ abstract class SimpleGrammar implements Grammar
 	public function unglue($word)
 	{
 		return array($word);
-	}
-
-	/**
-	 * This function turns structured meaning into a line of text.
-	 *
-	 * @param SentenceContext $Sentence A sentence that contains a speech act, and meaning.
-	 * @return string|false Either a sentence in natural language, or false, in case of failure
-	 */
-	public function generate(SentenceContext $SentenceContext)
-	{
-		// turn the intention of the sentence into a syntactic structure
-		$lexicalItems = $this->Microplanner->plan($SentenceContext->getPhraseSpecification(), $this);
-		if (!$lexicalItems) {
-			return false;
-		}
-
-        $SentenceContext->lexicalItems = $lexicalItems;
-
-# todo: split items into words
-$words = $lexicalItems;
-
-        $SentenceContext->words = $words;
-
-        $SentenceContext->surfaceText = $this->createSurfaceText($SentenceContext);
-
-		return $SentenceContext->surfaceText;
-	}
-
-	private function createSurfaceText(SentenceContext $SentenceContext)
-	{
-		$words = $SentenceContext->words;
-
-		$words[0] = ucfirst($words[0]);
-
-		$text = '';
-
-		// add all words and preceed each one with a space,
-		// except the first word, and comma's
-		foreach ($words as $index => $word) {
-			if ($index > 0) {
-				if ($word != ',') {
-					$text .= ' ';
-				}
-			}
-			$text .= $word;
-		}
-
-        if ($SentenceContext->getRootObject() instanceof Sentence) {
-            $text .= '.';
-        }
-
-        return $text;
 	}
 
 	public function getRulesForAntecedent($antecedent)

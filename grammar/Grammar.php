@@ -18,13 +18,6 @@ interface Grammar
 	public function getLanguage();
 
 	/**
-	 * Returns a surface representation for a given sentence,
-	 * @param SentenceContext $Sentence
-	 * @return string
-	 */
-	public function generate(SentenceContext $Sentence);
-
-	/**
 	 * Returns all grammar rules with $antecedent as their antecedent.
 	 * @return array
 	 */
