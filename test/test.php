@@ -7,7 +7,7 @@ use \agentecho\test\LabeledDAGTest;
 use \agentecho\test\ParserTest;
 use \agentecho\test\ConversationTest;
 use \agentecho\test\DBPediaTest;
-use \agentecho\test\ProductionTest;
+use \agentecho\test\ProducerTest;
 
 function r($string, $return = false)
 {
@@ -28,6 +28,6 @@ $Test->execute();
 $Test = new DBPediaTest();
 $Test->execute();
 
-$Test = new ProductionTest();
+$Test = new ProducerTest();
 $Test->execute();
 

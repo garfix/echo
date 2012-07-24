@@ -4,7 +4,6 @@ namespace agentecho\component;
 
 use \agentecho\grammar\Grammar;
 use \agentecho\component\Lexer;
-use \agentecho\component\Conversation;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\exception\ParseException;
 use \agentecho\phrasestructure\Sentence;

@@ -5,11 +5,9 @@ namespace agentecho\component;
 use \agentecho\AgentEcho;
 use \agentecho\Settings;
 use \agentecho\grammar\Grammar;
-use \agentecho\datastructure\SentenceContext;
 use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
 
 /**
@@ -53,49 +51,6 @@ class Conversation
 	}
 
 	/**
-	 * Turns an object structure of a phrase or sentence into surface text,
-	 *
-	 * @param PhraseStructure $Structure
-	 * @return string
-	 */
-	public function produce(PhraseStructure $Structure)
-	{
-		if ($Structure instanceof Sentence) {
-			$phraseSpecification = array('head' => $this->buildPhraseStructure($Structure));
-		} else {
-			$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Structure)));
-		}
-
-        $SentenceContext = new SentenceContext($this);
-		$SentenceContext->setPhraseSpecification($phraseSpecification);
-        $SentenceContext->RootObject = $Structure;
-
-        return $this->CurrentGrammar->generate($SentenceContext);
-	}
-
-	/**
-	 * Turns a phrase object structure into an array structure.
-	 *
-	 * @param PhraseStructure $PhraseStructure
-	 * @return array
-	 */
-	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
-	{
-		$structure = array();
-		$structure['type'] = strtolower(basename(str_replace('\\', '/', get_class($PhraseStructure))));
-
-		foreach ($PhraseStructure->getAttributes() as $name => $value) {
-			if ($value instanceof PhraseStructure) {
-				$structure[strtolower($name)] = $this->buildPhraseStructure($value);
-			} else {
-				$structure[$name] = $value;
-			}
-		}
-
-		return $structure;
-	}
-
-	/**
 	 * High-level: reply to the human readable $question with a human readable sentence
 	 *
 	 * @param string $question
@@ -128,9 +83,10 @@ class Conversation
 				if ($result) {
 					$answer = 'Yes.';
 
+					$Producer = new Producer();
 
 					$Sentence->setSentenceType(Sentence::DECLARATIVE);
-					$s = $this->produce($Sentence);
+					$s = $Producer->produce($Sentence, $this->CurrentGrammar);
 
 					if ($s) {
 						$answer .= ' ' . $s;
@@ -156,9 +112,9 @@ class Conversation
 									$Sentence->setSentenceType(Sentence::DECLARATIVE);
 									$Determiner->setQuestion(false);
 									$Determiner->setCategory($answer);
-//r($Sentence);
-//r($phraseSpecification = $this->buildPhraseStructure($Sentence));
-									$sentence = $this->produce($Sentence);
+
+									$Producer = new Producer();
+									$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
 									if ($sentence) {
 										$answer = $sentence;
 									}
@@ -190,7 +146,8 @@ class Conversation
 
                     $Phrase = SentenceBuilder::buildConjunction($entities);
 
-                    $sentence = $this->produce($Phrase);
+					$Producer = new Producer();
+                    $sentence = $Producer->produce($Phrase, $this->CurrentGrammar);
 
 					if ($sentence) {
 						$answer = $sentence;

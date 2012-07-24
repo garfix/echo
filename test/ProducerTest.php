@@ -2,8 +2,8 @@
 
 namespace agentecho\test;
 
-use \agentecho\AgentEcho;
 use \agentecho\test\TestBase;
+use \agentecho\component\Producer;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\phrasestructure\Sentence;
@@ -11,15 +11,14 @@ use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\SentenceBuilder;
 
-class ProductionTest extends TestBase
+class ProducerTest extends TestBase
 {
 	function execute()
 	{
-		$Echo = new AgentEcho();
-		$Echo->addGrammar($English = new EnglishGrammar());
-		$Echo->addGrammar($Dutch = new DutchGrammar());
+		$Producer = new Producer();
 
-		$Conversation = $Echo->startConversation();
+		$English = new EnglishGrammar();
+		$Dutch = new DutchGrammar();
 
 		$John = new Entity();
 			$John->setName('John');
@@ -35,7 +34,7 @@ class ProductionTest extends TestBase
 			$Relation->setIndirectObject($Mary);
 		$Sentence = new Sentence();
 			$Sentence->setRelation($Relation);
-		$line = $Conversation->produce($Sentence);
+		$line = $Producer->produce($Sentence, $English);
 		$this->test(401, $line, 'John gives Mary flowers.');
 
 		$John = new Entity();
@@ -50,19 +49,17 @@ class ProductionTest extends TestBase
 		$Phrase2 = SentenceBuilder::buildConjunction(array($John, $Mary, $Benjamin, $Bob));
 
 		// English
-		$Conversation->setCurrentGrammar($English);
-		$line = $Conversation->produce($Phrase1);
+		$line = $Producer->produce($Phrase1, $English);
 		$this->test(402, $line, 'John and Mary');
 
-		$line = $Conversation->produce($Phrase2);
+		$line = $Producer->produce($Phrase2, $English);
 		$this->test(403, $line, 'John, Mary, Benjamin, and Bob');
 
 		// Dutch
-		$Conversation->setCurrentGrammar($Dutch);
-		$line = $Conversation->produce($Phrase1);
+		$line = $Producer->produce($Phrase1, $Dutch);
 		$this->test(404, $line, 'John en Mary');
 
-		$line = $Conversation->produce($Phrase2);
+		$line = $Producer->produce($Phrase2, $Dutch);
 		$this->test(405, $line, 'John, Mary, Benjamin en Bob');
 	}
 }
