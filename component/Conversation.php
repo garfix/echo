@@ -74,7 +74,6 @@ class Conversation
 			$Sentence = $SentenceContext->getRootObject();
 
 			$sentenceType = $Sentence->getSentenceType();
-
 			if ($sentenceType == 'yes-no-question') {
 
 				// since this is a yes-no question, check the statement

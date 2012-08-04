@@ -2,10 +2,8 @@
 
 namespace agentecho\grammar;
 
-use \agentecho\component\EarleyParser;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
-use \agentecho\exception\GenerationException;
 use \agentecho\phrasestructure\Sentence;
 
 /**
@@ -277,7 +275,7 @@ abstract class SimpleGrammar implements Grammar
 //echo 'qq';
 //r($pattern);
 				$rawRule = $generationRule['rule'];
-				$Dag = EarleyParser::createLabeledDag($rawRule);
+				$Dag = self::createLabeledDag($rawRule);
 //r($Dag);
 				$UnifiedDag = $Dag->unify($FeatureDAG);
 //r($UnifiedDag);
@@ -288,6 +286,18 @@ abstract class SimpleGrammar implements Grammar
 		}
 //exit;
 		return false;
+	}
+
+	private static function createLabeledDag(array $rule)
+	{
+		$tree = array();
+		foreach ($rule as $index => $line) {
+			if (isset($line['features'])) {
+				$tree[$line['cat'] . '@' . $index] = $line['features'];
+			}
+		}
+
+		return new LabeledDAG($tree);
 	}
 
 	protected function getParseRules()

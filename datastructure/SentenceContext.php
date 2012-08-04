@@ -2,17 +2,13 @@
 
 namespace agentecho\datastructure;
 
-//use \agentecho\component\Conversation;
 use \agentecho\phrasestructure\PhraseStructure;
 
 /**
- * A sentence-in-progress.
+ * A blackboard for a sentence in progress.
  */
 class SentenceContext
 {
-//	/** @var The Conversation in which this sentence took place */
-//	private $Conversation = null;
-
 	/** @var The language of this sentence (english/dutch) */
 	private $language = null;
 
@@ -35,16 +31,6 @@ class SentenceContext
 
 	/** @var The root object of the object structure. */
 	public $RootObject = null;
-
-//	public function __construct(Conversation $Conversation)
-//	{
-//		$this->Conversation = $Conversation;
-//	}
-
-//	public function getConversation()
-//	{
-//		return $this->Conversation;
-//	}
 
 	public function getRootObject()
 	{

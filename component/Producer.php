@@ -3,11 +3,11 @@
 namespace agentecho\component;
 
 use \agentecho\Settings;
-use agentecho\phrasestructure\PhraseStructure;
-use agentecho\phrasestructure\Sentence;
-use agentecho\datastructure\SentenceContext;
+use \agentecho\phrasestructure\PhraseStructure;
+use \agentecho\phrasestructure\Sentence;
+use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
-use agentecho\grammar\Grammar;
+use \agentecho\grammar\Grammar;
 
 /**
  * This class creates turns a phrase structure into surface text.

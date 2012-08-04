@@ -2,7 +2,7 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\SentenceContext;
+use \agentecho\datastructure\SentenceContext;
 use \agentecho\exception\LexicalItemException;
 use \agentecho\grammar\Grammar;
 

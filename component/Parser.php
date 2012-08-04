@@ -8,6 +8,9 @@ use \agentecho\datastructure\SentenceContext;
 use \agentecho\exception\ParseException;
 use \agentecho\phrasestructure\Sentence;
 
+/**
+ * This class parses a surface text into a phrase specification.
+ */
 class Parser
 {
 	/** @var array $grammars A list of grammars that are used to parse a sentence */
@@ -81,7 +84,6 @@ class Parser
 				// now parse the rest of the input, if there is one
 				// this code works either in ltr and rtl languages (not that i tried ;)
 				$restInput = str_replace($Sentence->surfaceText, '', $input);
-//				return array_merge($sentences, $this->parseSentenceGivenMultipleGrammars($restInput, $Conversation, $CurrentGrammar, $grammars));
 				return array_merge($sentences, $this->parse($restInput));
 
 			} catch (\Exception $E) {
