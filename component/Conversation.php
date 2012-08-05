@@ -60,12 +60,12 @@ class Conversation
 	{
 		$answer = '';
 
-		try {
+		$Parser = new Parser();
+		$Parser->setGrammars($this->Echo->getAvailableGrammars());
+		$Parser->setCurrentGrammar($this->CurrentGrammar);
+		$Parser->setProperNounIdentifiers($this->Echo->getKnowledgeManager());
 
-			$Parser = new Parser();
-			$Parser->setGrammars($this->Echo->getAvailableGrammars());
-			$Parser->setCurrentGrammar($this->CurrentGrammar);
-			$Parser->setProperNounIdentifiers($this->Echo->getKnowledgeManager());
+		try {
 
 			$SentenceContext = $Parser->parseFirstLine($question);
 			$this->CurrentGrammar = $Parser->getCurrentGrammar();
@@ -159,8 +159,11 @@ class Conversation
 
 		} catch (\Exception $E) {
 
-			$answer = (string)$E;
+			$message = $E->getMessage();
+			$translatedMessage = Translations::translate($message, $Parser->getCurrentGrammar()->getLanguageCode());
+			$E->setMessage($translatedMessage);
 
+			$answer = (string)$E;
 		}
 
 		return $answer;

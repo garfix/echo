@@ -11,6 +11,7 @@ use \agentecho\grammar\DutchGrammar;
 /**
  * Question answering
  * Lord Byron facts: http://dbpedia.org/page/Lord_Byron
+ * Anne Isabella Milbanke http://dbpedia.org/page/Anne_Isabella_Byron,_Baroness_Byron
  */
 class DBPediaTest extends TestBase
 {
@@ -62,5 +63,13 @@ class DBPediaTest extends TestBase
 
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->test(352, $answer, "Ada Lovelace en Allegra Byron");
+
+		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabelle Milbanke?");
+		$this->test(361, $answer, "Yes.");
+
+		#todo: geef de foutmelding "word not found" in het nederlands.
+
+//		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabelle Milbanke?");
+//		$this->test(362, $answer, "Ja.");
 	}
 }

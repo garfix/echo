@@ -9,6 +9,11 @@ class DutchGrammar extends SimpleGrammar
 		return 'dutch';
 	}
 
+	public function getLanguageCode()
+	{
+		return 'nl';
+	}
+
 	public function getLexicon()
 	{
 		return array(

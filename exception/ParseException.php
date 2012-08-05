@@ -4,7 +4,7 @@ namespace agentecho\exception;
 
 use \Exception;
 
-class ParseException extends Exception
+class ParseException extends EchoException
 {
 	private $lexicalItems = null;
 	private $lastParsedIndex = null;

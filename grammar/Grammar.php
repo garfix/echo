@@ -12,10 +12,16 @@ use \agentecho\datastructure\SentenceContext;
 interface Grammar
 {
 	/**
-	 * Returns the name of the language of this grammar.
+	 * Returns the lowercase name of the language of this grammar.
 	 * @return string
 	 */
 	public function getLanguage();
+
+	/**
+	 * Returns the iso-639-1 language code of the language.
+	 * @return string
+	 */
+	public function getLanguageCode();
 
 	/**
 	 * Returns all grammar rules with $antecedent as their antecedent.

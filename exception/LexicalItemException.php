@@ -4,8 +4,10 @@ namespace agentecho\exception;
 
 use \Exception;
 
-class LexicalItemException extends Exception
+class LexicalItemException extends EchoException
 {
+	const WORD_NOT_FOUND = 'Word not found: %1$s';
+
 	private $word;
 
 	public function setWord($word)
@@ -20,6 +22,6 @@ class LexicalItemException extends Exception
 
 	public function __toString()
 	{
-		return 'Word not found: ' . $this->word;
+		return sprintf($this->getMessage(), $this->word);
 	}
 }

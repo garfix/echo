@@ -4,7 +4,7 @@ namespace agentecho\exception;
 
 use \Exception;
 
-class GenerationException extends Exception
+class GenerationException extends EchoException
 {
 	const TYPE_UNKNOWN_CONSTITUENT = 1;
 	const TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH = 2;

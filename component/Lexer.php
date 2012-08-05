@@ -133,7 +133,7 @@ class Lexer
 
 				if ($involvedWords === false) {
 
-					$E = new LexicalItemException();
+					$E = new LexicalItemException(LexicalItemException::WORD_NOT_FOUND);
 					$E->setWord($word);
 					throw $E;
 

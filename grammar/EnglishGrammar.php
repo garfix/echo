@@ -17,6 +17,11 @@ class EnglishGrammar extends SimpleGrammar
 		return 'english';
 	}
 
+	public function getLanguageCode()
+	{
+		return 'en';
+	}
+
 	public function getLexicon()
 	{
 #todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?
@@ -231,6 +236,15 @@ class EnglishGrammar extends SimpleGrammar
 				'determiner' => array(
 					'features' => array('head' => array('sem' => array('category' => 'many')))
 				),
+			),
+			'married' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'marry', 'tense' => 'past'),
+						)
+					),
+				)
 			),
 			'name' => array(
 				'verb' => array(
