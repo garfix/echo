@@ -37,13 +37,8 @@ class DBPedia extends KnowledgeSource
 
 		if (!isset($resources[$name])) {
 
-			$resources[$name] = array();
-
-			$triple = array('?object', 'rdfs:label', "'$name'@en");
-			$resources[$name] = array_merge($resources[$name], $this->querySingleColumn(array($triple), '?object'));
-
-			$triple = array('?object', 'dbpprop:birthName', "'$name'@en");
-			$resources[$name] = array_merge($resources[$name], $this->querySingleColumn(array($triple), '?object'));
+			$triple = array(" { { ?object rdfs:label '$name'@en } UNION { ?object dbpprop:birthName '$name'@en } }");
+			$resources[$name] = $this->querySingleColumn(array($triple), '?object');
 
 		}
 
@@ -272,6 +267,7 @@ class DBPedia extends KnowledgeSource
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg2id = $Relation->getArgument2()->getHashCode();
 					$triples[] = array('?' . $arg2id, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
+					$triples[] = array('_:place', 'dbpedia-owl:city', '?' . $locationId);
 				}
 
 				if ($Preposition->getCategory() == 'time') {
@@ -289,6 +285,7 @@ class DBPedia extends KnowledgeSource
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg1id = $Relation->getArgument1()->getHashCode();
 					$triples[] = array('?' . $arg1id, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
+					$triples[] = array('_:place', 'dbpedia-owl:city', '?' . $locationId);
 				}
 			}
 
@@ -312,7 +309,8 @@ class DBPedia extends KnowledgeSource
 				$Preposition = $Relation->getPreposition();
 				$person2 = $Preposition->getObject()->getHashCode();
 
-				$triples[] = array('?' . $person2, '<http://dbpedia.org/property/spouse>', '?' . $person1);
+				// spouse: a symmetric relation
+				$triples[] = array("{ { ?{$person1} dbpprop:spouse ?{$person2} } UNION { ?{$person2} dbpprop:spouse ?{$person1} }}");
 			}
 		}
 
@@ -410,11 +408,6 @@ $triples = array_unique($triples);
 			}
 		}
 		return $return;
-	}
-
-	private static function getVariableId()
-	{
-		return 'v' . ++self::$id;
 	}
 
 	private function getResultFromCache($query)

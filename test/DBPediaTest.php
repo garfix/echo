@@ -38,9 +38,9 @@ class DBPediaTest extends TestBase
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("Where was Lord Byron born?");
-		$this->test(321, $answer, 'Dover');
+		$this->test(321, $answer, 'London');
 		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-		$this->test(322, $answer, 'Dover');
+		$this->test(322, $answer, 'London');
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("When was Lord Byron born?");
@@ -49,7 +49,7 @@ class DBPediaTest extends TestBase
 		$this->test(332, $answer, '1788-01-22');
 
 		$answer = $Conversation->answer("Where did Lord Byron die?");
-		$this->test(333, $answer, 'Aetolia-Acarnania');
+		$this->test(333, $answer, 'Missolonghi');
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
@@ -59,17 +59,18 @@ class DBPediaTest extends TestBase
 
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
-		$this->test(351, $answer, "Ada Lovelace and Allegra Byron");
+		$this->test(351, $answer, "Allegra Byron and Ada Lovelace");
 
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
-		$this->test(352, $answer, "Ada Lovelace en Allegra Byron");
+		$this->test(352, $answer, "Allegra Byron en Ada Lovelace");
 
 
 		$Conversation->setCurrentGrammar($English);
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->test(361, $answer, "Yes.");
 
-		#todo: geef de foutmelding "word not found" in het nederlands.
+		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
+		$this->test(362, $answer, "Yes.");
 
 //		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 //		$this->test(362, $answer, "Ja.");
