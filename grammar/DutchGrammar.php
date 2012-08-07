@@ -94,6 +94,15 @@ class DutchGrammar extends SimpleGrammar
 				'conjunction' => array(
 				),
 			),
+			'getrouwd' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'marry', 'tense' => 'past'),
+						)
+					),
+				)
+			),
 			'had' => array(
 				'verb' => array(
 					'features' => array(
@@ -139,6 +148,13 @@ class DutchGrammar extends SimpleGrammar
 						)
 					),
 				)
+			),
+			'met' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'to'),
+					))
+				),
 			),
 			'noem' => array(
 				'verb' => array(

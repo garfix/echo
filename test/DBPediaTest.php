@@ -72,7 +72,7 @@ class DBPediaTest extends TestBase
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
 		$this->test(362, $answer, "Yes.");
 
-//		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
-//		$this->test(362, $answer, "Ja.");
+		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
+		$this->test(363, $answer, "Yes.");
 	}
 }

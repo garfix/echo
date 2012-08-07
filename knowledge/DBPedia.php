@@ -45,27 +45,17 @@ class DBPedia extends KnowledgeSource
 		return $resources[$name];
 	}
 
-	/**
-	 * Returns a SPARQL triple for a given proper name.
-	 * @param $name
-	 * @param $subjectId
-	 * @return array
-	 */
-	private function getNameTriple($name, $subjectId)
-	{
-		return array("FILTER(?{$subjectId} IN (<" . implode('>, <', $this->getResourcesByName($name)) . ">))");
-	}
 
     public function checkQuestion(Sentence $Sentence)
    	{
-   		$triples = array();
+   		$clauses = array();
    		$select = '';
         $sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
 
-   		if (Settings::$debugKnowledge) r($triples);
+   		if (Settings::$debugKnowledge) r($clauses);
 
-   		$result = $this->query($triples, $select);
+   		$result = $this->query($clauses, $select);
 
    		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
 
@@ -75,12 +65,12 @@ class DBPedia extends KnowledgeSource
 	public function answerQuestion(Sentence $Sentence)
 	{
 //r($Sentence);exit;
-		$triples = array();
+		$clauses = array();
 		$select = '';
 		$sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
 
-		$result = $this->query($triples, $select);
+		$result = $this->query($clauses, $select);
 
 		if ($sentenceType == 'wh-question') {
 			if (count($result == 1)) {
@@ -106,12 +96,12 @@ class DBPedia extends KnowledgeSource
 	public function answerQuestionAboutObject(Sentence $Sentence)
 	{
 //r($Sentence);exit;
-		$triples = array();
+		$clauses = array();
 		$select = '';
 		$sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $triples, $select, null);
+		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
 
-		$result = $this->query($triples, $select);
+		$result = $this->query($clauses, $select);
 
 		if ($sentenceType == 'wh-question') {
 			if (count($result == 1)) {
@@ -134,7 +124,7 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$triples, &$select, $parentId)
+	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$clauses, &$select, $parentId)
 	{
 		$subjectId = $Phrase->getHashCode();
 
@@ -158,8 +148,8 @@ class DBPedia extends KnowledgeSource
 
                     $select = '?name';
                     $arg2id = $Relation->getArgument2()->getHashCode();
-                    $triples[] = array('?' . $arg2id, 'rdfs:label', '?name');
-                    $triples[] = array('FILTER(lang(?name) = "en")');
+                    $clauses[] = "?{$arg2id} rdfs:label ?name";
+                    $clauses[] = 'FILTER(lang(?name) = "en")';
                 }
 			}
 		}
@@ -187,8 +177,8 @@ class DBPedia extends KnowledgeSource
 
 			if ($category == 'location') {
 				if ($Object->isQuestion()) {
-					$triples[] = array('?' . $Object->getHashCode(), 'rdfs:label', '?location');
-					$triples[] = array('FILTER(lang(?location) = "en")');
+					$clauses[] = "?{$Object->getHashCode()} rdfs:label ?location";
+					$clauses[] = 'FILTER(lang(?location) = "en")';
 					$select = '?location';
 				}
 			}
@@ -207,7 +197,8 @@ class DBPedia extends KnowledgeSource
        		$Entity = $Phrase;
 
             if ($name = $Entity->getName()) {
-	            $triples[] = $this->getNameTriple(ucwords($name), $subjectId);
+	            $ucName = ucwords($name);
+	            $clauses[] = "{ { ?{$subjectId} rdfs:label '$ucName'@en } UNION { ?{$subjectId} dbpprop:birthName '$ucName'@en } }";
             }
 
     		// http://dbpedia.org/property/children
@@ -215,7 +206,7 @@ class DBPedia extends KnowledgeSource
                 if ($Determiner = $Entity->getDeterminer()) {
                     if ($Object = $Determiner->getObject()) {
                         $objectId = $Object->getHashCode();
-                        $triples[] = array('?' . $objectId, '<http://dbpedia.org/property/children>', '?' . $subjectId);
+                        $clauses[] = "?{$objectId} <http://dbpedia.org/property/children> ?{$subjectId}";
                     }
                 }
             }
@@ -225,14 +216,11 @@ class DBPedia extends KnowledgeSource
 
 		        /** @var Preposition $Preposition */
 		        $Preposition = $Entity->getPreposition();
-
 		        $objectId = $Preposition->getObject()->getHashCode();
 
-		        $triples[] = array('?' . $objectId, '<http://dbpedia.org/ontology/author>', '?' . $subjectId);
+		        $clauses[] = "?{$objectId} <http://dbpedia.org/ontology/author> ?{$subjectId}";
 	        }
         }
-
-
 
 		// http://dbpedia.org/ontology/influencedBy
 		if ($Phrase instanceof Relation) {
@@ -247,7 +235,7 @@ class DBPedia extends KnowledgeSource
 				$arg1 = $Relation->getArgument1()->getHashCode();
 				$arg2 = $Relation->getArgument2()->getHashCode();
 
-				$triples[] = array('?' . $arg2, '<http://dbpedia.org/ontology/influencedBy>', '?' . $arg1);
+				$clauses[] = "?{$arg2} <http://dbpedia.org/ontology/influencedBy> ?{$arg1}";
 			}
 
 			// http://dbpedia.org/ontology/child (1)
@@ -256,7 +244,7 @@ class DBPedia extends KnowledgeSource
 				$arg2 = $Relation->getArgument2()->getHashCode();
 
 				if ($Relation->getArgument2()->getCategory() == 'child') {
-					$triples[] = array('?' . $arg1, '<http://dbpedia.org/ontology/child>', '?' . $arg2);
+					$clauses[] = "?{$arg1} <http://dbpedia.org/ontology/child> ?{$arg2}";
 				}
 			}
 
@@ -266,14 +254,14 @@ class DBPedia extends KnowledgeSource
 				if ($Preposition->getCategory() == 'location') {
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg2id = $Relation->getArgument2()->getHashCode();
-					$triples[] = array('?' . $arg2id, '<http://dbpedia.org/ontology/birthPlace>', '?' . $locationId);
-					$triples[] = array('_:place', 'dbpedia-owl:city', '?' . $locationId);
+					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthPlace> ?{$locationId}";
+					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
 				}
 
 				if ($Preposition->getCategory() == 'time') {
 					$timeId = $Preposition->getObject()->getHashCode();
 					$arg2id = $Relation->getArgument2()->getHashCode();
-					$triples[] = array('?' . $arg2id, '<http://dbpedia.org/ontology/birthDate>', '?' . $timeId);
+					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthDate> ?{$timeId}";
 				}
 
 			}
@@ -284,8 +272,8 @@ class DBPedia extends KnowledgeSource
 				if ($Preposition->getCategory() == 'location') {
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg1id = $Relation->getArgument1()->getHashCode();
-					$triples[] = array('?' . $arg1id, '<http://dbpedia.org/ontology/deathPlace>', '?' . $locationId);
-					$triples[] = array('_:place', 'dbpedia-owl:city', '?' . $locationId);
+					$clauses[] = "?{$arg1id} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";
+					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
 				}
 			}
 
@@ -298,7 +286,7 @@ class DBPedia extends KnowledgeSource
 				$parentId = $Object->getHashCode();
 
 				if ($Relation->getArgument2()->getCategory() == 'daughter') {
-					$triples[] = array('?' . $parentId, '<http://dbpedia.org/ontology/child>', '?' . $childId);
+					$clauses[] = "?{$parentId} <http://dbpedia.org/ontology/child> ?{$childId}";
 				}
 
 			}
@@ -310,35 +298,32 @@ class DBPedia extends KnowledgeSource
 				$person2 = $Preposition->getObject()->getHashCode();
 
 				// spouse: a symmetric relation
-				$triples[] = array("{ { ?{$person1} dbpprop:spouse ?{$person2} } UNION { ?{$person2} dbpprop:spouse ?{$person1} }}");
+				$clauses[] = "{ { ?{$person1} dbpprop:spouse ?{$person2} } UNION { ?{$person2} dbpprop:spouse ?{$person1} } }";
 			}
 		}
 
 		// interpret child elements
         foreach ($Phrase->getChildPhrases() as $ChildPhrase) {
-            $this->interpretPhrase($ChildPhrase, $sentenceType, $triples, $select, $subjectId);
+            $this->interpretPhrase($ChildPhrase, $sentenceType, $clauses, $select, $subjectId);
         }
 	}
 
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
 	 */
-	private function query($where, $select = '*')
+	private function query(array $where, $select = '*')
 	{
-		if (is_array($where)) {
-			$clauses = $where;
-			$triples = array();
-			foreach ($clauses as $clause) {
-				$triples[] = implode(' ', $clause);
-			}
-$triples = array_unique($triples);
-			$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $triples) . "\n}";
-		}
-
-		if (Settings::$debugKnowledge) r($query);
+		$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $where) . "\n}";
 
 //r($query);
 
+		$value = $this->queryDBPedia($query);
+
+		return $value;
+	}
+
+	private function  queryDBPedia($query)
+	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
 //r($result);
 		if ($result === false) {
@@ -360,11 +345,16 @@ $triples = array_unique($triples);
 				}
 			}
 		}
-//r($query);
-//r($result);
+	//r($query);
+	//r($result);
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
+
+			// single value
 			$value = $result['results']['bindings'][0]['callret-0']['value'];
+
 		} elseif (isset($result['results']['bindings'])) {
+
+			// a result set
 			$value = array();
 			foreach ($result['results']['bindings'] as $binding) {
 				$row = array();
