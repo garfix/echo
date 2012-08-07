@@ -282,6 +282,13 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('category' => 'that')))
 				),
 			),
+			'to' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'to'),
+					))
+				),
+			),
 			'was' => array(
 				'aux' => array(
 					'features' => array(

@@ -37,8 +37,9 @@ abstract class SimpleGrammar implements Grammar
 	{
 		// Sjaak
 		// Sjaak Zwart
+		// Kees Willem Zwart
 		// Sjaak (de|van|van de|van der) Zwart
-		$exp = '/^([A-Z][a-z]+)( (de |van |van de |van der )?[A-Z][a-z]+)?$/';
+		$exp = '/^([A-Z][a-z]+)( [A-Z][a-z]+)?( (de |van |van de |van der )?[A-Z][a-z]+)?$/';
 
 		return preg_match($exp, implode(' ', $words));
 	}

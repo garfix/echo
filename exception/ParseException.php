@@ -6,6 +6,8 @@ use \Exception;
 
 class ParseException extends EchoException
 {
+	const COULD_NOT_PARSE = 'Could not parse the part that starts with "%s"';
+
 	private $lexicalItems = null;
 	private $lastParsedIndex = null;
 
@@ -17,9 +19,6 @@ class ParseException extends EchoException
 
 	public function __toString()
 	{
-		return
-			'Could not parse the part that starts with "' .
-			implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)) .
-			'"';
+		return sprintf($this->getMessage(), implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)));
 	}
 }

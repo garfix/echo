@@ -20,17 +20,49 @@ class DBPedia extends KnowledgeSource
 
 	public function isProperNoun($identifier)
 	{
-		$triples = array(
-			array('?object', 'rdfs:label', "'$identifier'@en")
-		);
-		$select = 'COUNT(?object)';
-		$result = $this->query($triples, $select);
-		return $result;
+		$resources = $this->getResourcesByName($identifier);
+		return !empty($resources);
+	}
+
+	/**
+	 * Returns the URI's of all resources in DBPedia that can be identified by $name
+	 * as either a label or a birth name.
+	 *
+	 * @param $name
+	 * @return array
+	 */
+	private function getResourcesByName($name)
+	{
+		static $resources = array();
+
+		if (!isset($resources[$name])) {
+
+			$resources[$name] = array();
+
+			$triple = array('?object', 'rdfs:label', "'$name'@en");
+			$resources[$name] = array_merge($resources[$name], $this->querySingleColumn(array($triple), '?object'));
+
+			$triple = array('?object', 'dbpprop:birthName', "'$name'@en");
+			$resources[$name] = array_merge($resources[$name], $this->querySingleColumn(array($triple), '?object'));
+
+		}
+
+		return $resources[$name];
+	}
+
+	/**
+	 * Returns a SPARQL triple for a given proper name.
+	 * @param $name
+	 * @param $subjectId
+	 * @return array
+	 */
+	private function getNameTriple($name, $subjectId)
+	{
+		return array("FILTER(?{$subjectId} IN (<" . implode('>, <', $this->getResourcesByName($name)) . ">))");
 	}
 
     public function checkQuestion(Sentence $Sentence)
    	{
-//r($Sentence);
    		$triples = array();
    		$select = '';
         $sentenceType = $Sentence->getSentenceType();
@@ -180,7 +212,7 @@ class DBPedia extends KnowledgeSource
        		$Entity = $Phrase;
 
             if ($name = $Entity->getName()) {
-                $triples[] = array('?' . $subjectId, 'rdfs:label', "'" . ucwords($name) . "'@en");
+	            $triples[] = $this->getNameTriple(ucwords($name), $subjectId);
             }
 
     		// http://dbpedia.org/property/children
@@ -273,6 +305,15 @@ class DBPedia extends KnowledgeSource
 				}
 
 			}
+
+			// http://dbpedia/ontology/spouse
+			if ($predicate == 'marry') {
+				$person1 = $Relation->getArgument2()->getHashCode();
+				$Preposition = $Relation->getPreposition();
+				$person2 = $Preposition->getObject()->getHashCode();
+
+				$triples[] = array('?' . $person2, '<http://dbpedia.org/property/spouse>', '?' . $person1);
+			}
 		}
 
 		// interpret child elements
@@ -298,8 +339,10 @@ $triples = array_unique($triples);
 
 		if (Settings::$debugKnowledge) r($query);
 
-		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
+//r($query);
 
+		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
+//r($result);
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -351,10 +394,22 @@ $triples = array_unique($triples);
 		$result = $this->querySingleRow($query);
 		if ($result) {
 			$var = reset($result);
-			return $var['value'];
+			return is_array($var) ? $var['value'] : $var;
 		} else {
 			return null;
 		}
+	}
+
+	private function querySingleColumn($query)
+	{
+		$return = array();
+		$result = $this->query($query);
+		if ($result) {
+			foreach ($result as $row) {
+				$return[] = reset($row);
+			}
+		}
+		return $return;
 	}
 
 	private static function getVariableId()

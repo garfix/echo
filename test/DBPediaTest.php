@@ -19,8 +19,8 @@ class DBPediaTest extends TestBase
 	{
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia());
-		$Echo->addGrammar(new EnglishGrammar());
-		$Echo->addGrammar(new DutchGrammar());
+		$Echo->addGrammar($English = new EnglishGrammar());
+		$Echo->addGrammar($Dutch = new DutchGrammar());
 
 		$Conversation = $Echo->startConversation();
 
@@ -64,12 +64,14 @@ class DBPediaTest extends TestBase
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->test(352, $answer, "Ada Lovelace en Allegra Byron");
 
-		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabelle Milbanke?");
+
+		$Conversation->setCurrentGrammar($English);
+		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->test(361, $answer, "Yes.");
 
 		#todo: geef de foutmelding "word not found" in het nederlands.
 
-//		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabelle Milbanke?");
+//		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 //		$this->test(362, $answer, "Ja.");
 	}
 }
