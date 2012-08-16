@@ -26,9 +26,9 @@ class DBPediaTest extends TestBase
 
 		// S => aux NP VP ; DBPedia
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
-		$this->test(301, $answer, 'Yes. Lord Byron was influenced by the author of Paradise Lost.');
+		$this->test(301, $answer, 'Yes, Lord Byron was influenced by the author of Paradise Lost.');
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
-		$this->test(302, $answer, 'Yes. Lord Byron werd beïnvloed door de auteur van Paradise Lost.');
+		$this->test(302, $answer, 'Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.');
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
@@ -53,9 +53,9 @@ class DBPediaTest extends TestBase
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
-		$this->test(341, $answer, 'Yes.');
+		$this->test(341, $answer, 'Yes, Ada Lovelace was the daughter of Lord Byron.');
 		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
-		$this->test(342, $answer, 'Yes.');
+		$this->test(342, $answer, 'Ja, Ada Lovelace was een dochter van Lord Byron.');
 
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
@@ -64,15 +64,14 @@ class DBPediaTest extends TestBase
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->test(352, $answer, "Allegra Byron en Ada Lovelace");
 
-
-		$Conversation->setCurrentGrammar($English);
+		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
-		$this->test(361, $answer, "Yes.");
+		$this->test(361, $answer, "Yes, Lord Byron was married to Anne Isabella Milbanke.");
 
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
-		$this->test(362, $answer, "Yes.");
+		$this->test(362, $answer, "Yes, Anne Isabella Milbanke was married to Lord Byron.");
 
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
-		$this->test(363, $answer, "Yes.");
+		$this->test(363, $answer, "Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.");
 	}
 }

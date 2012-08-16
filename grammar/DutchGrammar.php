@@ -94,6 +94,15 @@ class DutchGrammar extends SimpleGrammar
 				'conjunction' => array(
 				),
 			),
+			'geboren' => array(
+				'verb' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'bear'),
+						)
+					),
+				)
+			),
 			'getrouwd' => array(
 				'verb' => array(
 					'features' => array(
@@ -110,15 +119,6 @@ class DutchGrammar extends SimpleGrammar
 							'sem' => array('predicate' => 'have', 'tense' => 'past'),
 						)
 					)
-				)
-			),
-			'geboren' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'bear'),
-						)
-					),
 				)
 			),
 			'het' => array(
@@ -138,6 +138,11 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'ik' => array(
 				'pronoun' => array('features' => array('person' => 1, 'number' => 'singular'))
+			),
+			'ja' => array(
+				'adverb' => array(
+					'features' => array('head' => array('sem' => array('category' => 'yes')))
+				),
 			),
 			'kinderen' => array(
 				'noun' => array(
@@ -179,6 +184,7 @@ class DutchGrammar extends SimpleGrammar
 				))),
 			),
 			'was' => array(
+//?
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
@@ -190,6 +196,14 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => 'be'),
+						)
+					),
+				),
+//?
+				'auxBe' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
 						)
 					),
 				),

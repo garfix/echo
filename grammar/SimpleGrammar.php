@@ -5,6 +5,7 @@ namespace agentecho\grammar;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\phrasestructure\Sentence;
+use \agentecho\exception\ProductionException;
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -155,6 +156,8 @@ abstract class SimpleGrammar implements Grammar
 			}
 		} elseif ($partOfSpeech == 'aux') {
 			$word = $this->getWord($partOfSpeech, $features);
+		} elseif ($partOfSpeech == 'auxBe') {
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
@@ -169,13 +172,14 @@ abstract class SimpleGrammar implements Grammar
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'verb') {
 			$word = $this->getWord($partOfSpeech, $features);
+		} elseif ($partOfSpeech == 'adverb') {
+			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'conjunction') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'punctuationMark') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} else {
-			$E = new GenerationException();
-			$E->setType(GenerationException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
+			$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
 			$E->setValue($partOfSpeech);
 			throw $E;
 		}
@@ -262,8 +266,7 @@ abstract class SimpleGrammar implements Grammar
 	public function getRuleForDAG($antecedent, LabeledDAG $FeatureDAG)
 	{
 		if (!isset($this->generationRules[$antecedent])) {
-			$E = new GenerationException();
-			$E->setType(GenerationException::TYPE_UNKNOWN_CONSTITUENT);
+			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
 			$E->setValue($antecedent);
 			throw $E;
 		}
@@ -530,14 +533,16 @@ abstract class SimpleGrammar implements Grammar
 
 		// merk op dat de sem juist niet gedeeld wordt met de head van de rule; ze worden juist gescheiden
 
-		// de 'rule's zijn nodig om te bepalen hoe de phrase specification verdeeld wordt over de syntactisch regel
+		// de 'rule'-attributen zijn nodig om te bepalen hoe de phrase specification verdeeld wordt over de syntactische regel
 
 		return array(
 			'S' => array(
+
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2')))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 						array('cat' => 'aux', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
 						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('predicate' => '?pred')))),
@@ -545,6 +550,22 @@ abstract class SimpleGrammar implements Grammar
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
 					)
 				),
+
+				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+					),
+				),
+
 				// John gives Mary flowers
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('arg3' => null))),
@@ -556,6 +577,20 @@ abstract class SimpleGrammar implements Grammar
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					),
 				),
+
+				// (yes, ) Ada Lovelace was the daughter of Lord Byron
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('predicate' => 'be'))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+					),
+				),
+
+				// John likes Mary
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
@@ -565,7 +600,37 @@ abstract class SimpleGrammar implements Grammar
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					),
 				),
+//als je ^ dit uitcommentarieert, doet het antwoord "Ja, A was de dochter van B het"
+
+
+
+				// 'yes' or 'no' answers
+				array(
+					'condition' => array('head' => array('relation' => array('modifier' => null))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('modifier' => '?modifier-1')))),
+						array('cat' => 'adverb', 'features' => array('head' => array('sem' => '?modifier-1'))),
+					)
+				),
 			),
+
+			'premodifier' => array(
+				// yes, ...
+				array(
+					'condition' => array('head' => array('sem' => null)),
+					'rule' => array(
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier'))),
+						array('cat' => 'adverb', 'features' => array('head' => array('sem' => '?modifier'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+					)
+				),
+				// null rule, needed to fill the empty optional clause
+				array(
+					'condition' => array(),
+					'rule' => array()
+				)
+			),
+
 			'NP' => array(
 				array(
 					'condition' => array('head' => array('sem' => array('category' => null, 'preposition' => null))),

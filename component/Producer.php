@@ -140,12 +140,12 @@ $words = $lexicalItems;
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
-//r($DAG);
+//r($DAG);exit;
 		$result = $Grammar->getRuleForDAG($antecedent, $DAG);
 		if ($result === false) {
 			return false;
 		}
-//r($result);
+//r($result);exit;
 		list ($rule, $UnifiedDAG) = $result;
 		$words = array();
 

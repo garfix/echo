@@ -67,5 +67,12 @@ class ParserTest extends TestBase
 		// S => NP VP NP NP
 		$Sentence = $Parser->parseFirstLine("John gives Mary flowers.");
 		$this->test(281, $Sentence->getObjectString(), 'Sentence {sentenceType: declarative, Relation: Relation {predicate: give, Arg1: Entity {name: John, number: singular}, Arg2: Entity {category: flower, number: singular}, Arg3: Entity {name: Mary, number: singular}, tense: present}, voice: active}');
+
+
+
+//		$Sentence = $Parser->parseFirstLine('Was Lord Byron getrouwd met Anne Isabella Milbanke?');
+//		$this->test(213, $Sentence->getObjectString(), 'Sentence {sentenceType: wh-question, Relation: Relation {predicate: have, Arg1: Entity {name: Lord Byron, number: singular}, Arg2: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}');
+
+
 	}
 }

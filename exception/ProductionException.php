@@ -4,10 +4,10 @@ namespace agentecho\exception;
 
 use \Exception;
 
-class GenerationException extends EchoException
+class ProductionException extends EchoException
 {
-	const TYPE_UNKNOWN_CONSTITUENT = 'Generation exception: unknown constituent: %s';
-	const TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH = 'Generation exception: could not find a word for the part-of-speech: %s';
+	const TYPE_UNKNOWN_CONSTITUENT = 'Production exception: unknown constituent: %s';
+	const TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH = 'Production exception: could not find a word for the part-of-speech: %s';
 
 	private $type = null;
 	private $values = array();

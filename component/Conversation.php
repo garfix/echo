@@ -82,13 +82,17 @@ class Conversation
 				if ($result) {
 					$answer = 'Yes.';
 
+					$Sentence->getRelation()->setModifier(Sentence::MODIFIER_YES);
+
+
+
 					$Producer = new Producer();
 
 					$Sentence->setSentenceType(Sentence::DECLARATIVE);
 					$s = $Producer->produce($Sentence, $this->CurrentGrammar);
 
 					if ($s) {
-						$answer .= ' ' . $s;
+						$answer = $s;
 					}
 
 				} else {

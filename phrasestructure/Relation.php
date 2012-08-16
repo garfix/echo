@@ -120,4 +120,14 @@ class Relation extends PhraseStructure
 	{
 		return $this->data['tense'];
 	}
+
+	public function setModifier($modifier)
+	{
+		$this->data['modifier'] = $modifier;
+	}
+
+	public function getModifier()
+	{
+		return $this->data['modifier'];
+	}
 }

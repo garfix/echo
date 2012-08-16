@@ -326,6 +326,11 @@ class EnglishGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
 				),
 			),
+			'yes' => array(
+				'adverb' => array(
+					'features' => array('head' => array('sem' => array('category' => 'yes')))
+				),
+			),
 		);
 	}
 

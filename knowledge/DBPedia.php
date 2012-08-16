@@ -325,7 +325,7 @@ class DBPedia extends KnowledgeSource
 	private function  queryDBPedia($query)
 	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
-//r($result);
+
 		if ($result === false) {
 
 			$url = 'http://dbpedia.org/sparql';
@@ -339,7 +339,6 @@ class DBPedia extends KnowledgeSource
 
 			if ($json !== false) {
 				$result = json_decode($json, true);
-
 				if (self::$cacheResults) {
 					$this->cacheResult($query, $result);
 				}

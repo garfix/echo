@@ -25,13 +25,16 @@ class Sentence extends PhraseStructure
 	const INTERROGATIVE_YES_NO = 'yes-no-question';
 	const EXCLAMATORY = 'exclamatory';
 
+	const MODIFIER_YES = 'yes';
+
 	const PASSIVE = 'passive';
 	const ACTIVE = 'active';
 
 	protected $data = array(
 		'sentenceType' => self::DECLARATIVE,
 		'Relation' => null,
-		'voice' => self::ACTIVE
+		'voice' => self::ACTIVE,
+		'modifier' => null,
 	);
 
 	/**
