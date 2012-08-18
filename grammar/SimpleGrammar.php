@@ -5,7 +5,6 @@ namespace agentecho\grammar;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\exception\ProductionException;
 
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
@@ -22,6 +21,11 @@ abstract class SimpleGrammar implements Grammar
 		$this->lexicon = $this->getLexicon();
 		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
+	}
+
+	public function getLexicon()
+	{
+		return $this->lexicon;
 	}
 
 	public function wordExists($word)
@@ -96,8 +100,8 @@ abstract class SimpleGrammar implements Grammar
 			'numeral',
 			'verb',
 			'propernoun',
-			'whword', // WH-word that may not be followed by an NP
-			'whwordNP', // WH-word that may be followed by an NP
+			'whword', // WH-word that may not be followed by an NP (e.g. who)
+			'whwordNP', // WH-word that may be followed by an NP (e.g. which, what)
 			'aux',
 			'auxBe', // am, are, is, ...
 			'auxDo', // do, does, did, ...
@@ -130,108 +134,6 @@ abstract class SimpleGrammar implements Grammar
 				)
 			);
 		}
-	}
-
-	/**
-	 * @param $partOfSpeech
-	 * @param array $features
-	 * @return bool|int|string
-	 * @throws \agentecho\exception\GenerationException
-	 */
-	public function getWordForFeatures($partOfSpeech, array $features)
-	{
-		$word = false;
-
-		if ($partOfSpeech == 'propernoun') {
-			if (isset($features['head']['sem']['name'])) {
-				$word = $features['head']['sem']['name'];
-			}
-		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['sem']['determiner']['category'])) {
-				$word = $features['head']['sem']['determiner']['category'];
-			} else {
-				$word = $this->getWord($partOfSpeech, $features);
-			}
-		} else {
-			$word = $this->getWord($partOfSpeech, $features);
-			if (!$word) {
-				$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
-				$E->setValue($partOfSpeech);
-				throw $E;
-			}
-		}
-
-		return $word;
-	}
-
-	/*
-	 * TODO: SLOW IMPLEMENTATION
-	 */
-	private function getWord($partOfSpeech, $features)
-	{
-		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
-		$tense = isset($features['head']['sem']['tense']) ? $features['head']['sem']['tense'] : null;
-		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
-		$category = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
-		$isa = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
-
-		foreach ($this->lexicon as $word => $data) {
-
-			// check if the word belongs to this part of speech
-			if (!isset($data[$partOfSpeech])) {
-				continue;
-			}
-
-			if ($isa) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $isa) {
-					continue;
-				}
-			}
-
-			if ($predicate) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['predicate'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['predicate'] != $predicate) {
-					continue;
-				}
-			}
-
-			if ($tense) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['tense'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['tense'] != $tense) {
-					continue;
-				}
-			}
-
-			if ($determiner) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $determiner['category']) {
-					continue;
-				}
-			}
-
-			if ($category) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $category) {
-					continue;
-				}
-			}
-
-			return $word;
-
-		}
-
-		return false;
 	}
 
 	public function getParseRules()
