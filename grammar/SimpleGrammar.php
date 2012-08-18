@@ -234,53 +234,6 @@ abstract class SimpleGrammar implements Grammar
 		return false;
 	}
 
-	/**
-	 * Returns the first rule that have $antecedent and that match $features.
-	 * @param $antecedent
-	 * @param LabeledDAG $FeatureDAG
-	 * @throws GenerationException
-	 */
-	public function getRuleForDAG($antecedent, LabeledDAG $FeatureDAG)
-	{
-		if (!isset($this->generationRules[$antecedent])) {
-			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
-			$E->setValue($antecedent);
-			throw $E;
-		}
-//r($FeatureDAG);
-		foreach ($this->generationRules[$antecedent] as $generationRule) {
-
-			$pattern = array($antecedent . '@0' => $generationRule['condition']);
-//r($pattern);
-			if ($FeatureDAG->match($pattern)) {
-//echo 'qq';
-//r($pattern);
-				$rawRule = $generationRule['rule'];
-				$Dag = self::createLabeledDag($rawRule);
-//r($Dag);
-				$UnifiedDag = $Dag->unify($FeatureDAG);
-//r($UnifiedDag);
-				if ($UnifiedDag) {
-					return array($rawRule, $UnifiedDag);
-				}
-			}
-		}
-//exit;
-		return false;
-	}
-
-	private static function createLabeledDag(array $rule)
-	{
-		$tree = array();
-		foreach ($rule as $index => $line) {
-			if (isset($line['features'])) {
-				$tree[$line['cat'] . '@' . $index] = $line['features'];
-			}
-		}
-
-		return new LabeledDAG($tree);
-	}
-
 	public function getParseRules()
 	{
 		// Find parse rules:
@@ -502,7 +455,7 @@ abstract class SimpleGrammar implements Grammar
 		);
 	}
 
-	protected function getGenerationRules()
+	public function getGenerationRules()
 	{
 		// de volgorde van deze regels wijkt waarschijnlijk af van de syntax regels hierboven;
 		// de volgorde van deze regels is namelijk die van meest restrictief naar minst restrictief

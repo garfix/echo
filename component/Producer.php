@@ -141,7 +141,7 @@ $words = $lexicalItems;
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
 //r($DAG);exit;
-		$result = $Grammar->getRuleForDAG($antecedent, $DAG);
+		$result = $this->getRuleForDAG($Grammar, $antecedent, $DAG);
 		if ($result === false) {
 			return false;
 		}
@@ -189,6 +189,60 @@ $words = $lexicalItems;
 		}
 
 		return $words;
+	}
+
+	/**
+	 * Returns the first rule that have $antecedent and that match $features.
+	 *
+	 * Actually it returns an array of two components:
+	 * 1) the 'rule' part of a generation rule
+	 * 2) a unification of $DAG and the DAG created by the 'rule' part of the generation rule
+	 *
+	 * @param $antecedent
+	 * @param LabeledDAG $DAG
+	 * @return bool|array
+	 */
+	private function getRuleForDAG(Grammar $Grammar, $antecedent, LabeledDAG $FeatureDAG)
+	{
+		$generationRules = $Grammar->getGenerationRules();
+
+		if (!isset($generationRules[$antecedent])) {
+			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
+			$E->setValue($antecedent);
+			throw $E;
+		}
+//r($FeatureDAG);
+		foreach ($generationRules[$antecedent] as $generationRule) {
+
+			$pattern = array($antecedent . '@0' => $generationRule['condition']);
+//r($pattern);
+			if ($FeatureDAG->match($pattern)) {
+//echo 'qq';
+//r($pattern);
+				$rawRule = $generationRule['rule'];
+				$Dag = self::createLabeledDag($rawRule);
+//r($Dag);
+				$UnifiedDag = $Dag->unify($FeatureDAG);
+//r($UnifiedDag);
+				if ($UnifiedDag) {
+					return array($rawRule, $UnifiedDag);
+				}
+			}
+		}
+//exit;
+		return false;
+	}
+
+	private static function createLabeledDag(array $rule)
+	{
+		$tree = array();
+		foreach ($rule as $index => $line) {
+			if (isset($line['features'])) {
+				$tree[$line['cat'] . '@' . $index] = $line['features'];
+			}
+		}
+
+		return new LabeledDAG($tree);
 	}
 
 	private function getSyntaxToken($phraseStructureClass)

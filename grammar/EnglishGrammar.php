@@ -383,7 +383,7 @@ class EnglishGrammar extends SimpleGrammar
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
 	}
 
-	protected function getGenerationRules()
+	public function getGenerationRules()
 	{
 		return parent::getGenerationRules() + array(
 

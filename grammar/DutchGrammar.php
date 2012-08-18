@@ -262,7 +262,7 @@ class DutchGrammar extends SimpleGrammar
 		return array($word);
 	}
 
-	protected function getGenerationRules()
+	public function getGenerationRules()
 	{
 		return parent::getGenerationRules() + array(
 

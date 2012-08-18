@@ -30,17 +30,10 @@ interface Grammar
 	public function getParseRules();
 
 	/**
-	 * Returns the first rule that have $antecedent and that match $features.
-	 *
-	 * Actually it returns an array of two components:
-	 * 1) the 'rule' part of a generation rule
-	 * 2) a unification of $DAG and the DAG created by the 'rule' part of the generation rule
-	 *
-	 * @param $antecedent
-	 * @param LabeledDAG $DAG
-	 * @return bool|array
+	 * Returns all grammar rules for generation.
+	 * @return array
 	 */
-	public function getRuleForDAG($antecedent, LabeledDAG $DAG);
+	public function getGenerationRules();
 
 	/**
 	 * Returns true if $word belongs to the $partOfSpeech category (like 'verb', 'noun').
