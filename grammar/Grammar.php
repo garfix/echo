@@ -2,9 +2,6 @@
 
 namespace agentecho\grammar;
 
-use \agentecho\datastructure\LabeledDAG;
-use \agentecho\datastructure\SentenceContext;
-
 /**
  * A grammar should describe the rules of a language.
  * It contains the smallest set of callbacks required to implement the language-specific elements of a language.

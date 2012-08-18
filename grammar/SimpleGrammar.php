@@ -2,10 +2,6 @@
 
 namespace agentecho\grammar;
 
-use \agentecho\datastructure\SentenceContext;
-use \agentecho\datastructure\LabeledDAG;
-use \agentecho\phrasestructure\Sentence;
-
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
  */
