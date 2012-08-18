@@ -24,10 +24,10 @@ interface Grammar
 	public function getLanguageCode();
 
 	/**
-	 * Returns all grammar rules with $antecedent as their antecedent.
+	 * Returns all grammar rules for parsing.
 	 * @return array
 	 */
-	public function getRulesForAntecedent($antecedent);
+	public function getParseRules();
 
 	/**
 	 * Returns the first rule that have $antecedent and that match $features.

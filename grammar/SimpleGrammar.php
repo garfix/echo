@@ -50,15 +50,6 @@ abstract class SimpleGrammar implements Grammar
 		return array($word);
 	}
 
-	public function getRulesForAntecedent($antecedent)
-	{
-		if (isset($this->parseRules[$antecedent])) {
-			return $this->parseRules[$antecedent];
-		} else {
-			return array();
-		}
-	}
-
 	/**
 	 * Returns true if $word belongs to the $partOfSpeech category.
 	 *
@@ -110,7 +101,7 @@ abstract class SimpleGrammar implements Grammar
 			'aux',
 			'auxBe', // am, are, is, ...
 			'auxDo', // do, does, did, ...
-			'auxPsv',
+			'auxPsv', // "was" made, "werd" gemaakt
 			'preposition',
 			'passivisationPreposition',
 			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
@@ -155,36 +146,19 @@ abstract class SimpleGrammar implements Grammar
 			if (isset($features['head']['sem']['name'])) {
 				$word = $features['head']['sem']['name'];
 			}
-		} elseif ($partOfSpeech == 'aux') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'auxBe') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'auxPsv') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'passivisationPreposition') {
-			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'determiner') {
 			if (is_numeric($features['head']['sem']['determiner']['category'])) {
 				$word = $features['head']['sem']['determiner']['category'];
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}
-		} elseif ($partOfSpeech == 'noun') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'preposition') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'verb') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'adverb') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'conjunction') {
-			$word = $this->getWord($partOfSpeech, $features);
-		} elseif ($partOfSpeech == 'punctuationMark') {
-			$word = $this->getWord($partOfSpeech, $features);
 		} else {
-			$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
-			$E->setValue($partOfSpeech);
-			throw $E;
+			$word = $this->getWord($partOfSpeech, $features);
+			if (!$word) {
+				$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
+				$E->setValue($partOfSpeech);
+				throw $E;
+			}
 		}
 
 		return $word;
@@ -307,7 +281,7 @@ abstract class SimpleGrammar implements Grammar
 		return new LabeledDAG($tree);
 	}
 
-	protected function getParseRules()
+	public function getParseRules()
 	{
 		// Find parse rules:
 		//

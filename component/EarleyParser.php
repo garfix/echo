@@ -184,7 +184,7 @@ class EarleyParser
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
-		foreach ($this->Grammar->getRulesForAntecedent($nextConsequent) as $newRule) {
+		foreach ($this->getRulesForAntecedent($nextConsequent) as $newRule) {
 
 			$predictedState = array(
 				'rule' => $newRule,
@@ -194,6 +194,16 @@ class EarleyParser
 				'dag' => self::createLabeledDag($newRule),
 			);
 			$this->enqueue($predictedState, $endWordIndex);
+		}
+	}
+
+	public function getRulesForAntecedent($antecedent)
+	{
+		$parseRules = $this->Grammar->getParseRules();
+		if (isset($parseRules[$antecedent])) {
+			return $parseRules[$antecedent];
+		} else {
+			return array();
 		}
 	}
 
