@@ -81,9 +81,9 @@ class Entity extends PhraseStructure implements EntityStructure
 	/**
 	 * Mark this determiner as an unknown that needs to be resolved (a question).
 	 */
-	public function setQuestion()
+	public function setQuestion($isQuestion = true)
 	{
-		$this->data['question'] = true;
+		$this->data['question'] = $isQuestion;
 	}
 
 	public function isQuestion()

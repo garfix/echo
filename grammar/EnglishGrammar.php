@@ -222,6 +222,13 @@ class EnglishGrammar extends SimpleGrammar
 					)
 				),
 			),
+			'in' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'in'),
+					))
+				),
+			),
 			'influenced' => array(
 				'verb' => array(
 					'features' => array(
@@ -298,6 +305,13 @@ class EnglishGrammar extends SimpleGrammar
 					),
 				),
 				'auxBe' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						)
+					),
+				),
+				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => 'be', 'tense' => 'past'),

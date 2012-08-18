@@ -70,8 +70,8 @@ class ParserTest extends TestBase
 
 
 
-//		$Sentence = $Parser->parseFirstLine('Was Lord Byron getrouwd met Anne Isabella Milbanke?');
-//		$this->test(213, $Sentence->getObjectString(), 'Sentence {sentenceType: wh-question, Relation: Relation {predicate: have, Arg1: Entity {name: Lord Byron, number: singular}, Arg2: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}');
+//		$Sentence = $Parser->parseFirstLine('Where was Lord Byron born?');
+//		$this->test(213, $Sentence->getObjectString(), 0);
 
 
 	}

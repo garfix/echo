@@ -1,0 +1,14 @@
+SimpleNLG
+http://code.google.com/p/simplenlg/
+- Java
+- object oriented language generation
+- owner: Ehud Reiter (van: Building Natural Language Generation Systems)
+- NB: je kunt ook gewoon stukjes zin aan de object structuur toevoegen
+
+NLTK
+http://code.google.com/p/nltk/
+- Python
+- semantics
+- doc: https://sites.google.com/site/naturallanguagetoolkit/book
+
+

@@ -84,8 +84,6 @@ class Conversation
 
 					$Sentence->getRelation()->setModifier(Sentence::MODIFIER_YES);
 
-
-
 					$Producer = new Producer();
 
 					$Sentence->setSentenceType(Sentence::DECLARATIVE);
@@ -109,6 +107,10 @@ class Conversation
 					#todo: this should be made more generic
 //r($Sentence);
 					if ($Relation = $Sentence->getRelation()) {
+
+						$found = false;
+
+						// how many?
 						if ($Argument2 = $Relation->getArgument2()) {
 							if ($Determiner = $Argument2->getDeterminer()) {
 								if ($Determiner->isQuestion()) {
@@ -116,14 +118,52 @@ class Conversation
 									$Determiner->setQuestion(false);
 									$Determiner->setCategory($answer);
 
-									$Producer = new Producer();
-									$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
-									if ($sentence) {
-										$answer = $sentence;
+									$found = true;
+								}
+							}
+						}
+
+						// where?
+						if (!$found) {
+							if ($Preposition = $Relation->getPreposition()) {
+								if ($Object = $Preposition->getObject()) {
+									if ($Object->isQuestion()) {
+										if ($Preposition->getCategory() == 'location') {
+											$Sentence->setSentenceType(Sentence::DECLARATIVE);
+											$Preposition->setCategory('in');
+											$Object->setName($answer);
+											$Object->setQuestion(false);
+
+											$found = true;
+										}
 									}
 								}
 							}
 						}
+
+						if ($found) {
+							$Producer = new Producer();
+							$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
+							if ($sentence) {
+								$answer = $sentence;
+							}
+						}
+
+//						if ($Argument1 = $Relation->getArgument1()) {
+//							if ($Determiner = $Argument1->getDeterminer()) {
+//								if ($Determiner->isQuestion()) {
+//									$Sentence->setSentenceType(Sentence::DECLARATIVE);
+//									$Determiner->setQuestion(false);
+//									$Determiner->setCategory($answer);
+//
+//									$Producer = new Producer();
+//									$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
+//									if ($sentence) {
+//										$answer = $sentence;
+//									}
+//								}
+//							}
+//						}
 					}
 
 				}

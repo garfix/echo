@@ -139,6 +139,13 @@ class DutchGrammar extends SimpleGrammar
 			'ik' => array(
 				'pronoun' => array('features' => array('person' => 1, 'number' => 'singular'))
 			),
+			'in' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'in'),
+					))
+				),
+			),
 			'ja' => array(
 				'adverb' => array(
 					'features' => array('head' => array('sem' => array('category' => 'yes')))
@@ -184,14 +191,6 @@ class DutchGrammar extends SimpleGrammar
 				))),
 			),
 			'was' => array(
-//?
-				'auxPsv' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'be'),
-						)
-					),
-				),
 				'aux' => array(
 					'features' => array(
 						'head' => array(
@@ -199,7 +198,6 @@ class DutchGrammar extends SimpleGrammar
 						)
 					),
 				),
-//?
 				'auxBe' => array(
 					'features' => array(
 						'head' => array(
@@ -216,7 +214,14 @@ class DutchGrammar extends SimpleGrammar
 						)
 					),
 				),
-				'auxBe' => array(
+//				'auxBe' => array(
+//					'features' => array(
+//						'head' => array(
+//							'sem' => array('predicate' => 'be', 'tense' => 'past'),
+//						)
+//					),
+//				),
+				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
 							'sem' => array('predicate' => 'be', 'tense' => 'past'),

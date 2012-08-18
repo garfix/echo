@@ -110,6 +110,7 @@ abstract class SimpleGrammar implements Grammar
 			'aux',
 			'auxBe', // am, are, is, ...
 			'auxDo', // do, does, did, ...
+			'auxPsv',
 			'preposition',
 			'passivisationPreposition',
 			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
@@ -157,6 +158,8 @@ abstract class SimpleGrammar implements Grammar
 		} elseif ($partOfSpeech == 'aux') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'auxBe') {
+			$word = $this->getWord($partOfSpeech, $features);
+		} elseif ($partOfSpeech == 'auxPsv') {
 			$word = $this->getWord($partOfSpeech, $features);
 		} elseif ($partOfSpeech == 'passivisationPreposition') {
 			$word = $this->getWord($partOfSpeech, $features);
@@ -377,9 +380,9 @@ abstract class SimpleGrammar implements Grammar
 				// Where was John born?
 				// NP delivers arg2
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'relation' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'auxBe', 'features' => array('head' => array('agreement' => '?agr'))),
+					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg2' => '?sem-2')))),
 				),
@@ -538,6 +541,24 @@ abstract class SimpleGrammar implements Grammar
 		return array(
 			'S' => array(
 
+				// passive declarative sentence with a preposition
+				// (yes, ) Lord Byron was born in London
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => array('preposition' => null, 'arg2' => null))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+							'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+					),
+				),
+
+				// passive declarative sentence
+				// (yes, ) Lord Byron was influenced by John Milton
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
@@ -551,9 +572,10 @@ abstract class SimpleGrammar implements Grammar
 					)
 				),
 
+				// active declarative past-tense sentence with a preposition
 				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg1' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
 							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
@@ -566,6 +588,23 @@ abstract class SimpleGrammar implements Grammar
 					),
 				),
 
+				// active declarative sentence with a preposition
+				// Lord Byron was born in London
+				array(
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg2' => null))),
+					'rule' => array(
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+							'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+					),
+				),
+
+				// active declarative sentence with third argument
 				// John gives Mary flowers
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('arg3' => null))),
@@ -578,6 +617,7 @@ abstract class SimpleGrammar implements Grammar
 					),
 				),
 
+				// active declarative sentence with 'be' as verb
 				// (yes, ) Ada Lovelace was the daughter of Lord Byron
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('predicate' => 'be'))),
@@ -590,6 +630,7 @@ abstract class SimpleGrammar implements Grammar
 					),
 				),
 
+				// simple active declarative sentence
 				// John likes Mary
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),

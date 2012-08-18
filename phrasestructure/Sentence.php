@@ -32,9 +32,9 @@ class Sentence extends PhraseStructure
 
 	protected $data = array(
 		'sentenceType' => self::DECLARATIVE,
+#todo: draai deze om:
 		'Relation' => null,
 		'voice' => self::ACTIVE,
-		'modifier' => null,
 	);
 
 	/**

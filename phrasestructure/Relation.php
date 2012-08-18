@@ -4,6 +4,7 @@ namespace agentecho\phrasestructure;
 
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Entity;
+use \agentecho\phrasestructure\Preposition;
 
 /**
  * A relation forms the major structure of the sentence.
@@ -31,7 +32,8 @@ class Relation extends PhraseStructure
 		'Arg2' => null,
 		'Arg3' => null,
 		'Preposition' => null,
-		'tense' => self::PRESENT
+		'tense' => self::PRESENT,
+		'modifier' => null,
 	);
 
 	public function setPredicate($predicate)
@@ -106,7 +108,10 @@ class Relation extends PhraseStructure
 		$this->data['Preposition'] = $Preposition;
 	}
 
-    public function getPreposition()
+	/**
+	 * @return Preposition
+	 */
+	public function getPreposition()
     {
         return $this->data['Preposition'];
     }

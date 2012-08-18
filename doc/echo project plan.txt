@@ -1,0 +1,44 @@
+Doel
+=================================
+
+Het doel van project Echo is een open source PHP library (in GitHub, of gelijkwaardig), met de volgende eigenschappen:
+
+1. Natuurlijke taal verstaan - NLU
+
+- Deze functie zet een stuk tekst in natuurlijke taal om in een phrase structure
+
+2. Natuurlijke taal productie - NLP
+
+- Deze functie zet een phrase structure om in natuurlijke taal
+
+3. Beantwoorden
+
+- Deze functie leest een vraag van de gebruiker in en beantwoord hem naar het beste van zijn kunnen
+- De functie heeft een context waarin objecten leven die in het gesprek een rol spelen
+- De functie maakt gebruik van de context en de beschikbare lange termijn geheugens
+
+4. Facilitatie van koppelingen met externe databases
+
+- Door het implementeren van een enkele interface kan een koppeling worden gemaakt met een nieuwe database
+- Deze koppeling vormt een lange termijn geheugen
+
+5. Een uitbreidbaar lexicon en grammatica
+
+- NLU en NLP maken gebruik van dezelfde lexicon en grammatica
+- Standaard worden twee grammatica's meegeleverd: nederlands en engels
+- Door het implementeren van een interface kan een nieuwe lexicon / grammatica combinatie worden toegevoegd, die een extensie kan zijn van een bestaand lexicon / grammatica
+- Standaard is er een koppeling met DBPedia
+
+6. Documentatie
+
+- De documentatie legt de gebruiker stap-voor-stap uit wat hij moet doen om te werken met de standaard oplossing
+- Er wordt ook in detail uitgelegd hoe de interfaces gemaakt moeten worden
+
+Uitgangspunten
+=======================================
+
+De oplossing moet hier aan voldoen:
+
+- Gemakkelijk in het gebruik. Dat is het belangrijkste. Als dat niet lukt heeft het geen zin, want dan gaat niemand het gebruiken.
+- De oplossing moet voldoende uitgewerkt zijn dat een behoorlijke reeks aan veelvoorkomende vragen moeiteloos gesteld kan worden.
+
