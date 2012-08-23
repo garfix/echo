@@ -51,6 +51,14 @@ interface Grammar
 	public function isPartOfSpeech($constituent);
 
 	/**
+	 * Returns a word that matches the specified features.
+	 * @param $partOfSpeech
+	 * @param array $features
+	 * @return string|false
+	 */
+	public function getWordForFeatures($partOfSpeech, array $features);
+
+	/**
 	 * Returns the features of a word (a tree).
 	 * @return array
 	 */
@@ -77,4 +85,11 @@ interface Grammar
 	 * @return array
 	 */
 	public function unglue($word);
+
+	/**
+	 * Formats a date and / or time into a grammatically correct phrase.
+	 * @param $time
+	 * @return mixed
+	 */
+	public function formatTime($time);
 }

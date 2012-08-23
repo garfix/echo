@@ -8,7 +8,6 @@ use \agentecho\phrasestructure\Sentence;
 use \agentecho\datastructure\SentenceContext;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\grammar\Grammar;
-use \agentecho\exception\ProductionException;
 
 /**
  * This class creates turns a phrase structure into surface text.
@@ -100,6 +99,7 @@ $words = $lexicalItems;
 		$structure['type'] = strtolower(basename(str_replace('\\', '/', get_class($PhraseStructure))));
 
 		foreach ($PhraseStructure->getAttributes() as $name => $value) {
+#todo: their should be no need to lowercase
 			if ($value instanceof PhraseStructure) {
 				$structure[strtolower($name)] = $this->buildPhraseStructure($value);
 			} else {
@@ -141,12 +141,11 @@ $words = $lexicalItems;
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
 	{
-//r($DAG);exit;
 		$result = $this->getRuleForDAG($Grammar, $antecedent, $DAG);
 		if ($result === false) {
 			return false;
 		}
-//r($result);exit;
+
 		list ($rule, $UnifiedDAG) = $result;
 		$words = array();
 
@@ -166,7 +165,7 @@ $words = $lexicalItems;
 					$value = array();
 				}
 
-				$word = $this->getWordForFeatures($Grammar, $consequent, $value);
+				$word = $Grammar->getWordForFeatures($consequent, $value);
 				if ($word === false) {
 					return false;
 				}
@@ -190,110 +189,6 @@ $words = $lexicalItems;
 		}
 
 		return $words;
-	}
-
-	/**
-	 * @param $partOfSpeech
-	 * @param array $features
-	 * @return bool|int|string
-	 * @throws \agentecho\exception\ProductionException
-	 */
-	public function getWordForFeatures(Grammar $Grammar, $partOfSpeech, array $features)
-	{
-		$word = false;
-
-		if ($partOfSpeech == 'propernoun') {
-			if (isset($features['head']['sem']['name'])) {
-				$word = $features['head']['sem']['name'];
-			}
-		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['sem']['determiner']['category'])) {
-				$word = $features['head']['sem']['determiner']['category'];
-			} else {
-				$word = $this->getWord($Grammar, $partOfSpeech, $features);
-			}
-		} else {
-			$word = $this->getWord($Grammar, $partOfSpeech, $features);
-			if (!$word) {
-				$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
-				$E->setValue($partOfSpeech);
-				throw $E;
-			}
-		}
-
-		return $word;
-	}
-
-	/*
-	 * TODO: SLOW IMPLEMENTATION
-	 */
-	private function getWord(Grammar $Grammar, $partOfSpeech, $features)
-	{
-		$lexicon = $Grammar->getLexicon();
-
-		$predicate = isset($features['head']['sem']['predicate']) ? $features['head']['sem']['predicate'] : null;
-		$tense = isset($features['head']['sem']['tense']) ? $features['head']['sem']['tense'] : null;
-		$determiner = isset($features['head']['sem']['determiner']) ? $features['head']['sem']['determiner'] : null;
-		$category = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
-		$isa = isset($features['head']['sem']['category']) ? $features['head']['sem']['category'] : null;
-
-		foreach ($lexicon as $word => $data) {
-
-			// check if the word belongs to this part of speech
-			if (!isset($data[$partOfSpeech])) {
-				continue;
-			}
-
-			if ($isa) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $isa) {
-					continue;
-				}
-			}
-
-			if ($predicate) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['predicate'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['predicate'] != $predicate) {
-					continue;
-				}
-			}
-
-			if ($tense) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['tense'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['tense'] != $tense) {
-					continue;
-				}
-			}
-
-			if ($determiner) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $determiner['category']) {
-					continue;
-				}
-			}
-
-			if ($category) {
-				if (!isset($data[$partOfSpeech]['features']['head']['sem']['category'])) {
-					continue;
-				}
-				if ($data[$partOfSpeech]['features']['head']['sem']['category'] != $category) {
-					continue;
-				}
-			}
-
-			return $word;
-
-		}
-
-		return false;
 	}
 
 	/**
@@ -322,8 +217,7 @@ $words = $lexicalItems;
 			$pattern = array($antecedent . '@0' => $generationRule['condition']);
 //r($pattern);
 			if ($FeatureDAG->match($pattern)) {
-//echo 'qq';
-//r($pattern);
+
 				$rawRule = $generationRule['rule'];
 				$Dag = self::createLabeledDag($rawRule);
 //r($Dag);

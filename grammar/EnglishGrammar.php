@@ -239,6 +239,23 @@ class EnglishGrammar extends SimpleGrammar
 					),
 				)
 			),
+			'january' => array(
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('category' => 'january'),
+						),
+						'monthIndex' => 1
+					)
+				),
+			),
+			'on' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'on'),
+					))
+				),
+			),
 			'many' => array(
 				'determiner' => array(
 					'features' => array('head' => array('sem' => array('category' => 'many')))

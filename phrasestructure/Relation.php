@@ -33,7 +33,7 @@ class Relation extends PhraseStructure
 		'Arg3' => null,
 		'Preposition' => null,
 		'tense' => self::PRESENT,
-		'modifier' => null,
+		'Adverb' => null,
 	);
 
 	public function setPredicate($predicate)
@@ -126,13 +126,13 @@ class Relation extends PhraseStructure
 		return $this->data['tense'];
 	}
 
-	public function setModifier($modifier)
+	public function setAdverb(Adverb $Adverb)
 	{
-		$this->data['modifier'] = $modifier;
+		$this->data['Adverb'] = $Adverb;
 	}
 
-	public function getModifier()
+	public function getAdverb()
 	{
-		return $this->data['modifier'];
+		return $this->data['Adverb'];
 	}
 }

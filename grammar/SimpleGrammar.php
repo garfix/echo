@@ -5,30 +5,8 @@ namespace agentecho\grammar;
 /**
  * I've called this common denomenator of the English and Dutch grammars 'Simple' for no special reason.
  */
-abstract class SimpleGrammar implements Grammar
+abstract class SimpleGrammar extends BaseGrammar
 {
-	protected $parseRules = null;
-	protected $generationRules = null;
-	protected $lexicon = null;
-
-	public function __construct()
-	{
-		// structure
-		$this->lexicon = $this->getLexicon();
-		$this->parseRules = $this->getParseRules();
-		$this->generationRules = $this->getGenerationRules();
-	}
-
-	public function getLexicon()
-	{
-		return $this->lexicon;
-	}
-
-	public function wordExists($word)
-	{
-		return isset($this->lexicon[$word]);
-	}
-
 	/**
 	 * Returns true if $words for a proper noun.
 	 * @param $words
@@ -78,57 +56,20 @@ abstract class SimpleGrammar implements Grammar
 		return $result;
 	}
 
-	/**
-	 * Returns true if the given syntactic category is a non-abstract part-of-speech.
-	 *
-	 * @param string $category
-	 * @return bool
-	 */
-	public function isPartOfSpeech($category)
+	public function formatTime($time)
 	{
-		return in_array($category, array(
-			'adjective',
-			'adverb',
-			'conjunction',
-			'determiner',
-			'noun',
-			'pronoun',
-			'numeral',
-			'verb',
-			'propernoun',
-			'whword', // WH-word that may not be followed by an NP (e.g. who)
-			'whwordNP', // WH-word that may be followed by an NP (e.g. which, what)
-			'aux',
-			'auxBe', // am, are, is, ...
-			'auxDo', // do, does, did, ...
-			'auxPsv', // "was" made, "werd" gemaakt
-			'preposition',
-			'passivisationPreposition',
-			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
-			'punctuationMark',
-		));
-	}
+		if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $time, $matches)) {
+			$year = $matches[1];
+			$month = (int)$matches[2];
+			$day = (int)$matches[3];
 
-	/**
-	 * Returns the features for a word.
-	 * @return array
-	 */
-	public function getFeaturesForWord($word, $partOfSpeech)
-	{
-		if (isset($this->lexicon[$word][$partOfSpeech])) {
-			if (isset($this->lexicon[$word][$partOfSpeech]['features'])) {
-				return $this->lexicon[$word][$partOfSpeech]['features'];
-			} else {
-				return array();
-			}
-		} else {
-			// presume proper noun
-			return array(
-				'head' => array(
-					'agreement' => array('number' => 'singular', 'person' => 1),
-					'sem' => array('name' => $word)
-				)
+			$monthWord = $this->getWordForFeatures('noun',
+				array('monthIndex' => $month)
 			);
+
+			return $day . ' ' . $monthWord . ' ' . $year;
+		} else {
+			return $time;
 		}
 	}
 
@@ -372,10 +313,10 @@ abstract class SimpleGrammar implements Grammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => array('preposition' => null, 'arg2' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
-							'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+							'arg2' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
@@ -387,10 +328,10 @@ abstract class SimpleGrammar implements Grammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null)))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'adverb-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
-						array('cat' => 'aux', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
 						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
@@ -403,8 +344,8 @@ abstract class SimpleGrammar implements Grammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg1' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
-							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
@@ -419,8 +360,8 @@ abstract class SimpleGrammar implements Grammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg2' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
-							'arg2' => '?sem-2', 'modifier-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+							'arg2' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
 						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
@@ -447,8 +388,8 @@ abstract class SimpleGrammar implements Grammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('predicate' => 'be'))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'modifier-1' => null)))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'arg1' => '?sem-1', 'arg2' => '?sem-2', 'adverb-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
@@ -466,9 +407,6 @@ abstract class SimpleGrammar implements Grammar
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					),
 				),
-//als je ^ dit uitcommentarieert, doet het antwoord "Ja, A was de dochter van B het"
-
-
 
 				// 'yes' or 'no' answers
 				array(
@@ -485,8 +423,8 @@ abstract class SimpleGrammar implements Grammar
 				array(
 					'condition' => array('head' => array('sem' => null)),
 					'rule' => array(
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?modifier'))),
-						array('cat' => 'adverb', 'features' => array('head' => array('sem' => '?modifier'))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+						array('cat' => 'adverb', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
 					)
 				),
@@ -509,8 +447,8 @@ abstract class SimpleGrammar implements Grammar
 				array(
 					'condition' => array('head' =>array('sem' =>  array('category' => null, 'determiner' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => '?det')))),
-						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('determiner' => '?det')))),
+						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => array('category' => '?det'))))),
+						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('category' => '?det')))),
 						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 					)
 				),

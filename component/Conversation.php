@@ -9,6 +9,7 @@ use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\Entity;
+use \agentecho\phrasestructure\Adverb;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -82,7 +83,9 @@ class Conversation
 				if ($result) {
 					$answer = 'Yes.';
 
-					$Sentence->getRelation()->setModifier(Sentence::MODIFIER_YES);
+					$Adverb = new Adverb();
+					$Adverb->setCategory('yes');
+					$Sentence->getRelation()->setAdverb($Adverb);
 
 					$Producer = new Producer();
 
@@ -123,7 +126,7 @@ class Conversation
 							}
 						}
 
-						// where?
+						// when / where?
 						if (!$found) {
 							if ($Preposition = $Relation->getPreposition()) {
 								if ($Object = $Preposition->getObject()) {
@@ -132,6 +135,15 @@ class Conversation
 											$Sentence->setSentenceType(Sentence::DECLARATIVE);
 											$Preposition->setCategory('in');
 											$Object->setName($answer);
+											$Object->setQuestion(false);
+
+											$found = true;
+										}
+										if ($Preposition->getCategory() == 'time') {
+											$Sentence->setSentenceType(Sentence::DECLARATIVE);
+											$Preposition->setCategory('on');
+											$time = $this->CurrentGrammar->formatTime($answer);
+											$Object->setName($time);
 											$Object->setQuestion(false);
 
 											$found = true;
@@ -149,21 +161,6 @@ class Conversation
 							}
 						}
 
-//						if ($Argument1 = $Relation->getArgument1()) {
-//							if ($Determiner = $Argument1->getDeterminer()) {
-//								if ($Determiner->isQuestion()) {
-//									$Sentence->setSentenceType(Sentence::DECLARATIVE);
-//									$Determiner->setQuestion(false);
-//									$Determiner->setCategory($answer);
-//
-//									$Producer = new Producer();
-//									$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
-//									if ($sentence) {
-//										$answer = $sentence;
-//									}
-//								}
-//							}
-//						}
 					}
 
 				}

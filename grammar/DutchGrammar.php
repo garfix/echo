@@ -151,6 +151,16 @@ class DutchGrammar extends SimpleGrammar
 					'features' => array('head' => array('sem' => array('category' => 'yes')))
 				),
 			),
+			'januari' => array(
+				'noun' => array(
+					'features' => array(
+						'head' => array(
+							'sem' => array('category' => 'january'),
+						),
+						'monthIndex' => 1
+					)
+				),
+			),
 			'kinderen' => array(
 				'noun' => array(
 					'features' => array(
@@ -176,6 +186,13 @@ class DutchGrammar extends SimpleGrammar
 						)
 					)
 				)
+			),
+			'op' => array(
+				'preposition' => array(
+					'features' => array('head' => array(
+						'sem' => array('category' => 'on'),
+					))
+				),
 			),
 			'van' => array(
 				'preposition' => array(
@@ -214,13 +231,6 @@ class DutchGrammar extends SimpleGrammar
 						)
 					),
 				),
-//				'auxBe' => array(
-//					'features' => array(
-//						'head' => array(
-//							'sem' => array('predicate' => 'be', 'tense' => 'past'),
-//						)
-//					),
-//				),
 				'auxPsv' => array(
 					'features' => array(
 						'head' => array(
