@@ -127,6 +127,12 @@ abstract class BaseGrammar implements Grammar
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}
+		} elseif ($partOfSpeech == 'numeral') {
+			if (is_numeric($features['head']['sem']['value'])) {
+				$word = $features['head']['sem']['value'];
+			} else {
+				$word = $this->getWord($partOfSpeech, $features);
+			}
 		} else {
 			$word = $this->getWord($partOfSpeech, $features);
 			if (!$word) {

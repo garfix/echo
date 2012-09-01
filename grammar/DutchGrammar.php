@@ -19,7 +19,10 @@ class DutchGrammar extends SimpleGrammar
 		return array(
 			',' => array(
 				'punctuationMark' => array(
-					'features' => array('head' => array('sem' => array('category' => 'comma')))
+					'features' => array(
+						'head' => array('sem' => array('category' => 'comma')),
+						'space' => 'after_only'
+					)
 				)
 			),
 			'\'s' => array(
@@ -155,9 +158,8 @@ class DutchGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('category' => 'january'),
+							'sem' => array('category' => 'january', 'monthIndex' => 1),
 						),
-						'monthIndex' => 1
 					)
 				),
 			),
@@ -274,7 +276,9 @@ class DutchGrammar extends SimpleGrammar
 
 	public function getGenerationRules()
 	{
-		return parent::getGenerationRules() + array(
+		$rules = parent::getGenerationRules();
+
+		$rules += array(
 
 			'CP' => array(
 				// CP, NP ; non-toplevel conjunction with conjunction at the left hand
@@ -319,5 +323,20 @@ class DutchGrammar extends SimpleGrammar
 				),
 			),
 		);
+
+		$rules['NP'][] =
+
+			// 11 augustus 1979
+			array(
+				'condition' => array('head' => array('sem' => array('year' => null))),
+				'rule' => array(
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?day')))),
+					array('cat' => 'noun', 'features' => array('head' => array('sem' => array('monthIndex' => '?month')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?year')))),
+				)
+			);
+
+		return $rules;
 	}
 }

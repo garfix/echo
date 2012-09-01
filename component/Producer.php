@@ -44,7 +44,7 @@ class Producer
 	public function generate(SentenceContext $SentenceContext, Grammar $Grammar)
 	{
 		// turn the intention of the sentence into a syntactic structure
-		$lexicalItems = $this->plan($SentenceContext->getPhraseSpecification(), $Grammar);
+		list($lexicalItems, $partsOfSpeech) = $this->plan($SentenceContext->getPhraseSpecification(), $Grammar);
 		if (!$lexicalItems) {
 			return false;
 		}
@@ -55,15 +55,18 @@ class Producer
 $words = $lexicalItems;
 
         $SentenceContext->words = $words;
+		$SentenceContext->partsOfSpeech = $partsOfSpeech;
 
-        $SentenceContext->surfaceText = $this->createSurfaceText($SentenceContext);
+        $SentenceContext->surfaceText = $this->createSurfaceText($SentenceContext, $Grammar);
 
 		return $SentenceContext->surfaceText;
 	}
 
-	private function createSurfaceText(SentenceContext $SentenceContext)
+	private function createSurfaceText(SentenceContext $SentenceContext, Grammar $Grammar)
 	{
 		$words = $SentenceContext->words;
+		$partsOfSpeech = $SentenceContext->partsOfSpeech;
+		$lexicon = $Grammar->getLexicon();;
 
 		$words[0] = ucfirst($words[0]);
 
@@ -71,13 +74,29 @@ $words = $lexicalItems;
 
 		// add all words and preceed each one with a space,
 		// except the first word, and comma's
+		$i = 0;
 		foreach ($words as $index => $word) {
+
+			$partOfSpeech = $partsOfSpeech[$i];
+
 			if ($index > 0) {
-				if ($word != ',') {
+				if (isset($lexicon[$word][$partOfSpeech]['features'])) {
+					$features = $lexicon[$word][$partOfSpeech]['features'];
+				} else {
+					$features = array();
+				}
+
+				if (empty($features['space']) || ($features['space'] != 'after_only')) {
 					$text .= ' ';
 				}
+
+				if (!empty($features['capitalize'])) {
+					$word = ucfirst($word);
+				}
+
 			}
 			$text .= $word;
+			$i++;
 		}
 
         if ($SentenceContext->getRootObject() instanceof Sentence) {
@@ -134,9 +153,9 @@ $words = $lexicalItems;
 			$constituent . "@0" => $phraseSpecification
 		));
 
-		$words = $this->planPhrase($constituent, $FeatureDAG, $Grammar);
+		list($words, $partsOfSpeech) = $this->planPhrase($constituent, $FeatureDAG, $Grammar);
 
-		return $words;
+		return array($words, $partsOfSpeech);
 	}
 
 	private function planPhrase($antecedent, LabeledDAG $DAG, Grammar $Grammar)
@@ -147,7 +166,9 @@ $words = $lexicalItems;
 		}
 
 		list ($rule, $UnifiedDAG) = $result;
+
 		$words = array();
+		$partsOfSpeech = array();
 
 		for ($i = 1; $i < count($rule); $i++) {
 
@@ -171,6 +192,7 @@ $words = $lexicalItems;
 				}
 
 				$words[] = $word;
+				$partsOfSpeech[] = $consequent;
 
 			} else {
 
@@ -178,17 +200,19 @@ $words = $lexicalItems;
 				$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
 
 				// generate words for phrase
-				$phrase = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
-				if ($phrase === false) {
+				$result = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);;
+				if ($result === false) {
 					return false;
 				}
+				list($phraseWords, $phrasePartsOfSpeech) = $result;
 
-				$words =  array_merge($words, $phrase);
+				$words =  array_merge($words, $phraseWords);
+				$partsOfSpeech = array_merge($partsOfSpeech, $phrasePartsOfSpeech);
 			}
 
 		}
 
-		return $words;
+		return array($words, $partsOfSpeech);
 	}
 
 	/**

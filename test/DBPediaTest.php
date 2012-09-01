@@ -44,7 +44,7 @@ class DBPediaTest extends TestBase
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("When was Lord Byron born?");
-		$this->test(331, $answer, 'Lord Byron was born on 22 January 1788.');
+		$this->test(331, $answer, 'Lord Byron was born on January 22, 1788.');
 
 		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
 		$this->test(332, $answer, 'Lord Byron werd geboren op 22 januari 1788.');

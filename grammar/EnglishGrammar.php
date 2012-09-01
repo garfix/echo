@@ -28,8 +28,11 @@ class EnglishGrammar extends SimpleGrammar
 		return array(
 			',' => array(
 				'punctuationMark' => array(
-					'features' => array('head' => array('sem' => array('category' => 'comma')))
-				)
+					'features' => array(
+						'head' => array('sem' => array('category' => 'comma')),
+						'space' => 'after_only'
+					)
+				),
 			),
 			'\'s' => array(
 				'possessiveMarker' => array(
@@ -243,9 +246,9 @@ class EnglishGrammar extends SimpleGrammar
 				'noun' => array(
 					'features' => array(
 						'head' => array(
-							'sem' => array('category' => 'january'),
+							'sem' => array('category' => 'january', 'monthIndex' => 1),
 						),
-						'monthIndex' => 1
+						'capitalize' => true
 					)
 				),
 			),
@@ -400,9 +403,28 @@ class EnglishGrammar extends SimpleGrammar
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
 	}
 
+	public function formatTime($time)
+	{
+		if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $time, $matches)) {
+			$year = $matches[1];
+			$month = (int)$matches[2];
+			$day = (int)$matches[3];
+
+			$monthWord = $this->getWordForFeatures('noun',
+				array('monthIndex' => $month)
+			);
+
+			return $day . ' ' . $monthWord . ', ' . $year;
+		} else {
+			return $time;
+		}
+	}
+
 	public function getGenerationRules()
 	{
-		return parent::getGenerationRules() + array(
+		$rules = parent::getGenerationRules();
+
+		$rules += array(
 
 			'CP' => array(
 				// CP NP, ; non-toplevel conjunction with conjunction at the left hand
@@ -448,5 +470,21 @@ class EnglishGrammar extends SimpleGrammar
 				),
 			),
 		);
+
+		$rules['NP'][] =
+
+			// August 11, 1979
+			array(
+				'condition' => array('head' => array('sem' => array('year' => null))),
+				'rule' => array(
+					array('cat' => 'NP', 'features' => array('head' => array('sem' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
+					array('cat' => 'noun', 'features' => array('head' => array('sem' => array('monthIndex' => '?month')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?day')))),
+					array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?year')))),
+				)
+			);
+
+		return $rules;
 	}
 }

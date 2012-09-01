@@ -29,7 +29,7 @@ class Preposition extends PhraseStructure
 	/**
 	 * @param Entity $Entity
 	 */
-	public function setObject(Entity $Entity)
+	public function setObject(EntityStructure $Entity)
 	{
 		$this->data['Object'] = $Entity;
 	}

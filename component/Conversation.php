@@ -10,6 +10,7 @@ use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Adverb;
+use \agentecho\phrasestructure\Date;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -142,9 +143,14 @@ class Conversation
 										if ($Preposition->getCategory() == 'time') {
 											$Sentence->setSentenceType(Sentence::DECLARATIVE);
 											$Preposition->setCategory('on');
-											$time = $this->CurrentGrammar->formatTime($answer);
-											$Object->setName($time);
-											$Object->setQuestion(false);
+
+											// in stead of "name" create a new Date object
+											list($year, $month, $day) = explode('-', $answer);
+											$Date = new Date();
+											$Date->setYear((int)$year);
+											$Date->setMonth((int)$month);
+											$Date->setDay((int)$day);
+											$Preposition->setObject($Date);
 
 											$found = true;
 										}

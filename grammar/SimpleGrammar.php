@@ -56,23 +56,6 @@ abstract class SimpleGrammar extends BaseGrammar
 		return $result;
 	}
 
-	public function formatTime($time)
-	{
-		if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $time, $matches)) {
-			$year = $matches[1];
-			$month = (int)$matches[2];
-			$day = (int)$matches[3];
-
-			$monthWord = $this->getWordForFeatures('noun',
-				array('monthIndex' => $month)
-			);
-
-			return $day . ' ' . $monthWord . ' ' . $year;
-		} else {
-			return $time;
-		}
-	}
-
 	public function getParseRules()
 	{
 		// Find parse rules:
@@ -466,6 +449,9 @@ abstract class SimpleGrammar extends BaseGrammar
 						array('cat' => 'propernoun', 'features' => array('head' => array('sem' => array('name' => '?name')))),
 					)
 				),
+
+
+
 			),
 			'VP' => array(
 //				// gives Mary flowers

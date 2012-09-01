@@ -23,6 +23,11 @@ class SentenceContext
 	 */
 	public $lexicalItems = null;
 
+	/**
+	 * In production: the parts of speech of the lexical items.
+	 */
+	public $partsOfSpeech = null;
+
 	/** @var The token that ends the sentence, like . ! ? or SentenceContext::INDIGNATION */
 	public $terminator = null;
 

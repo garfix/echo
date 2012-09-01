@@ -85,11 +85,4 @@ interface Grammar
 	 * @return array
 	 */
 	public function unglue($word);
-
-	/**
-	 * Formats a date and / or time into a grammatically correct phrase.
-	 * @param $time
-	 * @return mixed
-	 */
-	public function formatTime($time);
 }
