@@ -22,348 +22,397 @@ class EnglishGrammar extends SimpleGrammar
 		return 'en';
 	}
 
-	public function getLexicon()
+	protected function getLexicon()
 	{
 #todo Neem 'plural' ook op in de semantiek als de syntactische number = p; want je moet alleen verder kunnen met de semantiek; hetzelfde geld voor tense; kunnen we hier automatische regels voor opstellen?
 		return array(
 			',' => array(
-				'punctuationMark' => array(
-					'features' => array(
-						'head' => array('sem' => array('category' => 'comma')),
-						'space' => 'after_only'
-					)
+				'form' => ',',
+				'part-of-speech' => 'punctuationMark',
+				'features' => array(
+					'head' => array('sem' => array('category' => 'comma')),
+					'space' => 'after_only'
 				),
 			),
 			'\'s' => array(
-				'possessiveMarker' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'possessive'),
-					))
+				'form' => '\'s',
+				'part-of-speech' => 'possessiveMarker',
+				'features' => array(
+					'head' => array('sem' => array('category' => 'possessive')),
 				)
 			),
 			'a' => array(
-				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => 'a')))
-				),
+				'form' => 'a',
+				'part-of-speech' => 'determiner',
+				'features' => array('head' => array('sem' => array('category' => 'a')))
 			),
 			'an' => array(
-				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => 'a')))
-				),
+				'form' => 'an',
+				'part-of-speech' => 'determiner',
+				'features' => array('head' => array('sem' => array('category' => 'a')))
 			),
 			'and' => array(
-				'conjunction' => array(
-				),
+				'form' => 'and',
+				'part-of-speech' => 'conjunction'
 			),
 			'am' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'agreement' => array('person' => 1, 'number' => 'singular'),
-							'sem' => array('predicate' => 'be', 'tense' => 'present'),
-							),
-						)//'arguments' => 2)
+				'form' => 'am',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 1, 'number' => 'singular'),
+						'sem' => array('predicate' => 'be', 'tense' => 'present'),
+					),
+				)
+			),
+			'are' => array(
+				'form' => 'are',
+				'part-of-speech' => 'verb',
+				'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'plural')), 'arguments' => 1)
+			),
+			'author' => array(
+				'form' => 'author',
+				'part-of-speech' => 'noun',
+				'features' => array('head' => array('sem' => array('category' => 'author')))
+			),
+			'book_v' => array(
+				'form' => 'book',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 1,
+					'head' => array(
+						'agreement' => array('person' => 2, 'number' => 'singular'),
+						'sem' => array('predicate' => 'book'),
 					)
 				),
-			'are' => array(
-				'verb' => array(
-					'features' => array('head' => array('agreement' => array('person' => 1, 'number' => 'plural')), 'arguments' => 1))),
-			'author' => array(
-				'noun' => array(
-					'features' => array('head' => array('sem' => array('category' => 'author')))
-				),
 			),
-			'book' => array(
-				'verb' => array(
-					'features' => array(
-						'arguments' => 1,
-						'head' => array(
-							'agreement' => array('person' => 2, 'number' => 'singular'),
-							'sem' => array('predicate' => 'book'),
-						)
-					),
-				),
-				'noun' => array(
-					'features' => array('head' => array('sem' => array('category' => 'book'))),
-				),
+			'book_n' => array(
+				'form' => 'book',
+				'part-of-speech' => 'noun',
+				'features' => array('head' => array('sem' => array('category' => 'book'))),
 			),
 			'born' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'bear'),
-						)
-					),
+				'form' => 'born',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'bear'),
+					)
 				),
 			),
-			'by' => array(
-				'preposition' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'by'),
-					))
-				),
-
-				'passivisationPreposition' => array(
-					'features' => array('head' => array(
-					))
-				),
-
+			'by_prp' => array(
+				'form' => 'by',
+				'part-of-speech' => 'preposition',
+				'features' => array('head' => array(
+					'sem' => array('category' => 'by'),
+				))
+			),
+			'by_psv' => array(
+				'form' => 'by',
+				'part-of-speech' => 'passivisationPreposition',
 			),
 			'children' => array(
-				'noun' => array(
-					'features' => array(
-						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'plural'),
-							'sem' => array('category' => 'child')
-						)
-					),
+				'form' => 'children',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 3, 'number' => 'plural'),
+						'sem' => array('category' => 'child')
+					)
 				),
 			),
 			'daughter' => array(
-				'noun' => array(
-					'features' => array(
-						'head' => array(
-//							'agreement' => array('person' => 3, 'number' => 'singular'),
-							'sem' => array('category' => 'daughter')
-						)
-					),
+				'form' => 'daughter',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'sem' => array('category' => 'daughter')
+					)
 				),
 			),
-			'did' => array(
-				'aux' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('tense' => 'past'),
-						)
-					),
-				),
-				'auxDo' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('tense' => 'past'),
-						)
-					),
+			'did_aux' => array(
+				'form' => 'did',
+				'part-of-speech' => 'aux',
+				'features' => array(
+					'head' => array(
+						'sem' => array('tense' => 'past'),
+					)
 				),
 			),
-			'die' => array(
-				'verb' => array(
-					'features' => array(
-						'arguments' => 0,
-						'head' => array(
-							'sem' => array('predicate' => 'die'),
-						)
-					)),
+			'did_auxDo' => array(
+				'form' => 'did',
+				'part-of-speech' => 'auxDo',
+				'features' => array(
+					'head' => array(
+						'sem' => array('tense' => 'past'),
+					)
+				),
+			),
+			'die_smp' => array(
+				'form' => 'die',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 0,
+					'head' => array(
+						'sem' => array('predicate' => 'die', 'tense' => 'present', 'form' => 'simple'),
+					)
+				)
+			),
+			'die_inf' => array(
+				'form' => 'die',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 0,
+					'head' => array(
+						'sem' => array('predicate' => 'die', 'verb_form' => 'infinitive'),
+					)
+				),
+			),
+			'died' => array(
+				'form' => 'died',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 0,
+					'head' => array(
+						'sem' => array('predicate' => 'die', 'tense' => 'past'),
+					)
+				),
 			),
 			'flight' => array(
-				'noun' => array(
-					'features' => array(
-						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'singular'),
-							'sem' => array('category' => 'flight'),
-						)
+				'form' => 'flight',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 3, 'number' => 'singular'),
+						'sem' => array('category' => 'flight'),
 					)
 				),
 			),
 			'flowers' => array(
-				'noun' => array(
-					'features' => array(
-						'head' => array(
-							'agreement' => array('person' => 3, 'number' => 'plural'),
-							'sem' => array('category' => 'flower'),
-						)
+				'form' => 'flowers',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 3, 'number' => 'plural'),
+						'sem' => array('category' => 'flower'),
 					)
 				),
 			),
 			'gives' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'give', 'tense' => 'present'),
-						)
-					),
+				'form' => 'gives',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'give', 'tense' => 'present'),
+					)
 				),
 			),
 			'had' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'have', 'tense' => 'past'),
-						)
-					),
+				'form' => 'had',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'have', 'tense' => 'past'),
+					)
 				),
 			),
 			'have' => array(
-				'verb' => array(
-					'features' => array(
-//						'arguments' => 1,
-						'head' => array(
-							'sem' => array('predicate' => 'have'),
-						)
-					),
+				'form' => 'have',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'have'),
+					)
 				),
 			),
-			'how' => array(
-				'whword' => array(
-					'features' => array('head' => array('sem' => array('manner' => array('question' => 'object'))))
-				),
-				'whwordNP' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('arg2{?arg}' => array('determiner' => array('question' => true))),
-							'variables' => array('role' => '?arg')
-						)
+			'how_1' => array(
+				'form' => 'how',
+				'part-of-speech' => 'whword',
+				'features' => array('head' => array('sem' => array('manner' => array('question' => 'object'))))
+			),
+			'how_2' => array(
+				'form' => 'how',
+				'part-of-speech' => 'whwordNP',
+				'features' => array(
+					'head' => array(
+						'sem' => array('arg2{?arg}' => array('determiner' => array('question' => true))),
+						'variables' => array('role' => '?arg')
 					)
 				),
 			),
 			'i' => array(
-				'pronoun' => array(
-					'features' => array(
-						'head' => array(
-							'agreement' => array('person' => 1, 'number' => 'singular'),
-							'sem' => array('category' => 'firstPerson')
-						)
-					)
+				'form' => 'i',
+				'part-of-speech' => 'pronoun',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 1, 'number' => 'singular'),
+						'sem' => array('category' => 'firstPerson')
+					),
+					'capitalize' => true
 				),
 			),
 			'in' => array(
-				'preposition' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'in'),
-					))
-				),
+				'form' => 'in',
+				'part-of-speech' => 'preposition',
+				'features' => array('head' => array(
+					'sem' => array('category' => 'in'),
+				))
 			),
 			'influenced' => array(
-				'verb' => array(
-					'features' => array(
-						'arguments' => 1,
-						'head' => array(
-							'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
-						)
-					),
-				)
+				'form' => 'influenced',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 1,
+					'head' => array(
+						'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
+					)
+				),
 			),
 			'january' => array(
-				'noun' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('category' => 'january', 'monthIndex' => 1),
-						),
-						'capitalize' => true
+				'form' => 'january',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'sem' => array('category' => 'january', 'monthIndex' => 1),
+					),
+					'capitalize' => true
+				)
+			),
+			'old' => array(
+				'form' => 'old',
+				'part-of-speech' => 'noun',
+				'features' => array(
+					'head' => array(
+						'sem' => array('category' => 'old')
 					)
 				),
 			),
 			'on' => array(
-				'preposition' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'on'),
-					))
-				),
+				'form' => 'on',
+				'part-of-speech' => 'preposition',
+				'features' => array('head' => array(
+					'sem' => array('category' => 'on'),
+				))
 			),
 			'many' => array(
-				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => 'many')))
-				),
+				'form' => 'many',
+				'part-of-speech' => 'determiner',
+				'features' => array('head' => array('sem' => array('category' => 'many')))
 			),
 			'married' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'marry', 'tense' => 'past'),
-						)
-					),
+				'form' => 'married',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'marry', 'tense' => 'past'),
+					)
 				)
 			),
 			'name' => array(
-				'verb' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'name'),
-						)
+				'form' => 'name',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'name'),
 					)
 				)
 			),
 			'of' => array(
-				'preposition' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'of'),
-					))
-				),
+				'form' => 'of',
+				'part-of-speech' => 'preposition',
+				'features' => array('head' => array(
+					'sem' => array('category' => 'of'),
+				))
 			),
 			'sees' => array(
-				'verb' => array(
-					'features' => array(
-						'arguments' => 1,
-						'head' => array(
-							'sem' => array('predicate' => 'see', 'tense' => 'present'),
-						)
-					),
+				'form' => 'sees',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'arguments' => 1,
+					'head' => array(
+						'sem' => array('predicate' => 'see', 'tense' => 'present'),
+					)
+				),
+			),
+			'she' => array(
+				'form' => 'she',
+				'part-of-speech' => 'pronoun',
+				'features' => array(
+					'head' => array(
+						'agreement' => array('person' => 3, 'number' => 'singular'),
+						'sem' => array('category' => 'she') // thirdPerson?
+					)
 				)
 			),
 			'the' => array(
-				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => 'the')))
-				)
+				'form' => 'the',
+				'part-of-speech' => 'determiner',
+				'features' => array('head' => array('sem' => array('category' => 'the')))
 			),
 			'that' => array(
-				'determiner' => array(
-					'features' => array('head' => array('sem' => array('category' => 'that')))
-				),
+				'form' => 'that',
+				'part-of-speech' => 'determiner',
+				'features' => array('head' => array('sem' => array('category' => 'that')))
 			),
 			'to' => array(
-				'preposition' => array(
-					'features' => array('head' => array(
-						'sem' => array('category' => 'to'),
-					))
+				'form' => 'to',
+				'part-of-speech' => 'preposition',
+				'features' => array('head' => array(
+					'sem' => array('category' => 'to'),
+				))
+			),
+			'was_aux' => array(
+				'form' => 'was',
+				'part-of-speech' => 'aux',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+					)
 				),
 			),
-			'was' => array(
-				'aux' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'be', 'tense' => 'past'),
-						)
-					),
+			'was_be' => array(
+				'form' => 'was',
+				'part-of-speech' => 'auxBe',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+					)
 				),
-				'auxBe' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'be', 'tense' => 'past'),
-						)
-					),
-				),
-				'auxPsv' => array(
-					'features' => array(
-						'head' => array(
-							'sem' => array('predicate' => 'be', 'tense' => 'past'),
-						)
-					),
+			),
+			'was_psv' => array(
+				'form' => 'was',
+				'part-of-speech' => 'auxPsv',
+				'features' => array(
+					'head' => array(
+						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+					)
 				),
 			),
 			'when' => array(
-				'whword' => array(
-					'features' => array('head' => array('sem' => array(
-						'preposition' => array(
-							'type' => 'preposition', 'category' => 'time', 'object' => array(
-								'type' => 'entity', 'question' => true)))))
-				),
+				'form' => 'when',
+				'part-of-speech' => 'whword',
+				'features' => array('head' => array('sem' => array(
+					'preposition' => array(
+						'type' => 'preposition', 'category' => 'time', 'object' => array(
+							'type' => 'entity', 'question' => true)))))
 			),
 			'where' => array(
-				'whword' => array(
-					'features' => array('head' => array('sem' => array(
-						'preposition' => array(
-							'type' => 'preposition', 'category' => 'location', 'object' => array(
-								'type' => 'entity', 'question' => true)))))
-				),
+				'form' => 'where',
+				'part-of-speech' => 'whword',
+				'features' => array('head' => array('sem' => array(
+					'preposition' => array(
+						'type' => 'preposition', 'category' => 'location', 'object' => array(
+							'type' => 'entity', 'question' => true)))))
 			),
 			'who' => array(
-				'whword' => array(
-					'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
-				),
+				'form' => 'who',
+				'part-of-speech' => 'whword',
+				'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
 			),
 			'yes' => array(
-				'adverb' => array(
-					'features' => array('head' => array('sem' => array('category' => 'yes')))
-				),
+				'form' => 'yes',
+				'part-of-speech' => 'adverb',
+				'features' => array('head' => array('sem' => array('category' => 'yes')))
 			),
 		);
 	}
@@ -401,23 +450,6 @@ class EnglishGrammar extends SimpleGrammar
 	public function isVocal($letter)
 	{
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
-	}
-
-	public function formatTime($time)
-	{
-		if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $time, $matches)) {
-			$year = $matches[1];
-			$month = (int)$matches[2];
-			$day = (int)$matches[3];
-
-			$monthWord = $this->getWordForFeatures('noun',
-				array('monthIndex' => $month)
-			);
-
-			return $day . ' ' . $monthWord . ', ' . $year;
-		} else {
-			return $time;
-		}
 	}
 
 	public function getGenerationRules()

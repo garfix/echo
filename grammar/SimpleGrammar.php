@@ -28,34 +28,6 @@ abstract class SimpleGrammar extends BaseGrammar
 		return array($word);
 	}
 
-	/**
-	 * Returns true if $word belongs to the $partOfSpeech category.
-	 *
-	 * @param string $word
-	 * @param string $partOfSpeech
-	 * @return bool
-	 */
-	public function isWordAPartOfSpeech($word, $partOfSpeech)
-	{
-		$result = false;
-
-		if (isset($this->lexicon[$word])) {
-
-			if (isset($this->lexicon[$word][$partOfSpeech])) {
-				$result = true;
-			}
-
-		} else {
-
-			// all words can be proper nouns
-			if ($partOfSpeech == 'propernoun') {
-				$result = true;
-			}
-		}
-
-		return $result;
-	}
-
 	public function getParseRules()
 	{
 		// Find parse rules:

@@ -33,6 +33,8 @@ abstract class BaseGrammar implements Grammar
 	 */
 	protected $matchIndex = null;
 
+	protected $wordIndex = null;
+
 	public function __construct()
 	{
 		// structure
@@ -40,17 +42,30 @@ abstract class BaseGrammar implements Grammar
 		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
 
-		$this->indexLexicon();
+		$this->indexLexiconFeatures();
+		$this->indexLexiconWords();
 	}
 
-	public function getLexicon()
-	{
-		return $this->lexicon;
-	}
+	protected abstract function getLexicon();
 
 	public function wordExists($word)
 	{
-		return isset($this->lexicon[$word]);
+		return isset($this->wordIndex[$word]);
+	}
+
+	/**
+	 * Returns the features of a word.
+	 * @param $word
+	 * @param $partOfSpeech
+	 * @return array
+	 */
+	public function	getWordFeatures($word, $partOfSpeech)
+	{
+		if (isset($this->wordIndex[$word][$partOfSpeech]['features'])) {
+			return $this->wordIndex[$word][$partOfSpeech]['features'];
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -85,14 +100,42 @@ abstract class BaseGrammar implements Grammar
 	}
 
 	/**
+	 * Returns true if $word belongs to the $partOfSpeech category.
+	 *
+	 * @param string $word
+	 * @param string $partOfSpeech
+	 * @return bool
+	 */
+	public function isWordAPartOfSpeech($word, $partOfSpeech)
+	{
+		$result = false;
+
+		if (isset($this->wordIndex[$word])) {
+
+			if (isset($this->wordIndex[$word][$partOfSpeech])) {
+				$result = true;
+			}
+
+		} else {
+
+			// all words can be proper nouns
+			if ($partOfSpeech == 'propernoun') {
+				$result = true;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Returns the features for a word.
 	 * @return array
 	 */
 	public function getFeaturesForWord($word, $partOfSpeech)
 	{
-		if (isset($this->lexicon[$word][$partOfSpeech])) {
-			if (isset($this->lexicon[$word][$partOfSpeech]['features'])) {
-				return $this->lexicon[$word][$partOfSpeech]['features'];
+		if (isset($this->wordIndex[$word][$partOfSpeech])) {
+			if (isset($this->wordIndex[$word][$partOfSpeech]['features'])) {
+				return $this->wordIndex[$word][$partOfSpeech]['features'];
 			} else {
 				return array();
 			}
@@ -173,7 +216,7 @@ r($features);
 		// no features => first word
 		if ($result === false && empty($flattenedFeatures)) {
 			// find the first part-of-speech
-			foreach ($this->lexicon as $word => $partsOfSpeech) {
+			foreach ($this->wordIndex as $word => $partsOfSpeech) {
 				if (isset($partsOfSpeech[$partOfSpeech])) {
 					$result = $word;
 					break;
@@ -184,16 +227,13 @@ r($features);
 		return $result;
 	}
 
-	private function indexLexicon()
+	private function indexLexiconFeatures()
 	{
 		$this->matchIndex = array();
 
-		foreach ($this->lexicon as $word => $partsOfSpeech) {
-			foreach ($partsOfSpeech as $partOfSpeech => $data) {
-
-				if (isset($data['features'])) {
-					$this->indexFeatures($word, $this->matchIndex, $partOfSpeech, $data['features'], '');
-				}
+		foreach ($this->lexicon as $entry) {
+			if (isset($entry['features'])) {
+				$this->indexFeatures($entry['form'], $this->matchIndex, $entry['part-of-speech'], $entry['features'], '');
 			}
 		}
 	}
@@ -241,6 +281,15 @@ r($features);
 				$flattened[] = $partOfSpeech . ':' . $path;
 
 			}
+		}
+	}
+
+	private function indexLexiconWords()
+	{
+		$this->wordIndex = array();
+
+		foreach ($this->lexicon as $entry) {
+			$this->wordIndex[$entry['form']][$entry['part-of-speech']] = $entry;
 		}
 	}
 }

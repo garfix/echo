@@ -12,6 +12,7 @@ use \agentecho\grammar\DutchGrammar;
  * Question answering
  * Lord Byron facts: http://dbpedia.org/page/Lord_Byron
  * Anne Isabella Milbanke http://dbpedia.org/page/Anne_Isabella_Byron,_Baroness_Byron
+ * Mary Shelley http://dbpedia.org/page/Mary_Shelley
  */
 class DBPediaTest extends TestBase
 {
@@ -45,7 +46,6 @@ class DBPediaTest extends TestBase
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("When was Lord Byron born?");
 		$this->test(331, $answer, 'Lord Byron was born on January 22, 1788.');
-
 		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
 		$this->test(332, $answer, 'Lord Byron werd geboren op 22 januari 1788.');
 
@@ -61,18 +61,20 @@ class DBPediaTest extends TestBase
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->test(351, $answer, "Allegra Byron and Ada Lovelace");
-
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->test(352, $answer, "Allegra Byron en Ada Lovelace");
 
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->test(361, $answer, "Yes, Lord Byron was married to Anne Isabella Milbanke.");
-
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
 		$this->test(362, $answer, "Yes, Anne Isabella Milbanke was married to Lord Byron.");
-
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 		$this->test(363, $answer, "Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.");
+
+		// dependent clause
+$Conversation->setCurrentGrammar($English);
+		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
+		$this->test(371, $answer, "She was xx years old.");
 	}
 }

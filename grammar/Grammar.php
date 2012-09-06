@@ -27,10 +27,12 @@ interface Grammar
 	public function getParseRules();
 
 	/**
-	 * Returns the lexicon.
+	 * Returns the features of a word.
+	 * @param $word
+	 * @param $partOfSpeech
 	 * @return array
 	 */
-	public function getLexicon();
+	public function	getWordFeatures($word, $partOfSpeech);
 
 	/**
 	 * Returns all grammar rules for generation.

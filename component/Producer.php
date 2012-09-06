@@ -66,7 +66,6 @@ $words = $lexicalItems;
 	{
 		$words = $SentenceContext->words;
 		$partsOfSpeech = $SentenceContext->partsOfSpeech;
-		$lexicon = $Grammar->getLexicon();;
 
 		$words[0] = ucfirst($words[0]);
 
@@ -80,11 +79,12 @@ $words = $lexicalItems;
 			$partOfSpeech = $partsOfSpeech[$i];
 
 			if ($index > 0) {
-				if (isset($lexicon[$word][$partOfSpeech]['features'])) {
-					$features = $lexicon[$word][$partOfSpeech]['features'];
-				} else {
-					$features = array();
-				}
+$features = $Grammar->getWordFeatures($word, $partOfSpeech);
+//				if (isset($lexicon[$word][$partOfSpeech]['features'])) {
+//					$features = $lexicon[$word][$partOfSpeech]['features'];
+//				} else {
+//					$features = array();
+//				}
 
 				if (empty($features['space']) || ($features['space'] != 'after_only')) {
 					$text .= ' ';
