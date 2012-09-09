@@ -175,14 +175,14 @@ class DBPedia extends KnowledgeSource
 			$category = $Preposition->getCategory();
 			$Object = $Preposition->getObject();
 
-			if ($category == 'location') {
+			if ($category == 'where') {
 				if ($Object->isQuestion()) {
 					$clauses[] = "?{$Object->getHashCode()} rdfs:label ?location";
 					$clauses[] = 'FILTER(lang(?location) = "en")';
 					$select = '?location';
 				}
 			}
-			if ($category == 'time') {
+			if ($category == 'when') {
 				if ($Object->isQuestion()) {
 					$select = '?' . $Object->getHashCode();
 				}
@@ -251,14 +251,14 @@ class DBPedia extends KnowledgeSource
 			// http://dbpedia.org/ontology/birthPlace
 			if ($predicate == 'bear') {
 				$Preposition = $Relation->getPreposition();
-				if ($Preposition->getCategory() == 'location') {
+				if ($Preposition->getCategory() == 'where') {
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg2id = $Relation->getArgument2()->getHashCode();
 					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthPlace> ?{$locationId}";
 					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
 				}
 
-				if ($Preposition->getCategory() == 'time') {
+				if ($Preposition->getCategory() == 'when') {
 					$timeId = $Preposition->getObject()->getHashCode();
 					$arg2id = $Relation->getArgument2()->getHashCode();
 					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthDate> ?{$timeId}";
@@ -269,7 +269,7 @@ class DBPedia extends KnowledgeSource
 			// http://dbpedia.org/ontology/deathPlace
 			if ($predicate == 'die') {
 				$Preposition = $Relation->getPreposition();
-				if ($Preposition->getCategory() == 'location') {
+				if ($Preposition->getCategory() == 'where') {
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg1id = $Relation->getArgument1()->getHashCode();
 					$clauses[] = "?{$arg1id} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";

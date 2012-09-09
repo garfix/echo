@@ -235,7 +235,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'whwordNP',
 				'features' => array(
 					'head' => array(
-						'sem' => array('arg2{?arg}' => array('determiner' => array('question' => true))),
+						'sem' => array('arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
 						'variables' => array('role' => '?arg')
 					)
 				),
@@ -391,23 +391,18 @@ class EnglishGrammar extends SimpleGrammar
 			'when' => array(
 				'form' => 'when',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array(
-					'preposition' => array(
-						'type' => 'preposition', 'category' => 'time', 'object' => array(
-							'type' => 'entity', 'question' => true)))))
+				'features' => array('head' => array('sem' => array('category' => 'when')))
 			),
 			'where' => array(
 				'form' => 'where',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array(
-					'preposition' => array(
-						'type' => 'preposition', 'category' => 'location', 'object' => array(
-							'type' => 'entity', 'question' => true)))))
+				'features' => array('head' => array('sem' => array('category' => 'where')))
 			),
 			'who' => array(
 				'form' => 'who',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
+//				'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
+				'features' => array('head' => array('sem' => array('category' => 'identity')))
 			),
 			'yes' => array(
 				'form' => 'yes',
@@ -450,6 +445,35 @@ class EnglishGrammar extends SimpleGrammar
 	public function isVocal($letter)
 	{
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
+	}
+
+	public function getParseRules()
+	{
+		$rules = parent::getParseRules();
+
+		// How many children did John have?
+		// NP delivers arg1
+		$rules['S'][] =
+			array(
+				array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
+				array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+				array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
+				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
+				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
+			);
+
+		// How old was Mary Shelley when she died?
+		// NP delivers arg1
+		$rules['S'][] =
+			array(
+				array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-3', 'relativeClause' => '?sem-4'))),
+				array('cat' => 'WhNP', 'features' => array('head' => array('sem-3' => array('arg2' => null)))),
+				array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'relation', 'arg1' => '?sem-1')))),
+				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+				array('cat' => 'SBar', 'features' => array('head' => array('sem' => '?sem-4'))),
+			);
+
+		return $rules;
 	}
 
 	public function getGenerationRules()

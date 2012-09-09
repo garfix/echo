@@ -132,7 +132,7 @@ class Conversation
 							if ($Preposition = $Relation->getPreposition()) {
 								if ($Object = $Preposition->getObject()) {
 									if ($Object->isQuestion()) {
-										if ($Preposition->getCategory() == 'location') {
+										if ($Preposition->getCategory() == 'where') {
 											$Sentence->setSentenceType(Sentence::DECLARATIVE);
 											$Preposition->setCategory('in');
 											$Object->setName($answer);
@@ -140,7 +140,7 @@ class Conversation
 
 											$found = true;
 										}
-										if ($Preposition->getCategory() == 'time') {
+										if ($Preposition->getCategory() == 'when') {
 											$Sentence->setSentenceType(Sentence::DECLARATIVE);
 											$Preposition->setCategory('on');
 

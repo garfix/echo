@@ -16,9 +16,10 @@ class Entity extends PhraseStructure implements EntityStructure
 		'category' => null,
 		'name' => null,
 		'Determiner' => null,
-		'Preposition' => null,
 		'number' => self::SINGULAR,
-		'question' => null
+		'question' => null,
+		// i.e. "on the table"
+		'Preposition' => null,
 	);
 
 	public function setCategory($category)

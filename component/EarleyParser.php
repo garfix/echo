@@ -284,6 +284,10 @@ class EarleyParser
 				// store extra information to make it easier to extract parse trees later
 				$treeComplete = $this->storeStateInfo($completedState, $chartedState, $advancedState);
 
+				if ($treeComplete) {
+					break;
+				}
+
 				$this->enqueue($advancedState, $completedState['endWordIndex']);
 			}
 		}
@@ -308,7 +312,7 @@ class EarleyParser
 		if ($chartedState['dotPosition'] == $consequentCount) {
 
 			// complete sentence?
-			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'S') {
+			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'gamma') {
 
 				// that matches all words?
 				if ($completedState['endWordIndex'] == count($this->words)) {
@@ -469,6 +473,12 @@ class EarleyParser
 		$rule = $state['rule'];
 
 		$antecedent = $rule[self::ANTECEDENT]['cat'];
+
+		if ($antecedent == 'gamma') {
+			$constituentId = $state['children'][0];
+			$constituent = $this->treeInfo['states'][$constituentId];
+			return $this->extractParseTreeBranch($constituent);
+		}
 
 		$branch = array(
 			'part-of-speech' => $antecedent

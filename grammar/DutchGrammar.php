@@ -256,18 +256,12 @@ class DutchGrammar extends SimpleGrammar
 			'waar' => array(
 				'form' => 'waar',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array(
-					'preposition' => array(
-						'type' => 'preposition', 'category' => 'location', 'object' => array(
-							'type' => 'entity', 'question' => true)))))
+				'features' => array('head' => array('sem' => array('category' => 'where')))
 			),
 			'wanneer' => array(
 				'form' => 'wanneer',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array(
-					'preposition' => array(
-						'type' => 'preposition', 'category' => 'time', 'object' => array(
-							'type' => 'entity', 'question' => true)))))
+				'features' => array('head' => array('sem' => array('category' => 'when')))
 			),
 		);
 	}

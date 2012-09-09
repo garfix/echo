@@ -35,6 +35,8 @@ class Sentence extends PhraseStructure
 #todo: draai deze om:
 		'Relation' => null,
 		'voice' => self::ACTIVE,
+		// i.e. "when she died"
+		'RelativeClause' => null
 	);
 
 	/**
@@ -77,4 +79,14 @@ class Sentence extends PhraseStructure
 	{
 		return $this->data['voice'];
 	}
+
+	public function setRelativeClause(RelativeClause $Clause)
+	{
+		$this->data['RelativeClause'] = $Clause;
+	}
+
+    public function getRelativeClause()
+    {
+        return $this->data['RelativeClause'];
+    }
 }

@@ -88,16 +88,6 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
 
-				// How many children did John have?
-				// NP delivers arg1
-#todo alleen-engels constructie!
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
-				),
 				// Where was John born?
 				// NP delivers arg2
 				array(
@@ -141,6 +131,23 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
 			),
+			// S-Bar, see 'The structure of modern english' - Brinton (2000) - p. 230
+			// secondary clause
+			'SBar' => array(
+				array(
+					array('cat' => 'SBar', 'features' => array('head' => array('sem' =>
+						array('type' => 'relativeClause', 'clause' => '?sem-2', 'complementizer' => '?cat')))),
+//						array('type' => 'relativeClause', 'clause' => '?sem-2', 'complementizer' => array(
+//							'type' => 'preposition',
+//							'category' => '?cat',
+//							'object' => array(
+//								'type' => 'entity', 'question' => true
+//							)
+//						))))),
+					array('cat' => 'whword', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+					array('cat' => 'S', 'features' => array('head' => array('sem' => '?sem-2'))),
+				),
+			),
 			'VP' => array(
 				// drives
 				array(
@@ -173,10 +180,18 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 			),
 			'WhNP' => array(
-				// where, who
 				array(
-					array('cat' => 'WhNP', 'features' => array('head' => '?head')),
-					array('cat' => 'whword', 'features' => array('head' => '?head')),
+#todo: this interpreation is counterintuitive, especially for 'who'
+					// where, when, who
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem' => array(
+						'preposition' => array(
+							'type' => 'preposition',
+							'category' => '?cat',
+							'object' => array(
+								'type' => 'entity', 'question' => true
+							)
+						))))),
+					array('cat' => 'whword', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 				),
 				// which car, how many children
 				array(
