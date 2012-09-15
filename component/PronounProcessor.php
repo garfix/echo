@@ -28,6 +28,7 @@ class PronounProcessor
 			function(PhraseStructure $Phrase) use ($Subject)
 			{
 				if ($Phrase instanceof Entity) {
+
 					/** @var Entity $Entity  */
 					$Entity = $Phrase;
 

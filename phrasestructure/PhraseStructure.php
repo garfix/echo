@@ -78,10 +78,10 @@ abstract class PhraseStructure
 	}
 
 	/**
-	 * Perfom $function on this node and all its children.
+	 * Perform $function on this node and all its children.
 	 * @param $function A function like f(PhraseStructure)
 	 */
-	public function visit($function)
+	public function visit(\Closure $function)
 	{
 		$function($this);
 

@@ -71,7 +71,7 @@ class ParserTest extends TestBase
 
 		// secondary sentence
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
-		$this->test(291, $Sentence->getObjectString(), 'Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, Arg1: Entity {name: Mary Shelley, number: singular}, Arg2: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Relation {predicate: die, Arg1: Entity {category: she, number: singular}, tense: past}}}');
+		$this->test(291, $Sentence->getObjectString(), 'Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, Arg1: Entity {name: Mary Shelley, number: singular}, Arg2: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Relation {predicate: die, Arg1: Entity {category: subject, number: singular}, tense: past}}}');
 
 	}
 }

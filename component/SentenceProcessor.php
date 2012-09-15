@@ -49,7 +49,7 @@ class SentenceProcessor
 
 		} elseif ($sentenceType == 'wh-question') {
 
-			$answer = $this->KnowledgeManager->answerQuestionAboutObject($Sentence);
+			$answer = $this->KnowledgeManager->answerQuestion($Sentence);
 
 			// incorporate the answer in the original question
 			if ($answer !== false) {

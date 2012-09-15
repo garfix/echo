@@ -13,8 +13,6 @@ abstract class KnowledgeSource
 	 */
 	public abstract function isProperNoun($identifier);
 
-	public abstract function answerQuestionAboutObject(Sentence $Sentence);
-
 	public abstract function answerQuestion(Sentence $Sentence);
 
     public abstract function checkQuestion(Sentence $Sentence);

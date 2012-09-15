@@ -30,18 +30,6 @@ class KnowledgeManager implements ProperNounIdentifier
    		return false;
    	}
 
-	public function answerQuestionAboutObject(Sentence $Sentence)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestionAboutObject($Sentence);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
-	}
-
 	public function answerQuestion(Sentence $Sentence)
 	{
 		foreach ($this->knowledgeSources as $KnowledgeSource) {

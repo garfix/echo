@@ -93,36 +93,6 @@ class DBPedia extends KnowledgeSource
 		return $result;
 	}
 
-	public function answerQuestionAboutObject(Sentence $Sentence)
-	{
-		$clauses = array();
-		$select = '';
-		$sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
-
-		$result = $this->query($clauses, $select);
-
-		if ($sentenceType == 'wh-question') {
-			if (count($result == 1)) {
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-			}
-		}
-		if ($sentenceType == 'imperative') {
-			$values = array();
-			foreach ($result as $resultVal) {
-				$values[] = reset($resultVal);
-			}
-			$result = $values;
-		}
-
-		return $result;
-	}
-
 	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$clauses, &$select, $parentId)
 	{
 		$subjectId = $Phrase->getHashCode();
