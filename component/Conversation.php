@@ -6,6 +6,7 @@ use \agentecho\component\KnowledgeManager;
 use \agentecho\grammar\Grammar;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
+use \agentecho\datastructure\ConversationContext;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -14,8 +15,8 @@ use \agentecho\phrasestructure\Sentence;
  */
 class Conversation
 {
-	/** @var Local memory store for the roles in the conversation */
-	private $context = array();
+	/** @var ConversationContext Local memory store for the roles in the conversation */
+	private $ConversationContext = null;
 
 	/** @var KnowledgeManager The agent having the conversation */
 	private $KnowledgeManager;
@@ -28,6 +29,7 @@ class Conversation
 	 */
 	public function __construct(array $grammars, KnowledgeManager $KnowledgeManager)
 	{
+		$this->ConversationContext = new ConversationContext();
 		$this->grammars = $grammars;
 		$this->KnowledgeManager = $KnowledgeManager;
 
@@ -71,13 +73,23 @@ class Conversation
 			// extract the Sentence
 			$Sentence = $SentenceContext->getRootObject();
 
+			// update the subject of the conversation
+			$ContextProcessor = new ContextProcessor();
+			$ContextProcessor->updateSubject($Sentence, $this->ConversationContext);
+
+			// resolve pronouns
+			$PronounProcessor = new PronounProcessor();
+			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
+
 			// process the sentence
-			$Processor = new SentenceProcessor($this->KnowledgeManager);
-			$Response = $Processor->process($Sentence);
+			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+			$Response = $SentenceProcessor->process($Sentence);
 
 			// produce the surface text of the response
 			$Producer = new Producer();
 			$answer = $Producer->produce($Response, $this->CurrentGrammar);
+
+			// substitute proper nouns by pronouns
 
 		} catch (\Exception $E) {
 

@@ -340,7 +340,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
-						'sem' => array('category' => 'she') // thirdPerson?
+						'sem' => array('category' => 'subject') // thirdPerson?
 					)
 				)
 			),

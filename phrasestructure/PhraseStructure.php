@@ -2,6 +2,9 @@
 
 namespace agentecho\phrasestructure;
 
+/**
+ * Base class for all sentence nodes.
+ */
 abstract class PhraseStructure
 {
 	protected $data = array();
@@ -72,5 +75,18 @@ abstract class PhraseStructure
 	public function getAttributes()
 	{
 		return $this->data;
+	}
+
+	/**
+	 * Perfom $function on this node and all its children.
+	 * @param $function A function like f(PhraseStructure)
+	 */
+	public function visit($function)
+	{
+		$function($this);
+
+		foreach ($this->getChildPhrases() as $Child) {
+			$Child->visit($function);
+		}
 	}
 }
