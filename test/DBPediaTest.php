@@ -51,7 +51,7 @@ class DBPediaTest extends TestBase
 		$this->test(332, $answer, 'Lord Byron werd geboren op 22 januari 1788.');
 
 		$answer = $Conversation->answer("Where did Lord Byron die?");
-		$this->test(333, $answer, 'Missolonghi');
+		$this->test(333, $answer, 'Lord Byron died in Missolonghi.');
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");

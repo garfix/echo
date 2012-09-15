@@ -95,7 +95,6 @@ class DBPedia extends KnowledgeSource
 
 	public function answerQuestionAboutObject(Sentence $Sentence)
 	{
-//r($Sentence);exit;
 		$clauses = array();
 		$select = '';
 		$sentenceType = $Sentence->getSentenceType();
@@ -269,7 +268,7 @@ class DBPedia extends KnowledgeSource
 			// http://dbpedia.org/ontology/deathPlace
 			if ($predicate == 'die') {
 				$Preposition = $Relation->getPreposition();
-				if ($Preposition->getCategory() == 'where') {
+				if ($Preposition && $Preposition->getCategory() == 'where') {
 					$locationId = $Preposition->getObject()->getHashCode();
 					$arg1id = $Relation->getArgument1()->getHashCode();
 					$clauses[] = "?{$arg1id} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";
@@ -282,13 +281,14 @@ class DBPedia extends KnowledgeSource
 				$childId = $Relation->getArgument1()->getHashCode();
 				$Arg2 = $Relation->getArgument2();
 				$Preposition = $Arg2->getPreposition();
-				$Object = $Preposition->getObject();
-				$parentId = $Object->getHashCode();
+				if ($Preposition) {
+					$Object = $Preposition->getObject();
+					$parentId = $Object->getHashCode();
 
-				if ($Relation->getArgument2()->getCategory() == 'daughter') {
-					$clauses[] = "?{$parentId} <http://dbpedia.org/ontology/child> ?{$childId}";
+					if ($Relation->getArgument2()->getCategory() == 'daughter') {
+						$clauses[] = "?{$parentId} <http://dbpedia.org/ontology/child> ?{$childId}";
+					}
 				}
-
 			}
 
 			// http://dbpedia/ontology/spouse

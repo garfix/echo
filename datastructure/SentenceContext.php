@@ -3,6 +3,7 @@
 namespace agentecho\datastructure;
 
 use \agentecho\phrasestructure\PhraseStructure;
+use \agentecho\phrasestructure\Sentence;
 
 /**
  * A blackboard for a sentence in progress.
@@ -37,6 +38,7 @@ class SentenceContext
 	/** @var The root object of the object structure. */
 	public $RootObject = null;
 
+	/** @return Sentence */
 	public function getRootObject()
 	{
 		return $this->RootObject;

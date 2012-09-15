@@ -2,15 +2,10 @@
 
 namespace agentecho\component;
 
-use \agentecho\AgentEcho;
-use \agentecho\Settings;
+use \agentecho\component\KnowledgeManager;
 use \agentecho\grammar\Grammar;
-use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Adverb;
-use \agentecho\phrasestructure\Date;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -22,28 +17,25 @@ class Conversation
 	/** @var Local memory store for the roles in the conversation */
 	private $context = array();
 
-	/** @var \AgentEcho The agent having the conversation */
-	private $Echo;
+	/** @var KnowledgeManager The agent having the conversation */
+	private $KnowledgeManager;
 
 	/** @var Start parsing in the last used grammar */
 	private $CurrentGrammar = null;
 
 	/**
-	 * @param \agentecho\AgentEcho $Echo
 	 * @throws ConfigurationException
 	 */
-	public function __construct(AgentEcho $Echo)
+	public function __construct(array $grammars, KnowledgeManager $KnowledgeManager)
 	{
-		$this->Echo = $Echo;
+		$this->grammars = $grammars;
+		$this->KnowledgeManager = $KnowledgeManager;
 
-		// set current grammar
-		$availableGrammars = $Echo->getAvailableGrammars();
-
-		if (empty($availableGrammars)) {
+		if (empty($grammars)) {
 			throw new ConfigurationException(ConfigurationException::NO_GRAMMAR);
 		}
 
-		$Grammar = reset($availableGrammars);
+		$Grammar = reset($grammars);
 		$this->setCurrentGrammar($Grammar);
 	}
 
@@ -60,149 +52,32 @@ class Conversation
 	 */
 	public function answer($question)
 	{
-		$answer = '';
-
+		// prepare the parser
 		$Parser = new Parser();
-		$Parser->setGrammars($this->Echo->getAvailableGrammars());
+		$Parser->setGrammars($this->grammars);
 		$Parser->setCurrentGrammar($this->CurrentGrammar);
-		$Parser->setProperNounIdentifiers($this->Echo->getKnowledgeManager());
+		$Parser->setProperNounIdentifiers($this->KnowledgeManager);
 
 		try {
 
+			// parse the sentence
 			$SentenceContext = $Parser->parseFirstLine($question);
+
+			// update the current grammar from the language found in this sentence
 			$this->CurrentGrammar = $Parser->getCurrentGrammar();
 
-			/** @var Sentence $Sentence  */
+#todo: what do we need the context for? is it necessary to keep it at this level of abstraction?
+
+			// extract the Sentence
 			$Sentence = $SentenceContext->getRootObject();
 
-			$sentenceType = $Sentence->getSentenceType();
-			if ($sentenceType == 'yes-no-question') {
+			// process the sentence
+			$Processor = new SentenceProcessor($this->KnowledgeManager);
+			$Response = $Processor->process($Sentence);
 
-				// since this is a yes-no question, check the statement
-				$result = $this->Echo->getKnowledgeManager()->checkQuestion($Sentence);
-
-				if ($result) {
-					$answer = 'Yes.';
-
-					$Adverb = new Adverb();
-					$Adverb->setCategory('yes');
-					$Sentence->getRelation()->setAdverb($Adverb);
-
-					$Producer = new Producer();
-
-					$Sentence->setSentenceType(Sentence::DECLARATIVE);
-					$s = $Producer->produce($Sentence, $this->CurrentGrammar);
-
-					if ($s) {
-						$answer = $s;
-					}
-
-				} else {
-					$answer = 'No.';
-				}
-
-			} elseif ($sentenceType == 'wh-question') {
-
-				$answer = $this->Echo->getKnowledgeManager()->answerQuestionAboutObject($Sentence);
-
-				// incorporate the answer in the original question
-				if ($answer !== false) {
-
-					#todo: this should be made more generic
-//r($Sentence);
-					if ($Relation = $Sentence->getRelation()) {
-
-						$found = false;
-
-						// how many?
-						if ($Argument2 = $Relation->getArgument2()) {
-							if ($Determiner = $Argument2->getDeterminer()) {
-								if ($Determiner->isQuestion()) {
-									$Sentence->setSentenceType(Sentence::DECLARATIVE);
-									$Determiner->setQuestion(false);
-									$Determiner->setCategory($answer);
-
-									$found = true;
-								}
-							}
-						}
-
-						// when / where?
-						if (!$found) {
-							if ($Preposition = $Relation->getPreposition()) {
-								if ($Object = $Preposition->getObject()) {
-									if ($Object->isQuestion()) {
-										if ($Preposition->getCategory() == 'where') {
-											$Sentence->setSentenceType(Sentence::DECLARATIVE);
-											$Preposition->setCategory('in');
-											$Object->setName($answer);
-											$Object->setQuestion(false);
-
-											$found = true;
-										}
-										if ($Preposition->getCategory() == 'when') {
-											$Sentence->setSentenceType(Sentence::DECLARATIVE);
-											$Preposition->setCategory('on');
-
-											// in stead of "name" create a new Date object
-											list($year, $month, $day) = explode('-', $answer);
-											$Date = new Date();
-											$Date->setYear((int)$year);
-											$Date->setMonth((int)$month);
-											$Date->setDay((int)$day);
-											$Preposition->setObject($Date);
-
-											$found = true;
-										}
-									}
-								}
-							}
-						}
-
-						if ($found) {
-							$Producer = new Producer();
-							$sentence = $Producer->produce($Sentence, $this->CurrentGrammar);
-							if ($sentence) {
-								$answer = $sentence;
-							}
-						}
-
-					}
-
-				}
-
-			} elseif ($Sentence->getSentenceType() == 'imperative') {
-
-				#todo Imperatives are not always questions
-				$isQuestion = true;
-
-				if ($isQuestion) {
-
-					$answer = $this->Echo->getKnowledgeManager()->answerQuestion($Sentence);
-
-					$entities = array();
-
-					foreach ($answer as $name) {
-
-                        $Entity = new Entity();
-                        $Entity->setName($name);
-
-                        $entities[] = $Entity;
-					}
-
-                    $Phrase = SentenceBuilder::buildConjunction($entities);
-
-					$Producer = new Producer();
-                    $sentence = $Producer->produce($Phrase, $this->CurrentGrammar);
-
-					if ($sentence) {
-						$answer = $sentence;
-					}
-				}
-
-			} else {
-				$answer = 'ok.';
-			}
+			// produce the surface text of the response
+			$Producer = new Producer();
+			$answer = $Producer->produce($Response, $this->CurrentGrammar);
 
 		} catch (\Exception $E) {
 

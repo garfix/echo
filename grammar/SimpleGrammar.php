@@ -308,24 +308,40 @@ abstract class SimpleGrammar extends BaseGrammar
 					)
 				),
 
-				// active declarative past-tense sentence with a preposition
-				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
+				// active declarative sentence with a preposition
+				// Lord Byron died in Missolonghi
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg1' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
-							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+							'arg1' => '?sem-1', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
 					),
 				),
 
+				// active declarative past-tense sentence with a preposition
+				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg1' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+//							'arg1' => '?sem-1', 'arg2' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
+//						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+//					),
+//				),
+
 				// active declarative sentence with a preposition
 				// Lord Byron was born in London
+				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'arg2' => null))),
 					'rule' => array(

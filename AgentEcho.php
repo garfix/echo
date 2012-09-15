@@ -87,7 +87,7 @@ class AgentEcho
 
 	public function startConversation()
 	{
-		$Conversation = new Conversation($this);
+		$Conversation = new Conversation($this->getAvailableGrammars(), $this->getKnowledgeManager());
 
 		return $Conversation;
 	}
