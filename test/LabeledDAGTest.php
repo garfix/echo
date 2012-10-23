@@ -91,28 +91,28 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
 
 		// check that a shared child is implemented correctly
-		$this->assertSame($F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
-		$this->assertSame($F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
-		$this->assertSame($F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
+		$this->assertSame('no', $F1->getPathValue(array('aaa', 'head', 'agreement')));
+		$this->assertSame('no', $F1->getPathValue(array('bbb', 'head', 'agreement')));
+		$this->assertSame('no', $F1->getPathValue(array('ccc', 'head', 'agreement')));
 		// check that $F2 is not changed by the unification
-		$this->assertSame($F2->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->assertSame(null, $F2->getPathValue(array('ccc', 'head', 'agreement')));
 		// check that $F3 is not changed by the unification
-		$this->assertSame($F3->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->assertSame(null, $F3->getPathValue(array('ccc', 'head', 'agreement')));
 		// check that $F4 shows unification
-		$this->assertSame($F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
-		$this->assertSame($F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
+		$this->assertSame('yes', $F4->getPathValue(array('ccc', 'head', 'agreement')));
+		$this->assertSame('yes', $F4->getPathValue(array('ddd', 'head', 'agreement')));
 		// check that $F6 contains the followed path
-		$this->assertSame($F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
+		$this->assertSame(5, $F6->getPathValue(array('skies', 'structures', 'a', 'c')));
 		// check that $F6 does not contain removed paths from $F5
-		$this->assertSame($F5->getPathValue(array('dogs', 'blackie')), 3);
-		$this->assertSame($F6->getPathValue(array('dogs', 'blackie')), null);
+		$this->assertSame(3, $F5->getPathValue(array('dogs', 'blackie')));
+		$this->assertSame(null, $F6->getPathValue(array('dogs', 'blackie')));
 		// check for failing unifications
-		$this->assertSame($F9, false);
-		$this->assertSame($F12->getPathValue(array('color', 'a')), 1);
-		$this->assertSame($F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
+		$this->assertSame(false, $F9);
+		$this->assertSame(1, $F12->getPathValue(array('color', 'a')));
+		$this->assertSame(1, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')));
 		// regression test
-		$this->assertSame($F18->getPathValue(array('NP', 'person')), null);
-		$this->assertSame($F21->getPathValue(array('a', 'head')), 1);
+		$this->assertSame(null, $F18->getPathValue(array('NP', 'person')));
+		$this->assertSame(1, $F21->getPathValue(array('a', 'head')));
 		// alias
 		$tree = array(
 			'color' => '?c',
@@ -121,25 +121,25 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		);
 		$F22 = new LabeledDAG($tree);
 		$F22->setPathValue(array('color'), 'red');
-		$this->assertSame($F22->getPathValue(array('colour')), 'red');
+		$this->assertSame('red', $F22->getPathValue(array('colour')));
 		$F22->setPathValue(array('colour'), 'blue');
-		$this->assertSame($F22->getPathValue(array('color')), 'blue');
+		$this->assertSame('blue', $F22->getPathValue(array('color')));
 		$F22->setPathValue(array('couleur'), 'yellow');
-		$this->assertSame($F22->getPathValue(array('color')), 'yellow');
+		$this->assertSame('yellow', $F22->getPathValue(array('color')));
 
 		// match
 		$F28 = new LabeledDAG(array('a' => 1));
 		$F29 = new LabeledDAG(array('a' => 1, 'b' => null));
 		$F30 = new LabeledDAG(array('a' => 1, 'b' => array('c' => null, 'd' => 4)));
-		$this->assertSame($F28->match(array('a' => 1)), true);
-		$this->assertSame($F28->match(array('a' => 2)), false);
-		$this->assertSame($F28->match(array('a' => 1, 'c' => null)), false);
-		$this->assertSame($F29->match(array('a' => 1, 'b' => 2)), false);
-		$this->assertSame($F29->match(array('a' => 1)), true);
-		$this->assertSame($F29->match(array('b' => 2)), false);
-		$this->assertSame($F30->match(array('b' => array('d' => 4))), true);
-		$this->assertSame($F30->match(array('b' => array('c' => 3))), false);
-		$this->assertSame($F30->match(array('b' => array('d' => 4, 'e' => null))), false);
+		$this->assertSame(true, $F28->match(array('a' => 1)));
+		$this->assertSame(false, $F28->match(array('a' => 2)));
+		$this->assertSame(false, $F28->match(array('a' => 1, 'c' => null)));
+		$this->assertSame(false, $F29->match(array('a' => 1, 'b' => 2)));
+		$this->assertSame(true, $F29->match(array('a' => 1)));
+		$this->assertSame(false, $F29->match(array('b' => 2)));
+		$this->assertSame(true, $F30->match(array('b' => array('d' => 4))));
+		$this->assertSame(false, $F30->match(array('b' => array('c' => 3))));
+		$this->assertSame(false, $F30->match(array('b' => array('d' => 4, 'e' => null))));
 
 		// simpler syntax
 		$F40 = new LabeledDAG(array(
@@ -150,9 +150,9 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		));
 
 		$F40->setPathValue(array('aap'), 3);
-		$this->assertSame($F40->getPathValue(array('wim')), 3);
-		$this->assertSame($F40->getPathValue(array('zus', 'jet')), 3);
-		$this->assertSame($F40->getPathValue(array('zus', 'schapen')), null);
+		$this->assertSame(3, $F40->getPathValue(array('wim')));
+		$this->assertSame(3, $F40->getPathValue(array('zus', 'jet')));
+		$this->assertSame(null, $F40->getPathValue(array('zus', 'schapen')));
 
 	}
 }
