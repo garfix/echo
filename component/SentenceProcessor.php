@@ -26,7 +26,7 @@ class SentenceProcessor
 
 	/**
 	 * @param Sentence $Sentence
-	 * @return Sentence
+	 * @return PhraseStructure
 	 */
 	public function process(Sentence $Sentence)
 	{

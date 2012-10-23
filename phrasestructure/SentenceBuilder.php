@@ -9,6 +9,8 @@ class SentenceBuilder
 {
     /**
      * Builds a (nested) conjunction of an array of entities.
+     *
+     * @return Conjunction
      */
     public static function buildConjunction(array $entities)
     {

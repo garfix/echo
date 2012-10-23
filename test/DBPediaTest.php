@@ -74,8 +74,11 @@ class DBPediaTest extends TestBase
 		$this->test(363, $answer, "Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.");
 
 		// dependent clause
-$Conversation->setCurrentGrammar($English);
-		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-		$this->test(371, $answer, "She was xx years old.");
+//$Conversation->setCurrentGrammar($English);
+//		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
+//		$this->test(371, $answer, "She was xx years old.");
+
+		// When did Lord Byron pass away?
+		// -> interpret the expression into 'die'
 	}
 }

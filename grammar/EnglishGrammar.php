@@ -462,6 +462,7 @@ class EnglishGrammar extends SimpleGrammar
 				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
 			);
 
+#todo: rewrite to s => s sbar
 		// How old was Mary Shelley when she died?
 		// NP delivers arg1
 		$rules['S'][] =
@@ -472,6 +473,22 @@ class EnglishGrammar extends SimpleGrammar
 				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 				array('cat' => 'SBar', 'features' => array('head' => array('sem' => '?sem-4'))),
 			);
+
+//// How old was Mary Shelley when she died?
+//// NP delivers arg1
+//$rules['S'][] =
+//	array(
+//		array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-3', 'relativeClause' => '?sem-4'))),
+//		array('cat' => 'WhNP', 'features' => array('head' => array('sem-3' => array('arg2' => null)))),
+//		array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'relation', 'arg1' => '?sem-1')))),
+//		array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+//	);
+//$rules['S'][] =
+//	array(
+//		array('cat' => 'S', 'features' => array('head-1' => null)),
+//		array('cat' => 'S', 'features' => array('head-1' => null)),
+//		array('cat' => 'SBar', 'features' => array('head-1' => null)),
+//	);
 
 		return $rules;
 	}
