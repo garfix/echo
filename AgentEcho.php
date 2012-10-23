@@ -92,3 +92,10 @@ class AgentEcho
 		return $Conversation;
 	}
 }
+
+function r($string, $return = false)
+{
+	$trace = debug_backtrace();
+	echo $trace[0]['file'] . ' (' . $trace[0]['line'] . '):' . "\n";
+	return print_r($string, $return);
+}

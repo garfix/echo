@@ -2,12 +2,13 @@
 
 namespace agentecho\test;
 
-use \agentecho\test\TestBase;
+require_once __DIR__ . '/../component/Autoload.php';
+
 use \agentecho\datastructure\LabeledDAG;
 
-class LabeledDAGTest extends TestBase
+class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 {
-	function execute()
+	function testLabeledDAGs()
 	{
 		$tree1 = array(
 			'aaa' => array('head-1' => null),
@@ -90,28 +91,28 @@ class LabeledDAGTest extends TestBase
 		$F1->setPathValue(array('ccc', 'head', 'agreement'), 'no');
 
 		// check that a shared child is implemented correctly
-		$this->test(300, $F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
-		$this->test(301, $F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
-		$this->test(302, $F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
+		$this->assertSame($F1->getPathValue(array('aaa', 'head', 'agreement')), 'no');
+		$this->assertSame($F1->getPathValue(array('bbb', 'head', 'agreement')), 'no');
+		$this->assertSame($F1->getPathValue(array('ccc', 'head', 'agreement')), 'no');
 		// check that $F2 is not changed by the unification
-		$this->test(310, $F2->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->assertSame($F2->getPathValue(array('ccc', 'head', 'agreement')), null);
 		// check that $F3 is not changed by the unification
-		$this->test(311, $F3->getPathValue(array('ccc', 'head', 'agreement')), null);
+		$this->assertSame($F3->getPathValue(array('ccc', 'head', 'agreement')), null);
 		// check that $F4 shows unification
-		$this->test(312, $F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
-		$this->test(313, $F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
+		$this->assertSame($F4->getPathValue(array('ccc', 'head', 'agreement')), 'yes');
+		$this->assertSame($F4->getPathValue(array('ddd', 'head', 'agreement')), 'yes');
 		// check that $F6 contains the followed path
-		$this->test(320, $F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
+		$this->assertSame($F6->getPathValue(array('skies', 'structures', 'a', 'c')), 5);
 		// check that $F6 does not contain removed paths from $F5
-		$this->test(321, $F5->getPathValue(array('dogs', 'blackie')), 3);
-		$this->test(322, $F6->getPathValue(array('dogs', 'blackie')), null);
+		$this->assertSame($F5->getPathValue(array('dogs', 'blackie')), 3);
+		$this->assertSame($F6->getPathValue(array('dogs', 'blackie')), null);
 		// check for failing unifications
-		$this->test(330, $F9, false);
-		$this->test(331, $F12->getPathValue(array('color', 'a')), 1);
-		$this->test(332, $F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
+		$this->assertSame($F9, false);
+		$this->assertSame($F12->getPathValue(array('color', 'a')), 1);
+		$this->assertSame($F15->getPathValue(array('NP', 'head', 'agreement', 'person')), 1);
 		// regression test
-		$this->test(333, $F18->getPathValue(array('NP', 'person')), null);
-		$this->test(334, $F21->getPathValue(array('a', 'head')), 1);
+		$this->assertSame($F18->getPathValue(array('NP', 'person')), null);
+		$this->assertSame($F21->getPathValue(array('a', 'head')), 1);
 		// alias
 		$tree = array(
 			'color' => '?c',
@@ -120,25 +121,25 @@ class LabeledDAGTest extends TestBase
 		);
 		$F22 = new LabeledDAG($tree);
 		$F22->setPathValue(array('color'), 'red');
-		$this->test(341, $F22->getPathValue(array('colour')), 'red');
+		$this->assertSame($F22->getPathValue(array('colour')), 'red');
 		$F22->setPathValue(array('colour'), 'blue');
-		$this->test(341, $F22->getPathValue(array('color')), 'blue');
+		$this->assertSame($F22->getPathValue(array('color')), 'blue');
 		$F22->setPathValue(array('couleur'), 'yellow');
-		$this->test(341, $F22->getPathValue(array('color')), 'yellow');
+		$this->assertSame($F22->getPathValue(array('color')), 'yellow');
 
 		// match
 		$F28 = new LabeledDAG(array('a' => 1));
 		$F29 = new LabeledDAG(array('a' => 1, 'b' => null));
 		$F30 = new LabeledDAG(array('a' => 1, 'b' => array('c' => null, 'd' => 4)));
-		$this->test(361, $F28->match(array('a' => 1)), true);
-		$this->test(362, $F28->match(array('a' => 2)), false);
-		$this->test(363, $F28->match(array('a' => 1, 'c' => null)), false);
-		$this->test(364, $F29->match(array('a' => 1, 'b' => 2)), false);
-		$this->test(365, $F29->match(array('a' => 1)), true);
-		$this->test(366, $F29->match(array('b' => 2)), false);
-		$this->test(367, $F30->match(array('b' => array('d' => 4))), true);
-		$this->test(368, $F30->match(array('b' => array('c' => 3))), false);
-		$this->test(369, $F30->match(array('b' => array('d' => 4, 'e' => null))), false);
+		$this->assertSame($F28->match(array('a' => 1)), true);
+		$this->assertSame($F28->match(array('a' => 2)), false);
+		$this->assertSame($F28->match(array('a' => 1, 'c' => null)), false);
+		$this->assertSame($F29->match(array('a' => 1, 'b' => 2)), false);
+		$this->assertSame($F29->match(array('a' => 1)), true);
+		$this->assertSame($F29->match(array('b' => 2)), false);
+		$this->assertSame($F30->match(array('b' => array('d' => 4))), true);
+		$this->assertSame($F30->match(array('b' => array('c' => 3))), false);
+		$this->assertSame($F30->match(array('b' => array('d' => 4, 'e' => null))), false);
 
 		// simpler syntax
 		$F40 = new LabeledDAG(array(
@@ -149,9 +150,9 @@ class LabeledDAGTest extends TestBase
 		));
 
 		$F40->setPathValue(array('aap'), 3);
-		$this->test(370, $F40->getPathValue(array('wim')), 3);
-		$this->test(371, $F40->getPathValue(array('zus', 'jet')), 3);
-		$this->test(372, $F40->getPathValue(array('zus', 'schapen')), null);
+		$this->assertSame($F40->getPathValue(array('wim')), 3);
+		$this->assertSame($F40->getPathValue(array('zus', 'jet')), 3);
+		$this->assertSame($F40->getPathValue(array('zus', 'schapen')), null);
 
 	}
 }

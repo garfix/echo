@@ -2,7 +2,8 @@
 
 namespace agentecho\test;
 
-use \agentecho\test\TestBase;
+require_once __DIR__ . '/../component/Autoload.php';
+
 use \agentecho\component\Producer;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
@@ -11,9 +12,9 @@ use \agentecho\phrasestructure\Relation;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\SentenceBuilder;
 
-class ProducerTest extends TestBase
+class ProducerTest extends \PHPUnit_Framework_TestCase
 {
-	function execute()
+	function test()
 	{
 		$Producer = new Producer();
 
@@ -35,7 +36,7 @@ class ProducerTest extends TestBase
 		$Sentence = new Sentence();
 			$Sentence->setRelation($Relation);
 		$line = $Producer->produce($Sentence, $English);
-		$this->test(401, $line, 'John gives Mary flowers.');
+		$this->assertSame('John gives Mary flowers.', $line);
 
 		$John = new Entity();
 			$John->setName('John');
@@ -50,16 +51,16 @@ class ProducerTest extends TestBase
 
 		// English
 		$line = $Producer->produce($Phrase1, $English);
-		$this->test(402, $line, 'John and Mary');
+		$this->assertSame('John and Mary', $line);
 
 		$line = $Producer->produce($Phrase2, $English);
-		$this->test(403, $line, 'John, Mary, Benjamin, and Bob');
+		$this->assertSame('John, Mary, Benjamin, and Bob', $line);
 
 		// Dutch
 		$line = $Producer->produce($Phrase1, $Dutch);
-		$this->test(404, $line, 'John en Mary');
+		$this->assertSame('John en Mary', $line);
 
 		$line = $Producer->produce($Phrase2, $Dutch);
-		$this->test(405, $line, 'John, Mary, Benjamin en Bob');
+		$this->assertSame('John, Mary, Benjamin en Bob', $line);
 	}
 }

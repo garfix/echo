@@ -2,8 +2,9 @@
 
 namespace agentecho\test;
 
+require_once __DIR__ . '/../component/Autoload.php';
+
 use \agentecho\AgentEcho;
-use \agentecho\test\TestBase;
 use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
@@ -14,9 +15,9 @@ use \agentecho\grammar\DutchGrammar;
  * Anne Isabella Milbanke http://dbpedia.org/page/Anne_Isabella_Byron,_Baroness_Byron
  * Mary Shelley http://dbpedia.org/page/Mary_Shelley
  */
-class DBPediaTest extends TestBase
+class DBPediaTest extends \PHPUnit_Framework_TestCase
 {
-	function execute()
+	function test()
 	{
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia());
@@ -27,56 +28,56 @@ class DBPediaTest extends TestBase
 
 		// S => aux NP VP ; DBPedia
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
-		$this->test(301, $answer, 'Yes, Lord Byron was influenced by the author of Paradise Lost.');
+		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
-		$this->test(302, $answer, 'Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.');
+		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
-		$this->test(311, $answer, 'Lord Byron had 2 children.');
+		$this->assertSame('Lord Byron had 2 children.', $answer);
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
-		$this->test(312, $answer, 'Lord Byron had 2 kinderen.');
+		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("Where was Lord Byron born?");
-		$this->test(321, $answer, 'Lord Byron was born in London.');
+		$this->assertSame('Lord Byron was born in London.', $answer);
 		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-		$this->test(322, $answer, 'Lord Byron werd geboren in London.');
+		$this->assertSame('Lord Byron werd geboren in London.', $answer);
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("When was Lord Byron born?");
-		$this->test(331, $answer, 'Lord Byron was born on January 22, 1788.');
+		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
 
 		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
-		$this->test(332, $answer, 'Lord Byron werd geboren op 22 januari 1788.');
+		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
 
 		$answer = $Conversation->answer("Where did Lord Byron die?");
-		$this->test(333, $answer, 'Lord Byron died in Missolonghi.');
+		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
-		$this->test(341, $answer, 'Yes, Ada Lovelace was the daughter of Lord Byron.');
+		$this->assertSame('Yes, Ada Lovelace was the daughter of Lord Byron.', $answer);
 		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
-		$this->test(342, $answer, 'Ja, Ada Lovelace was een dochter van Lord Byron.');
+		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
 
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
-		$this->test(351, $answer, "Allegra Byron and Ada Lovelace");
+		$this->assertSame("Allegra Byron and Ada Lovelace", $answer);
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
-		$this->test(352, $answer, "Allegra Byron en Ada Lovelace");
+		$this->assertSame("Allegra Byron en Ada Lovelace", $answer);
 
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
-		$this->test(361, $answer, "Yes, Lord Byron was married to Anne Isabella Milbanke.");
+		$this->assertSame("Yes, Lord Byron was married to Anne Isabella Milbanke.", $answer);
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
-		$this->test(362, $answer, "Yes, Anne Isabella Milbanke was married to Lord Byron.");
+		$this->assertSame("Yes, Anne Isabella Milbanke was married to Lord Byron.", $answer);
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
-		$this->test(363, $answer, "Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.");
+		$this->assertSame("Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.", $answer);
 
 		// dependent clause
 //$Conversation->setCurrentGrammar($English);
 //		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-//		$this->test(371, $answer, "She was xx years old.");
+//		$this->assertSame("She was xx years old.", $answer);
 
 		// When did Lord Byron pass away?
 		// -> interpret the expression into 'die'

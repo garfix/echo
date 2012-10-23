@@ -2,14 +2,15 @@
 
 namespace agentecho\test;
 
+require_once __DIR__ . '/../component/Autoload.php';
+
 use \agentecho\AgentEcho;
-use \agentecho\test\TestBase;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 
-class ConversationTest extends TestBase
+class ConversationTest extends \PHPUnit_Framework_TestCase
 {
-	public function execute()
+	public function test()
 	{
 		$Echo = new AgentEcho();
 		$Echo->addGrammar(new EnglishGrammar());
@@ -18,9 +19,9 @@ class ConversationTest extends TestBase
 		$Conversation = $Echo->startConversation();
 		// proper error feedback
 		$answer = $Conversation->answer('rwyrwur');
-		$this->test(270, $answer, "Word not found: rwyrwur");
+		$this->assertSame("Word not found: rwyrwur", $answer);
 
 		$answer = $Conversation->answer('We rwyrwur born');
-		$this->test(271, $answer, "Word not found: rwyrwur");
+		$this->assertSame("Word not found: rwyrwur", $answer);
 	}
 }
