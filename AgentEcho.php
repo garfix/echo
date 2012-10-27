@@ -45,6 +45,7 @@ use \agentecho\grammar\Grammar;
  * Sentence + Relation => Clause (!?)
  * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
  * Maak van de testen PHPUnit tests
+ * Introduceer deep subject / deep object / deep indirect object
  */
 class AgentEcho
 {

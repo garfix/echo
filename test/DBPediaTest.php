@@ -8,6 +8,7 @@ use \agentecho\AgentEcho;
 use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
+use \agentecho\component\Conversation;
 
 /**
  * Question answering
@@ -17,7 +18,21 @@ use \agentecho\grammar\DutchGrammar;
  */
 class DBPediaTest extends \PHPUnit_Framework_TestCase
 {
-	function test()
+	/**
+	 * @return Conversation
+	 */
+	private function startEnglishConversation()
+	{
+		$Echo = new AgentEcho();
+		$Echo->addKnowledgeSource(new DBPedia());
+		$Echo->addGrammar($English = new EnglishGrammar());
+
+		$Conversation = $Echo->startConversation();
+
+		return $Conversation;
+	}
+
+	public function test()
 	{
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia());
@@ -74,12 +89,21 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 		$this->assertSame("Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.", $answer);
 
-		// dependent clause
-//$Conversation->setCurrentGrammar($English);
-//		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-//		$this->assertSame("She was xx years old.", $answer);
+	}
+
+	/**
+	 * The answer is calculated.
+	 * Uses a dependent clause
+	 */
+	public function testCalculatedAnswer()
+	{
+		$Conversation = $this->startEnglishConversation();
+
+		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
+		$this->assertSame("She was xx years old.", $answer);
+	}
+
 
 		// When did Lord Byron pass away?
 		// -> interpret the expression into 'die'
-	}
 }

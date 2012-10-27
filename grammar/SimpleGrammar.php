@@ -130,6 +130,22 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
+
+				// How old was Mary Shelley?
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-3', 'relativeClause' => '?sem-4'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('sem-3' => array('arg2' => null)))),
+					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'relation', 'arg1' => '?sem-1')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+				),
+
+				// How old was Mary Shelley when she died?
+				array(
+					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'SBar', 'features' => array('head' => array('sem' => '?sem-1'))),
+				)
+
 			),
 			// S-Bar, see 'The structure of modern english' - Brinton (2000) - p. 230
 			// secondary clause
@@ -137,13 +153,6 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'SBar', 'features' => array('head' => array('sem' =>
 						array('type' => 'relativeClause', 'clause' => '?sem-2', 'complementizer' => '?cat')))),
-//						array('type' => 'relativeClause', 'clause' => '?sem-2', 'complementizer' => array(
-//							'type' => 'preposition',
-//							'category' => '?cat',
-//							'object' => array(
-//								'type' => 'entity', 'question' => true
-//							)
-//						))))),
 					array('cat' => 'whword', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
 					array('cat' => 'S', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),

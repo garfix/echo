@@ -14,7 +14,7 @@ use \agentecho\phrasestructure\SentenceBuilder;
 
 class ProducerTest extends \PHPUnit_Framework_TestCase
 {
-	function test()
+	function testConjunction()
 	{
 		$Producer = new Producer();
 
