@@ -201,19 +201,19 @@ class DBPedia extends KnowledgeSource
 
 			// http://dbpedia.org/ontology/influencedBy
 			if ($predicate == 'influence') {
-				$arg1 = $Relation->getArgument1()->getHashCode();
+				$subject = $Relation->getDeepSubject()->getHashCode();
 				$arg2 = $Relation->getArgument2()->getHashCode();
 
-				$clauses[] = "?{$arg2} <http://dbpedia.org/ontology/influencedBy> ?{$arg1}";
+				$clauses[] = "?{$arg2} <http://dbpedia.org/ontology/influencedBy> ?{$subject}";
 			}
 
 			// http://dbpedia.org/ontology/child (1)
 			if ($predicate == 'have') {
-				$arg1 = $Relation->getArgument1()->getHashCode();
+				$subject = $Relation->getDeepSubject()->getHashCode();
 				$arg2 = $Relation->getArgument2()->getHashCode();
 
 				if ($Relation->getArgument2()->getCategory() == 'child') {
-					$clauses[] = "?{$arg1} <http://dbpedia.org/ontology/child> ?{$arg2}";
+					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/child> ?{$arg2}";
 				}
 			}
 
@@ -240,15 +240,15 @@ class DBPedia extends KnowledgeSource
 				$Preposition = $Relation->getPreposition();
 				if ($Preposition && $Preposition->getCategory() == 'where') {
 					$locationId = $Preposition->getObject()->getHashCode();
-					$arg1id = $Relation->getArgument1()->getHashCode();
-					$clauses[] = "?{$arg1id} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";
+					$subject = $Relation->getDeepSubject()->getHashCode();
+					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";
 					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
 				}
 			}
 
 			// http://dbpedia.org/ontology/child (2)
 			if ($predicate == 'be') {
-				$childId = $Relation->getArgument1()->getHashCode();
+				$childId = $Relation->getDeepSubject()->getHashCode();
 				$Arg2 = $Relation->getArgument2();
 				$Preposition = $Arg2->getPreposition();
 				if ($Preposition) {

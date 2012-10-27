@@ -28,7 +28,8 @@ class Relation extends PhraseStructure
 
 	protected $data = array(
 		'predicate' => null,
-		'Arg1' => null,
+		// Deep subject: the subject of the active form of the sentence
+		'DeepSubject' => null,
 		'Arg2' => null,
 		'Arg3' => null,
 		'Preposition' => null,
@@ -46,14 +47,9 @@ class Relation extends PhraseStructure
 		return $this->data['predicate'];
 	}
 
-	public function setArgument($index, $value)
+	public function setDeepSubject($arg)
 	{
-		$this->data['Arg' . $index] = $value;
-	}
-
-	public function setArg1($arg)
-	{
-		$this->data['Arg1'] = $arg;
+		$this->data['DeepSubject'] = $arg;
 	}
 	public function setArg2($arg)
 	{
@@ -67,9 +63,9 @@ class Relation extends PhraseStructure
 	/**
 	 * @return Entity
 	 */
-	public function getArgument1()
+	public function getDeepSubject()
 	{
-		return $this->data['Arg1'];
+		return $this->data['DeepSubject'];
 	}
 
 	/**
@@ -90,7 +86,7 @@ class Relation extends PhraseStructure
 
 	public function setSubject(Entity $Subject)
 	{
-		$this->data['Arg1'] = $Subject;
+		$this->data['DeepSubject'] = $Subject;
 	}
 
 	public function setObject(Entity $Object)

@@ -36,26 +36,26 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		// S => WhNP VP ; referring expression "I" ; agreement feature
 		$Sentence = $Parser->parseFirstLine('Who am I?');
 		$this->assertSame('[S [WhNP [whword who]][VP [verb am]][NP [pronoun i]]]', $Sentence->getSyntaxString());
-#		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, Arg1: Entity {category: firstPerson, number: singular}, Arg2: Entity {number: singular, question: 1}, tense: present}, voice: active}', $Sentence->getObjectString());
-		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, Arg1: Entity {category: firstPerson, number: singular}, Preposition: Preposition {category: identity, Object: Entity {number: singular, question: 1}}, tense: present}, voice: active}', $Sentence->getObjectString());
+#		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, DeepSubject1: Entity {category: firstPerson, number: singular}, Arg2: Entity {number: singular, question: 1}, tense: present}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, DeepSubject: Entity {category: firstPerson, number: singular}, Preposition: Preposition {category: identity, Object: Entity {number: singular, question: 1}}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		$Sentence = $Parser->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
 		$this->assertSame('[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('Sentence {sentenceType: yes-no-question, Relation: Relation {predicate: influence, Arg1: Entity {category: author, Determiner: Determiner {category: the, question: }, number: singular, Preposition: Preposition {category: of, Object: Entity {name: Paradise Lost, number: singular}}}, Arg2: Entity {name: Lord Byron, number: singular}, tense: past}, voice: passive}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: yes-no-question, Relation: Relation {predicate: influence, DeepSubject: Entity {category: author, Determiner: Determiner {category: the, question: }, number: singular, Preposition: Preposition {category: of, Object: Entity {name: Paradise Lost, number: singular}}}, Arg2: Entity {name: Lord Byron, number: singular}, tense: past}, voice: passive}', $Sentence->getObjectString());
 
 		$Sentence = $Parser->parseFirstLine('How many children did Lord Byron have?');
-		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: have, Arg1: Entity {name: Lord Byron, number: singular}, Arg2: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: have, DeepSubject: Entity {name: Lord Byron, number: singular}, Arg2: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}', $Sentence->getObjectString());
 
 		// S => NP VP
 		$Sentence = $Parser->parseFirstLine('John sees the book');
 		$this->assertSame('[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: see, Arg1: Entity {name: John, number: singular}, Arg2: Entity {category: book, Determiner: Determiner {category: the, question: }, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: see, DeepSubject: Entity {name: John, number: singular}, Arg2: Entity {category: book, Determiner: Determiner {category: the, question: }, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		// agreement success
 		// S => NP VP
 		$Sentence = $Parser->parseFirstLine('I am Patrick');
 		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [propernoun Patrick]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: be, Arg1: Entity {category: firstPerson, number: singular}, Arg2: Entity {name: Patrick, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: be, DeepSubject: Entity {category: firstPerson, number: singular}, Arg2: Entity {name: Patrick, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		// agreement fail
 		$caught = false;
@@ -68,11 +68,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		// S => NP VP NP NP
 		$Sentence = $Parser->parseFirstLine("John gives Mary flowers.");
-		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: give, Arg1: Entity {name: John, number: singular}, Arg2: Entity {category: flower, number: singular}, Arg3: Entity {name: Mary, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: declarative, Relation: Relation {predicate: give, DeepSubject: Entity {name: John, number: singular}, Arg2: Entity {category: flower, number: singular}, Arg3: Entity {name: Mary, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		// secondary sentence
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
-		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, Arg1: Entity {name: Mary Shelley, number: singular}, Arg2: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Relation {predicate: die, Arg1: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: wh-question, Relation: Relation {predicate: be, DeepSubject: Entity {name: Mary Shelley, number: singular}, Arg2: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Relation {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
 
 	}
 }

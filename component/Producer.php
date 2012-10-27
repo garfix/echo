@@ -115,12 +115,12 @@ $features = $Grammar->getWordFeatures($word, $partOfSpeech);
 	private function buildPhraseStructure(PhraseStructure $PhraseStructure)
 	{
 		$structure = array();
-		$structure['type'] = strtolower(basename(str_replace('\\', '/', get_class($PhraseStructure))));
+		$structure['type'] = lcfirst(basename(str_replace('\\', '/', get_class($PhraseStructure))));
 
 		foreach ($PhraseStructure->getAttributes() as $name => $value) {
 #todo: their should be no need to lowercase
 			if ($value instanceof PhraseStructure) {
-				$structure[strtolower($name)] = $this->buildPhraseStructure($value);
+				$structure[lcfirst($name)] = $this->buildPhraseStructure($value);
 			} else {
 				$structure[$name] = $value;
 			}
@@ -128,6 +128,7 @@ $features = $Grammar->getWordFeatures($word, $partOfSpeech);
 
 		return $structure;
 	}
+
 	/**
 	 * Turns phrase specification into a surface representation.
 	 *

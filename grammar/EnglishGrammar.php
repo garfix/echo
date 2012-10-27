@@ -452,14 +452,14 @@ class EnglishGrammar extends SimpleGrammar
 		$rules = parent::getParseRules();
 
 		// How many children did John have?
-		// NP delivers arg1
+		// NP delivers deep subject
 		$rules['S'][] =
 			array(
 				array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
 				array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 				array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
 				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
-				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('arg1' => '?sem-2')))),
+				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem-2')))),
 			);
 
 		return $rules;

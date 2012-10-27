@@ -16,9 +16,9 @@ class ContextProcessor
 	{
 		$Relation = $Sentence->getRelation();
 		if ($Relation) {
-			$Arg1 = $Relation->getArgument1();
-			if ($Arg1) {
-				$ConversationContext->setSubject($Arg1);
+			$DeepSubject = $Relation->getDeepSubject();
+			if ($DeepSubject) {
+				$ConversationContext->setSubject($DeepSubject);
 			}
 		}
 	}

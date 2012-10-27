@@ -30,7 +30,7 @@ class LabeledDAG
 	 *
 	 * 	$tree = array(
 	 *	    'noun' => array('head' => array('sem{?sem1}' => array('role' => null))),
-	 *	    'verb' => array('head' => array('sem' => array('arg1' => '?sem1'))),
+	 *	    'verb' => array('head' => array('sem' => array('subject' => '?sem1'))),
 	 *	);
 	 *
 	 * Example 3:
