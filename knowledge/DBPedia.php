@@ -116,8 +116,8 @@ class DBPedia extends KnowledgeSource
                 if ($Relation->getPredicate() == 'name') {
 
                     $select = '?name';
-                    $arg2id = $Relation->getArgument2()->getHashCode();
-                    $clauses[] = "?{$arg2id} rdfs:label ?name";
+                    $deepDeepDirectObject = $Relation->getDeepDirectObject()->getHashCode();
+                    $clauses[] = "?{$deepDeepDirectObject} rdfs:label ?name";
                     $clauses[] = 'FILTER(lang(?name) = "en")';
                 }
 			}
@@ -202,18 +202,18 @@ class DBPedia extends KnowledgeSource
 			// http://dbpedia.org/ontology/influencedBy
 			if ($predicate == 'influence') {
 				$subject = $Relation->getDeepSubject()->getHashCode();
-				$arg2 = $Relation->getArgument2()->getHashCode();
+				$deepDeepDirectObject = $Relation->getDeepDirectObject()->getHashCode();
 
-				$clauses[] = "?{$arg2} <http://dbpedia.org/ontology/influencedBy> ?{$subject}";
+				$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/influencedBy> ?{$subject}";
 			}
 
 			// http://dbpedia.org/ontology/child (1)
 			if ($predicate == 'have') {
 				$subject = $Relation->getDeepSubject()->getHashCode();
-				$arg2 = $Relation->getArgument2()->getHashCode();
+				$deepDeepDirectObject = $Relation->getDeepDirectObject()->getHashCode();
 
-				if ($Relation->getArgument2()->getCategory() == 'child') {
-					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/child> ?{$arg2}";
+				if ($Relation->getDeepDirectObject()->getCategory() == 'child') {
+					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/child> ?{$deepDeepDirectObject}";
 				}
 			}
 
@@ -222,15 +222,15 @@ class DBPedia extends KnowledgeSource
 				$Preposition = $Relation->getPreposition();
 				if ($Preposition->getCategory() == 'where') {
 					$locationId = $Preposition->getObject()->getHashCode();
-					$arg2id = $Relation->getArgument2()->getHashCode();
-					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthPlace> ?{$locationId}";
+					$deepDeepDirectObject = $Relation->getDeepDirectObject()->getHashCode();
+					$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/birthPlace> ?{$locationId}";
 					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
 				}
 
 				if ($Preposition->getCategory() == 'when') {
 					$timeId = $Preposition->getObject()->getHashCode();
-					$arg2id = $Relation->getArgument2()->getHashCode();
-					$clauses[] = "?{$arg2id} <http://dbpedia.org/ontology/birthDate> ?{$timeId}";
+					$deepDeepDirectObject = $Relation->getDeepDirectObject()->getHashCode();
+					$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/birthDate> ?{$timeId}";
 				}
 
 			}
@@ -249,13 +249,13 @@ class DBPedia extends KnowledgeSource
 			// http://dbpedia.org/ontology/child (2)
 			if ($predicate == 'be') {
 				$childId = $Relation->getDeepSubject()->getHashCode();
-				$Arg2 = $Relation->getArgument2();
-				$Preposition = $Arg2->getPreposition();
+				$DeepDirectObject = $Relation->getDeepDirectObject();
+				$Preposition = $DeepDirectObject->getPreposition();
 				if ($Preposition) {
 					$Object = $Preposition->getObject();
 					$parentId = $Object->getHashCode();
 
-					if ($Relation->getArgument2()->getCategory() == 'daughter') {
+					if ($Relation->getDeepDirectObject()->getCategory() == 'daughter') {
 						$clauses[] = "?{$parentId} <http://dbpedia.org/ontology/child> ?{$childId}";
 					}
 				}
@@ -263,7 +263,7 @@ class DBPedia extends KnowledgeSource
 
 			// http://dbpedia/ontology/spouse
 			if ($predicate == 'marry') {
-				$person1 = $Relation->getArgument2()->getHashCode();
+				$person1 = $Relation->getDeepDirectObject()->getHashCode();
 				$Preposition = $Relation->getPreposition();
 				$person2 = $Preposition->getObject()->getHashCode();
 

@@ -235,7 +235,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'whwordNP',
 				'features' => array(
 					'head' => array(
-						'sem' => array('arg2{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
+						'sem' => array('deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
 						'variables' => array('role' => '?arg')
 					)
 				),
@@ -401,7 +401,6 @@ class EnglishGrammar extends SimpleGrammar
 			'who' => array(
 				'form' => 'who',
 				'part-of-speech' => 'whword',
-//				'features' => array('head' => array('sem' => array('arg2' => array('type' => 'entity', 'question' => true))))
 				'features' => array('head' => array('sem' => array('category' => 'identity')))
 			),
 			'yes' => array(

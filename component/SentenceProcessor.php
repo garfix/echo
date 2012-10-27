@@ -63,8 +63,8 @@ class SentenceProcessor
 					$found = false;
 
 					// how many?
-					if ($Argument2 = $Relation->getArgument2()) {
-						if ($Determiner = $Argument2->getDeterminer()) {
+					if ($DeepDirectObject = $Relation->getDeepDirectObject()) {
+						if ($Determiner = $DeepDirectObject->getDeterminer()) {
 							if ($Determiner->isQuestion()) {
 								$Answer->setSentenceType(Sentence::DECLARATIVE);
 								$Determiner->setQuestion(false);

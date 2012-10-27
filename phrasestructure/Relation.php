@@ -30,8 +30,8 @@ class Relation extends PhraseStructure
 		'predicate' => null,
 		// Deep subject: the subject of the active form of the sentence
 		'DeepSubject' => null,
-		'Arg2' => null,
-		'Arg3' => null,
+		'DeepDirectObject' => null,
+		'DeepIndirectObject' => null,
 		'Preposition' => null,
 		'tense' => self::PRESENT,
 		'Adverb' => null,
@@ -51,13 +51,13 @@ class Relation extends PhraseStructure
 	{
 		$this->data['DeepSubject'] = $arg;
 	}
-	public function setArg2($arg)
+	public function setDeepDirectObject($arg)
 	{
-		$this->data['Arg2'] = $arg;
+		$this->data['DeepDirectObject'] = $arg;
 	}
-	public function setArg3($arg)
+	public function setDeepIndirectObject($arg)
 	{
-		$this->data['Arg3'] = $arg;
+		$this->data['DeepIndirectObject'] = $arg;
 	}
 
 	/**
@@ -71,17 +71,17 @@ class Relation extends PhraseStructure
 	/**
 	 * @return Entity
 	 */
-	public function getArgument2()
+	public function getDeepDirectObject()
 	{
-		return $this->data['Arg2'];
+		return $this->data['DeepDirectObject'];
 	}
 
 	/**
 	 * @return Entity
 	 */
-	public function getArgument3()
+	public function getDeepIndirectObject()
 	{
-		return $this->data['Arg3'];
+		return $this->data['DeepIndirectObject'];
 	}
 
 	public function setSubject(Entity $Subject)
@@ -91,12 +91,12 @@ class Relation extends PhraseStructure
 
 	public function setObject(Entity $Object)
 	{
-		$this->data['Arg2'] = $Object;
+		$this->data['DeepDirectObject'] = $Object;
 	}
 
 	public function setIndirectObject(Entity $IndirectObject)
 	{
-		$this->data['Arg3'] = $IndirectObject;
+		$this->data['DeepIndirectObject'] = $IndirectObject;
 	}
 
 	public function setPreposition(Preposition $Preposition)
