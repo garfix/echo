@@ -26,8 +26,7 @@ class RelativeClause extends PhraseStructure
         return $this->data['complementizer'];
     }
 
-#todo: Sentence + Relation => Clause
-    public function setClause(Relation $Clause)
+    public function setClause(Clause $Clause)
     {
         $this->data['Clause'] = $Clause;
     }

@@ -43,7 +43,7 @@ class SentenceProcessor
 
 				$Adverb = new Adverb();
 				$Adverb->setCategory('yes');
-				$Answer->getRelation()->setAdverb($Adverb);
+				$Answer->getClause()->setAdverb($Adverb);
 				$Answer->setSentenceType(Sentence::DECLARATIVE);
 			}
 
@@ -58,12 +58,12 @@ class SentenceProcessor
 
 				#todo: this should be made more generic
 
-				if ($Relation = $Answer->getRelation()) {
+				if ($Clause = $Answer->getClause()) {
 
 					$found = false;
 
 					// how many?
-					if ($DeepDirectObject = $Relation->getDeepDirectObject()) {
+					if ($DeepDirectObject = $Clause->getDeepDirectObject()) {
 						if ($Determiner = $DeepDirectObject->getDeterminer()) {
 							if ($Determiner->isQuestion()) {
 								$Answer->setSentenceType(Sentence::DECLARATIVE);
@@ -77,7 +77,7 @@ class SentenceProcessor
 
 					// when / where?
 					if (!$found) {
-						if ($Preposition = $Relation->getPreposition()) {
+						if ($Preposition = $Clause->getPreposition()) {
 							if ($Object = $Preposition->getObject()) {
 								if ($Object->isQuestion()) {
 									if ($Preposition->getCategory() == 'where') {

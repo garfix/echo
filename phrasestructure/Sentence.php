@@ -3,7 +3,7 @@
 namespace agentecho\phrasestructure;
 
 use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Relation;
+use \agentecho\phrasestructure\Clause;
 use \agentecho\exception\SentenceException;
 
 /**
@@ -33,7 +33,7 @@ class Sentence extends PhraseStructure
 	protected $data = array(
 		'sentenceType' => self::DECLARATIVE,
 #todo: draai deze om:
-		'Relation' => null,
+		'Clause' => null,
 		'voice' => self::ACTIVE,
 		// i.e. "when she died"
 		'RelativeClause' => null
@@ -57,17 +57,17 @@ class Sentence extends PhraseStructure
 		return $this->data['sentenceType'];
 	}
 
-	public function setRelation(Relation $Relation)
+	public function setClause(Clause $Clause)
 	{
-		$this->data['Relation'] = $Relation;
+		$this->data['Clause'] = $Clause;
 	}
 
 	/**
-	 * @return Relation
+	 * @return Clause
 	 */
-	public function getRelation()
+	public function getClause()
 	{
-		return $this->data['Relation'];
+		return $this->data['Clause'];
 	}
 
 	public function setVoice($voice)

@@ -8,7 +8,7 @@ use \agentecho\component\Producer;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\Relation;
+use \agentecho\phrasestructure\Clause;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\SentenceBuilder;
 
@@ -28,13 +28,13 @@ class ProducerTest extends \PHPUnit_Framework_TestCase
 		$Flowers = new Entity();
 			$Flowers->setCategory('flower');
 			$Flowers->setNumber(Entity::PLURAL);
-		$Relation = new Relation();
-			$Relation->setPredicate('give');
-			$Relation->setSubject($John);
-			$Relation->setObject($Flowers);
-			$Relation->setIndirectObject($Mary);
+		$Clause = new Clause();
+			$Clause->setPredicate('give');
+			$Clause->setSubject($John);
+			$Clause->setObject($Flowers);
+			$Clause->setIndirectObject($Mary);
 		$Sentence = new Sentence();
-			$Sentence->setRelation($Relation);
+			$Sentence->setClause($Clause);
 		$line = $Producer->produce($Sentence, $English);
 		$this->assertSame('John gives Mary flowers.', $line);
 

@@ -7,7 +7,7 @@ use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Preposition;
 
 /**
- * A relation forms the major structure of the sentence.
+ * A clause forms the major structure of the sentence.
  * It forms a set of entities, labeled by a predicate.
  *
  * For example:
@@ -21,7 +21,7 @@ use \agentecho\phrasestructure\Preposition;
  * - predicate: be
  *
  */
-class Relation extends PhraseStructure
+class Clause extends PhraseStructure
 {
 	const PRESENT = 'present';
 	const PAST = 'past';

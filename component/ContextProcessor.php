@@ -14,9 +14,9 @@ class ContextProcessor
 {
 	public function updateSubject(Sentence $Sentence, ConversationContext $ConversationContext)
 	{
-		$Relation = $Sentence->getRelation();
-		if ($Relation) {
-			$DeepSubject = $Relation->getDeepSubject();
+		$Clause = $Sentence->getClause();
+		if ($Clause) {
+			$DeepSubject = $Clause->getDeepSubject();
 			if ($DeepSubject) {
 				$ConversationContext->setSubject($DeepSubject);
 			}

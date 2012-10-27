@@ -3,7 +3,7 @@
 namespace agentecho\phrasestructure;
 
 /**
- * A modifier for a Relation or ...
+ * A modifier for a Clause or ...
  *
  * todo: I am not happy with the name of this structure. It's an adverb, but it should have a more 'semantic' name
  *

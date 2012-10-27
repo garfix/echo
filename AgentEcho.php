@@ -40,12 +40,9 @@ use \agentecho\grammar\Grammar;
  * 1st person (in artikel voorbeeld => 3rd person)
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
  * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
- * Veel DBPedia testen slaagden ten onrechte, omdat restricties die niet goed worden gematched gewoon worden weggelaten. Vooral bij yes/no vragen is die een probleem.
  * Welke mogen weg? features / head / sem?
- * Sentence + Relation => Clause (!?)
  * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
- * Maak van de testen PHPUnit tests
- * Introduceer deep subject / deep object / deep indirect object
+ * Sentence: verplaats voice naar clause
  */
 class AgentEcho
 {

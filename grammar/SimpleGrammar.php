@@ -41,7 +41,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// The car was driven by John
 				#todo Deze regel wordt niet gebruikt!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => '?sem-3'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-3'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'aux', 'features' => array('head-1' => null)),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
@@ -56,14 +56,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem')))),
 				),
 				// John was driving
 				#todo Deze regel wordt niet gebruikt!
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => '?sem-2'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
 					array('cat' => 'aux'),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem')))),
@@ -73,7 +73,7 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// Drive! / Book that flight.
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'relation' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?sem-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => null))),
 				),
 
@@ -82,7 +82,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -91,7 +91,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Where was John born?
 				// NP delivers deepDirectObject
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'relation' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?sem-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
 					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
@@ -105,7 +105,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'relation' => '?sem-3'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?sem-3'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('deepDirectObject' => '?sem-1')))),
@@ -113,7 +113,7 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// Was the car driven by John?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'relation' => '?sem-3'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?sem-3'))),
 					array('cat' => 'aux'),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
@@ -125,17 +125,17 @@ abstract class SimpleGrammar extends BaseGrammar
 				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'relation' => '?sem-3'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem-3' => array('type' => 'relation', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?sem-3'))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem-3' => array('type' => 'clause', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
 				),
 
 				// How old was Mary Shelley?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'relation' => '?sem-3', 'relativeClause' => '?sem-4'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?sem-3', 'relativeClause' => '?sem-4'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('sem-3' => array('deepDirectObject' => null)))),
-					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'relation', 'deepSubject' => '?sem-1')))),
+					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'clause', 'deepSubject' => '?sem-1')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
 				),
 
@@ -160,7 +160,7 @@ abstract class SimpleGrammar extends BaseGrammar
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'relation')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
@@ -168,13 +168,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('deepDirectObject' => '?sem')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
 				// John gives Mary flowers
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('deepDirectObject' => '?sem-3', 'deepIndirectObject' => '?sem-2')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
@@ -183,7 +183,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'relation')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem')))),
 					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
 				),
@@ -289,9 +289,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// passive declarative sentence with a preposition
 				// (yes, ) Lord Byron was born in London
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'relation' => array('preposition' => null, 'deepDirectObject' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
 							'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
@@ -307,7 +307,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('tense-1' => null, 'predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense-1' => null, 'predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
 						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
@@ -320,9 +320,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// active declarative sentence with a preposition
 				// Lord Byron died in Missolonghi
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'deepSubject' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
 							'deepSubject' => '?sem-1', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
@@ -335,9 +335,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// active declarative past-tense sentence with a preposition
 				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
 //				array(
-//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'deepSubject' => null))),
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
 //					'rule' => array(
-//						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
 //							'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
 //						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 //						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
@@ -352,9 +352,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Lord Byron was born in London
 				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('preposition' => null, 'deepDirectObject' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense',
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
 							'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
@@ -368,9 +368,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// active declarative sentence with third argument
 				// John gives Mary flowers
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('deepIndirectObject' => null))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('deepIndirectObject' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'deepIndirectObject' => '?sem-3')))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'deepIndirectObject' => '?sem-3')))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem' => '?sem-1'))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
@@ -381,9 +381,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				// active declarative sentence with 'be' as verb
 				// (yes, ) Ada Lovelace was the daughter of Lord Byron
 				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'relation' => array('predicate' => 'be'))),
+					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('predicate' => 'be'))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
@@ -396,7 +396,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
 						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
 						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
@@ -405,9 +405,9 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// 'yes' or 'no' answers
 				array(
-					'condition' => array('head' => array('relation' => array('modifier' => null))),
+					'condition' => array('head' => array('clause' => array('modifier' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('relation' => array('modifier' => '?modifier-1')))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('modifier' => '?modifier-1')))),
 						array('cat' => 'adverb', 'features' => array('head' => array('sem' => '?modifier-1'))),
 					)
 				),
