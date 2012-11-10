@@ -17,7 +17,7 @@ abstract class BaseGrammar implements Grammar
 	 * An index to find all words that match a given feature.
 	 * Part of an example index:
 	 *
-	 *     [/head/sem/category=a] => Array
+	 *     [/head/syntax/category=a] => Array
 	 *        (
 	 *            [0] => a/determiner
 	 *            [1] => an/determiner
@@ -145,7 +145,7 @@ abstract class BaseGrammar implements Grammar
 			return array(
 				'head' => array(
 					'agreement' => array('number' => 'singular', 'person' => 1),
-					'sem' => array(
+					'syntax' => array(
 						'name' => $word,
 					),
 				)
@@ -164,18 +164,18 @@ abstract class BaseGrammar implements Grammar
 		$word = false;
 
 		if ($partOfSpeech == 'propernoun') {
-			if (isset($features['head']['sem']['name'])) {
-				$word = $features['head']['sem']['name'];
+			if (isset($features['head']['syntax']['name'])) {
+				$word = $features['head']['syntax']['name'];
 			}
 		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['sem']['category'])) {
-				$word = $features['head']['sem']['category'];
+			if (is_numeric($features['head']['syntax']['category'])) {
+				$word = $features['head']['syntax']['category'];
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}
 		} elseif ($partOfSpeech == 'numeral') {
-			if (is_numeric($features['head']['sem']['value'])) {
-				$word = $features['head']['sem']['value'];
+			if (is_numeric($features['head']['syntax']['value'])) {
+				$word = $features['head']['syntax']['value'];
 			} else {
 				$word = $this->getWord($partOfSpeech, $features);
 			}

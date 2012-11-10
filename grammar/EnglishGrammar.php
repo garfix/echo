@@ -30,7 +30,7 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => ',',
 				'part-of-speech' => 'punctuationMark',
 				'features' => array(
-					'head' => array('sem' => array('category' => 'comma')),
+					'head' => array('syntax' => array('category' => 'comma')),
 					'space' => 'after_only'
 				),
 			),
@@ -38,18 +38,18 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => '\'s',
 				'part-of-speech' => 'possessiveMarker',
 				'features' => array(
-					'head' => array('sem' => array('category' => 'possessive')),
+					'head' => array('syntax' => array('category' => 'possessive')),
 				)
 			),
 			'a' => array(
 				'form' => 'a',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'a')))
+				'features' => array('head' => array('syntax' => array('category' => 'a')))
 			),
 			'an' => array(
 				'form' => 'an',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'a')))
+				'features' => array('head' => array('syntax' => array('category' => 'a')))
 			),
 			'and' => array(
 				'form' => 'and',
@@ -61,7 +61,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 1, 'number' => 'singular'),
-						'sem' => array('predicate' => 'be', 'tense' => 'present'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'present'),
 					),
 				)
 			),
@@ -73,7 +73,7 @@ class EnglishGrammar extends SimpleGrammar
 			'author' => array(
 				'form' => 'author',
 				'part-of-speech' => 'noun',
-				'features' => array('head' => array('sem' => array('category' => 'author')))
+				'features' => array('head' => array('syntax' => array('category' => 'author')))
 			),
 			'book_v' => array(
 				'form' => 'book',
@@ -82,21 +82,21 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 1,
 					'head' => array(
 						'agreement' => array('person' => 2, 'number' => 'singular'),
-						'sem' => array('predicate' => 'book'),
+						'syntax' => array('predicate' => 'book'),
 					)
 				),
 			),
 			'book_n' => array(
 				'form' => 'book',
 				'part-of-speech' => 'noun',
-				'features' => array('head' => array('sem' => array('category' => 'book'))),
+				'features' => array('head' => array('syntax' => array('category' => 'book'))),
 			),
 			'born' => array(
 				'form' => 'born',
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'bear'),
+						'syntax' => array('predicate' => 'bear'),
 					)
 				),
 			),
@@ -104,7 +104,7 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => 'by',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'by'),
+					'syntax' => array('category' => 'by'),
 				))
 			),
 			'by_psv' => array(
@@ -117,7 +117,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
-						'sem' => array('category' => 'child')
+						'syntax' => array('category' => 'child')
 					)
 				),
 			),
@@ -126,7 +126,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'sem' => array('category' => 'daughter')
+						'syntax' => array('category' => 'daughter')
 					)
 				),
 			),
@@ -135,7 +135,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'aux',
 				'features' => array(
 					'head' => array(
-						'sem' => array('tense' => 'past'),
+						'syntax' => array('tense' => 'past'),
 					)
 				),
 			),
@@ -144,7 +144,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'auxDo',
 				'features' => array(
 					'head' => array(
-						'sem' => array('tense' => 'past'),
+						'syntax' => array('tense' => 'past'),
 					)
 				),
 			),
@@ -154,7 +154,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 0,
 					'head' => array(
-						'sem' => array('predicate' => 'die', 'tense' => 'present', 'form' => 'simple'),
+						'syntax' => array('predicate' => 'die', 'tense' => 'present', 'form' => 'simple'),
 					)
 				)
 			),
@@ -164,7 +164,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 0,
 					'head' => array(
-						'sem' => array('predicate' => 'die', 'verb_form' => 'infinitive'),
+						'syntax' => array('predicate' => 'die', 'verb_form' => 'infinitive'),
 					)
 				),
 			),
@@ -174,7 +174,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 0,
 					'head' => array(
-						'sem' => array('predicate' => 'die', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'die', 'tense' => 'past'),
 					)
 				),
 			),
@@ -184,7 +184,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
-						'sem' => array('category' => 'flight'),
+						'syntax' => array('category' => 'flight'),
 					)
 				),
 			),
@@ -194,7 +194,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
-						'sem' => array('category' => 'flower'),
+						'syntax' => array('category' => 'flower'),
 					)
 				),
 			),
@@ -203,7 +203,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'give', 'tense' => 'present'),
+						'syntax' => array('predicate' => 'give', 'tense' => 'present'),
 					)
 				),
 			),
@@ -212,7 +212,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'have', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'have', 'tense' => 'past'),
 					)
 				),
 			),
@@ -221,21 +221,21 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'have'),
+						'syntax' => array('predicate' => 'have'),
 					)
 				),
 			),
 			'how_1' => array(
 				'form' => 'how',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('manner' => array('question' => 'object'))))
+				'features' => array('head' => array('syntax' => array('manner' => array('question' => 'object'))))
 			),
 			'how_2' => array(
 				'form' => 'how',
 				'part-of-speech' => 'whwordNP',
 				'features' => array(
 					'head' => array(
-						'sem' => array('deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
+						'syntax' => array('deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
 						'variables' => array('role' => '?arg')
 					)
 				),
@@ -246,7 +246,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 1, 'number' => 'singular'),
-						'sem' => array('category' => 'firstPerson')
+						'syntax' => array('category' => 'firstPerson')
 					),
 					'capitalize' => true
 				),
@@ -255,7 +255,7 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => 'in',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'in'),
+					'syntax' => array('category' => 'in'),
 				))
 			),
 			'influenced' => array(
@@ -264,7 +264,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 1,
 					'head' => array(
-						'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
+						'syntax' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
 					)
 				),
 			),
@@ -273,7 +273,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'sem' => array('category' => 'january', 'monthIndex' => 1),
+						'syntax' => array('category' => 'january', 'monthIndex' => 1),
 					),
 					'capitalize' => true
 				)
@@ -283,7 +283,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'sem' => array('category' => 'old')
+						'syntax' => array('category' => 'old')
 					)
 				),
 			),
@@ -291,20 +291,20 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => 'on',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'on'),
+					'syntax' => array('category' => 'on'),
 				))
 			),
 			'many' => array(
 				'form' => 'many',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'many')))
+				'features' => array('head' => array('syntax' => array('category' => 'many')))
 			),
 			'married' => array(
 				'form' => 'married',
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'marry', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
 					)
 				)
 			),
@@ -313,7 +313,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'name'),
+						'syntax' => array('predicate' => 'name'),
 					)
 				)
 			),
@@ -321,7 +321,7 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => 'of',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'of'),
+					'syntax' => array('category' => 'of'),
 				))
 			),
 			'sees' => array(
@@ -330,7 +330,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 1,
 					'head' => array(
-						'sem' => array('predicate' => 'see', 'tense' => 'present'),
+						'syntax' => array('predicate' => 'see', 'tense' => 'present'),
 					)
 				),
 			),
@@ -340,25 +340,25 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
-						'sem' => array('category' => 'subject') // thirdPerson?
+						'syntax' => array('category' => 'subject') // thirdPerson?
 					)
 				)
 			),
 			'the' => array(
 				'form' => 'the',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'the')))
+				'features' => array('head' => array('syntax' => array('category' => 'the')))
 			),
 			'that' => array(
 				'form' => 'that',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'that')))
+				'features' => array('head' => array('syntax' => array('category' => 'that')))
 			),
 			'to' => array(
 				'form' => 'to',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'to'),
+					'syntax' => array('category' => 'to'),
 				))
 			),
 			'was_aux' => array(
@@ -366,7 +366,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'aux',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
@@ -375,7 +375,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'auxBe',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
@@ -384,7 +384,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'auxPsv',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
@@ -392,23 +392,23 @@ class EnglishGrammar extends SimpleGrammar
 				'form' => 'when',
 				'part-of-speech' => 'whword',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'when'),
+					'syntax' => array('category' => 'when'),
 				))
 			),
 			'where' => array(
 				'form' => 'where',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('category' => 'where')))
+				'features' => array('head' => array('syntax' => array('category' => 'where')))
 			),
 			'who' => array(
 				'form' => 'who',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('category' => 'identity')))
+				'features' => array('head' => array('syntax' => array('category' => 'identity')))
 			),
 			'yes' => array(
 				'form' => 'yes',
 				'part-of-speech' => 'adverb',
-				'features' => array('head' => array('sem' => array('category' => 'yes')))
+				'features' => array('head' => array('syntax' => array('category' => 'yes')))
 			),
 		);
 	}
@@ -456,11 +456,11 @@ class EnglishGrammar extends SimpleGrammar
 		// NP delivers deep subject
 		$rules['S'][] =
 			array(
-				array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?sem-1'))),
-				array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+				array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
+				array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
 				array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
-				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
-				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem-2')))),
+				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
+				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
 			);
 
 		return $rules;
@@ -475,43 +475,43 @@ class EnglishGrammar extends SimpleGrammar
 			'CP' => array(
 				// CP NP, ; non-toplevel conjunction with conjunction at the left hand
 				array(
-					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
+					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
 					)
 				),
 				// NP, NP, ; non-toplevel conjunction with entity at the left hand
 				array(
 					'condition' => array('head' => array('subconjunction' => true)),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
 					)
 				),
 				// CP and NP ; toplevel conjunction with conjunction at the left hand
 				array(
-					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')))),
+					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')))),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
 						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 				// NP and NP ; toplevel conjunction with entity at the left hand
 				array(
 					'condition' => array(),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
 						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 			),
@@ -521,13 +521,13 @@ class EnglishGrammar extends SimpleGrammar
 
 			// August 11, 1979
 			array(
-				'condition' => array('head' => array('sem' => array('year' => null))),
+				'condition' => array('head' => array('syntax' => array('year' => null))),
 				'rule' => array(
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
-					array('cat' => 'noun', 'features' => array('head' => array('sem' => array('monthIndex' => '?month')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?day')))),
-					array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?year')))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
+					array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('monthIndex' => '?month')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?day')))),
+					array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?year')))),
 				)
 			);
 

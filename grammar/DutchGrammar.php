@@ -21,7 +21,7 @@ class DutchGrammar extends SimpleGrammar
 				'form' => ',',
 				'part-of-speech' => 'punctuationMark',
 				'features' => array(
-					'head' => array('sem' => array('category' => 'comma')),
+					'head' => array('syntax' => array('category' => 'comma')),
 					'space' => 'after_only'
 				)
 			),
@@ -29,13 +29,13 @@ class DutchGrammar extends SimpleGrammar
 				'form' => '\'s',
 				'part-of-speech' => 'possessiveMarker',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'possessive'),
+					'syntax' => array('category' => 'possessive'),
 				))
 			),
 			'auteur' => array(
 				'form' => 'auteur',
 				'part-of-speech' => 'noun',
-				'features' => array('head' => array('sem' => array('category' => 'author')))
+				'features' => array('head' => array('syntax' => array('category' => 'author')))
 			),
 			'ben' => array(
 				'form' => 'ben',
@@ -48,7 +48,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'arguments' => 1,
 					'head' => array(
-						'sem' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
+						'syntax' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
 					)
 				)
 			),
@@ -57,24 +57,24 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array('head' => array(
 					'agreement' => array('person' => 2, 'number' => 'singular'),
-					'sem' => array('predicate' => 'book'),
+					'syntax' => array('predicate' => 'book'),
 				))
 			),
 			'de' => array(
 				'form' => 'de',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'the')))
+				'features' => array('head' => array('syntax' => array('category' => 'the')))
 			),
 			'die' => array(
 				'form' => 'die',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'that')))
+				'features' => array('head' => array('syntax' => array('category' => 'that')))
 			),
 			'door_prep' => array(
 				'form' => 'door',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'by'),
+					'syntax' => array('category' => 'by'),
 				))
 			),
 			'door_psv' => array(
@@ -87,14 +87,14 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'sem' => array('category' => 'daughter')
+						'syntax' => array('category' => 'daughter')
 					)
 				),
 			),
 			'een' => array(
 				'form' => 'een',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('sem' => array('category' => 'a')))
+				'features' => array('head' => array('syntax' => array('category' => 'a')))
 			),
 			'en' => array(
 				'form' => 'en',
@@ -105,7 +105,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'bear'),
+						'syntax' => array('predicate' => 'bear'),
 					)
 				),
 			),
@@ -114,7 +114,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'marry', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
 					)
 				)
 			),
@@ -123,7 +123,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'have', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'have', 'tense' => 'past'),
 					)
 				)
 			),
@@ -136,7 +136,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'whwordNP',
 				'features' => array(
 					'head' => array(
-						'sem' => array(
+						'syntax' => array(
 							'deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true, 'category' => 'many')),
 						),
 						'variables' => array('role' => '?arg')
@@ -152,20 +152,20 @@ class DutchGrammar extends SimpleGrammar
 				'form' => 'in',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'in'),
+					'syntax' => array('category' => 'in'),
 				))
 			),
 			'ja' => array(
 				'form' => 'ja',
 				'part-of-speech' => 'adverb',
-				'features' => array('head' => array('sem' => array('category' => 'yes')))
+				'features' => array('head' => array('syntax' => array('category' => 'yes')))
 			),
 			'januari' => array(
 				'form' => 'januari',
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'sem' => array('category' => 'january', 'monthIndex' => 1),
+						'syntax' => array('category' => 'january', 'monthIndex' => 1),
 					),
 				),
 			),
@@ -175,7 +175,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
-						'sem' => array('category' => 'child')
+						'syntax' => array('category' => 'child')
 					)
 				),
 			),
@@ -183,7 +183,7 @@ class DutchGrammar extends SimpleGrammar
 				'form' => 'met',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'to'),
+					'syntax' => array('category' => 'to'),
 				))
 			),
 			'noem' => array(
@@ -191,7 +191,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'verb',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'name'),
+						'syntax' => array('predicate' => 'name'),
 					)
 				)
 			),
@@ -199,14 +199,14 @@ class DutchGrammar extends SimpleGrammar
 				'form' => 'op',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'on'),
+					'syntax' => array('category' => 'on'),
 				))
 			),
 			'van' => array(
 				'form' => 'van',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
-					'sem' => array('category' => 'of'),
+					'syntax' => array('category' => 'of'),
 				))
 			),
 			'vlucht' => array(
@@ -214,7 +214,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
 					'agreement' => array('person' => 3, 'number' => 'singular'),
-					'sem' => array('category' => 'flight')
+					'syntax' => array('category' => 'flight')
 				)),
 			),
 			'was_aux' => array(
@@ -222,7 +222,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'aux',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be'),
+						'syntax' => array('predicate' => 'be'),
 					)
 				),
 			),
@@ -231,7 +231,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'auxBe',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
@@ -240,7 +240,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'aux',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
@@ -249,19 +249,19 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'auxPsv',
 				'features' => array(
 					'head' => array(
-						'sem' => array('predicate' => 'be', 'tense' => 'past'),
+						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
 			),
 			'waar' => array(
 				'form' => 'waar',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('category' => 'where')))
+				'features' => array('head' => array('syntax' => array('category' => 'where')))
 			),
 			'wanneer' => array(
 				'form' => 'wanneer',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('category' => 'when')))
+				'features' => array('head' => array('syntax' => array('category' => 'when')))
 			),
 		);
 	}
@@ -287,42 +287,42 @@ class DutchGrammar extends SimpleGrammar
 			'CP' => array(
 				// CP, NP ; non-toplevel conjunction with conjunction at the left hand
 				array(
-					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
+					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 				// NP, NP, ; non-toplevel conjunction with entity at the left hand
 				array(
 					'condition' => array('head' => array('subconjunction' => true)),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 				// CP en NP ; toplevel conjunction with conjunction at the left hand
 				array(
-					'condition' => array('head' => array('sem' => array('left' => array('type' => 'conjunction')))),
+					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')))),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => '?left', 'subconjunction' => true))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
 						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 				// NP en NP ; toplevel conjunction with entity at the left hand
 				array(
 					'condition' => array(),
 					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('sem' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?left'))),
+						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
 						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?right'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
 					)
 				),
 			),
@@ -332,12 +332,12 @@ class DutchGrammar extends SimpleGrammar
 
 			// 11 augustus 1979
 			array(
-				'condition' => array('head' => array('sem' => array('year' => null))),
+				'condition' => array('head' => array('syntax' => array('year' => null))),
 				'rule' => array(
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?day')))),
-					array('cat' => 'noun', 'features' => array('head' => array('sem' => array('monthIndex' => '?month')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('sem' => array('value' => '?year')))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?day')))),
+					array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('monthIndex' => '?month')))),
+					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?year')))),
 				)
 			);
 

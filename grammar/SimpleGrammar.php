@@ -41,12 +41,12 @@ abstract class SimpleGrammar extends BaseGrammar
 				// The car was driven by John
 //				#todo Deze regel wordt niet gebruikt!
 //				array(
-//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-3'))),
-//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?syntax-3'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 //					array('cat' => 'aux', 'features' => array('head-1' => null)),
-//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
+//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
 //					array('cat' => 'passivisationPreposition'),
-//					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 //				),
 
 				// active declarative
@@ -56,16 +56,16 @@ abstract class SimpleGrammar extends BaseGrammar
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?sem-1'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem')))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?syntax-1'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax')))),
 				),
 				// Lady Lovelace was born
 //				array(
-//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-2'))),
-//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
+//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?syntax-2'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
 //					array('cat' => 'aux'),
-//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem')))),
+//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-2' => array('deepSubject' => '?syntax')))),
 //				),
 
 
@@ -74,11 +74,11 @@ array(
 		array(
 			'sentenceType' => 'declarative',
 			'voice' => 'passive',
-			'clause' => '?sem-2',
+			'clause' => '?syntax-2',
 	))),
-	array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem-1' => null))),
+	array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax-1' => null))),
 	array('cat' => 'aux'),
-	array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem-1')))),
+	array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-2' => array('deepSubject' => '?syntax-1')))),
 ),
 
 
@@ -88,8 +88,8 @@ array(
 
 				// Drive! / Book that flight.
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?sem-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 
 				// non-subject questions
@@ -97,20 +97,20 @@ array(
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?sem-1'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem-2')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				),
 
 				// Where was John born?
 				// NP delivers deepDirectObject
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?sem-1'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-1' => null))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
 					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepDirectObject' => '?sem-2')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepDirectObject' => '?syntax-2')))),
 				),
 
 				// yes-no questions
@@ -120,45 +120,45 @@ array(
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?sem-3'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('deepDirectObject' => '?sem-1')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('deepDirectObject' => '?syntax-1')))),
 				),
 
 				// Was the car driven by John?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?sem-3'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?syntax-3'))),
 					array('cat' => 'aux'),
-					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
+					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
 					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head-3' => array('sem' => '?sem-2'))),
+					array('cat' => 'NP', 'features' => array('head-3' => array('syntax' => '?syntax-2'))),
 				),
 
 				// Was John a fool?
 				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?sem-3'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'sem-3' => array('type' => 'clause', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-2'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
+					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				),
 
 				// How old was Mary Shelley?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?sem-3', 'relativeClause' => '?sem-4'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem-3' => array('deepDirectObject' => null)))),
-					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('type' => 'clause', 'deepSubject' => '?sem-1')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4'))),
+					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
+					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 				),
 
 				// How old was Mary Shelley when she died?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?sem-1'))),
+					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?syntax-1'))),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
-					array('cat' => 'SBar', 'features' => array('head' => array('sem' => '?sem-1'))),
+					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
 				)
 
 			),
@@ -166,17 +166,17 @@ array(
 			// secondary clause
 			'SBar' => array(
 				array(
-					array('cat' => 'SBar', 'features' => array('head' => array('sem' =>
-						array('type' => 'relativeClause', 'clause' => '?sem-2',	'complementizer' => '?cat')))),
+					array('cat' => 'SBar', 'features' => array('head' => array('syntax' =>
+						array('type' => 'relativeClause', 'clause' => '?syntax-2',	'complementizer' => '?cat')))),
 					array('cat' => 'whword', 'features' => array('head' => array(
-						'sem' => array('category' => '?cat')))),
-					array('cat' => 'S', 'features' => array('head' => array('sem' => '?sem-2'))),
+						'syntax' => array('category' => '?cat')))),
+					array('cat' => 'S', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
 			),
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem' => array('type' => 'clause')))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
@@ -184,31 +184,31 @@ array(
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('deepDirectObject' => '?sem')), 'arguments' => 1)),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax')), 'arguments' => 1)),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 				// John gives Mary flowers
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('deepDirectObject' => '?sem-3', 'deepIndirectObject' => '?sem-2')), 'arguments' => 1)),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax-3', 'deepIndirectObject' => '?syntax-2')), 'arguments' => 1)),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
 				),
 				// driven by John
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('sem-1' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem')))),
-					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem'))),
+					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax')))),
+					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
 			'WhNP' => array(
 				array(
 #todo: this interpreation is counterintuitive, especially for 'who'
 					// where, when, who
-					array('cat' => 'WhNP', 'features' => array('head' => array('sem' => array(
+					array('cat' => 'WhNP', 'features' => array('head' => array('syntax' => array(
 						'preposition' => array(
 							'type' => 'preposition',
 							'category' => '?cat',
@@ -216,59 +216,59 @@ array(
 								'type' => 'entity', 'question' => true
 							)
 						))))),
-					array('cat' => 'whword', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+					array('cat' => 'whword', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 				),
 				// which car, how many children
 				array(
 					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
-					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?sem')))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
+					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
 			'NP' => array(
 				// John
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity')))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem' => array('type' => 'entity')))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity')))),
-					array('cat' => 'DP', 'features' => array('head' => array('sem' => '?sem-2'))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('determiner' => '?sem-2')))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
+					array('cat' => 'DP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('determiner' => '?syntax-2')))),
 				),
 				// (large) car (in the lot)
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('sem-1' => array('type' => 'entity')))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'NP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 			),
 			// For N-bar, see 'The structure of modern english' - Brinton (2000) - p. 175
 			'NBar' => array(
 				// car
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'noun', 'features' => array('head-1' => array('sem-1' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 				// car in the lot
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => null))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('sem-1' => array('preposition' => '?sem-2')))),
-					array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem-2'))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax-2')))),
+					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
 			),
 			// Prepositional Phrase
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP', 'features' => array('head-1' => array('sem-1' => array('type' => 'preposition')))),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
+					array('cat' => 'PP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'preposition')))),
+					array('cat' => 'preposition', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
 			// Determiner Phrase
@@ -276,14 +276,14 @@ array(
 			'DP' => array(
 				// the
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => array('sem' => array('type' => 'determiner')))),
+					array('cat' => 'DP', 'features' => array('head-1' => array('syntax' => array('type' => 'determiner')))),
 					array('cat' => 'determiner', 'features' => array('head-1' => null)),
 				),
 				// Byron's
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => array('sem-1' => array('type' => 'determiner')))),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem'))),
-					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('sem-1' => array('type' => null, 'object' => '?sem')))),
+					array('cat' => 'DP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'determiner')))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
+					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
 				),
 			)
 		);
@@ -295,7 +295,7 @@ array(
 		// de volgorde van deze regels is namelijk die van meest restrictief naar minst restrictief
 		// de volgorde van de regels hierboven is die van aflopende trefkans
 
-		// merk op dat de sem juist niet gedeeld wordt met de head van de rule; ze worden juist gescheiden
+		// merk op dat de syntax juist niet gedeeld wordt met de head van de rule; ze worden juist gescheiden
 
 		// de 'rule'-attributen zijn nodig om te bepalen hoe de phrase specification verdeeld wordt over de syntactische regel
 
@@ -308,13 +308,13 @@ array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+							'deepDirectObject' => '?syntax-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-2' => null))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
 					),
 				),
 
@@ -323,13 +323,13 @@ array(
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense-1' => null, 'predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('sem' => array('predicate' => 'be', 'tense-1' => null)))),
-						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('predicate' => '?pred')))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense-1' => null, 'predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense-1' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-1'))),
 					)
 				),
 
@@ -339,12 +339,12 @@ array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepSubject' => '?sem-1', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+							'deepSubject' => '?syntax-1', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
 					),
 				),
 
@@ -354,13 +354,13 @@ array(
 //					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
 //					'rule' => array(
 //						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-//							'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-//						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-//						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-//						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
-//						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
-//						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
-//						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+//							'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-2' => null))),
+//						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
 //					),
 //				),
 
@@ -371,13 +371,13 @@ array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?sem-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?sem-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-2' => null))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem-3' => null))),
+							'deepDirectObject' => '?syntax-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-2' => null))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
 					),
 				),
 
@@ -386,11 +386,11 @@ array(
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('deepIndirectObject' => null))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'deepIndirectObject' => '?sem-3')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem' => '?sem-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'deepIndirectObject' => '?syntax-3')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => '?syntax-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
 				),
 
@@ -399,11 +399,11 @@ array(
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('predicate' => 'be'))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2', 'adverb-1' => null)))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('sem' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb-1' => null)))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
 				),
 
@@ -412,10 +412,10 @@ array(
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?sem-1', 'deepDirectObject' => '?sem-2')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'sem-1' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'sem' => array('predicate' => '?pred', 'tense' => '?tense')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
 				),
 
@@ -424,7 +424,7 @@ array(
 					'condition' => array('head' => array('clause' => array('modifier' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('modifier' => '?modifier-1')))),
-						array('cat' => 'adverb', 'features' => array('head' => array('sem' => '?modifier-1'))),
+						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => '?modifier-1'))),
 					)
 				),
 			),
@@ -432,11 +432,11 @@ array(
 			'premodifier' => array(
 				// yes, ...
 				array(
-					'condition' => array('head' => array('sem' => null)),
+					'condition' => array('head' => array('syntax' => null)),
 					'rule' => array(
-						array('cat' => 'premodifier', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
-						array('cat' => 'adverb', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('sem' => array('category' => 'comma')))),
+						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
 					)
 				),
 				// null rule, needed to fill the empty optional clause
@@ -448,33 +448,33 @@ array(
 
 			'NP' => array(
 				array(
-					'condition' => array('head' => array('sem' => array('category' => null, 'preposition' => null))),
+					'condition' => array('head' => array('syntax' => array('category' => null, 'preposition' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'preposition' => '?sem', 'determiner' => '?det')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => '?det')))),
-						array('cat' => 'PP', 'features' => array('head' => array('sem' => '?sem')))
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'preposition' => '?syntax', 'determiner' => '?det')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => '?det')))),
+						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
 					)
 				),
 				array(
-					'condition' => array('head' =>array('sem' =>  array('category' => null, 'determiner' => null))),
+					'condition' => array('head' =>array('syntax' =>  array('category' => null, 'determiner' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat', 'determiner' => array('category' => '?det'))))),
-						array('cat' => 'determiner', 'features' => array('head' => array('sem' => array('category' => '?det')))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => array('category' => '?det'))))),
+						array('cat' => 'determiner', 'features' => array('head' => array('syntax' => array('category' => '?det')))),
+						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 					)
 				),
 				array(
-					'condition' => array('head' => array('sem' => array('category' => null))),
+					'condition' => array('head' => array('syntax' => array('category' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
-						array('cat' => 'noun', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 					)
 				),
 				array(
-					'condition' => array('head' => array('sem' => array('name' => null))),
+					'condition' => array('head' => array('syntax' => array('name' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => array('name' => '?name')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('sem' => array('name' => '?name')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
 					)
 				),
 
@@ -484,27 +484,27 @@ array(
 			'VP' => array(
 //				// gives Mary flowers
 //				array(
-//					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null, 'deepIndirectObject' => null))),
+//					'condition' => array('head' => array('syntax' => array('predicate' => null, 'category' => null, 'deepIndirectObject' => null))),
 //					'rule' => array(
-//						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred', 'deepDirectObject' => '?sem-2', 'deepIndirectObject' => '?sem-3')))),
-//						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'sem' => array('predicate' => '?pred')))),
-//						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-3'))),
-//						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2')))
+//						array('cat' => 'VP', 'features' => array('head' => array('tense' => '?tense', 'syntax' => array('predicate' => '?pred', 'deepDirectObject' => '?syntax-2', 'deepIndirectObject' => '?syntax-3')))),
+//						array('cat' => 'verb', 'features' => array('head' => array('tense' => '?tense', 'syntax' => array('predicate' => '?pred')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2')))
 //					)
 //				),
 				array(
-					'condition' => array('head' => array('sem' => array('predicate' => null, 'category' => null))),
+					'condition' => array('head' => array('syntax' => array('predicate' => null, 'category' => null))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array())
 					)
 				),
 				array(
-					'condition' => array('head' => array('sem' => array('predicate' => null))),
+					'condition' => array('head' => array('syntax' => array('predicate' => null))),
 					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('sem' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
 					)
 				),
 			),
@@ -512,9 +512,9 @@ array(
 				array(
 					'condition' => array(),
 					'rule' => array(
-						array('cat' => 'PP', 'features' => array('head' => array('sem' => array('category' => '?category', 'object' => '?obj')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('sem' => array('category' => '?category')))),
-						array('cat' => 'NP', 'features' => array('head' => array('sem' => '?obj'))),
+						array('cat' => 'PP', 'features' => array('head' => array('syntax' => array('category' => '?category', 'object' => '?obj')))),
+						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?category')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?obj'))),
 					)
 				),
 			),

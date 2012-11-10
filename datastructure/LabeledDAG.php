@@ -26,11 +26,11 @@ class LabeledDAG
 	 * Example 2:
 	 * Using variables in cases where the location is an array.
 	 * In this example '?sem1' is in both cases the name of the location.
-	 * Here, in "'sem{?sem1}'" '?sem' is the name of the array that immediately follows it,
+	 * Here, in "'syntax{?sem1}'" '?syntax' is the name of the array that immediately follows it,
 	 *
 	 * 	$tree = array(
-	 *	    'noun' => array('head' => array('sem{?sem1}' => array('role' => null))),
-	 *	    'verb' => array('head' => array('sem' => array('subject' => '?sem1'))),
+	 *	    'noun' => array('head' => array('syntax{?sem1}' => array('role' => null))),
+	 *	    'verb' => array('head' => array('syntax' => array('subject' => '?sem1'))),
 	 *	);
 	 *
 	 * Example 3:

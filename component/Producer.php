@@ -25,7 +25,7 @@ class Producer
 		if ($Structure instanceof Sentence) {
 			$phraseSpecification = array('head' => $this->buildPhraseStructure($Structure));
 		} else {
-			$phraseSpecification = array('head' => array('sem' => $this->buildPhraseStructure($Structure)));
+			$phraseSpecification = array('head' => array('syntax' => $this->buildPhraseStructure($Structure)));
 		}
 
         $SentenceContext = new SentenceContext();
@@ -146,8 +146,8 @@ $features = $Grammar->getWordFeatures($word, $partOfSpeech);
 
 #todo: algemener maken
 
-		if (!empty($phraseSpecification['head']['sem']['type'])) {
-			$constituent = $this->getSyntaxToken($phraseSpecification['head']['sem']['type']);
+		if (!empty($phraseSpecification['head']['syntax']['type'])) {
+			$constituent = $this->getSyntaxToken($phraseSpecification['head']['syntax']['type']);
 		}
 
 		$FeatureDAG = new LabeledDAG(array(
