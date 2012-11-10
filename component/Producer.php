@@ -253,7 +253,7 @@ $features = $Grammar->getWordFeatures($word, $partOfSpeech);
 				}
 			}
 		}
-//exit;
+
 		return false;
 	}
 

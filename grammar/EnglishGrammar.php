@@ -391,7 +391,9 @@ class EnglishGrammar extends SimpleGrammar
 			'when' => array(
 				'form' => 'when',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('sem' => array('category' => 'when')))
+				'features' => array('head' => array(
+					'sem' => array('category' => 'when'),
+				))
 			),
 			'where' => array(
 				'form' => 'where',

@@ -39,15 +39,15 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// passive declarative
 				// The car was driven by John
-				#todo Deze regel wordt niet gebruikt!
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-3'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
-					array('cat' => 'aux', 'features' => array('head-1' => null)),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
-					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
-				),
+//				#todo Deze regel wordt niet gebruikt!
+//				array(
+//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-3'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem-1'))),
+//					array('cat' => 'aux', 'features' => array('head-1' => null)),
+//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-3' => array('predicate' => null, 'deepSubject' => '?sem-2', 'deepDirectObject' => '?sem-1')))),
+//					array('cat' => 'passivisationPreposition'),
+//					array('cat' => 'NP', 'features' => array('head' => array('sem' => '?sem-2'))),
+//				),
 
 				// active declarative
 
@@ -60,14 +60,29 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-1' => array('deepSubject' => '?sem')))),
 				),
-				// John was driving
-				#todo Deze regel wordt niet gebruikt!
-				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-2'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
-					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem')))),
-				),
+				// Lady Lovelace was born
+//				array(
+//					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?sem-2'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem' => '?sem'))),
+//					array('cat' => 'aux'),
+//					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem')))),
+//				),
+
+
+array(
+	array('cat' => 'S', 'features' => array('head-1' =>
+		array(
+			'sentenceType' => 'declarative',
+			'voice' => 'passive',
+			'clause' => '?sem-2',
+	))),
+	array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'sem-1' => null))),
+	array('cat' => 'aux'),
+	array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'sem-2' => array('deepSubject' => '?sem-1')))),
+),
+
+
+
 
 				// imperative
 
@@ -152,8 +167,9 @@ abstract class SimpleGrammar extends BaseGrammar
 			'SBar' => array(
 				array(
 					array('cat' => 'SBar', 'features' => array('head' => array('sem' =>
-						array('type' => 'relativeClause', 'clause' => '?sem-2', 'complementizer' => '?cat')))),
-					array('cat' => 'whword', 'features' => array('head' => array('sem' => array('category' => '?cat')))),
+						array('type' => 'relativeClause', 'clause' => '?sem-2',	'complementizer' => '?cat')))),
+					array('cat' => 'whword', 'features' => array('head' => array(
+						'sem' => array('category' => '?cat')))),
 					array('cat' => 'S', 'features' => array('head' => array('sem' => '?sem-2'))),
 				),
 			),

@@ -69,10 +69,21 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		// S => NP VP NP NP
 		$Sentence = $Parser->parseFirstLine("John gives Mary flowers.");
 		$this->assertSame('Sentence {sentenceType: declarative, Clause: Clause {predicate: give, DeepSubject: Entity {name: John, number: singular}, DeepDirectObject: Entity {category: flower, number: singular}, DeepIndirectObject: Entity {name: Mary, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
+	}
+
+	public function testCalculatedAnswerSemantics()
+	{
+		$Parser = new Parser();
+		$Parser->setGrammars(array(new EnglishGrammar()));
 
 		// secondary sentence
-		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
-		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
-
+		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when Lady Lovelace was born?");
+		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: bear, DeepSubject: Entity {name: Lady Lovelace, number: singular}, tense: present}}}', $Sentence->getObjectString());
+//		$this->assertSame('question(q,
+//			age(subject: o1, time: t1, object: q) &
+//			name(subject: o1, object: "Mary Shelley") &
+//			same(t1, t2) &
+//			born(subject: o2, time: t2) &
+//			name(subject: o2, object: "Lady Lovelace"))', $Sentence->getSemanticsString());
 	}
 }

@@ -11,4 +11,7 @@ http://code.google.com/p/nltk/
 - semantics
 - doc: https://sites.google.com/site/naturallanguagetoolkit/book
 
-
+Thought Treasure
+http://en.wikipedia.org/wiki/ThoughtTreasure
+- Cancelled in 2000
+- Lijkt alleen vrij eenvoudige zinnen aan te kunnen

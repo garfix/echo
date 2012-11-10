@@ -100,4 +100,12 @@ class SentenceContext
 	{
 		return (string)$this->RootObject;
 	}
+
+	/**
+	 * @return string A flat representation of the semantics structure
+	 */
+	public function getSemanticsString()
+	{
+		return '';
+	}
 }

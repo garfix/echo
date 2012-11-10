@@ -9,7 +9,7 @@ use \agentecho\Settings;
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in
  * "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
- * It is the basic algorithm (p 381) extended with unification (p 431)
+ * It is the basic algorithm (p 381) extended with unification (p 431) and semantics (p 570)
  */
 class EarleyParser
 {
@@ -119,6 +119,7 @@ class EarleyParser
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
 			'dag' => self::createLabeledDag($rule),
+			'semantics' => null,
 		);
 
 		$this->enqueue($initialState, 0);
@@ -192,6 +193,7 @@ class EarleyParser
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
 				'dag' => self::createLabeledDag($newRule),
+				'semantics' => null,
 			);
 			$this->enqueue($predictedState, $endWordIndex);
 		}
@@ -234,6 +236,7 @@ class EarleyParser
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
 				'dag' => $DAG,
+				'semantics' => null,
 			);
 
 			$this->enqueue($scannedState, $endWordIndex + 1);
@@ -278,7 +281,8 @@ class EarleyParser
 					'dotPosition' => $dotPosition + 1,
 					'startWordIndex' => $chartedState['startWordIndex'],
 					'endWordIndex' => $completedState['endWordIndex'],
-					'dag' => $NewDag
+					'dag' => $NewDag,
+					'semantics' => null,
 				);
 
 				// store extra information to make it easier to extract parse trees later
@@ -333,21 +337,56 @@ class EarleyParser
 	 * A state that is already present is not entered again.
 	 * Meaning is applied to the (completed) state here.
 	 *
+	 * The function at its current state is a reflection of the algorithm at page 570 of chapter 15.
+	 *
 	 * @param array $state
 	 * @param int $position
 	 */
 	private function enqueue(array $state, $position)
 	{
+		// check for completeness
+		if ($this->isIncomplete($state)) {
+
+			if (!$this->isStateInChart($state, $position)) {
+
+				$this->pushState($state, $position);
+			}
+
+		} elseif ($this->unifyState($state)) {
+
+			if ($this->applySemantics($state)) {
+
+				if (!$this->isStateInChart($state, $position)) {
+
+					$this->pushState($state, $position);
+				}
+
+			}
+
+		}
+	}
+
+	private function unifyState(array &$state)
+	{
+#todo
+		return true;
+	}
+
+	private function applySemantics(array &$state)
+	{
+#todo
+		return true;
+	}
+
+	private function pushState($state, $position)
+	{
 		static $stateIDs = 0;
 
-		if (!$this->isStateInChart($state, $position)) {
-
-			$this->showDebug('enqueue', $state);
-			$stateIDs++;
-			$state['id'] = $stateIDs;
-			$this->treeInfo['states'][$stateIDs] = $state;
-			$this->chart[$position][] = $state;
-		}
+		$this->showDebug('enqueue', $state);
+		$stateIDs++;
+		$state['id'] = $stateIDs;
+		$this->treeInfo['states'][$stateIDs] = $state;
+		$this->chart[$position][] = $state;
 	}
 
 	private function isStateInChart(array $state, $position)

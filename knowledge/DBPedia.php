@@ -64,7 +64,6 @@ class DBPedia extends KnowledgeSource
 
 	public function answerQuestion(Sentence $Sentence)
 	{
-//r($Sentence);exit;
 		$clauses = array();
 		$select = '';
 		$sentenceType = $Sentence->getSentenceType();

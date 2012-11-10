@@ -140,11 +140,14 @@ abstract class BaseGrammar implements Grammar
 				return array();
 			}
 		} else {
+
 			// presume proper noun
 			return array(
 				'head' => array(
 					'agreement' => array('number' => 'singular', 'person' => 1),
-					'sem' => array('name' => $word)
+					'sem' => array(
+						'name' => $word,
+					),
 				)
 			);
 		}
