@@ -2,8 +2,6 @@
 
 namespace agentecho\exception;
 
-use \Exception;
-
 class LexicalItemException extends EchoException
 {
 	const WORD_NOT_FOUND = 'Word not found: %1$s';

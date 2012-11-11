@@ -2,8 +2,6 @@
 
 namespace agentecho\exception;
 
-use \Exception;
-
 class ParseException extends EchoException
 {
 	const COULD_NOT_PARSE = 'Could not parse the part that starts with "%s"';

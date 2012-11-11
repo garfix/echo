@@ -418,6 +418,10 @@ class EarleyParser
 		return $state['rule'][$state['dotPosition']]['cat'];
 	}
 
+	/**
+	 * @param array $rule
+	 * @return LabeledDAG
+	 */
 	public static function createLabeledDag(array $rule)
 	{
 		$tree = array();
@@ -428,6 +432,11 @@ class EarleyParser
 		}
 
 		return new LabeledDAG($tree);
+	}
+
+	public static function createSematicStructure($semanticString)
+	{
+
 	}
 
 	/**

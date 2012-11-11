@@ -2,8 +2,6 @@
 
 namespace agentecho\exception;
 
-use \Exception;
-
 class ProductionException extends EchoException
 {
 	const TYPE_UNKNOWN_CONSTITUENT = 'Production exception: unknown constituent: %s';
