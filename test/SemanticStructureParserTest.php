@@ -42,15 +42,15 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-//	public function testPropertyProperty()
-//	{
-//		$Parser = new SemanticStructureParser();
-//
-//		$string = 'NP.first.sem';
-//		$Structure = $Parser->parse($string);
-//		$serialized = $Parser->serialize($Structure);
-//		$this->assertEquals($string, $serialized);
-//	}
+	public function testPropertyProperty()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'NP.first.second.sem';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
 
 	public function testParsePredicationList()
 	{

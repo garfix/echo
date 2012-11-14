@@ -170,23 +170,48 @@ class SemanticStructureParser
 	private function parseProperty(array $tokens, $pos, &$Property)
 	{
 		// parse an atom
-		if ($newPos = $this->parseAtom($tokens, $pos, $atom)) {
+		if ($newPos = $this->parseAtom($tokens, $pos, $Atom)) {
 			$pos = $newPos;
 
-			// parse a dot
-			if ($newPos = $this->parseSingleToken(self::T_DOT, $tokens, $pos)) {
+			// parse .name(.name(.name(...)))
+			if ($newPos = $this->parsePropertyTail($tokens, $pos, $Atom, $Property)) {
+				$pos = $newPos;
+				return $pos;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $Object Will be placed in the 'object' field
+	 */
+	private function parsePropertyTail(array $tokens, $pos, $Object, &$Property)
+	{
+		// parse a dot
+		if ($newPos = $this->parseSingleToken(self::T_DOT, $tokens, $pos)) {
+			$pos = $newPos;
+
+			// parse a propertyname
+			if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $name)) {
 				$pos = $newPos;
 
-				// parse a propertyname
-				if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $name)) {
+				// create a new property
+				$Property = new Property();
+				$Property->setObject($Object);
+				$Property->setName($name);
+
+				// parse the rest (optional)
+				// This call will attempt to place the $Property we just made into the 'object' field of a new property
+				// It will return another Property object ($Property3) as the last argument
+				if ($newPos = $this->parsePropertyTail($tokens, $pos, $Property, $ParentProperty)) {
 					$pos = $newPos;
 
-					$Property = new Property();
-					$Property->setObject($atom);
-					$Property->setName($name);
-
-					return $pos;
+					// the property we created above was pushed down and
+					// we will return the object created by our call to parsePropertyTail
+					$Property = $ParentProperty;
 				}
+				return $pos;
 			}
 		}
 
