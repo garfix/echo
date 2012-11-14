@@ -7,6 +7,7 @@ use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
+use agentecho\datastructure\Property;
 use agentecho\exception\SemanticStructureParseException;
 
 /**
@@ -22,6 +23,7 @@ class SemanticStructureParser
 	const T_COMMA = 6;
 	const T_AND = 7;
 	const T_WHITESPACE = 8;
+	const T_DOT = 9;
 
 	private $lastPosParsed = 0;
 
@@ -66,6 +68,8 @@ class SemanticStructureParser
 		if ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredication($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -163,17 +167,75 @@ class SemanticStructureParser
 		return false;
 	}
 
+	private function parseProperty(array $tokens, $pos, &$Property)
+	{
+		// parse an atom
+		if ($newPos = $this->parseAtom($tokens, $pos, $atom)) {
+			$pos = $newPos;
+
+			// parse a dot
+			if ($newPos = $this->parseSingleToken(self::T_DOT, $tokens, $pos)) {
+				$pos = $newPos;
+
+				// parse a propertyname
+				if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $name)) {
+					$pos = $newPos;
+
+					$Property = new Property();
+					$Property->setObject($atom);
+					$Property->setName($name);
+
+					return $pos;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	private function parseArgument(array $tokens, $pos, &$argument)
+	{
+		if ($newPos = $this->parseConstant($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseAtom($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseVariable($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseConstant(array $tokens, $pos, &$constant)
 	{
 		if ($newPos = $this->parseSingleToken(self::T_STRING, $tokens, $pos, $string)) {
 			$pos = $newPos;
-			$argument = new Constant($string);
-		} elseif ($newPos = $this->parseSingleToken(self::T_UC_IDENTIFIER, $tokens, $pos, $string)) {
+			$constant = new Constant($string);
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseAtom(array $tokens, $pos, &$atom)
+	{
+		if ($newPos = $this->parseSingleToken(self::T_UC_IDENTIFIER, $tokens, $pos, $string)) {
 			$pos = $newPos;
-			$argument = new Atom($string);
-		} elseif ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $string)) {
+			$atom = new Atom($string);
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseVariable(array $tokens, $pos, &$variable)
+	{
+		if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $string)) {
 			$pos = $newPos;
-			$argument = new Variable($string);
+			$variable = new Variable($string);
 		} else {
 			$pos = false;
 		}
@@ -224,6 +286,9 @@ class SemanticStructureParser
 				$contents = ')';
 			} elseif ($char == ',') {
 				$id = self::T_COMMA;
+				$contents = ',';
+			} elseif ($char == '.') {
+				$id = self::T_DOT;
 				$contents = ',';
 			} elseif ($char == "\"" || $string[$pos] == "'") {
 				$endPos = strpos($string, $char, $pos + 1);

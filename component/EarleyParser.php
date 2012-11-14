@@ -236,6 +236,7 @@ class EarleyParser
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
 				'dag' => $DAG,
+#todo haal de semantics uit het lexicon
 				'semantics' => null,
 			);
 
@@ -372,9 +373,20 @@ class EarleyParser
 		return true;
 	}
 
+	/**
+	 * Applies the semantics part of the state's rule
+	 *
+	 * @param array $state
+	 * @return bool
+	 */
 	private function applySemantics(array &$state)
 	{
-#todo
+		$Rule = self::createSemanticStructure($state['rule']);
+		if ($Rule) {
+			//$sem = SemanticApplier::apply($Rule, $state['semantics'][CHILDREN]);
+			//$state['semantics'][HEAD] = $sem
+		}
+
 		return true;
 	}
 
@@ -432,6 +444,19 @@ class EarleyParser
 		}
 
 		return new LabeledDAG($tree);
+	}
+
+	public static function createSemanticStructure($newRule)
+	{
+		$head = reset($newRule);
+		if (!isset($head['semantics'])) {
+			return null;
+		} else {
+			$semantics = $head['semantics'];
+			$Parser = new SemanticStructureParser();
+			$SemanticStructure = $Parser->parse($semantics);
+			return $SemanticStructure;
+		}
 	}
 
 	public static function createSematicStructure($semanticString)

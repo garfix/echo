@@ -148,7 +148,12 @@ array(
 
 				// How old was Mary Shelley?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4'))),
+					array('cat' => 'S',
+						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
+#todo
+'semantics' => 'question(q, wnNP(NP))'
+// 'semantics' => 'question(q, WnNP.sem(NP.sem))'
+					),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
 					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
@@ -176,7 +181,10 @@ array(
 			'VP' => array(
 				// drives
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
+					array('cat' => 'VP',
+#todo
+'semantics' => 'verb(a)',
+						'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
@@ -215,12 +223,16 @@ array(
 							'object' => array(
 								'type' => 'entity', 'question' => true
 							)
-						))))),
+						)))),
+					),
 					array('cat' => 'whword', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 				),
 				// which car, how many children
 				array(
-					array('cat' => 'WhNP', 'features' => array('head-1' => null)),
+					array('cat' => 'WhNP',
+#todo
+'semantics' => 'question(q, wnNP(NP))',
+						'features' => array('head-1' => null)),
 					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
@@ -228,7 +240,10 @@ array(
 			'NP' => array(
 				// John
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'NP',
+#todo
+'semantics' => 'question(q, wnNP(NP))',
+						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 				// he
@@ -244,7 +259,10 @@ array(
 				),
 				// (large) car (in the lot)
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
+					array('cat' => 'NP',
+#todo
+'semantics' => 'question(q, wnNP(NP))',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 			),
@@ -252,7 +270,10 @@ array(
 			'NBar' => array(
 				// car
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
+#todo
+'semantics' => 'question(q, wnNP(NP))'
+					),
 					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 				// car in the lot
