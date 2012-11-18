@@ -8,6 +8,7 @@ use agentecho\datastructure\Constant;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Property;
+use agentecho\datastructure\LambdaExpression;
 use agentecho\exception\SemanticStructureParseException;
 
 /**
@@ -15,15 +16,22 @@ use agentecho\exception\SemanticStructureParseException;
  */
 class SemanticStructureParser
 {
-	const T_IDENTIFIER = 'identifier';
+	// pairs
 	const T_BRACKET_OPEN = 'bracket open';
 	const T_BRACKET_CLOSE = 'bracket close';
-	const T_STRING = 'string';
+	const T_CURLY_BRACKET_OPEN = 'curly bracket open';
+	const T_CURLY_BRACKET_CLOSE = 'curly bracket close';
+	// single
 	const T_COMMA = 'comma';
-	const T_AND = 'and';
-	const T_WHITESPACE = 'whitespace';
 	const T_DOT = 'dot';
 	const T_QUESTION_MARK = 'question mark';
+	const T_COLON = 'colon';
+	// content
+	const T_IDENTIFIER = 'identifier';
+	const T_STRING = 'string';
+	const T_WHITESPACE = 'whitespace';
+	// keywords
+	const T_AND = 'and';
 
 	private $lastPosParsed = 0;
 
@@ -68,6 +76,50 @@ class SemanticStructureParser
 		if ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseLambdaExpression($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseLambdaExpression(array $tokens, $pos, &$LambdaExpression)
+	{
+		if ($newPos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
+			$pos = $newPos;
+
+			if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
+				$pos = $newPos;
+
+				if ($newPos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+					$pos = $newPos;
+
+					if ($newPos = $this->parseTerm($tokens, $pos, $Term)) {
+						$pos = $newPos;
+
+						if ($newPos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
+							$pos = $newPos;
+
+							$LambdaExpression = new LambdaExpression();
+							$LambdaExpression->setVariable($Variable);
+							$LambdaExpression->setTerm($Term);
+							return $pos;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function parseTerm(array $tokens, $pos, &$Term)
+	{
+		if ($newPos = $this->parsePredicationList($tokens, $pos, $Term)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseLambdaExpression($tokens, $pos, $Term)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -302,31 +354,31 @@ class SemanticStructureParser
 		$stringLength = strlen($string);
 		$tokens = array();
 
+		$singleCharTokens = array(
+			'(' => self::T_BRACKET_OPEN,
+			')' => self::T_BRACKET_CLOSE,
+			'{' => self::T_CURLY_BRACKET_OPEN,
+			'}' => self::T_CURLY_BRACKET_CLOSE,
+			',' => self::T_COMMA,
+			'.' => self::T_DOT,
+			':' => self::T_COLON,
+			'?' => self::T_QUESTION_MARK,
+		);
+
 		for ($pos = 0; $pos < $stringLength; $pos++) {
 
 			$char = $string[$pos];
 
-			if ($char == ' ' || $char == "\t" || $char == "\r" || $char == "\n") {
+
+			if (isset($singleCharTokens[$char])) {
+				$id = $singleCharTokens[$char];
+				$contents = $char;
+			} elseif ($char == ' ' || $char == "\t" || $char == "\r" || $char == "\n") {
 				if (preg_match('/(\s+)/', $string, $matches, 0, $pos)) {
 					$id = self::T_WHITESPACE;
 					$contents = $matches[1];
 					$pos += strlen(($contents)) - 1;
 				}
-			} elseif ($char == '(') {
-				$id = self::T_BRACKET_OPEN;
-				$contents = '(';
-			} elseif ($char == ')') {
-				$id = self::T_BRACKET_CLOSE;
-				$contents = ')';
-			} elseif ($char == ',') {
-				$id = self::T_COMMA;
-				$contents = ',';
-			} elseif ($char == '.') {
-				$id = self::T_DOT;
-				$contents = ',';
-			} elseif ($char == '?') {
-				$id = self::T_QUESTION_MARK;
-				$contents = '?';
 			} elseif ($char == "\"" || $string[$pos] == "'") {
 				$endPos = strpos($string, $char, $pos + 1);
 				if ($endPos !== false) {

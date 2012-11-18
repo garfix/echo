@@ -8,7 +8,7 @@ namespace agentecho\datastructure;
  *
  * @author Patrick van Bergen
  */
-class PredicationList
+class PredicationList extends  Term
 {
 	private $predications = array();
 
