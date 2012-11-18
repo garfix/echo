@@ -15,16 +15,15 @@ use agentecho\exception\SemanticStructureParseException;
  */
 class SemanticStructureParser
 {
-	const T_LC_IDENTIFIER = 1;
-	const T_UC_IDENTIFIER = 2;
-	const T_BRACKET_OPEN = 3;
-	const T_BRACKET_CLOSE = 4;
-	const T_STRING = 5;
-	const T_COMMA = 6;
-	const T_AND = 7;
-	const T_WHITESPACE = 8;
-	const T_DOT = 9;
-	const T_QUESTION_MARK = 10;
+	const T_IDENTIFIER = 'identifier';
+	const T_BRACKET_OPEN = 'bracket open';
+	const T_BRACKET_CLOSE = 'bracket close';
+	const T_STRING = 'string';
+	const T_COMMA = 'comma';
+	const T_AND = 'and';
+	const T_WHITESPACE = 'whitespace';
+	const T_DOT = 'dot';
+	const T_QUESTION_MARK = 'question mark';
 
 	private $lastPosParsed = 0;
 
@@ -68,8 +67,6 @@ class SemanticStructureParser
 	{
 		if ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parsePredication($tokens, $pos, $Result)) {
-			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
@@ -83,7 +80,7 @@ class SemanticStructureParser
 		$predicate = null;
 		$arguments = array();
 
-		if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $predicate)) {
+		if ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $predicate)) {
 			$pos = $newPos;
 
 			// opening bracket
@@ -196,7 +193,7 @@ class SemanticStructureParser
 			$pos = $newPos;
 
 			// parse a propertyname
-			if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $name)) {
+			if ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $name)) {
 				$pos = $newPos;
 
 				// create a new property
@@ -225,9 +222,9 @@ class SemanticStructureParser
 	{
 		if ($newPos = $this->parseConstant($tokens, $pos, $argument)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseAtom($tokens, $pos, $argument)) {
-			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseAtom($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseVariable($tokens, $pos, $argument)) {
 			$pos = $newPos;
@@ -250,7 +247,7 @@ class SemanticStructureParser
 
 	private function parseAtom(array $tokens, $pos, &$atom)
 	{
-		if ($newPos = $this->parseSingleToken(self::T_UC_IDENTIFIER, $tokens, $pos, $string)) {
+		if ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $string)) {
 			$pos = $newPos;
 			$atom = new Atom($string);
 		} else {
@@ -264,7 +261,7 @@ class SemanticStructureParser
 		if ($newPos = $this->parseSingleToken(self::T_QUESTION_MARK, $tokens, $pos)) {
 			$pos = $newPos;
 
-			if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $string)) {
+			if ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $string)) {
 				$pos = $newPos;
 
 				$variable = new Variable($string);
@@ -345,17 +342,11 @@ class SemanticStructureParser
 				$id = self::T_AND;
 				$contents = 'and';
 				$pos += 3 - 1;
-			} elseif ($char >= 'A' and $char <= 'Z') {
+			} elseif (($char >= 'A' and $char <= 'Z') || ($char >= 'a' and $char <= 'z')) {
 				if (preg_match('/(\w+)/', $string, $matches, 0, $pos)) {
-					$id = self::T_UC_IDENTIFIER;
+					$id = self::T_IDENTIFIER;
 					$contents = $matches[1];
 					$pos += strlen(($contents)) - 1;
-				}
-			} elseif ($char >= 'a' and $char <= 'z') {
-				if (preg_match('/(\w+)/', $string, $matches, 0, $pos)) {
-					$id = self::T_LC_IDENTIFIER;
-					$contents = $matches[1];
-					$pos += strlen($contents) - 1;
 				}
 			} else {
 				$this->lastPosParsed = $pos;
