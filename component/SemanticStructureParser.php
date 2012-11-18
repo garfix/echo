@@ -24,6 +24,7 @@ class SemanticStructureParser
 	const T_AND = 7;
 	const T_WHITESPACE = 8;
 	const T_DOT = 9;
+	const T_QUESTION_MARK = 10;
 
 	private $lastPosParsed = 0;
 
@@ -184,6 +185,8 @@ class SemanticStructureParser
 	}
 
 	/**
+	 * Parses the .name(.name(...)) part of a property
+	 *
 	 * @param $Object Will be placed in the 'object' field
 	 */
 	private function parsePropertyTail(array $tokens, $pos, $Object, &$Property)
@@ -258,9 +261,18 @@ class SemanticStructureParser
 
 	private function parseVariable(array $tokens, $pos, &$variable)
 	{
-		if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $string)) {
+		if ($newPos = $this->parseSingleToken(self::T_QUESTION_MARK, $tokens, $pos)) {
 			$pos = $newPos;
-			$variable = new Variable($string);
+
+			if ($newPos = $this->parseSingleToken(self::T_LC_IDENTIFIER, $tokens, $pos, $string)) {
+				$pos = $newPos;
+
+				$variable = new Variable($string);
+
+			} else {
+				$pos = false;
+			}
+
 		} else {
 			$pos = false;
 		}
@@ -315,6 +327,9 @@ class SemanticStructureParser
 			} elseif ($char == '.') {
 				$id = self::T_DOT;
 				$contents = ',';
+			} elseif ($char == '?') {
+				$id = self::T_QUESTION_MARK;
+				$contents = '?';
 			} elseif ($char == "\"" || $string[$pos] == "'") {
 				$endPos = strpos($string, $char, $pos + 1);
 				if ($endPos !== false) {

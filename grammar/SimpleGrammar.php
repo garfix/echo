@@ -151,10 +151,14 @@ array(
 					array('cat' => 'S',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
 #todo
-'semantics' => 'question(q, wnNP(NP))'
+'semantics' => 'question(?q, wnNP(NP))'
+// 'sem' => '?sem-1(?sem-2)'
+// 'semantics' => 'question(q, wnNP(NP-1))'
 // 'semantics' => 'question(q, WnNP.sem(NP.sem))'
+// 'semantics' => 'question(q, apply(sem("wnNP"), sem("NP")))'
 					),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
+// 'sem' => '?sem-1'
 					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 				),
@@ -183,7 +187,7 @@ array(
 				array(
 					array('cat' => 'VP',
 #todo
-'semantics' => 'verb(a)',
+'semantics' => 'verb(?a)',
 						'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
@@ -231,7 +235,7 @@ array(
 				array(
 					array('cat' => 'WhNP',
 #todo
-'semantics' => 'question(q, wnNP(NP))',
+'semantics' => 'question(?q, wnNP(NP))',
 						'features' => array('head-1' => null)),
 					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
@@ -242,7 +246,7 @@ array(
 				array(
 					array('cat' => 'NP',
 #todo
-'semantics' => 'question(q, wnNP(NP))',
+'semantics' => 'question(?q, wnNP(NP))',
 						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
@@ -261,7 +265,7 @@ array(
 				array(
 					array('cat' => 'NP',
 #todo
-'semantics' => 'question(q, wnNP(NP))',
+'semantics' => 'question(?q, wnNP(NP))',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
@@ -272,7 +276,7 @@ array(
 				array(
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
 #todo
-'semantics' => 'question(q, wnNP(NP))'
+'semantics' => 'question(?q, wnNP(NP))'
 					),
 					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
 				),

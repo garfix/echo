@@ -237,7 +237,7 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'syntax' => array('deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
 						'variables' => array('role' => '?arg'),
-						'semantics' => 'manner(e, m)'
+						'semantics' => 'manner(?e, ?m)'
 					)
 				),
 			),
@@ -285,7 +285,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'old'),
-						'semantics' => 'isa(e, Old) and subject(e, s)'
+						'semantics' => 'isa(?e, Old) and subject(?e, ?s)'
 					)
 				),
 			),

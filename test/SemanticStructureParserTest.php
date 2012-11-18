@@ -16,7 +16,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'name(a, "John")';
+		$string = 'name(?a, "John")';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -26,7 +26,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'isa(a, Bird)';
+		$string = 'isa(?a, Bird)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -56,7 +56,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'name(a, "John") and name(b, "Mary") and love(a, b)';
+		$string = 'name(?a, "John") and name(?b, "Mary") and love(?a, ?b)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -66,7 +66,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'question(q, first(q, e) and second(e, "answer"))';
+		$string = 'question(?q, first(?q, ?e) and second(?e, "answer"))';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -93,12 +93,12 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$pos = false;
 
 		try {
-			$string = 'name(a) and ()';
+			$string = 'name(?a) and ()';
 			$Parser->parse($string);
 		} catch (SemanticStructureParseException $E) {
 			$pos = $E->pos;
 		}
 
-		$this->assertEquals(12, $pos);
+		$this->assertEquals(13, $pos);
 	}
 }
