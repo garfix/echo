@@ -37,6 +37,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testAtom()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'NP';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testProperty()
 	{
 		$Parser = new SemanticStructureParser();

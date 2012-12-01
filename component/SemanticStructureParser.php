@@ -37,7 +37,6 @@ class SemanticStructureParser
 
 	/**
 	 * @param $semanticStructureString
-	 * @return Predication
 	 * @throws SemanticStructureParseException
 	 */
 	public function parse($string)
@@ -77,6 +76,8 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
+			$pos = $newPos;
 		} elseif ($newPos = $this->parseLambdaExpression($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
@@ -85,6 +86,14 @@ class SemanticStructureParser
 		return $pos;
 	}
 
+	/**
+	 * Parses {?x : P(?x)}
+	 *
+	 * @param array $tokens
+	 * @param $pos
+	 * @param $LambdaExpression
+	 * @return bool
+	 */
 	private function parseLambdaExpression(array $tokens, $pos, &$LambdaExpression)
 	{
 		if ($newPos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
@@ -115,6 +124,14 @@ class SemanticStructureParser
 		return false;
 	}
 
+	/**
+	 * Parses any lambda calculus term.
+	 *
+	 * @param array $tokens
+	 * @param $pos
+	 * @param $Term
+	 * @return bool
+	 */
 	private function parseTerm(array $tokens, $pos, &$Term)
 	{
 		if ($newPos = $this->parsePredicationList($tokens, $pos, $Term)) {

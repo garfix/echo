@@ -91,18 +91,18 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 	}
 
-//	/**
-//	 * The answer is calculated.
-//	 * Uses a dependent clause
-//	 */
-//	public function testCalculatedAnswer()
-//	{
-//		$this->markTestSkipped();
-//		$Conversation = $this->startEnglishConversation();
-//
-//		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-//		$this->assertSame("She was xx years old.", $answer);
-//	}
+	/**
+	 * The answer is calculated.
+	 * Uses a dependent clause
+	 */
+	public function testCalculatedAnswer()
+	{
+		$this->markTestSkipped();
+		$Conversation = $this->startEnglishConversation();
+
+		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
+		$this->assertSame("She was xx years old.", $answer);
+	}
 
 
 		// When did Lord Byron pass away?

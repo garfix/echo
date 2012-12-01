@@ -27,12 +27,12 @@ interface Grammar
 	public function getParseRules();
 
 	/**
-	 * Returns the features of a word.
+	 * Returns the semantics of a word.
 	 * @param $word
 	 * @param $partOfSpeech
-	 * @return array
+	 * @return mixed
 	 */
-	public function	getWordFeatures($word, $partOfSpeech);
+	public function	getSemanticsForWord($word, $partOfSpeech);
 
 	/**
 	 * Returns all grammar rules for generation.

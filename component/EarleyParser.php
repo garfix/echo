@@ -226,6 +226,7 @@ class EarleyParser
 
 			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
 			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
+			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
 
 			$scannedState = array(
 				'rule' => array(
@@ -236,8 +237,7 @@ class EarleyParser
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
 				'dag' => $DAG,
-#todo haal de semantics uit het lexicon
-				'semantics' => null,
+				'semantics' => $Semantics,
 			);
 
 			$this->enqueue($scannedState, $endWordIndex + 1);
@@ -381,10 +381,30 @@ class EarleyParser
 	 */
 	private function applySemantics(array &$state)
 	{
-		$Rule = self::createSemanticStructure($state['rule']);
+		$head = reset($state['rule']);
+		if (!isset($head['semantics'])) {
+			return true;
+		} else {
+			$semanticSpecification = $head['semantics'];
+		}
+
+		$Rule = self::createSemanticStructure($semanticSpecification);
 		if ($Rule) {
-			//$sem = SemanticApplier::apply($Rule, $state['semantics'][CHILDREN]);
-			//$state['semantics'][HEAD] = $sem
+
+			$childSemantics = array();
+
+			$i = 1;
+			foreach ($state['children'] as $childNodeId) {
+#todo: does not handle multiple categories (i.e. S => NP NP)
+				$cat = $state['rule'][$i]['cat'];
+				$childState = $this->treeInfo['states'][$childNodeId];
+				$childSemantics[$cat] = $childState['semantics'];
+				$i++;
+			}
+
+			$Applier = new SemanticApplier();
+			$sem = $Applier->apply($Rule, $childSemantics);
+			$state['semantics'] = $sem;
 		}
 
 		return true;
@@ -395,7 +415,9 @@ class EarleyParser
 		static $stateIDs = 0;
 
 		$this->showDebug('enqueue', $state);
+
 		$stateIDs++;
+
 		$state['id'] = $stateIDs;
 		$this->treeInfo['states'][$stateIDs] = $state;
 		$this->chart[$position][] = $state;
@@ -446,22 +468,15 @@ class EarleyParser
 		return new LabeledDAG($tree);
 	}
 
-	public static function createSemanticStructure($newRule)
+	public static function createSemanticStructure($semanticSpecification)
 	{
-		$head = reset($newRule);
-		if (!isset($head['semantics'])) {
+		if ($semanticSpecification === null) {
 			return null;
 		} else {
-			$semantics = $head['semantics'];
 			$Parser = new SemanticStructureParser();
-			$SemanticStructure = $Parser->parse($semantics);
+			$SemanticStructure = $Parser->parse($semanticSpecification);
 			return $SemanticStructure;
 		}
-	}
-
-	public static function createSematicStructure($semanticString)
-	{
-
 	}
 
 	/**

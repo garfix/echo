@@ -17,6 +17,11 @@ class PredicationList extends  Term
 		$this->predications = $predications;
 	}
 
+	public function getPredications()
+	{
+		return $this->predications;
+	}
+
 	public function __toString()
 	{
 		return implode(' and ',  $this->predications);

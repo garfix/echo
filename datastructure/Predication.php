@@ -16,9 +16,19 @@ class Predication
 		$this->predicate = $predicate;
 	}
 
+	public function getPredicate()
+	{
+		return $this->predicate;
+	}
+
 	public function setArguments(array $arguments)
 	{
 		$this->arguments = $arguments;
+	}
+
+	public function getArguments()
+	{
+		return $this->arguments;
 	}
 
 	public function __toString()

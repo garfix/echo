@@ -54,21 +54,6 @@ abstract class BaseGrammar implements Grammar
 	}
 
 	/**
-	 * Returns the features of a word.
-	 * @param $word
-	 * @param $partOfSpeech
-	 * @return array
-	 */
-	public function	getWordFeatures($word, $partOfSpeech)
-	{
-		if (isset($this->wordIndex[$word][$partOfSpeech]['features'])) {
-			return $this->wordIndex[$word][$partOfSpeech]['features'];
-		} else {
-			return array();
-		}
-	}
-
-	/**
 	 * Returns true if the given syntactic category is a non-abstract part-of-speech.
 	 *
 	 * @param string $category
@@ -150,6 +135,15 @@ abstract class BaseGrammar implements Grammar
 					),
 				)
 			);
+		}
+	}
+
+	public function getSemanticsForWord($word, $partOfSpeech)
+	{
+		if (isset($this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'])) {
+			return $this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'];
+		} else {
+			return null;
 		}
 	}
 

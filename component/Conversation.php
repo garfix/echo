@@ -7,6 +7,7 @@ use \agentecho\grammar\Grammar;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\datastructure\ConversationContext;
+use \agentecho\exception\EchoException;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -94,8 +95,11 @@ class Conversation
 		} catch (\Exception $E) {
 
 			$message = $E->getMessage();
-			$translatedMessage = Translations::translate($message, $Parser->getCurrentGrammar()->getLanguageCode());
-			$E->setMessage($translatedMessage);
+
+			if ($E instanceof EchoException) {
+				$translatedMessage = Translations::translate($message, $Parser->getCurrentGrammar()->getLanguageCode());
+				$E->setMessage($translatedMessage);
+			}
 
 			$answer = (string)$E;
 		}
