@@ -147,6 +147,12 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?syntax-1')),
 #todo
 'semantics' => 'S(SBar)'
+/*
+'semantics' => '
+	S1.sem = S2.sem and SBar.sem;
+	S1.?event = S2.?event;
+	S1.?event = SBar.?super-event'
+*/
 					),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),

@@ -37,6 +37,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testPredicationWithProperty()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'isa(noun.object, Bird)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testAtom()
 	{
 		$Parser = new SemanticStructureParser();
@@ -102,6 +112,46 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Parser = new SemanticStructureParser();
 
 		$string = '{?x : {?y : greater(?x, ?y)}}';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testAssignmentWithProperty()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'NP.sem = noun.sem';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testAssignmentWithPredicationList()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'NP.sem = subject(?event, ?subject)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testAssignmentWithPropertyAndPredication()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'NP.sem = noun.sem and subject(?event, ?subject)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testAssignmentList()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.object';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

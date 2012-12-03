@@ -286,6 +286,7 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'syntax' => array('category' => 'old'),
 						'semantics' => '{?e : {?s : isa(?e, Old) and subject(?e, ?s)}}'
+						//'semantics' => 'isa(?object, Old)
 					)
 				),
 			),

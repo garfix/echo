@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Property
+class Property extends Term
 {
 	private $name;
 	private $object;

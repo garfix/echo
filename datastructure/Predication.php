@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Predication
+class Predication extends Term
 {
 	private $predicate = null;
 
