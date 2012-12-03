@@ -134,8 +134,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
-#todo
-'semantics' => 'WhNP(NP)'
+
+'semantics' => '
+	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	S.event = WhNP.object;
+	S.subject = NP.object;
+	S.request = WhNP.request
+'
 					),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
 					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
@@ -145,14 +150,12 @@ abstract class SimpleGrammar extends BaseGrammar
 				// How old was Mary Shelley when she died?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?syntax-1')),
-#todo
-'semantics' => 'S(SBar)'
-/*
 'semantics' => '
 	S1.sem = S2.sem and SBar.sem;
-	S1.?event = S2.?event;
-	S1.?event = SBar.?super-event'
-*/
+	S1.event = S2.event;
+	S1.event = SBar.superEvent
+'
+
 					),
 					array('cat' => 'S', 'features' => array('head-1' => null)),
 					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
@@ -174,8 +177,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// drives
 				array(
 					array('cat' => 'VP',
-#todo
-'semantics' => 'verb',
+'semantics' => '
+	VP.sem = verb.sem;
+	VP.event = verb.event
+',
 						'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
@@ -222,8 +227,12 @@ abstract class SimpleGrammar extends BaseGrammar
 				// which car, how many children
 				array(
 					array('cat' => 'WhNP',
-#todo
-'semantics' => 'NP(whwordNP)',
+'semantics' => '
+	WhNP.sem = whwordNP.sem and NP.sem;
+	WhNP.object = whwordNP.object;
+	WhNP.object = NP.object;
+	WhNP.request = whword.request
+',
 						'features' => array('head-1' => null)),
 					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
@@ -233,8 +242,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// John
 				array(
 					array('cat' => 'NP',
-#todo
-'semantics' => 'propernoun',
+'semantics' => '
+	NP.sem = propernoun.sem;
+	NP.object = propernoun.object
+',
 						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
@@ -252,8 +263,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// (large) car (in the lot)
 				array(
 					array('cat' => 'NP',
-#todo
-'semantics' => 'NBar',
+'semantics' => '
+	NP.sem = NBar.sem;
+	NP.object = NBar.object
+',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
@@ -263,8 +276,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// car
 				array(
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
-#todo
-'semantics' => 'noun'
+'semantics' => '
+	NP.sem = noun.sem;
+	NP.object = noun.object
+'
 					),
 					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
 				),

@@ -22,6 +22,17 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testAllowTrailingWhitespace()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'name(?a, "John") ';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$string = 'name(?a, "John")';
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testPredicationWithAtomAndVariable()
 	{
 		$Parser = new SemanticStructureParser();

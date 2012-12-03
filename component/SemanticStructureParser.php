@@ -95,6 +95,23 @@ class SemanticStructureParser
 		} else {
 			$pos = false;
 		}
+
+		// parse trailing whitespace
+		if ($newPos = $this->parseWhitespace($tokens, $pos)) {
+			$pos = $newPos;
+		}
+
+		return $pos;
+	}
+
+	private function parseWhitespace($tokens, $pos)
+	{
+		if ($newPos = $this->parseSingleToken(self::T_WHITESPACE, $tokens, $pos)) {
+			$pos = $newPos;
+		} else {
+			$pos = false;
+		}
+
 		return $pos;
 	}
 
