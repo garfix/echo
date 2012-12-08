@@ -175,6 +175,8 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 0,
 					'head' => array(
 						'syntax' => array('predicate' => 'die', 'tense' => 'past'),
+						'semantics' => 'isa(this.event, Die)'
+// and tense(this.event, Past)
 					)
 				),
 			),
@@ -342,7 +344,8 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
-						'syntax' => array('category' => 'subject') // thirdPerson?
+						'syntax' => array('category' => 'subject'), // thirdPerson?
+						'semantics' => 'isa(this.object, Female)'
 					)
 				)
 			),
@@ -378,6 +381,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
+						'semantics' => 'tense(this.event, Past)'
 					)
 				),
 			),
@@ -395,6 +399,7 @@ class EnglishGrammar extends SimpleGrammar
 				'part-of-speech' => 'whword',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
+					'semantics' => 'at_time(this.superEvent, this.subEvent)'
 				))
 			),
 			'where' => array(

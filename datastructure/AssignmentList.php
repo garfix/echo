@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class AssignmentList
+class AssignmentList extends SemanticStructure
 {
 	private $assignments;
 

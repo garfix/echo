@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class TermList
+class TermList extends SemanticStructure
 {
 	private $terms = array();
 

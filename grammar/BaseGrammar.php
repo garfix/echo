@@ -133,6 +133,7 @@ abstract class BaseGrammar implements Grammar
 					'syntax' => array(
 						'name' => $word,
 					),
+//					'semantics' => 'name(this.object, "' . $word . '")'
 				)
 			);
 		}
@@ -142,6 +143,9 @@ abstract class BaseGrammar implements Grammar
 	{
 		if (isset($this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'])) {
 			return $this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'];
+		} elseif ($partOfSpeech == 'propernoun') {
+			// presume proper noun
+			return 'name(this.object, "' . $word . '")';
 		} else {
 			return null;
 		}

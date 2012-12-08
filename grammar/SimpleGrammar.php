@@ -51,12 +51,18 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// active declarative
 
-				// John drives
+				// John drives / She died
 				// VP is the head constituent (head-1)
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?syntax-1'))),
+					array('cat' => 'S',
+'semantics' => '
+	S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+	S.event = VP.event;
+	S.subject = NP.object
+',
+						'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?syntax-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax')))),
 				),
@@ -70,7 +76,7 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// imperative
 
-				// Drive! / Book that flight.
+				// Drive! / Book that flight / She died
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => null))),
@@ -138,6 +144,7 @@ abstract class SimpleGrammar extends BaseGrammar
 'semantics' => '
 	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
 	S.event = WhNP.object;
+	S.event = auxBe.event;
 	S.subject = NP.object;
 	S.request = WhNP.request
 '
@@ -150,10 +157,11 @@ abstract class SimpleGrammar extends BaseGrammar
 				// How old was Mary Shelley when she died?
 				array(
 					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?syntax-1')),
+# todo: should accept S1 and S2
 'semantics' => '
-	S1.sem = S2.sem and SBar.sem;
-	S1.event = S2.event;
-	S1.event = SBar.superEvent
+	S.sem = S.sem and SBar.sem;
+	S.event = S.event;
+	S.event = SBar.superEvent
 '
 
 					),
@@ -167,7 +175,16 @@ abstract class SimpleGrammar extends BaseGrammar
 			'SBar' => array(
 				array(
 					array('cat' => 'SBar', 'features' => array('head' => array('syntax' =>
-						array('type' => 'relativeClause', 'clause' => '?syntax-2',	'complementizer' => '?cat')))),
+						array('type' => 'relativeClause', 'clause' => '?syntax-2',	'complementizer' => '?cat'))),
+'semantics' => '
+	SBar.sem = whword.sem and S.sem;
+	SBar.superEvent = whword.superEvent;
+	SBar.subEvent = whword.subEvent;
+	SBar.subEvent = S.event
+'
+
+
+					),
 					array('cat' => 'whword', 'features' => array('head' => array(
 						'syntax' => array('category' => '?cat')))),
 					array('cat' => 'S', 'features' => array('head' => array('syntax' => '?syntax-2'))),
@@ -251,7 +268,12 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 				// he
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'NP',
+'semantics' => '
+	NP.sem = pronoun.sem;
+	NP.object = pronoun.object
+',
+						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
 					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
 				),
 				// the car

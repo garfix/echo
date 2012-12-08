@@ -187,13 +187,21 @@ class EarleyParser
 		// go through all rules that have the next consequent as their antecedent
 		foreach ($this->getRulesForAntecedent($nextConsequent) as $newRule) {
 
+# correct? probably not!
+if (isset($newRule[0]['semantics'])) {
+//	$Semantics = $this->createSemanticStructure($newRule[0]['semantics']);
+	$Semantics = null;
+} else {
+	$Semantics =  null;
+}
+
 			$predictedState = array(
 				'rule' => $newRule,
 				'dotPosition' => self::CONSEQUENT,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
 				'dag' => self::createLabeledDag($newRule),
-				'semantics' => null,
+				'semantics' => $Semantics,
 			);
 			$this->enqueue($predictedState, $endWordIndex);
 		}
@@ -227,6 +235,10 @@ class EarleyParser
 			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
 			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
 			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
+
+if ($Semantics === null) {
+	$a = 0;
+}
 
 			$scannedState = array(
 				'rule' => array(
@@ -283,7 +295,7 @@ class EarleyParser
 					'startWordIndex' => $chartedState['startWordIndex'],
 					'endWordIndex' => $completedState['endWordIndex'],
 					'dag' => $NewDag,
-					'semantics' => null,
+					'semantics' => null
 				);
 
 				// store extra information to make it easier to extract parse trees later
@@ -356,6 +368,8 @@ class EarleyParser
 		} elseif ($this->unifyState($state)) {
 
 			if ($this->applySemantics($state)) {
+
+echo $state['semantics']."\n";
 
 				if (!$this->isStateInChart($state, $position)) {
 

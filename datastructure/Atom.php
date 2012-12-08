@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Atom
+class Atom extends SemanticStructure
 {
 	private $name;
 

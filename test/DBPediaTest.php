@@ -97,10 +97,11 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCalculatedAnswer()
 	{
-		$this->markTestSkipped();
+//		$this->markTestSkipped();
 		$Conversation = $this->startEnglishConversation();
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
+#exit;
 		$this->assertSame("She was xx years old.", $answer);
 	}
 

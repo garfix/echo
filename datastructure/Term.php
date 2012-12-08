@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Term
+class Term extends SemanticStructure
 {
 
 }
