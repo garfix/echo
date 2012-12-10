@@ -168,7 +168,8 @@ class SemanticApplier
 
 			return $clonedPredications;
 		} else {
-			die("don't know this name");
+			//die("don't know this name");
+			return array();
 		}
 	}
 

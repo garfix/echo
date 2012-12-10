@@ -369,7 +369,7 @@ if ($Semantics === null) {
 
 			if ($this->applySemantics($state)) {
 
-echo $state['semantics']."\n";
+#echo $state['semantics']."\n";
 
 				if (!$this->isStateInChart($state, $position)) {
 
@@ -447,6 +447,7 @@ echo $state['semantics']."\n";
 				$presentState['endWordIndex'] == $state['endWordIndex'] &&
 				// this could be replaced by a fast test for subsumption of both dags;
 				// however, accepting the duplicate state is probably faster than the fastest test for subsumption
+				// an added complexity would be the implication of semantic structures
 				true
 				) {
 					return true;
@@ -595,6 +596,8 @@ echo $state['semantics']."\n";
 		if (isset($dagTree[$antecedent . '@0'])) {
 			$branch['features'] = $dagTree[$antecedent . '@0'];
 		}
+
+		$branch['semantics'] = $state['semantics'];
 
 		if (isset($state['children'])) {
 

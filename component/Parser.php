@@ -133,6 +133,7 @@ class Parser
 		// create a phrase specification from these lexical items
 		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
 		$Sentence->setPhraseSpecification($result['tree']);
+		$Sentence->setSemantics($result['tree']['semantics']);
 
 		if (!$result['success']) {
 

@@ -2,8 +2,8 @@
 
 namespace agentecho\datastructure;
 
-use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\PredicationList;
 
 /**
  * A blackboard for a sentence in progress.
@@ -38,6 +38,8 @@ class SentenceContext
 	/** @var The root object of the object structure. */
 	public $RootObject = null;
 
+	public $Semantics = null;
+
 	/** @return Sentence */
 	public function getRootObject()
 	{
@@ -52,6 +54,22 @@ class SentenceContext
 	public function getPhraseSpecification()
 	{
 		return $this->phraseSpecification;
+	}
+
+	/**
+	 * @param PredicationList $Semantics
+	 */
+	public function setSemantics($Semantics)
+	{
+		$this->Semantics = $Semantics;
+	}
+
+	/**
+	 * @return PredicationList
+	 */
+	public function getSemantics()
+	{
+		return $this->Semantics;
 	}
 
 	public function setLanguage($language)
@@ -106,6 +124,6 @@ class SentenceContext
 	 */
 	public function getSemanticsString()
 	{
-		return '';
+		return (string)$this->Semantics;
 	}
 }
