@@ -2,14 +2,10 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Atom;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
-use agentecho\datastructure\LambdaExpression;
 use agentecho\datastructure\AssignmentList;
-use agentecho\datastructure\Assignment;
 use agentecho\datastructure\Property;
-use agentecho\datastructure\SemanticNode;
 use agentecho\datastructure\SemanticStructure;
 use agentecho\datastructure\TermList;
 
@@ -19,7 +15,7 @@ use agentecho\datastructure\TermList;
 class SemanticApplier
 {
 	/**
-	 * @param $Rule
+	 * @param AssignmentList $Rule It is an assignmentlist now; it may grow out into a complete program
 	 *
 	 * Example (an Assignmentlist that can be paraphrased as):
 	 * 	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
@@ -27,172 +23,210 @@ class SemanticApplier
 	 *	S.subject = NP.object;
 	 *	S.request = WhNP.request
 	 *
-	 * @param array $arguments An array of [cat => SemanticStructure]
+	 * @param array $childNodeSemantics An array of [cat => SemanticStructure]
 	 *
 	 * Example:
 	 *  NP => isa(this.object, Old)
 	 *
 	 * @return SemanticStructure
 	 */
-	public function apply($Rule, $arguments)
+	public function apply($Rule, $childNodeSemantics)
 	{
 		if ($Rule instanceof AssignmentList) {
 
+			// A rule consists of one or more assignments
+			// like: S.event = WhNP.object
 			$assignments = $Rule->getAssignments();
-			$SemanticNode = new SemanticNode();
 
+			// look up the syntactic category
+			$parentSyntacticCategory = $assignments[0]->getLeft()->getObject()->getName();
+
+			/** @var TermList $Attachment  */
+			$SemanticAttachment = null;
+			/** @var array $childPropertyBindings */
+			$childPropertyBindings = array();
+
+			// extract the semantic attachment and the bindings to child semantic properties
+			// into two separate variables
 			foreach ($assignments as $Assignment) {
-				$this->applyAssignment($Assignment, $SemanticNode);
+
+				/** @var Property $Left  */
+				$Left = $Assignment->getLeft();
+				/** @var TermList $Right  */
+				$Right = $Assignment->getRight();
+
+				/** @var TermList $Attachments  */
+				if ($Left->getName() == 'sem') {
+					// assignment of semantics (i.e. VP.sem = verb.sem)
+					$SemanticAttachment = $Right;
+				} else {
+					// binding of child property to parent property (VP.event = verb.event)
+					$childPropertyBindings[] = array($Left->getName() => $Right);
+				}
 			}
 
-			$Semantics = $this->applyAttachment($SemanticNode->attachment, $SemanticNode->bindings, $arguments);
-
-$p = (string)$Semantics;
+			// create the predication list from this semantic attachment and the child nodes
+			$Semantics = $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $parentSyntacticCategory);
 
 			return $Semantics;
-
-		} elseif ($Rule instanceof Atom) {
-
-			$cat = $Rule->getName();
-			$Argument = $arguments[$cat];
-			return $Argument;
-
-		} elseif ($Rule instanceof PredicationList) {
-
-			/** @var PredicationList $List  */
-			$List = $Rule;
-
-			foreach ($List->getPredications() as $Predication) {
-
-				if (!$this->applyPredication($Predication, $arguments)) {
-					return false;
-				}
-
-			}
-
-		} else {
-			$a = 0;
-			#todo
 		}
 	}
 
-	private function applyAssignment(Assignment $Assignment, SemanticNode $SemanticNode)
-	{
-		/** @var Property $Left  */
-		$Left = $Assignment->getLeft();
-		$Right = $Assignment->getRight();
-
-		if ($Left->getName() == 'sem') {
-			$SemanticNode->attachment = $Right;
-		} else {
-			$SemanticNode->bindings[] = array($Left->getName() => $Right);
-		}
-	}
-
-	// $Attachment example:
-	//      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
-	//
-	// $bindings example:
-	//      'object' => NP.object
-	//
-	// $arguments example:
-	//      'NP' => isa(this.object, Old)
-	private function applyAttachment(TermList $TermList, array $bindings, array $arguments)
+	/**
+	 * Create a new predication list that forms the semantic attachment of the current node.
+	 *
+	 * $SemanticAttachment example:
+	 *      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	 *
+	 * $childPropertyBindings example:
+	 *      ['object' => NP.object]
+	 *
+	 * $childNodeSemantics example:
+	 *      'NP' => isa(this.object, Old)
+	 *
+	 * @return PredicationList
+	 */
+	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, $parentSyntacticCategory)
 	{
 		$predications = array();
 
-		foreach ($TermList->getTerms() as $Term) {
+		// each of the terms of the semantic expression needs to be instantiated with the child properties
+		foreach ($SemanticAttachment->getTerms() as $Term) {
 
+			// there are two kinds of terms: properties (like NP.sem) and predications (like isa(this.event, Live))
 			if ($Term instanceof Property) {
 
 				if ($Term->getName() == 'sem') {
 
-					#todo: make a (deep) clone
-					$name = $Term->getObject()->getName();
-					if (isset($arguments[$name])) {
-						$childPredications = $arguments[$name]->getPredications();
+					// add the child node's predications to this node's predications
+					$childPredications = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory);
 
-
-						foreach ($childPredications as $Predication) {
-							// replace child's variables by parent variables according to $bindings
-							$this->replaceVariables($Predication, $bindings);
-						}
-
-						$predications = array_merge($predications, $childPredications);
-					} else {
-						//die("don't know this name");
-					}
-
+					$predications = array_merge($predications, $childPredications);
 
 				} else {
-					die("don't know this property");
+					die("Only sem is allowed as property.");
 				}
 
 			} elseif ($Term instanceof Predication) {
 
-				// clone the predication
-				$clonedPredication = clone $Term;
+				/** @var Predication $ClonedPredication  */
+				$ClonedPredication = $Term->createClone();
 
-				$predications[] = $clonedPredication;
+				$predications[] = $ClonedPredication;
 
 			} else {
 				die("don't know this term");
 			}
-
 		}
 
 		$PredicationList = new PredicationList();
 		$PredicationList->setPredications($predications);
 		return $PredicationList;
-
 	}
 
-	private function applyPredication(Predication $Predication, array $arguments)
+	private function replaceThisBySyntacticCategory(Predication $Predication, $syntacticCategory)
 	{
-		$BoundPredicate = $arguments[$Predication->getPredicate()];
-
-		$boundArguments = array();
-		foreach ($Predication->getArguments() as $argument) {
-			if ($argument instanceof Atom) {
-				/** @var Atom $Atom  */
-				$Atom = $argument;
-				$boundArguments[] = $arguments[$Atom->getName()];
+		foreach ($Predication->getArguments() as $Argument) {
+			if ($Argument instanceof Property) {
+				/** @var $Property Property */
+				$Property = $Argument;
+				$Object = $Property->getObject();
+				if ($Object->getName() == 'this') {
+					$Object->setName($syntacticCategory);
+				}
 			}
 		}
-
-$a = 0;
 	}
 
-	private function replaceVariables(Predication $Predication, array $bindings)
+	/**
+	 * @param $Term A property like noun.sem
+	 * @param $childNodeSemantics
+	 * @param $childPropertyBindings
+	 * @return mixed
+	 */
+	private function inheritChildNodeSemantics(Property $Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory)
+	{
+		$childSyntacticCategory = $Term->getObject()->getName();
+
+		if (isset($childNodeSemantics[$childSyntacticCategory])) {
+			$childPredications = $childNodeSemantics[$childSyntacticCategory]->getPredications();
+
+			$clonedPredications = array();
+			foreach ($childPredications as $Predication) {
+
+				// copy the predication of the child
+				$ClonedPredication = $Predication->createClone();
+
+				// replace 'this' in all its arguments by the name of the syntactic category
+				$this->replaceThisBySyntacticCategory($ClonedPredication, $childSyntacticCategory);
+
+				// replace child's variables by parent variables according to $childPropertyBindings
+				$this->replaceProperties($ClonedPredication, $childPropertyBindings, $parentSyntacticCategory);
+
+				$clonedPredications[] = $ClonedPredication;
+			}
+
+			return $clonedPredications;
+		} else {
+			die("don't know this name");
+		}
+	}
+
+	/**
+	 * Replaces all property arguments (like NP.subject) in a child-semantics predication with the matching
+	 * properties in the parent-semantics. These are given in $childPropertyBindings.
+	 *
+	 * @param \agentecho\datastructure\Predication $Predication
+	 * @param array $childPropertyBindings
+	 */
+	private function replaceProperties(Predication $Predication, array $childPropertyBindings, $parentSyntacticCategory)
 	{
 		/** @var Property $Argument */
 		foreach ($Predication->getArguments() as $Argument) {
 
+if ($Predication->getPredicate() == 'isa') {
+	$a = 0;
+}
+
 			if ($Argument instanceof Property) {
+
+				// this is the name of the property that needs to be replaced
 				$childName = $Argument->getName();
+				$childSyntacticCategory = $Argument->getObject()->getName();
 
 				$found = false;
 
-				foreach ($bindings as $binding) {
+				// go through all bindings to find the one that has $childName as its name
+				foreach ($childPropertyBindings as $binding) {
 
 					foreach ($binding as $parentName => $TermList) {
+
 						$terms = $TermList->getTerms();
 						$Property = reset($terms);
 						$name = $Property->getName();
+						$category = $Property->getObject()->getName();
 
-						if ($name == $childName) {
+						if ($category == $childSyntacticCategory and $name == $childName) {
 							$Argument->setName($parentName);
 							$found = true;
+
+							// change the name of the object
+							$Argument->getObject()->setName($parentSyntacticCategory);
+
+							break 2;
 						}
 					}
 				}
 
 				if (!$found) {
-					//die('Did not find binding for ' . $childName);
+
+					// update the name of the object
+					$Argument->getObject()->setName(
+						$parentSyntacticCategory . '_' . $Argument->getObject()->getName()
+					);
+
 				}
 			}
 		}
-
-		$a = 0;
 	}
 }

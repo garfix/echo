@@ -34,4 +34,12 @@ class Property extends Term
 	{
 		return $this->object . '.' . $this->name;
 	}
+
+	public function createClone()
+	{
+		$Clone = new Property();
+		$Clone->setName($this->getName());
+		$Clone->setObject($this->getObject()->createClone());
+		return $Clone;
+	}
 }

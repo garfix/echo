@@ -35,4 +35,18 @@ class Predication extends Term
 	{
 		return $this->predicate . '(' . implode(', ',  $this->arguments) . ')';
 	}
+
+	public function createClone()
+	{
+		$Clone = new Predication();
+		$Clone->setPredicate($this->predicate);
+
+		$arguments = array();
+		foreach ($this->arguments as $Argument) {
+			$arguments[] = $Argument->createClone();
+		}
+		$Clone->setArguments($arguments);
+
+		return $Clone;
+	}
 }

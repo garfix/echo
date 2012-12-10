@@ -23,4 +23,10 @@ class Constant
 	{
 		return '"' . $this->name . '"';
 	}
+
+	public function createClone()
+	{
+		$Clone = new Constant($this->name);
+		return $Clone;
+	}
 }

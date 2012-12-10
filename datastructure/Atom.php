@@ -7,7 +7,7 @@ namespace agentecho\datastructure;
  */
 class Atom extends SemanticStructure
 {
-	private $name;
+	private $name = '';
 
 	public function __construct($name)
 	{
@@ -19,8 +19,19 @@ class Atom extends SemanticStructure
 		return $this->name;
 	}
 
+	public function setName($name)
+	{
+		$this->name = $name;
+	}
+
 	public function __toString()
 	{
 		return $this->name;
+	}
+
+	public function createClone()
+	{
+		$Clone = new Atom($this->name);
+		return $Clone;
 	}
 }

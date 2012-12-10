@@ -101,7 +101,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Conversation = $this->startEnglishConversation();
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-#exit;
+exit;
 		$this->assertSame("She was xx years old.", $answer);
 	}
 
