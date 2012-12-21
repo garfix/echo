@@ -103,6 +103,14 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
 //exit;
 		$this->assertSame("She was xx years old.", $answer);
+
+
+# todo's:
+# Beantwoord de vraag die door de semantiek wordt uitgedrukt en lever een antwoord op
+
+# done:
+# S_SBar.subEvent, S_SBar_S.subject moet  S.subject worden (vanwege pronoun resolution of "she"
+
 	}
 
 

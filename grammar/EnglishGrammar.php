@@ -345,7 +345,7 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
 						'syntax' => array('category' => 'subject'), // thirdPerson?
-						'semantics' => 'isa(this.object, Female)'
+						'semantics' => 'isa(this.object, Female) and reference(this.object)'
 					)
 				)
 			),

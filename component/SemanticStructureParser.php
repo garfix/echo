@@ -13,6 +13,7 @@ use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Assignment;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
+use agentecho\datastructure\GoalClause;
 
 /**
  *
@@ -34,12 +35,15 @@ class SemanticStructureParser
 	const T_COLON = 'colon';
 	const T_SEMICOLON = 'semicolon';
 	const T_EQUALS_SIGN = 'equals sign';
+	// two chars
+	const T_IMPLICATION = 'implication';
 	// content
 	const T_IDENTIFIER = 'identifier';
 	const T_STRING = 'string';
 	const T_WHITESPACE = 'whitespace';
 	// keywords
 	const T_AND = 'and';
+
 
 	private $lastPosParsed = 0;
 
@@ -80,7 +84,9 @@ class SemanticStructureParser
 
 	private function parseMain(array $tokens, $pos, &$Result)
 	{
-		if ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
+		if ($newPos = $this->parseGoalClause($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -113,6 +119,34 @@ class SemanticStructureParser
 		}
 
 		return $pos;
+	}
+
+	/**
+	 * Parses grandfather(?x, ?z) :- father(?x, ?y) and father(?y, ?z)
+	 *
+	 * @param array $tokens
+	 * @param $pos
+	 * @param $GoalClause
+	 * @return bool
+	 */
+	private function parseGoalClause(array $tokens, $pos, &$GoalClause)
+	{
+		if ($pos = $this->parsePredication($tokens, $pos, $Predication)) {
+
+			if ($pos = $this->parseSingleToken(self::T_IMPLICATION, $tokens, $pos)) {
+
+				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList)) {
+
+					$GoalClause = new GoalClause();
+					$GoalClause->setGoal($Predication);
+					$GoalClause->setMeans($PredicationList);
+					return $pos;
+
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -507,7 +541,7 @@ class SemanticStructureParser
 			':' => self::T_COLON,
 			';' => self::T_SEMICOLON,
 			'?' => self::T_QUESTION_MARK,
-			'=' => self::T_EQUALS_SIGN,
+			'=' => self::T_EQUALS_SIGN
 		);
 
 		for ($pos = 0; $pos < $stringLength; $pos++) {
@@ -515,10 +549,7 @@ class SemanticStructureParser
 			$char = $string[$pos];
 
 
-			if (isset($singleCharTokens[$char])) {
-				$id = $singleCharTokens[$char];
-				$contents = $char;
-			} elseif ($char == ' ' || $char == "\t" || $char == "\r" || $char == "\n") {
+			if ($char == ' ' || $char == "\t" || $char == "\r" || $char == "\n") {
 				if (preg_match('/(\s+)/', $string, $matches, 0, $pos)) {
 					$id = self::T_WHITESPACE;
 					$contents = $matches[1];
@@ -535,10 +566,18 @@ class SemanticStructureParser
 					$this->lastPosParsed = $pos;
 					return false;
 				}
+			} elseif (substr($string, $pos, 2) == ':-') {
+				$id = self::T_IMPLICATION;
+				$contents = ':-';
+				$pos += 2 - 1;
 			} elseif (substr($string, $pos, 3) == 'and') {
 				$id = self::T_AND;
 				$contents = 'and';
 				$pos += 3 - 1;
+			} elseif (isset($singleCharTokens[$char])) {
+				// single character
+				$id = $singleCharTokens[$char];
+				$contents = $char;
 			} elseif (($char >= 'A' and $char <= 'Z') || ($char >= 'a' and $char <= 'z')) {
 				if (preg_match('/(\w+)/', $string, $matches, 0, $pos)) {
 					$id = self::T_IDENTIFIER;

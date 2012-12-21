@@ -81,13 +81,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
 		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
-		$this->assertSame('manner(S.event, S.request) and isa(S.event, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and at_time(S.event, S_SBar.subEvent) and isa(S_SBar_S.subject, Female) and isa(S_SBar.subEvent, Die) and subject(S_SBar.subEvent, S_SBar_S.subject)', $Sentence->getSemanticsString());
-return;
-		$this->assertSame('question(q,
-			age(subject: o1, time: t1, object: q) &
-			name(subject: o1, object: "Mary Shelley") &
-			same(t1, t2) &
-			born(subject: o2, time: t2) &
-			name(subject: o2, object: "Lady Lovelace"))', $Sentence->getSemanticsString());
+		$this->assertSame('manner(S.event, S.request) and isa(S.event, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and at_time(S.event, S_SBar.subEvent) and isa(S_SBar_S.subject, Female) and reference(S_SBar_S.subject) and isa(S_SBar.subEvent, Die) and subject(S_SBar.subEvent, S_SBar_S.subject)', $Sentence->getSemanticsString());
 	}
 }

@@ -34,4 +34,15 @@ class Variable
 	{
 		return '?' . $this->name;
 	}
+
+	public function createClone()
+	{
+		$Clone = new Variable($this->getName());
+		if (is_object($this->value)) {
+			$Clone->setValue($this->value->createClone());
+		} else {
+			$Clone->setValue($this->value);
+		}
+		return $Clone;
+	}
 }

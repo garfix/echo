@@ -26,4 +26,18 @@ class PredicationList extends  Term
 	{
 		return implode(' and ',  $this->predications);
 	}
+
+	public function createClone()
+	{
+		$Clone = new PredicationList();
+
+		$predications = array();
+
+		foreach ($this->predications as $Predication) {
+			$predications[] = $Predication->createClone();
+		}
+
+		$Clone->setPredications($predications);
+		return $Clone;
+	}
 }

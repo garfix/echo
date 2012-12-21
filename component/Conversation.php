@@ -74,17 +74,28 @@ class Conversation
 			// extract the Sentence
 			$Sentence = $SentenceContext->getRootObject();
 
+$Semantics = $SentenceContext->getSemantics();
+
 			// update the subject of the conversation
 			$ContextProcessor = new ContextProcessor();
 			$ContextProcessor->updateSubject($Sentence, $this->ConversationContext);
+
+#The subject of a sentence is always S.subject
+#$ContextProcessor->updateSemanticSubject($Semantics, $this->ConversationContext);
 
 			// resolve pronouns
 			$PronounProcessor = new PronounProcessor();
 			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
 
+if (!$Semantics) {
+	$Semantics = new \agentecho\datastructure\PredicationList();
+}
+
+$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
+//echo($Semantics);exit;
 			// process the sentence
 			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
-			$Response = $SentenceProcessor->process($Sentence);
+			$Response = $SentenceProcessor->process($Sentence, $Semantics);
 
 			// produce the surface text of the response
 			$Producer = new Producer();

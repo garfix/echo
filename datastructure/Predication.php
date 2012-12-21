@@ -31,6 +31,21 @@ class Predication extends Term
 		return $this->arguments;
 	}
 
+	public function getFirstArgument()
+	{
+		return reset($this->arguments);
+	}
+
+	public function getArgument($index)
+	{
+		return $this->arguments[$index];
+	}
+
+	public function getArgumentCount()
+	{
+		return count($this->arguments);
+	}
+
 	public function __toString()
 	{
 		return $this->predicate . '(' . implode(', ',  $this->arguments) . ')';

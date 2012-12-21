@@ -168,6 +168,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testGoalClause()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'grandfather(?x, ?z) :- father(?x, ?y) and father(?y, ?z)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testTokenizerFail()
 	{
 		$Parser = new SemanticStructureParser();

@@ -4,6 +4,7 @@ namespace agentecho\component;
 
 use \agentecho\knowledge\KnowledgeSource;
 use \agentecho\phrasestructure\Sentence;
+use \agentecho\datastructure\PredicationList;
 
 /**
  * This object provides a single interface for multiple KnowledgeSources.

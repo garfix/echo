@@ -8,6 +8,7 @@ use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Adverb;
 use \agentecho\phrasestructure\Date;
 use \agentecho\phrasestructure\SentenceBuilder;
+use \agentecho\datastructure\PredicationList;
 
 /**
  * This class answers question and processes imperatives.
@@ -28,7 +29,7 @@ class SentenceProcessor
 	 * @param Sentence $Sentence
 	 * @return PhraseStructure
 	 */
-	public function process(Sentence $Sentence)
+	public function process(Sentence $Sentence, PredicationList $Semantics)
 	{
 		$Answer = null;
 
@@ -49,7 +50,10 @@ class SentenceProcessor
 
 		} elseif ($sentenceType == 'wh-question') {
 
-			$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+			$answer = $this->answerQuestionWithSemantics($Semantics);
+			if (!$answer) {
+				$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+			}
 
 			// incorporate the answer in the original question
 			if ($answer !== false) {
@@ -131,5 +135,18 @@ class SentenceProcessor
 		}
 
 		return $Answer;
+	}
+
+	public function answerQuestionWithSemantics(PredicationList $PredicationList)
+	{
+		$bindings = array();
+
+		foreach ($PredicationList->getPredications() as $Predication) {
+
+			// process predication, given bindings. This yields new bindings
+
+		}
+
+		return $bindings;
 	}
 }

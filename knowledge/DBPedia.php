@@ -9,6 +9,7 @@ use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Clause;
 use \agentecho\phrasestructure\Preposition;
+use \agentecho\datastructure\Predication;
 
 /**
  * An adapter for DBPedia.
@@ -390,5 +391,11 @@ class DBPedia extends KnowledgeSource
 		$sha1 = sha1($query);
 		$json = json_encode($cache);
 		file_put_contents($path, $json);
+	}
+
+# still needed?
+	public function bind(Predication $Predication)
+	{
+
 	}
 }
