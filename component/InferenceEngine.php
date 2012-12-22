@@ -8,17 +8,17 @@ use agentecho\datastructure\Variable;
 use agentecho\datastructure\GoalClause;
 
 /**
- * This class provides a Prolog-like type of binding predication variables.
+ * This class provides a Prolog-like type of creating sets of predication variables.
  *
  * @author Patrick van Bergen
  */
 class InferenceEngine
 {
 	/**
-	 * This function processes a series of predications and returns a list of all binding-sets
+	 * This function processes a series of predications and returns a list of all variable binding-sets
 	 * that apply to the predications.
 	 *
-	 * The actual binding is performed on each of the knowledge and rule sources provided.
+	 * The binding is performed on each of the knowledge sources and rule sources provided.
 	 *
 	 * @param PredicationList $PredicationList
 	 * @param array $knowledgeSources
@@ -28,11 +28,32 @@ class InferenceEngine
 	 */
 	public function bind(PredicationList $PredicationList, array $knowledgeSources, array $ruleSources)
 	{
-		$bindings = $this->bindPredicationTail($PredicationList->getPredications(), array(), $knowledgeSources, $ruleSources);
-#todo find a way to ensure that all objects are cloned at the right time
+		$variableSets = $this->bindPredicationTail($PredicationList->getPredications(), array(), $knowledgeSources, $ruleSources);
 
-//		$variableSets = $this->cleanSets($variableSets, $variables);
-		return $bindings;
+		$variableSets = $this->removeHelperVariables($variableSets, $PredicationList);
+
+		return $variableSets;
+	}
+
+	/**
+	 * Removes all variables of $variableSets that are not used in $PredicationList
+	 *
+	 * @param array $variableSets
+	 * @param PredicationList $PredicationList
+	 * @return array
+	 */
+	private function removeHelperVariables(array $variableSets, PredicationList $PredicationList)
+	{
+		// collect variables
+		$variables = $PredicationList->getVariableNames();
+
+		// remove variables other than the ones used in the predication list
+		$newSets = array();
+		foreach ($variableSets as $set) {
+			$newSets[] = array_intersect_key($set, $variables);
+		}
+
+		return $newSets;
 	}
 
 	private function bindPredicationTail(array $predications, array $variables, array $knowledgeSources, array $ruleSources)
@@ -83,17 +104,6 @@ class InferenceEngine
 
 			return $variableSets;
 		}
-	}
-
-	private function cleanSets($variableSets, $variables)
-	{
-		$newSets = array();
-
-		foreach ($variableSets as $set) {
-			$newSets[] = array_intersect_key($variables, $set);
-		}
-
-		return $newSets;
 	}
 
 	/**

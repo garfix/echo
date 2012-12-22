@@ -46,6 +46,24 @@ class Predication extends Term
 		return count($this->arguments);
 	}
 
+	/**
+	 * Returns a name => name list of the names of the variables used in this predication.
+	 * @return array
+	 */
+	public function getVariableNames()
+	{
+		$names = array();
+
+		foreach ($this->getArguments() as $Argument) {
+			if ($Argument instanceof Variable) {
+				$name = $Argument->getName();
+				$names[$name] = $name;
+			}
+		}
+
+		return $names;
+	}
+
 	public function __toString()
 	{
 		return $this->predicate . '(' . implode(', ',  $this->arguments) . ')';

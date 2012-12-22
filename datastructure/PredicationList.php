@@ -22,6 +22,21 @@ class PredicationList extends  Term
 		return $this->predications;
 	}
 
+	/**
+	 * Returns a name => name list of the names of the variables used in this list.
+	 * @return array
+	 */
+	public function getVariableNames()
+	{
+		$names = array();
+
+		foreach ($this->predications as $Predication) {
+			$names = $names + $Predication->getVariableNames();
+		}
+
+		return $names;
+	}
+
 	public function __toString()
 	{
 		return implode(' and ',  $this->predications);
