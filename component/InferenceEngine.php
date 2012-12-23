@@ -28,8 +28,10 @@ class InferenceEngine
 	 */
 	public function bind(PredicationList $PredicationList, array $knowledgeSources, array $ruleSources)
 	{
+		// bind the variables in the predication list to actual values
 		$variableSets = $this->bindPredicationTail($PredicationList->getPredications(), array(), $knowledgeSources, $ruleSources);
 
+		// remove the temporary variables used in the process
 		$variableSets = $this->removeHelperVariables($variableSets, $PredicationList);
 
 		return $variableSets;
@@ -56,10 +58,20 @@ class InferenceEngine
 		return $newSets;
 	}
 
+	/**
+	 * Recursive function to process the rest of the predications.
+	 *
+	 * @param array $predications
+	 * @param array $variables
+	 * @param array $knowledgeSources
+	 * @param array $ruleSources
+	 * @return array
+	 */
 	private function bindPredicationTail(array $predications, array $variables, array $knowledgeSources, array $ruleSources)
 	{
 		if (empty($predications)) {
 
+			// no predications => unification succeeds, keep the variables
 			return array($variables);
 
 		} else {
@@ -69,8 +81,6 @@ class InferenceEngine
 
 			// take the first predication
 			$Predication = array_shift($predications);
-			$predicate = $Predication->getPredicate();
-			$argumentCount = $Predication->getArgumentCount();
 
 			// fill the variables of $Predication with the current bindings
 			$BoundPredication = $this->bindPredication($Predication, $variables);
@@ -78,10 +88,7 @@ class InferenceEngine
 			// knowledge sources may provide bindings
 			foreach ($knowledgeSources as $KnowledgeSource) {
 
-				$ksSets = $KnowledgeSource->bind($BoundPredication);
-
-				// for each of these bindings, continue with the rest of the predications
-				$variableSets = array_merge($variableSets, $this->bindMultipleTails($predications, $variables, $ksSets, $knowledgeSources, $ruleSources));
+				$variableSets = array_merge($variableSets, $KnowledgeSource->bind($BoundPredication));
 
 			}
 
@@ -89,20 +96,29 @@ class InferenceEngine
 			foreach ($ruleSources as $RuleSource) {
 
 				// ask for the rules that are applicable here
-				$rules = $RuleSource->getRulesByPredicate($predicate, $argumentCount);
+				$rules = $RuleSource->getRulesByPredicate($Predication->getPredicate(), $Predication->getArgumentCount());
 
 				// go through each of these rules separately
 				foreach ($rules as $GoalClause) {
 
-					$gSets = $this->performGoal($GoalClause, $BoundPredication, $knowledgeSources, $ruleSources);
-
-					// for each of these bindings, continue with the rest of the predications
-					$variableSets = array_merge($variableSets, $this->bindMultipleTails($predications, $variables, $gSets, $knowledgeSources, $ruleSources));
+					$variableSets = array_merge($variableSets, $this->performGoal($GoalClause, $BoundPredication, $knowledgeSources, $ruleSources));
 
 				}
 			}
 
-			return $variableSets;
+			// for each of these newly gathered variable bindings, continue with the rest of the predications
+			$variableSetsTail = array();
+			foreach ($variableSets as $newVariables) {
+
+				// the rule - and knowledge sources may not have returned the initial variables, so we combine them here
+				$combinedVariables = array_merge($variables, $newVariables);
+
+				// unify the variables with the rest of the predications
+				$variableSetsTail = array_merge($variableSetsTail, $this->bindPredicationTail($predications, $combinedVariables, $knowledgeSources, $ruleSources));
+
+			}
+
+			return $variableSetsTail;
 		}
 	}
 
@@ -128,23 +144,6 @@ class InferenceEngine
 		$variableSets = $this->bindPredicationTail($Means->getPredications(), $variables, $knowledgeSources, $ruleSources);
 
 		return $variableSets;
-	}
-
-	private function bindMultipleTails(array $predications, array $variables, array $newSets, array $knowledgeSources, array $ruleSources)
-	{
-		$bindings = array();
-
-		foreach ($newSets as $newVariables) {
-
-			// combine the bindings returned by the knowledge source with the existing bindings
-			$combinedVariables = array_merge($variables, $newVariables);
-
-			// and proceed with the rest of the predications
-			$bindings = array_merge($bindings, $this->bindPredicationTail($predications, $combinedVariables, $knowledgeSources, $ruleSources));
-
-		}
-
-		return $bindings;
 	}
 
 	private function bindPredication(Predication $Predication, $bindings)
