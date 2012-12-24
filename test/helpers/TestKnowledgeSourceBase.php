@@ -1,16 +1,17 @@
 <?php
 
-namespace agentecho\test;
+namespace agentecho\test\helpers;
 
 use \agentecho\knowledge\KnowledgeSource;
 use \agentecho\datastructure\Predication;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\datastructure\Variable;
+use agentecho\datastructure\Constant;
 
 /**
  * @author Patrick van Bergen
  */
-class TestKnowledgeSource extends KnowledgeSource
+class TestKnowledgeSourceBase extends KnowledgeSource
 {
 #todo I don't want these functions here
 
@@ -18,27 +19,9 @@ class TestKnowledgeSource extends KnowledgeSource
 	public function answerQuestion(Sentence $Sentence) {}
     public function checkQuestion(Sentence $Sentence) {}
 
-	public function bind(Predication $Predication)
-	{
-		$predicate = $Predication->getPredicate();
-		$arguments = $Predication->getArguments();
+	public function bind(Predication $Predication) {}
 
-		if ($predicate == 'son') {
-
-			$sons = array(
-				array('sjoerd', 'kees'),
-				array('jan', 'piet'),
-				array('piet', 'otto'),
-				array('peter', 'sjoerd'),
-			);
-
-			return $this->bindPredicate($sons, $arguments);
-		}
-
-		return array();
-	}
-
-	private function bindPredicate(array $data, $arguments)
+	protected function bindPredicate(array $data, $arguments)
 	{
 		$bindings = array();
 
@@ -50,12 +33,22 @@ class TestKnowledgeSource extends KnowledgeSource
 			foreach ($arguments as $index => $Argument) {
 
 				if ($Argument instanceof Variable) {
+
 					$Variable = $Argument;
 					$value = $Variable->getValue();
 					$name = $Variable->getName();
+
 					if ($value === null) {
 						$binding[$name] = $row[$index];
 					} elseif ($value != $row[$index]) {
+						$error = true;
+					}
+				} elseif ($Argument instanceof Constant) {
+
+					$Constant = $Argument;
+					$name = $Constant->getName();
+
+					if ($name != $row[$index]) {
 						$error = true;
 					}
 				}
