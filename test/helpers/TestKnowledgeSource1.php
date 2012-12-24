@@ -2,18 +2,13 @@
 
 namespace agentecho\test\helpers;
 
-use \agentecho\datastructure\Predication;
-
 /**
  * @author Patrick van Bergen
  */
 class TestKnowledgeSource1 extends TestKnowledgeSourceBase
 {
-	public function bind(Predication $Predication)
+	public function bind($predicate, array $arguments)
 	{
-		$predicate = $Predication->getPredicate();
-		$arguments = $Predication->getArguments();
-
 		$predicates = array(
 			'son' => array(
 				array('sjoerd', 'kees'),
@@ -38,11 +33,6 @@ class TestKnowledgeSource1 extends TestKnowledgeSourceBase
 			)
 		);
 
-		if (isset($predicates[$predicate])) {
-			return $this->bindPredicate($predicates[$predicate], $arguments);
-		} else {
-			return array();
-		}
+		return $this->bindPredicate($predicates, $predicate, $arguments);
 	}
-
 }

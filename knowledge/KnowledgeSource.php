@@ -3,7 +3,6 @@
 namespace agentecho\knowledge;
 
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\Predication;
 
 abstract class KnowledgeSource
 {
@@ -22,9 +21,9 @@ abstract class KnowledgeSource
 	 * Provided with a predication that contains open variables, this function returns a list of
 	 * variable-binding sets that match the predication.
 	 *
-	 * @param \agentecho\datastructure\Predication $Predication
+	 * @param $predicate
 	 * @param array $boundVariables
-	 * @return array An array of arrays. Each array contains a variablename => value set,
+	 * @return array An array of result sets. Each result set is an array of values.
 	 */
-	public abstract function bind(Predication $Predication);
+	public abstract function bind($predicate, array $arguments);
 }

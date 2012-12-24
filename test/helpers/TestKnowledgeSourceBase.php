@@ -3,10 +3,7 @@
 namespace agentecho\test\helpers;
 
 use \agentecho\knowledge\KnowledgeSource;
-use \agentecho\datastructure\Predication;
 use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\Variable;
-use agentecho\datastructure\Constant;
 
 /**
  * @author Patrick van Bergen
@@ -19,46 +16,50 @@ class TestKnowledgeSourceBase extends KnowledgeSource
 	public function answerQuestion(Sentence $Sentence) {}
     public function checkQuestion(Sentence $Sentence) {}
 
-	public function bind(Predication $Predication) {}
+	public function bind($predicate, array $arguments) {}
 
-	protected function bindPredicate(array $data, $arguments)
+	/**
+	 * Searches through $data to find all rows that match $arguments.
+	 * @param array $data
+	 * @param $arguments
+	 * @return array
+	 */
+	protected function bindPredicate(array $data, $predicate, $arguments)
 	{
-		$bindings = array();
+		if (!isset($data[$predicate])) {
 
-		foreach ($data as $row) {
+			return array();
 
-			$binding = array();
-			$error = false;
+		} else {
 
-			foreach ($arguments as $index => $Argument) {
+			// find all predications that match the predicate
+			$predications = $data[$predicate];
 
-				if ($Argument instanceof Variable) {
+			// within these predications find all of those that match the arguments
+			$resultSets = array();
+			foreach ($predications as $row) {
 
-					$Variable = $Argument;
-					$value = $Variable->getValue();
-					$name = $Variable->getName();
+				$error = false;
 
-					if ($value === null) {
-						$binding[$name] = $row[$index];
-					} elseif ($value != $row[$index]) {
-						$error = true;
+				// go through all given arguments
+				foreach ($arguments as $index => $value) {
+
+					// a value of null matches anything
+					if ($value !== null) {
+
+						// if an argument was bound, it must match the field at the same position
+						if ($value != $row[$index]) {
+							$error = true;
+						}
 					}
-				} elseif ($Argument instanceof Constant) {
+				}
 
-					$Constant = $Argument;
-					$name = $Constant->getName();
-
-					if ($name != $row[$index]) {
-						$error = true;
-					}
+				if (!$error) {
+					$resultSets[] = $row;
 				}
 			}
 
-			if (!$error) {
-				$bindings[] = $binding;
-			}
+			return $resultSets;
 		}
-
-		return $bindings;
 	}
 }

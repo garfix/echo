@@ -394,8 +394,5 @@ class DBPedia extends KnowledgeSource
 	}
 
 # still needed?
-	public function bind(Predication $Predication)
-	{
-
-	}
+	public function bind($predicate, array $arguments) {}
 }

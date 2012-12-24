@@ -54,7 +54,7 @@ class InferenceEngine
 	 */
 	private function bindPredicationTail(array $predications, array $variables, $level, array $knowledgeSources, array $ruleSources)
 	{
-		if ($level == self::MAX_RECURSION_LEVEL) {
+		if ($level >= self::MAX_RECURSION_LEVEL) {
 			throw new RecursionException();
 		}
 
@@ -71,29 +71,11 @@ class InferenceEngine
 			// take the first predication
 			$Predication = array_shift($predications);
 
-			// fill the variables of $Predication with the current bindings
-			$BoundPredication = $this->bindPredication($Predication, $variables);
-
 			// knowledge sources may provide bindings
-			foreach ($knowledgeSources as $KnowledgeSource) {
-
-				$variableSets = array_merge($variableSets, $KnowledgeSource->bind($BoundPredication));
-
-			}
+			$variableSets = array_merge($variableSets, $this->findFacts($knowledgeSources, $Predication, $variables));
 
 			// rule sources may provide bindings
-			foreach ($ruleSources as $RuleSource) {
-
-				// ask for the rules that are applicable here
-				$rules = $RuleSource->getRulesByPredicate($Predication->getPredicate(), $Predication->getArgumentCount());
-
-				// go through each of these rules separately
-				foreach ($rules as $GoalClause) {
-
-					$variableSets = array_merge($variableSets, $this->performGoal($GoalClause, $BoundPredication, $level + 1, $knowledgeSources, $ruleSources));
-
-				}
-			}
+			$variableSets = array_merge($variableSets, $this->performRules($ruleSources, $Predication, $variables, $level + 1, $knowledgeSources));
 
 			// for each of these newly gathered variable bindings, continue with the rest of the predications
 			$variableSetsTail = array();
@@ -112,20 +94,104 @@ class InferenceEngine
 	}
 
 	/**
+	 * Tries to find variable sets for $Predication bound with $variables
+	 * by executing goal clauses.
+	 *
+	 * @param $ruleSources
+	 * @param $Predication
+	 * @param $variables
+	 * @param $level
+	 * @param $knowledgeSources
+	 * @return array
+	 */
+	private function performRules($ruleSources, $Predication, $variables, $level, $knowledgeSources)
+	{
+		$variableSets = array();
+
+		foreach ($ruleSources as $RuleSource) {
+
+			// ask for the rules that are applicable here
+			$rules = $RuleSource->getRulesByPredicate($Predication->getPredicate(), $Predication->getArgumentCount());
+
+			// go through each of these rules separately
+			foreach ($rules as $GoalClause) {
+
+				$variableSets = array_merge($variableSets, $this->performGoal($GoalClause, $Predication, $variables, $level + 1, $knowledgeSources, $ruleSources));
+
+			}
+		}
+		return $variableSets;
+	}
+
+	/**
+	 * Queries all $knowledgeSources for the $Predication that is bound with $variables.
+	 *
+	 * @param array $knowledgeSources
+	 * @param Predication $Predication
+	 * @param array $variables
+	 * @return array
+	 */
+	private function findFacts(array $knowledgeSources, Predication $Predication, array $variables)
+	{
+		// create a set of predication variables
+		$boundArguments = $this->bindPredicationArguments($Predication, $variables);
+
+		$variableSets = array();
+		foreach ($knowledgeSources as $KnowledgeSource) {
+
+			// ask this knowledge source for all rows that match the bound predication
+			$resultSets = $KnowledgeSource->bind($Predication->getPredicate(), $boundArguments);
+
+			// transform the index based results into variable assignments
+			foreach ($resultSets as $resultSet) {
+				$set = array();
+				foreach ($resultSet as $index => $value) {
+					$Argument = $Predication->getArgument($index);
+					if ($Argument instanceof Variable) {
+						$name = $Argument->getName();
+						$set[$name] = $value;
+					}
+				}
+				$variableSets[] = $set;
+			}
+		}
+
+		return $variableSets;
+	}
+
+	/**
+	 * Creates an array that corresponds with the arguments of $Predication,
+	 * with all values filled in.
+	 *
+	 * @param $Predication
+	 * @param $variables
+	 * @return array
+	 */
+	private function bindPredicationArguments($Predication, $variables)
+	{
+		$boundArguments = array();
+		foreach ($Predication->getArguments() as $Argument) {
+			if ($Argument instanceof Variable) {
+				$name = $Argument->getName();
+				$boundArguments[] = isset($variables[$name]) ? $variables[$name] : null;
+			} elseif ($Argument instanceof Constant) {
+				$boundArguments[] = $Argument->getName();
+			}
+		}
+		return $boundArguments;
+	}
+
+	/**
 	 * Performs a subgoal in the predication list.
 	 * One of the predications is matched against the goal of a goal clause and its means are used to create a new set of bindings
 	 *
 	 * @param GoalClause $GoalClause
 	 * @param Predication $Predication
 	 */
-	private function performGoal(GoalClause $GoalClause, Predication $Predication, $level, array $knowledgeSources, array $ruleSources)
+	private function performGoal(GoalClause $GoalClause, Predication $Predication, array $variables, $level, array $knowledgeSources, array $ruleSources)
 	{
 		$Goal = $GoalClause->getGoal();
 		$Means = $GoalClause->getMeans();
-
-		if ($level == self::MAX_RECURSION_LEVEL) {
-			throw new RecursionException();
-		}
 
 		// map the variable bindings from the predication to the goal close
 		$goalVariables = array();
@@ -135,7 +201,7 @@ class InferenceEngine
 
 			$Argument = $Predication->getArgument($index);
 			if ($Argument instanceof Variable) {
-				$goalVariables[$name] = $Argument->getValue();
+				$goalVariables[$name] = isset($variables[$name]) ? $variables[$name] : null;
 				$goal2predication[$Argument->getName()] = $name;
 			} elseif ($Argument instanceof Constant) {
 				$goalVariables[$name] = $Argument->getName();
@@ -156,23 +222,5 @@ class InferenceEngine
 		}
 
 		return $variableSets;
-	}
-
-	private function bindPredication(Predication $Predication, $bindings)
-	{
-		$BoundPredication = $Predication->createClone();
-
-		foreach ($BoundPredication->getArguments() as $Argument) {
-			if ($Argument instanceof Variable) {
-				$name = $Argument->getName();
-
-				if (isset($bindings[$name])) {
-					$value = $bindings[$name];
-					$Argument->setValue($value);
-				}
-			}
-		}
-
-		return $BoundPredication;
 	}
 }
