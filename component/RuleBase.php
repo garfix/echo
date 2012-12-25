@@ -2,12 +2,14 @@
 
 namespace agentecho\component;
 
+use agentecho\knowledge\RuleSource;
+
 /**
  * A wrapper around a set of GoalClauses, loaded from file.
  *
  * @author Patrick van Bergen
  */
-class RuleBase
+class RuleBase implements RuleSource
 {
 	private $rules;
 

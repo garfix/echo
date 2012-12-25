@@ -9,6 +9,8 @@ use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\component\Conversation;
+use agentecho\component\RuleBase;
+use agentecho\knowledge\EchoKnowledgeSource;
 
 /**
  * Question answering
@@ -98,7 +100,14 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	public function testCalculatedAnswer()
 	{
 //		$this->markTestSkipped();
-		$Conversation = $this->startEnglishConversation();
+		$Echo = new AgentEcho();
+		$Echo->addGrammar($English = new EnglishGrammar());
+
+		$Echo->addKnowledgeSource(new DBPedia());
+		$Echo->addKnowledgeSource(new EchoKnowledgeSource());
+		$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
+
+		$Conversation = $Echo->startConversation();
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
 //exit;

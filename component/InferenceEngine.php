@@ -5,6 +5,7 @@ namespace agentecho\component;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
+use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\GoalClause;
 use agentecho\exception\RecursionException;
@@ -133,8 +134,14 @@ class InferenceEngine
 	 */
 	private function findFacts(array $knowledgeSources, Predication $Predication, array $variables)
 	{
+#echo $Predication."\n";
+
 		// create a set of predication variables
 		$boundArguments = $this->bindPredicationArguments($Predication, $variables);
+		if ($boundArguments === false) {
+			// the predication contains properties and cannot be bound
+			return array();
+		}
 
 		$variableSets = array();
 		foreach ($knowledgeSources as $KnowledgeSource) {
@@ -151,6 +158,7 @@ class InferenceEngine
 						$name = $Argument->getName();
 						$set[$name] = $value;
 					}
+					// no need to match other objects than variables
 				}
 				$variableSets[] = $set;
 			}
@@ -176,6 +184,10 @@ class InferenceEngine
 				$boundArguments[] = isset($variables[$name]) ? $variables[$name] : null;
 			} elseif ($Argument instanceof Constant) {
 				$boundArguments[] = $Argument->getName();
+			} elseif ($Argument instanceof Atom) {
+				$boundArguments[] = $Argument->getName();
+			} else {
+				return false;
 			}
 		}
 		return $boundArguments;
@@ -190,6 +202,8 @@ class InferenceEngine
 	 */
 	private function performGoal(GoalClause $GoalClause, Predication $Predication, array $variables, $level, array $knowledgeSources, array $ruleSources)
 	{
+#echo $GoalClause."\n";
+
 		$Goal = $GoalClause->getGoal();
 		$Means = $GoalClause->getMeans();
 
@@ -197,14 +211,21 @@ class InferenceEngine
 		$goalVariables = array();
 		$goal2predication = array();
 		foreach ($Goal->getArguments() as $index => $Variable) {
-			$name = $Variable->getName();
 
+			$variableName = $Variable->getName();
+
+			// fetch the argument at the same position
 			$Argument = $Predication->getArgument($index);
+
 			if ($Argument instanceof Variable) {
-				$goalVariables[$name] = isset($variables[$name]) ? $variables[$name] : null;
-				$goal2predication[$Argument->getName()] = $name;
+				$argumentName = $Argument->getName();
+				$goalVariables[$variableName] = isset($variables[$argumentName]) ? $variables[$argumentName] : null;
+				$goal2predication[$argumentName] = $variableName;
 			} elseif ($Argument instanceof Constant) {
-				$goalVariables[$name] = $Argument->getName();
+				$goalVariables[$variableName] = $Argument->getName();
+			} else {
+				// leave atoms and properties unchanged
+				$goalVariables[$variableName] = $Argument;
 			}
 		}
 

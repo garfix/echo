@@ -26,6 +26,11 @@ class Predication extends Term
 		$this->arguments = $arguments;
 	}
 
+	public function setArgument($index, $Argument)
+	{
+		$this->arguments[$index] = $Argument;
+	}
+
 	public function getArguments()
 	{
 		return $this->arguments;

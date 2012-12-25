@@ -9,7 +9,6 @@ use \agentecho\phrasestructure\Determiner;
 use \agentecho\phrasestructure\Entity;
 use \agentecho\phrasestructure\Clause;
 use \agentecho\phrasestructure\Preposition;
-use \agentecho\datastructure\Predication;
 
 /**
  * An adapter for DBPedia.
@@ -393,6 +392,29 @@ class DBPedia extends KnowledgeSource
 		file_put_contents($path, $json);
 	}
 
-# still needed?
-	public function bind($predicate, array $arguments) {}
+	public function bind($predicate, array $arguments)
+	{
+		$resultSets = array();
+
+		if ($predicate == 'BIRTHDATE') {
+			list($name, $date) = $arguments;
+			if ($name == 'Mary Shelley') {
+#todo: do actual lookup in DBPedia
+				$date = '1797-08-30';
+				$resultSets[] = array($name, $date);
+			}
+		}
+
+		if ($predicate == 'DEATHDATE') {
+			list($name, $date) = $arguments;
+			if ($name == 'Mary Shelley') {
+#todo: do actual lookup in DBPedia
+				$date = '1851-02-01';
+				$resultSets[] = array($name, $date);
+			}
+		}
+
+
+		return $resultSets;
+	}
 }

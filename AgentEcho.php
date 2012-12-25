@@ -9,6 +9,7 @@ use \agentecho\component\KnowledgeManager;
 use \agentecho\component\Conversation;
 use \agentecho\component\Parser;
 use \agentecho\knowledge\KnowledgeSource;
+use agentecho\knowledge\RuleSource;
 use \agentecho\grammar\Grammar;
 
 /**
@@ -61,6 +62,11 @@ class AgentEcho
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
 		$this->KnowledgeManager->addKnowledgeSource($KnowledgeSource);
+	}
+
+	public function addRuleSource(RuleSource $RuleSource)
+	{
+		$this->KnowledgeManager->addRuleSource($RuleSource);
 	}
 
 	public function addGrammar(Grammar $Grammar)

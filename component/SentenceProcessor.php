@@ -9,6 +9,11 @@ use \agentecho\phrasestructure\Adverb;
 use \agentecho\phrasestructure\Date;
 use \agentecho\phrasestructure\SentenceBuilder;
 use \agentecho\datastructure\PredicationList;
+use agentecho\component\InferenceEngine;
+use agentecho\knowledge\PredicationListKnowledgeSource;
+use agentecho\datastructure\Predication;
+use agentecho\datastructure\Property;
+use agentecho\datastructure\Variable;
 
 /**
  * This class answers question and processes imperatives.
@@ -139,14 +144,51 @@ class SentenceProcessor
 
 	public function answerQuestionWithSemantics(PredicationList $PredicationList)
 	{
-		$bindings = array();
+		$InferenceEngine = new InferenceEngine();
 
-		foreach ($PredicationList->getPredications() as $Predication) {
+		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
 
-			// process predication, given bindings. This yields new bindings
+		// extract the question predication
+#todo: this is not the way, of course
+		$predications = $PredicationList->getPredications();
+		if (!$predications) {
+			return null;
+		}
+
+		$Question = $predications[0];
+		// turn request properties into variables
+		$this->changeRequestPropertyInVariable($Question);
+
+		$QuestionList = new PredicationList();
+		$QuestionList->setPredications(array($Question));
+
+		$bindings = $InferenceEngine->bind($QuestionList, $knowledgeSources, $this->KnowledgeManager->getRuleSources());
+
+		// the variable 'request' in $bindings should hold the answer
+		if ($bindings) {
+
+			$firstBinding = reset($bindings);
+			$response = $firstBinding['request'];
+
+		} else {
+
+			$response = null;
 
 		}
 
-		return $bindings;
+		return $response;
+	}
+
+	private function changeRequestPropertyInVariable(Predication $Predication)
+	{
+		foreach ($Predication->getArguments() as $index => $Argument) {
+			if ($Argument instanceof Property) {
+				$name = $Argument->getName();
+				if ($name == 'request') {
+					$Variable = new Variable($name);
+					$Predication->setArgument($index, $Variable);
+				}
+			}
+		}
 	}
 }
