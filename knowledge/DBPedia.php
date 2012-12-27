@@ -339,15 +339,15 @@ class DBPedia extends KnowledgeSource
 		return $value;
 	}
 
-	private function querySingleRow($query)
+	private function querySingleRow($query, $select = '*')
 	{
-		$result = $this->query($query);
+		$result = $this->query($query, $select);
 		return $result ? $result[0] : null;
 	}
 
-	private function querySingleCell($query)
+	private function querySingleCell($query, $select = '*')
 	{
-		$result = $this->querySingleRow($query);
+		$result = $this->querySingleRow($query, $select);
 		if ($result) {
 			$var = reset($result);
 			return is_array($var) ? $var['value'] : $var;
@@ -356,10 +356,10 @@ class DBPedia extends KnowledgeSource
 		}
 	}
 
-	private function querySingleColumn($query)
+	private function querySingleColumn($query, $select = '*')
 	{
 		$return = array();
-		$result = $this->query($query);
+		$result = $this->query($query, $select);
 		if ($result) {
 			foreach ($result as $row) {
 				$return[] = reset($row);
@@ -387,7 +387,6 @@ class DBPedia extends KnowledgeSource
 		if (!file_exists($dir)) {
 			mkdir($dir);
 		}
-		$sha1 = sha1($query);
 		$json = json_encode($cache);
 		file_put_contents($path, $json);
 	}
@@ -397,23 +396,36 @@ class DBPedia extends KnowledgeSource
 		$resultSets = array();
 
 		if ($predicate == 'BIRTHDATE') {
+			// presume that name is not null
 			list($name, $date) = $arguments;
-			if ($name == 'Mary Shelley') {
-#todo: do actual lookup in DBPedia
-				$date = '1797-08-30';
+
+			$clauses = array();
+			// name
+			$clauses[] = "{ { ?person rdfs:label '$name'@en } UNION { ?person dbpprop:birthName '$name'@en } }";
+			// birth date
+			$dateClause = $date ? $date : '?date';
+			$clauses[] = "?person <http://dbpedia.org/ontology/birthDate> {$dateClause}";
+
+			foreach ($this->querySingleColumn($clauses, '?date') as $date) {;
 				$resultSets[] = array($name, $date);
 			}
 		}
 
 		if ($predicate == 'DEATHDATE') {
+			// presume that name is not null
 			list($name, $date) = $arguments;
-			if ($name == 'Mary Shelley') {
-#todo: do actual lookup in DBPedia
-				$date = '1851-02-01';
+
+			$clauses = array();
+			// name
+			$clauses[] = "{ { ?person rdfs:label '$name'@en } UNION { ?person dbpprop:birthName '$name'@en } }";
+			// death date
+			$dateClause = $date ? $date : '?date';
+			$clauses[] = "?person <http://dbpedia.org/ontology/deathDate> {$dateClause}";
+
+			foreach ($this->querySingleColumn($clauses, '?date') as $date) {
 				$resultSets[] = array($name, $date);
 			}
 		}
-
 
 		return $resultSets;
 	}

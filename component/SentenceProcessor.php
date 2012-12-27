@@ -149,12 +149,12 @@ class SentenceProcessor
 		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
 
 		// extract the question predication
-#todo: this is not the way, of course
 		$predications = $PredicationList->getPredications();
 		if (!$predications) {
 			return null;
 		}
 
+#todo: this is not the way, of course
 		$Question = $predications[0];
 		// turn request properties into variables
 		$this->changeRequestPropertyInVariable($Question);
