@@ -14,6 +14,7 @@ use agentecho\knowledge\PredicationListKnowledgeSource;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
+use agentecho\component\QuestionExpander;
 
 /**
  * This class answers question and processes imperatives.
@@ -36,13 +37,21 @@ class SentenceProcessor
 	 */
 	public function process(Sentence $Sentence, PredicationList $Semantics)
 	{
+		global $NEW;
+
 		$Answer = null;
 
 		$sentenceType = $Sentence->getSentenceType();
 		if ($sentenceType == 'yes-no-question') {
 
 			// since this is a yes-no question, check the statement
+
+
+if ($NEW) {
+	$result = $this->answerYesNoQuestionWithSemantics($Semantics);
+} else {
 			$result = $this->KnowledgeManager->checkQuestion($Sentence);
+}
 
 			if ($result) {
 				$Answer = $Sentence;
@@ -57,7 +66,9 @@ class SentenceProcessor
 
 			$answer = $this->answerQuestionWithSemantics($Semantics);
 			if (!$answer) {
-				$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+				if (!$NEW) {
+					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+				}
 			}
 
 			// incorporate the answer in the original question
@@ -121,7 +132,9 @@ class SentenceProcessor
 
 			if ($isQuestion) {
 
-				$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+				if (!$NEW) {
+					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
+				}
 
 				$entities = array();
 
@@ -146,6 +159,9 @@ class SentenceProcessor
 	{
 		$InferenceEngine = new InferenceEngine();
 
+//		echo $PredicationList;exit;
+
+#todo: the predication list may not serve as a knowledge source. this is an incorrect idea
 		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
 
 		// extract the question predication
@@ -162,7 +178,37 @@ class SentenceProcessor
 		$QuestionList = new PredicationList();
 		$QuestionList->setPredications(array($Question));
 
-		$bindings = $InferenceEngine->bind($QuestionList, $knowledgeSources, $this->KnowledgeManager->getRuleSources());
+# the query will not be processed in a Prolog manner
+# the inference engine will still be useful for command-like sentences, however
+# and it may also be used as a knowledge source in itself
+#		$bindings = $InferenceEngine->bind($QuestionList, $knowledgeSources, $this->KnowledgeManager->getRuleSources());
+
+#todo
+		$QuestionExpander = new QuestionExpander();
+
+		// first explode the predications into all possible solution paths
+		// this is an array of predicationlists (or predication-arrays)
+		$ruleSources = $this->KnowledgeManager->getRuleSources();
+		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
+
+		$bindings = array();
+
+		foreach ($expandedQuestions as $ExpandedQuestion) {
+
+			foreach ($knowledgeSources as $KnowledgeSource) {
+
+				// turn the expanded question into a set of database relations
+				$databaseRelations = $this->createDatabaseRelations($KnowledgeSource, $ExpandedQuestion);
+
+				// convert the database relations into a query
+				$query = $KnowledgeSource->getManagementSystem()->createDatabaseQuery($databaseRelations);
+
+				// execute the query
+				$newBindings = $KnowledgeSource->processQuery($query);
+			}
+
+			$bindings = array_merge($bindings, $newBindings);
+		}
 
 		// the variable 'request' in $bindings should hold the answer
 		if ($bindings) {
@@ -177,6 +223,20 @@ class SentenceProcessor
 		}
 
 		return $response;
+	}
+
+	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
+	{
+		$InferenceEngine = new InferenceEngine();
+
+		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
+
+		// extract the question predication
+		$predications = $PredicationList->getPredications();
+		if (!$predications) {
+			return null;
+		}
+
 	}
 
 	private function changeRequestPropertyInVariable(Predication $Predication)

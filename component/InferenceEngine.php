@@ -207,7 +207,7 @@ class InferenceEngine
 		$Goal = $GoalClause->getGoal();
 		$Means = $GoalClause->getMeans();
 
-		// map the variable bindings from the predication to the goal close
+		// map the variable bindings from the predication to the goal clause
 		$goalVariables = array();
 		$goal2predication = array();
 		foreach ($Goal->getArguments() as $index => $Variable) {

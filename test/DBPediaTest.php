@@ -36,6 +36,10 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 	public function test()
 	{
+		global $NEW;
+
+$NEW = 1;
+
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia());
 		$Echo->addGrammar($English = new EnglishGrammar());

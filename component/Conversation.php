@@ -103,7 +103,7 @@ $PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
 
 			// substitute proper nouns by pronouns
 
-		} catch (\Exception $E) {
+		} catch (EchoException $E) {
 
 			$message = $E->getMessage();
 
@@ -112,7 +112,7 @@ $PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
 				$E->setMessage($translatedMessage);
 			}
 
-			$answer = (string)$E;
+			$answer = $E->getMessage();
 		}
 
 		return $answer;

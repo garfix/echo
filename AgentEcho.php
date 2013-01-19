@@ -36,14 +36,6 @@ use \agentecho\grammar\Grammar;
  * Preconditions:
  * - We can ask of the user that he enters grammatically and lexically correct sentences.
  *
- * TODO:
- * sentenceType => mood (later een keer; ben er nog niet uit wat ik hiermee doe)
- * 1st person (in artikel voorbeeld => 3rd person)
- * De zinseinde-detectie is te beperkt (zoeken naar een punt)
- * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
- * Welke mogen weg? features / head / syntax?
- * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
- * Sentence: verplaats voice naar clause
  */
 class AgentEcho
 {
