@@ -14,6 +14,7 @@ use agentecho\datastructure\Assignment;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\GoalClause;
+use agentecho\datastructure\DataMapping;
 
 /**
  *
@@ -37,6 +38,7 @@ class SemanticStructureParser
 	const T_EQUALS_SIGN = 'equals sign';
 	// two chars
 	const T_IMPLICATION = 'implication';
+	const T_TRANSFORMATION = 'transformation';
 	// content
 	const T_IDENTIFIER = 'identifier';
 	const T_STRING = 'string';
@@ -85,6 +87,8 @@ class SemanticStructureParser
 	private function parseMain(array $tokens, $pos, &$Result)
 	{
 		if ($newPos = $this->parseGoalClause($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseDataMapping($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -141,7 +145,31 @@ class SemanticStructureParser
 					$GoalClause->setGoal($Predication);
 					$GoalClause->setMeans($PredicationList);
 					return $pos;
+				}
+			}
+		}
 
+		return false;
+	}
+
+	/**
+	 * Parses age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2) and diff(?d2, ?d1, ?a)
+	 * @param array $tokens
+	 * @param $pos
+	 * @param $GoalClause
+	 */
+	private function parseDataMapping(array $tokens, $pos, &$DataMapping)
+	{
+		if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList1)) {
+
+			if ($pos = $this->parseSingleToken(self::T_TRANSFORMATION, $tokens, $pos)) {
+
+				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList2)) {
+
+					$DataMapping = new DataMapping();
+					$DataMapping->setPreList($PredicationList1);
+					$DataMapping->setPostList($PredicationList2);
+					return $pos;
 				}
 			}
 		}
@@ -569,6 +597,10 @@ class SemanticStructureParser
 			} elseif (substr($string, $pos, 2) == ':-') {
 				$id = self::T_IMPLICATION;
 				$contents = ':-';
+				$pos += 2 - 1;
+			} elseif (substr($string, $pos, 2) == '=>') {
+				$id = self::T_TRANSFORMATION;
+				$contents = '=>';
 				$pos += 2 - 1;
 			} elseif (substr($string, $pos, 3) == 'and') {
 				$id = self::T_AND;

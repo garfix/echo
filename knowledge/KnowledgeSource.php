@@ -3,6 +3,7 @@
 namespace agentecho\knowledge;
 
 use \agentecho\phrasestructure\Sentence;
+use \agentecho\datastructure\PredicationList;
 
 abstract class KnowledgeSource
 {
@@ -26,4 +27,10 @@ abstract class KnowledgeSource
 	 * @return array An array of result sets. Each result set is an array of values.
 	 */
 	public abstract function bind($predicate, array $arguments);
+
+	/**
+	 * @param PredicationList $Question
+	 * @return array An array of result sets.
+	 */
+	public abstract function answer(PredicationList $Question);
 }

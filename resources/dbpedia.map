@@ -1,0 +1,9 @@
+diff_years(?a, ?b, ?c) => diff_years(?a, ?b, ?c)
+born(?a, ?b) => born(?a, ?b)
+die(?a, ?b) => die(?a, ?b)
+name(?a, ?b) => name(?a, ?b)
+isa(?a, ?b) => true()
+subject(?a, ?b) => true()
+at_time(?a, ?b) => true
+tense(?a, ?b) => true()
+reference(?a) => true()

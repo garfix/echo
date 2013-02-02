@@ -2,13 +2,15 @@
 
 namespace agentecho\knowledge;
 
-use \agentecho\Settings;
-use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\Determiner;
-use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Clause;
-use \agentecho\phrasestructure\Preposition;
+use agentecho\Settings;
+use agentecho\phrasestructure\PhraseStructure;
+use agentecho\phrasestructure\Sentence;
+use agentecho\phrasestructure\Determiner;
+use agentecho\phrasestructure\Entity;
+use agentecho\phrasestructure\Clause;
+use agentecho\phrasestructure\Preposition;
+use agentecho\datastructure\PredicationList;
+use agentecho\component\DataMapper;
 
 /**
  * An adapter for DBPedia.
@@ -17,6 +19,14 @@ class DBPedia extends KnowledgeSource
 {
 	static $cacheResults = true;
 	static $id = 0;
+
+	private $dataMapFile = null;
+	private $Mapper = null;
+
+	public function __construct($dataMapFile)
+	{
+		$this->dataMapFile = $dataMapFile;
+	}
 
 	public function isProperNoun($identifier)
 	{
@@ -428,5 +438,36 @@ class DBPedia extends KnowledgeSource
 		}
 
 		return $resultSets;
+	}
+
+	public function answer(PredicationList $Question)
+	{
+		// turn the expanded question into a set of database relations
+		$databaseRelations = $this->getDataMapper()->mapPredications($Question);
+
+		// convert the database relations into a query
+		$query = $this->createDatabaseQuery($databaseRelations);
+
+		$resultSets = $this->processQuery($query);
+
+		return $resultSets;
+	}
+
+	private function getDataMapper()
+	{
+		if ($this->Mapper === null) {
+			$this->Mapper = new DataMapper($this->dataMapFile);
+		}
+		return $this->Mapper;
+	}
+
+	private function createDatabaseQuery($databaseRelations)
+	{
+
+	}
+
+	private function processQuery(array $query)
+	{
+
 	}
 }

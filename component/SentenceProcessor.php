@@ -162,7 +162,8 @@ if ($NEW) {
 //		echo $PredicationList;exit;
 
 #todo: the predication list may not serve as a knowledge source. this is an incorrect idea
-		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
+//		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
+		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
 
 		// extract the question predication
 		$predications = $PredicationList->getPredications();
@@ -171,12 +172,14 @@ if ($NEW) {
 		}
 
 #todo: this is not the way, of course
-		$Question = $predications[0];
-		// turn request properties into variables
-		$this->changeRequestPropertyInVariable($Question);
+//		$Question = $predications[0];
+		// replace all request properties with variables
+		foreach ($predications as $Predication) {
+			$this->changeRequestPropertyInVariable($Predication);
+		}
 
-		$QuestionList = new PredicationList();
-		$QuestionList->setPredications(array($Question));
+//		$QuestionList = new PredicationList();
+//		$QuestionList->setPredications(array($Question));
 
 # the query will not be processed in a Prolog manner
 # the inference engine will still be useful for command-like sentences, however
@@ -191,23 +194,23 @@ if ($NEW) {
 		$ruleSources = $this->KnowledgeManager->getRuleSources();
 		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
 
+//		foreach ($expandedQuestions as $q) {
+//			echo (string)$q . "\n";
+//		}
+//		exit;
+
 		$bindings = array();
 
 		foreach ($expandedQuestions as $ExpandedQuestion) {
 
 			foreach ($knowledgeSources as $KnowledgeSource) {
 
-				// turn the expanded question into a set of database relations
-				$databaseRelations = $this->createDatabaseRelations($KnowledgeSource, $ExpandedQuestion);
-
-				// convert the database relations into a query
-				$query = $KnowledgeSource->getManagementSystem()->createDatabaseQuery($databaseRelations);
-
 				// execute the query
-				$newBindings = $KnowledgeSource->processQuery($query);
-			}
+				$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
 
-			$bindings = array_merge($bindings, $newBindings);
+				$bindings = array_merge($bindings, $newBindings);
+
+			}
 		}
 
 		// the variable 'request' in $bindings should hold the answer
@@ -243,11 +246,10 @@ if ($NEW) {
 	{
 		foreach ($Predication->getArguments() as $index => $Argument) {
 			if ($Argument instanceof Property) {
-				$name = $Argument->getName();
-				if ($name == 'request') {
-					$Variable = new Variable($name);
-					$Predication->setArgument($index, $Variable);
-				}
+				$propertyName = $Argument->getName();
+				$objectName = $Argument->getObject()->getName();
+				$Variable = new Variable($objectName . '_' . $propertyName);
+				$Predication->setArgument($index, $Variable);
 			}
 		}
 	}

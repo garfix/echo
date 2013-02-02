@@ -87,4 +87,33 @@ class Predication extends Term
 
 		return $Clone;
 	}
+
+	/**
+	 * Returns false if $Predication does not match this predication;
+	 * and an array of mapped variable values on a match.
+	 *
+	 * @param Predication $Predication
+	 * @return array|bool
+	 */
+	public function match(Predication $Predication)
+	{
+		if ($Predication->getPredicate() != $this->predicate) {
+			return false;
+		}
+
+		$hisArguments = $Predication->getArguments();
+		if (count($hisArguments) != count($this->arguments)) {
+			return false;
+		}
+
+		$match = array();
+		foreach ($this->arguments as $index => $Argument) {
+			if ($Argument instanceof Variable) {
+				$varName = $Argument->getName();
+				$match[$varName] = $hisArguments[$index];
+			}
+		}
+
+		return $match;
+	}
 }

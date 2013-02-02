@@ -43,6 +43,7 @@ class PredicationListKnowledgeSource extends KnowledgeSource
 	public function isProperNoun($identifier) {}
 	public function answerQuestion(Sentence $Sentence) {}
     public function checkQuestion(Sentence $Sentence) {}
+	public function answer(PredicationList $Question) {}
 
 	public function bind($predicate, array $arguments)
 	{

@@ -37,8 +37,8 @@ class QuestionExpander
 	 * On each expansion, it copies the $ExpandedQuestion in a new expanded question and makes it continue on its own.
 	 * When a top-level $Question is completely expanded, the $ExpandedQuestion is added to the $expandedQuestions list.
 	 *
-	 * @param \agentecho\datastructure\PredicationList $Question
-	 * @param \agentecho\datastructure\PredicationList $ExpandedQuestion
+	 * @param PredicationList $Question
+	 * @param PredicationList $ExpandedQuestion
 	 * @param array $expandedQuestions
 	 */
 	private function expandQuestion(PredicationList $ExpandedQuestion, $index, array &$expandedQuestions, array $ruleSources)
@@ -101,7 +101,6 @@ class QuestionExpander
 
 			if ($Argument instanceof Variable) {
 				$argumentName = $Argument->getName();
-#				$goalVariables[$variableName] = isset($variables[$argumentName]) ? $variables[$argumentName] : null;
 				$goalVariables[$variableName] = $argumentName;
 			} elseif ($Argument instanceof Constant) {
 				$goalVariables[$variableName] = $Argument->getName();
@@ -122,8 +121,6 @@ class QuestionExpander
 					}
 					$newName = $goalVariables[$name];
 					$Argument->setName($newName);
-				} else {
-					die('?');
 				}
 			}
 		}
@@ -131,6 +128,13 @@ class QuestionExpander
 		return $snippet;
 	}
 
+	/**
+	 * Replaces the predication at position $i of $List with $snippet.
+	 *
+	 * @param \agentecho\datastructure\PredicationList $List
+	 * @param array $snippet
+	 * @param $i
+	 */
 	private function insertSnippet(PredicationList $List, array $snippet, $i)
 	{
 		$predications = $List->getPredications();

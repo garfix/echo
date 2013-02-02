@@ -3,6 +3,7 @@
 namespace agentecho\knowledge;
 
 use \agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\PredicationList;
 
 /**
  * @author Patrick van Bergen
@@ -14,6 +15,8 @@ class EchoKnowledgeSource extends KnowledgeSource
 	public function answerQuestion(Sentence $Sentence) {}
 
     public function checkQuestion(Sentence $Sentence) {}
+
+	public function answer(PredicationList $Question) {}
 
 	/**
 	 * Provided with a predication that contains open variables, this function returns a list of

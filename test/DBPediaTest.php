@@ -107,8 +107,8 @@ $NEW = 1;
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = new EnglishGrammar());
 
-		$Echo->addKnowledgeSource(new DBPedia());
-		$Echo->addKnowledgeSource(new EchoKnowledgeSource());
+		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+//		$Echo->addKnowledgeSource(new EchoKnowledgeSource());
 		$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
 
 		$Conversation = $Echo->startConversation();
@@ -116,6 +116,9 @@ $NEW = 1;
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
 //exit;
 		$this->assertSame("She was xx years old.", $answer);
+
+//		born(?s, ?t) :- name(?s, ?n) and BIRTHDATE(?n, ?t)
+//		die(?s, ?t) :- name(?s, ?n) and DEATHDATE(?n, ?t)
 
 
 # todo's:
