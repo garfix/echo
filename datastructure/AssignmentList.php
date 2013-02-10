@@ -19,6 +19,11 @@ class AssignmentList extends SemanticStructure
 		return $this->assignments;
 	}
 
+	public function getFirstAssignment()
+	{
+		return (empty($this->assignments) ? false : reset($this->assignments));
+	}
+
 	public function __toString()
 	{
 		return implode('; ', $this->assignments);

@@ -15,8 +15,18 @@ Volgende zinnen:
 * Maak een zin waarin een een determiner relevant is (Bv. geef me alle inwoners van London ouder dan 80 jaar)
 
 Nu:
-* Zet de properties van de zin om in variabelen
-* Stel een set database (DBPedia) specifieke relatie-conversie regels op
-* Breid de agent uit met functionaliteit die een predication-set omzet in een DB-specifieke set relaties,
-  op het moment dat de laatste _top-level_ predicatie is uitgevoerd
-* Bouw een DBMS-specifieke relatie-set naar query converter
+* testMapperSimple::testMapperSimple wordt niet goed uitgevoerd
+* Maak een speciale vorm van een predication: let(var, expression)
+	waar expression = term / functie (var + var / function, etc)
+	een andere vorm is misschien beter, want het is raar om een uitzondering te maken voor een bepaalde soort predicatie
+	en het zou goed zijn om aan te geven dat de functies worden uitgevoerd _na_ de predicaties
+	met tests
+* scheidt de predicaties van de relaties (indien nodig)
+* voer de functies uit nadat de resultaten van de database binnen zijn
+
+manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and diff_years(?b, ?t, ?q)
+
+manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t), ?q = floor(?b - ?t)
+
+predication :- predication (and predication)* (, assignment (, assignment)*)
+

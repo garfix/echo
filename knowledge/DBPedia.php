@@ -11,9 +11,15 @@ use agentecho\phrasestructure\Clause;
 use agentecho\phrasestructure\Preposition;
 use agentecho\datastructure\PredicationList;
 use agentecho\component\DataMapper;
+use agentecho\datastructure\SparqlQuery;
+use agentecho\datastructure\Predication;
 
 /**
  * An adapter for DBPedia.
+ *
+ * Docs:
+ * - SPARQL 1.1 spec:       http://www.w3.org/TR/sparql11-query/
+ * - SPARQL cheat sheet:    http://www.slideshare.net/LeeFeigenbaum/sparql-cheat-sheet
  */
 class DBPedia extends KnowledgeSource
 {
@@ -443,12 +449,20 @@ class DBPedia extends KnowledgeSource
 	public function answer(PredicationList $Question)
 	{
 		// turn the expanded question into a set of database relations
-		$databaseRelations = $this->getDataMapper()->mapPredications($Question);
+		$Relations = $this->getDataMapper()->mapPredications($Question);
 
-		// convert the database relations into a query
-		$query = $this->createDatabaseQuery($databaseRelations);
+		if ($Relations !== false) {
 
-		$resultSets = $this->processQuery($query);
+			// convert the database relations into a query
+			$query = $this->createDatabaseQuery($Relations);
+
+			$resultSets = $this->processQuery($query);
+
+		} else {
+
+			$resultSets = array();
+
+		}
 
 		return $resultSets;
 	}
@@ -461,9 +475,56 @@ class DBPedia extends KnowledgeSource
 		return $this->Mapper;
 	}
 
-	private function createDatabaseQuery($databaseRelations)
+	private function createDatabaseQuery(PredicationList $Relations)
 	{
+		$Query = new SparqlQuery();
 
+		foreach ($Relations->getPredications() as $Relation) {
+
+			$this->convertRelationIntoClauses($Relation, $Query);
+		}
+
+		return $Query;
+	}
+
+	private function convertRelationIntoClauses(Predication $Relation, SparqlQuery $Query)
+	{
+		$predicate = $Relation->getPredicate();
+
+		switch ($predicate) {
+			case 'true';
+				break;
+			case 'diff_years':
+				$op1 = (string)$Relation->getArgument(0)->getName();
+				$op2 = (string)$Relation->getArgument(1)->getName();
+				$result = (string)$Relation->getArgument(2)->getName();
+# will not work: $Query->where("FILTER(?{$result} = ?{$op1} - ?{$op2})");
+
+place the result in a select clause
+allow these functions only in selects (a limitation)
+http://dbpedia.org/sparql
+
+#todo
+				break;
+			case 'born':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object}");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			case 'name':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$ucName = ucwords($object);
+				$Query->where("{ { ?{$subject} rdfs:label '$ucName'@en } UNION { ?{$subject} dbpprop:birthName '$ucName'@en } }");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			default:
+				$i = 0;
+				break;
+		}
 	}
 
 	private function processQuery(array $query)

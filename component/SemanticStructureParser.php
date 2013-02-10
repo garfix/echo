@@ -15,6 +15,7 @@ use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\GoalClause;
 use agentecho\datastructure\DataMapping;
+use agentecho\datastructure\FunctionApplication;
 
 /**
  *
@@ -90,11 +91,11 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseDataMapping($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parsePropertyAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseAssignment($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parsePropertyAssignment($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -166,9 +167,21 @@ class SemanticStructureParser
 
 				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList2)) {
 
+					// optional: transformations
+					$Transformations = null;
+					if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+						$pos = $newPos;
+
+						$pos = $this->parseVariableAssignmentList($tokens, $pos, $Transformations);
+						if (!$pos) {
+							return false;
+						}
+					}
+
 					$DataMapping = new DataMapping();
 					$DataMapping->setPreList($PredicationList1);
 					$DataMapping->setPostList($PredicationList2);
+					$DataMapping->setTransformations($Transformations);
 					return $pos;
 				}
 			}
@@ -251,7 +264,7 @@ class SemanticStructureParser
 
 				// arguments
 
-				// required first argument
+				// optional first argument
 				if ($newPos = $this->parseArgument($tokens, $pos, $argument)) {
 					$pos = $newPos;
 					$arguments[] = $argument;
@@ -272,17 +285,17 @@ class SemanticStructureParser
 							}
 						}
 					}
+				}
 
-					// closing bracket
-					if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
-						$pos = $newPos;
+				// closing bracket
+				if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
+					$pos = $newPos;
 
-						$Predication = new Predication();
-						$Predication->setPredicate($predicate);
-						$Predication->setArguments($arguments);
+					$Predication = new Predication();
+					$Predication->setPredicate($predicate);
+					$Predication->setArguments($arguments);
 
-						return $pos;
-					}
+					return $pos;
 				}
 			}
 		}
@@ -362,12 +375,12 @@ class SemanticStructureParser
 		return false;
 	}
 
-	private function parseAssignmentList(array $tokens, $pos, &$AssignmentList)
+	private function parsePropertyAssignmentList(array $tokens, $pos, &$AssignmentList)
 	{
 		$count = 0;
 		$assignments = array($count => null);
 
-		if ($newPos = $this->parseAssignment($tokens, $pos, $assignments[$count])) {
+		if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
 			$pos = $newPos;
 			$count++;
 
@@ -379,7 +392,46 @@ class SemanticStructureParser
 
 					// argument
 					$assignments[$count] = null;
-					if ($newPos = $this->parseAssignment($tokens, $pos, $assignments[$count])) {
+					if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
+						$pos = $newPos;
+						$count++;
+					} else {
+						return false;
+					}
+
+				}
+
+			}
+
+			$AssignmentList = new AssignmentList();
+			$AssignmentList->setAssignments($assignments);
+			return $pos;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Parses a list of ?a = f(?b, ?c), ?d = g(?a)
+	 */
+	private function parseVariableAssignmentList(array $tokens, $pos, &$AssignmentList)
+	{
+		$count = 0;
+		$assignments = array($count => null);
+
+		if ($newPos = $this->parseVariableAssignment($tokens, $pos, $assignments[$count])) {
+			$pos = $newPos;
+			$count++;
+
+			while ($newPos) {
+
+				// and
+				if ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
+					$pos = $newPos;
+
+					// argument
+					$assignments[$count] = null;
+					if ($newPos = $this->parseVariableAssignment($tokens, $pos, $assignments[$count])) {
 						$pos = $newPos;
 						$count++;
 					} else {
@@ -463,6 +515,20 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseVariable($tokens, $pos, $argument)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseFunctionArgument(array $tokens, $pos, &$argument)
+	{
+		if ($newPos = $this->parseVariable($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
+			$pos = $newPos;
 		} else {
 			$pos = false;
 		}
@@ -491,7 +557,7 @@ class SemanticStructureParser
 		return $pos;
 	}
 
-	private function parseAssignment(array $tokens, $pos, &$Assignment)
+	private function parsePropertyAssignment(array $tokens, $pos, &$Assignment)
 	{
 		if ($newPos = $this->parseProperty($tokens, $pos, $Property1)) {
 			$pos = $newPos;
@@ -499,12 +565,85 @@ class SemanticStructureParser
 			if ($newPos = $this->parseSingleToken(self::T_EQUALS_SIGN, $tokens, $pos, $string)) {
 				$pos = $newPos;
 
-				if ($newPos = $this->parseTermList($tokens, $pos, $TermList)) {
+				if ($pos = $this->parseTermList($tokens, $pos, $TermList)) {
 
-					$pos = $newPos;
 					$Assignment = new Assignment();
 					$Assignment->setLeft($Property1);
 					$Assignment->setRight($TermList);
+					return $pos;
+
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function parseVariableAssignment(array $tokens, $pos, &$Assignment)
+	{
+		if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
+			$pos = $newPos;
+
+			if ($newPos = $this->parseSingleToken(self::T_EQUALS_SIGN, $tokens, $pos, $string)) {
+				$pos = $newPos;
+
+				if ($pos = $this->parseFunctionApplication($tokens, $pos, $FunctionApplication)) {
+
+					$Assignment = new Assignment();
+					$Assignment->setLeft($Variable);
+					$Assignment->setRight($FunctionApplication);
+					return $pos;
+
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function parseFunctionApplication(array $tokens, $pos, &$FunctionApplication)
+	{
+		$name = null;
+		$arguments = array();
+
+		if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $name)) {
+
+			// opening bracket
+			if ($pos = $this->parseSingleToken(self::T_BRACKET_OPEN, $tokens, $pos)) {
+
+				// arguments
+
+				// optional first argument
+				if ($newPos = $this->parseFunctionArgument($tokens, $pos, $argument)) {
+					$pos = $newPos;
+					$arguments[] = $argument;
+
+					// optional following arguments
+					while ($newPos) {
+
+						// comma
+						if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+							$pos = $newPos;
+
+							// argument
+							if ($newPos = $this->parseFunctionArgument($tokens, $pos, $argument)) {
+								$pos = $newPos;
+								$arguments[] = $argument;
+							} else {
+								return false;
+							}
+						}
+					}
+				}
+
+				// closing bracket
+				if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
+					$pos = $newPos;
+
+					$FunctionApplication = new FunctionApplication();
+					$FunctionApplication->setName($name);
+					$FunctionApplication->setArguments($arguments);
+
 					return $pos;
 				}
 			}

@@ -7,6 +7,7 @@ use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
+use agentecho\component\Utils;
 
 /**
  * This class maps logical predications to database relations, based on a declarative representation found in a map-file.
@@ -33,51 +34,63 @@ class DataMapper
 	}
 
 	/**
-	 * Maps all predications in $Predications to their relation counterparts in $mapFile.
+	 * Maps all predications in $Predications to their relation counterparts (also predications) in $mapFile.
 	 * One or more predications may be mapped to zero or more relations.
+	 * A single predication may be used in multiple mappings.
+	 *
+	 * If not all predications could be mapped, the function returns false.
 	 *
 	 * @param PredicationList $Predications
-	 * @return PredicationList
+	 * @return PredicationList|false
 	 */
 	public function mapPredications(PredicationList $Predications)
 	{
+		/** @var $newPredications Store the newly created predications */
 		$newPredications = array();
+		/** @var $usedPredications Remember which predications are used (an array of indexes) */
+		$usedPredications = array();
 
+		// go through each mapping
 		/** @var DataMapping $Mapping */
 		foreach ($this->map as $Mapping) {
 
-			$matchAllArguments = true;
-			$argumentMap = array();
+			/** @var A zero-based indexed array that keeps track of all predications that match each precondition */
+			$matchingPredicationsPerPrecondition = array();
 
 			// go through all preconditions of the mapping
-			foreach ($Mapping->getPreList()->getPredications() as $PrePredication) {
-
-				$matchSingleArgument = false;
+			foreach ($Mapping->getPreList()->getPredications() as $conditionIndex => $PrePredication) {
 
 				// check this precondition with all predications
 				/** @var Predication $PrePredication */
-				foreach ($Predications->getPredications() as $Predication) {
+				foreach ($Predications->getPredications() as $predicationIndex => $Predication) {
 
 					if (($result = $PrePredication->match($Predication)) !== false) {
-						$matchSingleArgument = true;
-						// integrate the predication map with the rest of the prepredication argument maps
-						$argumentMap += $result;
-						break;
-					}
-				}
 
-				if (!$matchSingleArgument) {
-					$matchAllArguments = false;
-					break;
+						$matchingPredicationsPerPrecondition[$conditionIndex][] = array(
+							'result' => $result,
+							'predicationIndex' => $predicationIndex
+						);
+					}
 				}
 			}
 
-			if ($matchAllArguments) {
+			// create all permutations for each of the precondition matches
+			$permutations = Utils::createPermutations($matchingPredicationsPerPrecondition);
+
+			foreach ($permutations as $row) {
+
+				// create a combined argument map and mark predications as used
+				$argumentMap = array();
+				foreach ($row as $singleArgumentMap) {
+					$argumentMap += $singleArgumentMap['result'];
+					$usedPredications[$singleArgumentMap['predicationIndex']] = true;
+				}
 
 				// create new predications filled in with the values in argument map
 				foreach ($Mapping->getPostList()->getPredications() as $PostPredication) {
 					$NewPredication = $PostPredication->createClone();
 
+					// rename the variables in the new predication
 					foreach ($NewPredication->getArguments() as $Argument) {
 						if ($Argument instanceof Variable) {
 							$varName = $Argument->getName();
@@ -93,6 +106,11 @@ class DataMapper
 					$newPredications[] = $NewPredication;
 				}
 			}
+		}
+
+		// check if all predications are used
+		if (count($usedPredications) != count($Predications->getPredications())) {
+			return false;
 		}
 
 		$NewPredicationList = new PredicationList();

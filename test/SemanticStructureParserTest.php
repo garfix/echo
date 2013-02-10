@@ -58,6 +58,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testPredicationWithoutArguments()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'true()';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testAtom()
 	{
 		$Parser = new SemanticStructureParser();
@@ -186,6 +196,19 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
+	}
+
+	public function testDataMappingWithAssignments()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2), ?a = daysToYears(subtractDates(?d2, ?d1))';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		// regression: check if subtractDates was not parsed as a relation
+		$this->assertTrue($Structure->getTransformations()->getFirstAssignment()->getRight()->getFirstArgument() instanceof \agentecho\datastructure\FunctionApplication);
 	}
 
 	public function testTokenizerFail()

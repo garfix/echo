@@ -24,7 +24,13 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 		$this->testMapper($Parser, $Mapper, 'blue(?a, ?b) and yellow(?b, ?c)', 'oak(?b, ?a) and pine(?b, ?s1) and larch(?s1, ?c)');
 
 		// map 2 to 1
-		$this->testMapper($Parser, $Mapper, 'green(?x, ?y) and orange(?y, ?z)', 'berch(?x, ?z)');
+		$this->testMapper($Parser, $Mapper, 'green(?x, ?y) and orange(?y, ?z)', 'birch(?x, ?z)');
+
+		// some predicate occurs twice
+		$this->testMapper($Parser, $Mapper, 'blue(?a, ?b) and yellow(?b, ?c) and blue(?c, ?d)', 'oak(?b, ?a) and oak(?d, ?c) and pine(?b, ?s1) and larch(?s1, ?c)');
+
+		// some predicate could not be matched
+		$this->testMapper($Parser, $Mapper, 'blue(?a, ?b) and pink(?b, ?c)', false);
 	}
 
 	private function testMapper(SemanticStructureParser $Parser, DataMapper $Mapper, $in, $out)
