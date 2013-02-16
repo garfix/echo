@@ -38,7 +38,12 @@ class Predication extends Term
 
 	public function getFirstArgument()
 	{
-		return reset($this->arguments);
+		return (empty($this->arguments) ? false : $this->arguments[0]);
+	}
+
+	public function getSecondArgument()
+	{
+		return (empty($this->arguments) ? false : $this->arguments[1]);
 	}
 
 	public function getArgument($index)

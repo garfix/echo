@@ -38,10 +38,10 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	{
 		global $NEW;
 
-$NEW = 1;
+$NEW = 0;
 
 		$Echo = new AgentEcho();
-		$Echo->addKnowledgeSource(new DBPedia());
+		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Echo->addGrammar($English = new EnglishGrammar());
 		$Echo->addGrammar($Dutch = new DutchGrammar());
 
@@ -103,6 +103,10 @@ $NEW = 1;
 	 */
 	public function testCalculatedAnswer()
 	{
+		global $NEW;
+
+$NEW = 1;
+
 //		$this->markTestSkipped();
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = new EnglishGrammar());

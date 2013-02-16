@@ -157,12 +157,6 @@ if ($NEW) {
 
 	public function answerQuestionWithSemantics(PredicationList $PredicationList)
 	{
-		$InferenceEngine = new InferenceEngine();
-
-//		echo $PredicationList;exit;
-
-#todo: the predication list may not serve as a knowledge source. this is an incorrect idea
-//		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
 		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
 
 		// extract the question predication
@@ -171,22 +165,11 @@ if ($NEW) {
 			return null;
 		}
 
-#todo: this is not the way, of course
-//		$Question = $predications[0];
 		// replace all request properties with variables
 		foreach ($predications as $Predication) {
 			$this->changeRequestPropertyInVariable($Predication);
 		}
 
-//		$QuestionList = new PredicationList();
-//		$QuestionList->setPredications(array($Question));
-
-# the query will not be processed in a Prolog manner
-# the inference engine will still be useful for command-like sentences, however
-# and it may also be used as a knowledge source in itself
-#		$bindings = $InferenceEngine->bind($QuestionList, $knowledgeSources, $this->KnowledgeManager->getRuleSources());
-
-#todo
 		$QuestionExpander = new QuestionExpander();
 
 		// first explode the predications into all possible solution paths
@@ -194,21 +177,22 @@ if ($NEW) {
 		$ruleSources = $this->KnowledgeManager->getRuleSources();
 		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
 
-//		foreach ($expandedQuestions as $q) {
-//			echo (string)$q . "\n";
-//		}
-//		exit;
-
 		$bindings = array();
 
 		foreach ($expandedQuestions as $ExpandedQuestion) {
 
 			foreach ($knowledgeSources as $KnowledgeSource) {
-
+$a = (string)$ExpandedQuestion;
 				// execute the query
 				$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
 
-				$bindings = array_merge($bindings, $newBindings);
+				if ($newBindings) {
+
+					// perform the translations
+					$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
+
+					$bindings = array_merge($bindings, $newBindings);
+				}
 
 			}
 		}
@@ -217,7 +201,11 @@ if ($NEW) {
 		if ($bindings) {
 
 			$firstBinding = reset($bindings);
-			$response = $firstBinding['request'];
+			if (isset($firstBinding['request'])) {
+				$response = $firstBinding['request'];
+			} else {
+				$response = $firstBinding['S_request'];
+			}
 
 		} else {
 
@@ -226,6 +214,29 @@ if ($NEW) {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Invokes all `let`-predications in $Predications on $bindings
+	 *
+	 * @param $newBindings
+	 * @param \agentecho\datastructure\PredicationList $Predications
+	 *
+	 * @return array A new list of bindings.
+	 */
+	private function performTranslations($bindings, PredicationList $Predications)
+	{
+		$FunctionInvoker = new FunctionInvoker();
+
+		foreach ($bindings as &$binding) {
+			foreach ($Predications->getPredications() as $Predication) {
+				if ($Predication->getPredicate() == 'let') {
+					$binding = $FunctionInvoker->applyLet($Predication, $binding);
+				}
+			}
+		}
+
+		return $bindings;
 	}
 
 	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)

@@ -167,21 +167,21 @@ class SemanticStructureParser
 
 				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList2)) {
 
-					// optional: transformations
-					$Transformations = null;
-					if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
-						$pos = $newPos;
-
-						$pos = $this->parseVariableAssignmentList($tokens, $pos, $Transformations);
-						if (!$pos) {
-							return false;
-						}
-					}
+//					// optional: transformations
+//					$Transformations = null;
+//					if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+//						$pos = $newPos;
+//
+//						$pos = $this->parseVariableAssignmentList($tokens, $pos, $Transformations);
+//						if (!$pos) {
+//							return false;
+//						}
+//					}
 
 					$DataMapping = new DataMapping();
 					$DataMapping->setPreList($PredicationList1);
 					$DataMapping->setPostList($PredicationList2);
-					$DataMapping->setTransformations($Transformations);
+//					$DataMapping->setTransformations($Transformations);
 					return $pos;
 				}
 			}
@@ -250,8 +250,60 @@ class SemanticStructureParser
 		return $pos;
 	}
 
+	private function parsePredicationLet(array $tokens, $pos, &$Predication)
+		{
+			$predicate = null;
+			$arguments = array();
+
+			if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $predicate)) {
+
+				if ($predicate == 'let') {
+
+					// opening bracket
+					if ($pos = $this->parseSingleToken(self::T_BRACKET_OPEN, $tokens, $pos)) {
+
+						// first argument
+						if ($pos = $this->parseArgument($tokens, $pos, $argument)) {
+							$arguments[] = $argument;
+
+							// comma
+							if ($pos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+
+								// second argument
+								if ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
+									$pos = $newPos;
+									$arguments[] = $argument;
+								} else {
+									return false;
+								}
+							}
+						}
+
+						// closing bracket
+						if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
+							$pos = $newPos;
+
+							$Predication = new Predication();
+							$Predication->setPredicate($predicate);
+							$Predication->setArguments($arguments);
+
+							return $pos;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
 	private function parsePredication(array $tokens, $pos, &$Predication)
 	{
+		// special case: let
+		if ($newPos = $this->parsePredicationLet($tokens, $pos, $Predication)) {
+			$pos = $newPos;
+			return $pos;
+		}
+
 		$predicate = null;
 		$arguments = array();
 

@@ -22,6 +22,11 @@ class PredicationList extends  Term
 		return $this->predications;
 	}
 
+	public function getPredication($index)
+	{
+		return isset($this->predications[$index]) ? $this->predications[$index] : false;
+	}
+
 	/**
 	 * Returns a name => name list of the names of the variables used in this list.
 	 * @return array

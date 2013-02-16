@@ -112,7 +112,7 @@ $PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
 				$E->setMessage($translatedMessage);
 			}
 
-			$answer = $E->getMessage();
+			$answer = (string)$E;
 		}
 
 		return $answer;

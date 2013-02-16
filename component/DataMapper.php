@@ -50,6 +50,9 @@ class DataMapper
 		/** @var $usedPredications Remember which predications are used (an array of indexes) */
 		$usedPredications = array();
 
+		/** @var $usedVariables A name => name list of all used variables in $Predications */
+		$usedVariables = $Predications->getVariableNames();
+
 		// go through each mapping
 		/** @var DataMapping $Mapping */
 		foreach ($this->map as $Mapping) {
@@ -81,9 +84,22 @@ class DataMapper
 
 				// create a combined argument map and mark predications as used
 				$argumentMap = array();
+				$mergeSuccess = true;
 				foreach ($row as $singleArgumentMap) {
-					$argumentMap += $singleArgumentMap['result'];
+					//$argumentMap += $singleArgumentMap['result'];
+
+					$argumentMap = $this->merge($argumentMap, $singleArgumentMap['result']);
+					if ($argumentMap === false) {
+						$mergeSuccess = false;
+						break;
+					}
+
+#todo this is too premature; the merge may still fail; place this behind the loop, for each of the results
 					$usedPredications[$singleArgumentMap['predicationIndex']] = true;
+				}
+
+				if (!$mergeSuccess) {
+					continue;
 				}
 
 				// create new predications filled in with the values in argument map
@@ -96,9 +112,13 @@ class DataMapper
 							$varName = $Argument->getName();
 							if (isset($argumentMap[$varName])) {
 								$newName = $argumentMap[$varName]->getName();
+//} elseif (isset($usedVariables[$varName])) { $newName = $usedVariables[$varName];
 							} else {
+//								$newName = PredicationUtils::createUnusedVariableName2($usedVariables);
 								$newName = PredicationUtils::createUnusedVariableName($argumentMap);
+$a = 0;
 							}
+//							$usedVariables[$newName] = $newName;
 							$Argument->setName($newName);
 						}
 					}
@@ -114,7 +134,29 @@ class DataMapper
 		}
 
 		$NewPredicationList = new PredicationList();
-		$NewPredicationList->setPredications($newPredications);
+#todo: many true() results are combined into one; is this a problem? can it happen to other relations?
+		$newPredications2 = array_unique($newPredications);
+		$NewPredicationList->setPredications($newPredications2);
 		return $NewPredicationList;
+	}
+
+	private function merge($oldValues, $newValues)
+	{
+		$merge = $oldValues;
+
+		foreach ($newValues as $key => $value) {
+			if (isset($oldValues[$key])) {
+
+				if ($oldValues[$key] != $value) {
+					// conflicting values
+					return false;
+				}
+
+			} else {
+				$merge[$key] = $value;
+			}
+		}
+
+		return $merge;
 	}
 }

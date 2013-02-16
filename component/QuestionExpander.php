@@ -6,6 +6,8 @@ use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\GoalClause;
+use agentecho\datastructure\FunctionApplication;
+use agentecho\component\PredicationUtils;
 
 /**
  * @author Patrick van Bergen
@@ -27,7 +29,10 @@ class QuestionExpander
 		$ExpandedQuestion = $Question->createClone();
 		$expandedQuestions[] = $ExpandedQuestion;
 
-		$this->expandQuestion($ExpandedQuestion, 0, $expandedQuestions, $ruleSources);
+		// keep track of all variable names used in the expanded list
+		$allVariables = $Question->getVariableNames();
+
+		$this->expandQuestion($ExpandedQuestion, 0, $expandedQuestions, $ruleSources, $allVariables);
 
 		return $expandedQuestions;
 	}
@@ -41,7 +46,7 @@ class QuestionExpander
 	 * @param PredicationList $ExpandedQuestion
 	 * @param array $expandedQuestions
 	 */
-	private function expandQuestion(PredicationList $ExpandedQuestion, $index, array &$expandedQuestions, array $ruleSources)
+	private function expandQuestion(PredicationList $ExpandedQuestion, $index, array &$expandedQuestions, array $ruleSources, array &$allVariables)
 	{
 		$predications = $ExpandedQuestion->getPredications();
 
@@ -54,7 +59,7 @@ class QuestionExpander
 			foreach ($rules as $Rule) {
 
 				// adapt the variables of $Means to $Question
-				$snippet = $this->createNewListWithAdaptedVariables($Predication, $Rule);
+				$snippet = $this->createNewListWithAdaptedVariables($Predication, $Rule, $allVariables);
 
 				// create a new expanded question
 				$NewExpandedQuestion = $ExpandedQuestion->createClone();
@@ -64,7 +69,7 @@ class QuestionExpander
 				$this->insertSnippet($NewExpandedQuestion, $snippet, $i);
 
 				// fork the expanded question
-				$this->expandQuestion($NewExpandedQuestion, $i, $expandedQuestions, $ruleSources);
+				$this->expandQuestion($NewExpandedQuestion, $i, $expandedQuestions, $ruleSources, $allVariables);
 			}
 		}
 	}
@@ -83,10 +88,8 @@ class QuestionExpander
 		return $rules;
 	}
 
-	private function createNewListWithAdaptedVariables(Predication $Predication, GoalClause $Rule)
+	private function createNewListWithAdaptedVariables(Predication $Predication, GoalClause $Rule, array &$allVariables)
 	{
-		static $v = 0;
-
 		$Goal = $Rule->getGoal();
 		$Means = $Rule->getMeans();
 
@@ -115,17 +118,50 @@ class QuestionExpander
 		foreach ($snippet as $SnippetPredication) {
 			foreach ($SnippetPredication->getArguments() as $Argument) {
 				if ($Argument instanceof Variable) {
+
 					$name = $Argument->getName();
+
 					if (!isset($goalVariables[$name])) {
-						$goalVariables[$name] = 'special' . ++$v;
+//$goalVariables[$name] = 'b' . ++$v;
+// note: s.++$v werkt niet!
+						$goalVariables[$name] = PredicationUtils::createUnusedVariableName2($allVariables);
 					}
+
 					$newName = $goalVariables[$name];
+
+					// make sure the newly created variable is used only once in the entire predication list
+					$allVariables[$newName] = $newName;
+
 					$Argument->setName($newName);
+				} elseif ($Argument instanceof FunctionApplication) {
+					$this->replaceFunctionApplicationVariables($Argument, $goalVariables, $allVariables);
 				}
 			}
 		}
 
 		return $snippet;
+	}
+
+	private function replaceFunctionApplicationVariables(FunctionApplication $FunctionApplication, $goalVariables, array &$allVariables)
+	{
+		foreach ($FunctionApplication->getArguments() as $Argument) {
+			if ($Argument instanceof Variable) {
+
+				$name = $Argument->getName();
+
+				if (!isset($goalVariables[$name])) {
+					$goalVariables[$name] = PredicationUtils::createUnusedVariableName2($allVariables);
+				}
+				$newName = $goalVariables[$name];
+
+				// make sure the newly created variable is used only once in the entire predication list
+				$allVariables[$newName] = $newName;
+
+				$Argument->setName($newName);
+			} elseif ($Argument instanceof FunctionApplication) {
+				$this->replaceFunctionApplicationVariables($Argument, $goalVariables, $allVariables);
+			}
+		}
 	}
 
 	/**

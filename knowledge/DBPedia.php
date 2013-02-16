@@ -454,9 +454,11 @@ class DBPedia extends KnowledgeSource
 		if ($Relations !== false) {
 
 			// convert the database relations into a query
-			$query = $this->createDatabaseQuery($Relations);
+			$Query = $this->createDatabaseQuery($Relations);
 
-			$resultSets = $this->processQuery($query);
+$sparql = (string)$Query;
+
+			$resultSets = $this->processQuery($Query);
 
 		} else {
 
@@ -494,22 +496,17 @@ class DBPedia extends KnowledgeSource
 		switch ($predicate) {
 			case 'true';
 				break;
-			case 'diff_years':
-				$op1 = (string)$Relation->getArgument(0)->getName();
-				$op2 = (string)$Relation->getArgument(1)->getName();
-				$result = (string)$Relation->getArgument(2)->getName();
-# will not work: $Query->where("FILTER(?{$result} = ?{$op1} - ?{$op2})");
-
-place the result in a select clause
-allow these functions only in selects (a limitation)
-http://dbpedia.org/sparql
-
-#todo
-				break;
 			case 'born':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
 				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object}");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			case 'die':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/deathDate> ?{$object}");
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
@@ -519,7 +516,11 @@ http://dbpedia.org/sparql
 				$ucName = ucwords($object);
 				$Query->where("{ { ?{$subject} rdfs:label '$ucName'@en } UNION { ?{$subject} dbpprop:birthName '$ucName'@en } }");
 				$Query->select("?{$subject}");
-				$Query->select("?{$object}");
+				break;
+			case 'time_property':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("{ { ?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object} } UNION { ?{$subject} <http://dbpedia.org/ontology/deathDate> ?{$object} } }");
 				break;
 			default:
 				$i = 0;
@@ -527,8 +528,9 @@ http://dbpedia.org/sparql
 		}
 	}
 
-	private function processQuery(array $query)
+	private function processQuery(SparqlQuery $Query)
 	{
-
+		$result = $this->queryDBPedia((string)$Query);
+		return $result;
 	}
 }

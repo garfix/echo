@@ -2,8 +2,6 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Variable;
-
 /**
  * @author Patrick van Bergen
  */
@@ -15,7 +13,7 @@ class PredicationUtils
 	 * @param array $variableList
 	 * @return string The name of a variable
 	 */
-	static public function createUnusedVariableName(array $variableList)
+	public static function createUnusedVariableName(array $variableList)
 	{
 		$found = false;
 		$i = 1;
@@ -28,9 +26,34 @@ class PredicationUtils
 
 		while (!$found) {
 
-			$varName = 's' . $i;
+			$varName = 'b' . $i;
 
 			if (!isset($names[$varName])) {
+				$found = true;
+			} else {
+				$i++;
+			}
+		}
+
+		return $varName;
+	}
+
+	/**
+	 * Variable names are found in  $variableKeyNameList.
+	 *
+	 * @param array $variableKeyNameList
+	 * @return string
+	 */
+	public static function createUnusedVariableName2(array $variableKeyNameList)
+	{
+		$found = false;
+		$i = 1;
+
+		while (!$found) {
+
+			$varName = 's' . $i;
+
+			if (!in_array($varName, $variableKeyNameList)) {
 				$found = true;
 			} else {
 				$i++;

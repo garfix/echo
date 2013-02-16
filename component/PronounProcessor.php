@@ -9,6 +9,7 @@ use \agentecho\phrasestructure\Entity;
 use \agentecho\datastructure\PredicationList;
 use \agentecho\datastructure\Predication;
 use \agentecho\datastructure\Property;
+use \agentecho\datastructure\Constant;
 
 /**
  * @author Patrick van Bergen

@@ -31,7 +31,12 @@ class FunctionApplication
 
 	public function getFirstArgument()
 	{
-		return (empty($this->arguments) ? false : reset($this->arguments));
+		return (empty($this->arguments) ? false : $this->arguments[0]);
+	}
+
+	public function getSecondArgument()
+	{
+		return (empty($this->arguments) ? false : $this->arguments[1]);
 	}
 
 	/**
@@ -57,7 +62,7 @@ class FunctionApplication
 
 	public function createClone()
 	{
-		$Clone = new Predication();
+		$Clone = new FunctionApplication();
 		$Clone->setName($this->name);
 
 		$arguments = array();

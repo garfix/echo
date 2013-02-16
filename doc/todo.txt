@@ -8,6 +8,7 @@ Ooit:
  * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
  * Sentence: verplaats voice naar clause
  * Maak een aparte taal voor syntax unification constraints
+ * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
 
 Volgende zinnen:
 * Maak een zin waarin een bijvoeglijk naamwoord voorkomt.
@@ -15,18 +16,11 @@ Volgende zinnen:
 * Maak een zin waarin een een determiner relevant is (Bv. geef me alle inwoners van London ouder dan 80 jaar)
 
 Nu:
-* testMapperSimple::testMapperSimple wordt niet goed uitgevoerd
-* Maak een speciale vorm van een predication: let(var, expression)
-	waar expression = term / functie (var + var / function, etc)
-	een andere vorm is misschien beter, want het is raar om een uitzondering te maken voor een bepaalde soort predicatie
-	en het zou goed zijn om aan te geven dat de functies worden uitgevoerd _na_ de predicaties
-	met tests
-* scheidt de predicaties van de relaties (indien nodig)
+
+Het probleem is dat ?S_subject gelijk gesteld moet worden aan ?special1 of 5
+?special1 <http://dbpedia.org/ontology/birthDate> ?special2
+?special5 <http://dbpedia.org/ontology/deathDate> ?special3
+{ { ?S_subject rdfs:label 'Mary Shelley'@en } UNION { ?S_subject dbpprop:birthName 'Mary Shelley'@en } }
+
+* maak de sparql query compleet
 * voer de functies uit nadat de resultaten van de database binnen zijn
-
-manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and diff_years(?b, ?t, ?q)
-
-manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t), ?q = floor(?b - ?t)
-
-predication :- predication (and predication)* (, assignment (, assignment)*)
-

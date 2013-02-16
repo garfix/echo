@@ -19,8 +19,8 @@ class DataMapping
 	/** @var PredicationList $PostList */
 	private $PostList;
 
-	/** @var AssignmentList $Transformations */
-	private $Transformations = null;
+//	/** @var AssignmentList $Transformations */
+//	private $Transformations = null;
 
 	/**
 	 * @param PredicationList $PostList
@@ -54,26 +54,26 @@ class DataMapping
 		return $this->PreList;
 	}
 
-	/**
-	 * @param \agentecho\datastructure\AssignmentList $Transformations
-	 */
-	public function setTransformations($Transformations)
-	{
-		$this->Transformations = $Transformations;
-	}
-
-	/**
-	 * @return \agentecho\datastructure\AssignmentList
-	 */
-	public function getTransformations()
-	{
-		return $this->Transformations;
-	}
+//	/**
+//	 * @param \agentecho\datastructure\AssignmentList $Transformations
+//	 */
+//	public function setTransformations($Transformations)
+//	{
+//		$this->Transformations = $Transformations;
+//	}
+//
+//	/**
+//	 * @return \agentecho\datastructure\AssignmentList
+//	 */
+//	public function getTransformations()
+//	{
+//		return $this->Transformations;
+//	}
 
 	public function __toString()
 	{
-		return $this->PreList . ' => ' . $this->PostList .
-			(is_null($this->Transformations) ? '' : ', ' . $this->Transformations);
+		return $this->PreList . ' => ' . $this->PostList;
+//			(is_null($this->Transformations) ? '' : ', ' . $this->Transformations);
 	}
 
 	public function createClone()
@@ -81,7 +81,7 @@ class DataMapping
 		$Clone = new GoalClause();
 		$Clone->setPreList($this->PreList->createClone());
 		$Clone->setPostList($this->PostList->createClone());
-		$Clone->setTransformations($this->Transformations->createClone());
+//		$Clone->setTransformations($this->Transformations->createClone());
 		return $Clone;
 	}
 }

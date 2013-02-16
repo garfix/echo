@@ -1,3 +1,3 @@
-manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and diff_years(?b, ?t, ?q)
+manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b)))
 time(?e, ?t) :- at_time(?e, ?f) and time1(?f, ?t)
 time1(?e, ?t) :- isa(?e, Die) and subject(?e, ?s) and die(?s, ?t)

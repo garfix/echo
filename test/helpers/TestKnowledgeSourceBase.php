@@ -4,6 +4,7 @@ namespace agentecho\test\helpers;
 
 use \agentecho\knowledge\KnowledgeSource;
 use \agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\PredicationList;
 
 /**
  * @author Patrick van Bergen
@@ -15,8 +16,8 @@ class TestKnowledgeSourceBase extends KnowledgeSource
 	public function isProperNoun($identifier) {}
 	public function answerQuestion(Sentence $Sentence) {}
     public function checkQuestion(Sentence $Sentence) {}
-
 	public function bind($predicate, array $arguments) {}
+	public function answer(PredicationList $Question) {}
 
 	/**
 	 * Searches through $data to find all rows that match $arguments.
