@@ -112,28 +112,13 @@ $NEW = 1;
 		$Echo->addGrammar($English = new EnglishGrammar());
 
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
-//		$Echo->addKnowledgeSource(new EchoKnowledgeSource());
 		$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
 
 		$Conversation = $Echo->startConversation();
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
-//exit;
+
 		$this->assertSame("She was xx years old.", $answer);
 
-//		born(?s, ?t) :- name(?s, ?n) and BIRTHDATE(?n, ?t)
-//		die(?s, ?t) :- name(?s, ?n) and DEATHDATE(?n, ?t)
-
-
-# todo's:
-# Beantwoord de vraag die door de semantiek wordt uitgedrukt en lever een antwoord op
-
-# done:
-# S_SBar.subEvent, S_SBar_S.subject moet  S.subject worden (vanwege pronoun resolution of "she"
-
 	}
-
-
-		// When did Lord Byron pass away?
-		// -> interpret the expression into 'die'
 }

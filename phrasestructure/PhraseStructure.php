@@ -41,7 +41,9 @@ abstract class PhraseStructure
 
 	public function getHashCode()
 	{
-		return sha1(serialize($this));
+		// I added 't' because DBPedia give the wrong results for some reason
+#todo: check if it can go
+		return sha1(serialize($this)) . 't';
 	}
 
     public function getChildPhrases()
