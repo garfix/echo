@@ -110,15 +110,19 @@ class DataMapper
 					foreach ($NewPredication->getArguments() as $Argument) {
 						if ($Argument instanceof Variable) {
 							$varName = $Argument->getName();
+
+							// does the variable occur in the map?
 							if (isset($argumentMap[$varName])) {
+								// yes, use it
 								$newName = $argumentMap[$varName]->getName();
-//} elseif (isset($usedVariables[$varName])) { $newName = $usedVariables[$varName];
 							} else {
-//								$newName = PredicationUtils::createUnusedVariableName2($usedVariables);
-								$newName = PredicationUtils::createUnusedVariableName($argumentMap);
-$a = 0;
+								// no, create a new variable
+								$newName = PredicationUtils::createUnusedVariableName($usedVariables);
+								// make sure this variable will not be used again in this predicationlist
+								$usedVariables[$newName] = $newName;
+								// use this same variable when used in this mapping rule
+								$argumentMap[$varName] = new Variable($newName);
 							}
-//							$usedVariables[$newName] = $newName;
 							$Argument->setName($newName);
 						}
 					}

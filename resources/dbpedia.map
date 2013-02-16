@@ -1,7 +1,7 @@
 born(?a, ?b) => born(?a, ?b)
 die(?a, ?b) => die(?a, ?b)
 name(?a, ?b) => name(?a, ?b)
-at_time(?e, ?f) and subject(?e, ?sub1) and subject(?f, ?sub2) and isa(?f, Die) => time_property(?sub1, ?t) and die(?sub2, ?t)
+at_time(?e, ?f) and subject(?e, ?sub1) and subject(?f, ?sub2) and isa(?f, Die) and name(?sub1, ?nn) => time_property(?sub1, ?t) and die(?sub2, ?t)
 subject(?e, ?s) and subject(?e, ?t) and name(?s, ?n) => name(?t, ?n)
 isa(?a, ?b) => true()
 subject(?a, ?b) => true()

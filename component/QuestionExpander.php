@@ -122,9 +122,7 @@ class QuestionExpander
 					$name = $Argument->getName();
 
 					if (!isset($goalVariables[$name])) {
-//$goalVariables[$name] = 'b' . ++$v;
-// note: s.++$v werkt niet!
-						$goalVariables[$name] = PredicationUtils::createUnusedVariableName2($allVariables);
+						$goalVariables[$name] = PredicationUtils::createUnusedVariableName($allVariables);
 					}
 
 					$newName = $goalVariables[$name];
