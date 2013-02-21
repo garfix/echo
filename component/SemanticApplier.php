@@ -146,10 +146,10 @@ class SemanticApplier
 	 */
 	private function inheritChildNodeSemantics(Property $Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory)
 	{
-		$childSyntacticCategory = $Term->getObject()->getName();
+		$childId = $Term->getObject()->getName();
 
-		if (isset($childNodeSemantics[$childSyntacticCategory])) {
-			$childPredications = $childNodeSemantics[$childSyntacticCategory]->getPredications();
+		if (isset($childNodeSemantics[$childId])) {
+			$childPredications = $childNodeSemantics[$childId]->getPredications();
 
 			$clonedPredications = array();
 			foreach ($childPredications as $Predication) {
@@ -158,10 +158,10 @@ class SemanticApplier
 				$ClonedPredication = $Predication->createClone();
 
 				// replace 'this' in all its arguments by the name of the syntactic category
-				$this->replaceThisBySyntacticCategory($ClonedPredication, $childSyntacticCategory);
+				$this->replaceThisBySyntacticCategory($ClonedPredication, $childId);
 
 				// replace child's variables by parent variables according to $childPropertyBindings
-				$this->replaceProperties($ClonedPredication, $childPropertyBindings, $parentSyntacticCategory);
+				$this->replaceProperties($ClonedPredication, $childPropertyBindings, $parentSyntacticCategory, $childId);
 
 				$clonedPredications[] = $ClonedPredication;
 			}
@@ -177,23 +177,19 @@ class SemanticApplier
 	 * Replaces all property arguments (like NP.subject) in a child-semantics predication with the matching
 	 * properties in the parent-semantics. These are given in $childPropertyBindings.
 	 *
-	 * @param \agentecho\datastructure\Predication $Predication
+	 * @param \agentecho\datastructure\Predication $Predication A predication like 'name(NP.object, "John")'
 	 * @param array $childPropertyBindings
+	 * @param string $childId The child node semantics id (like NP1, or VP)
 	 */
-	private function replaceProperties(Predication $Predication, array $childPropertyBindings, $parentSyntacticCategory)
+	private function replaceProperties(Predication $Predication, array $childPropertyBindings, $parentSyntacticCategory, $childId)
 	{
 		/** @var Property $Argument */
 		foreach ($Predication->getArguments() as $Argument) {
-
-if ($Predication->getPredicate() == 'isa') {
-	$a = 0;
-}
 
 			if ($Argument instanceof Property) {
 
 				// this is the name of the property that needs to be replaced
 				$childName = $Argument->getName();
-				$childSyntacticCategory = $Argument->getObject()->getName();
 
 				$found = false;
 
@@ -207,7 +203,7 @@ if ($Predication->getPredicate() == 'isa') {
 						$name = $Property->getName();
 						$category = $Property->getObject()->getName();
 
-						if ($category == $childSyntacticCategory and $name == $childName) {
+						if ($category == $childId and $name == $childName) {
 							$Argument->setName($parentName);
 							$found = true;
 

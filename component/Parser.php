@@ -143,6 +143,10 @@ class Parser
 			throw $E;
 		}
 
+		if ($result['tree']['semantics'] === null) {
+			throw new ParseException(ParseException::NO_SEMANTICS_AT_TOP_LEVEL);
+		}
+
 		$phraseSpecification = $Sentence->getPhraseSpecification();
 		$Sentence->RootObject = $this->buildObjectStructure($phraseSpecification['features']['head']);
 	}

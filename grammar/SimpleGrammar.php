@@ -118,7 +118,15 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// Was the car driven by John?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?syntax-3'))),
+					array('cat' => 'S',
+2 NP's! => testApplyRuleWithTwoNPs
+						'semantics' => '
+							S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject);
+							S.event = VP.event;
+							S.subject = NP2.object;
+							S.object = NP1.object
+						',
+						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?syntax-3'))),
 					array('cat' => 'aux'),
 					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),

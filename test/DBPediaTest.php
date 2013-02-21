@@ -48,8 +48,10 @@ $NEW = 0;
 		$Conversation = $Echo->startConversation();
 
 		// S => aux NP VP ; DBPedia
+$NEW = 1;
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
+return;
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
 

@@ -5,6 +5,7 @@ namespace agentecho\exception;
 class ParseException extends EchoException
 {
 	const COULD_NOT_PARSE = 'Could not parse the part that starts with "%s"';
+	const NO_SEMANTICS_AT_TOP_LEVEL = 'No semantic rule was defined at sentence level.';
 
 	private $lexicalItems = null;
 	private $lastParsedIndex = null;
@@ -17,6 +18,10 @@ class ParseException extends EchoException
 
 	public function __toString()
 	{
-		return sprintf($this->getMessage(), implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)));
+		if ($this->lexicalItems != null) {
+			return sprintf($this->getMessage(), implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)));
+		} else {
+			return $this->getMessage();
+		}
 	}
 }

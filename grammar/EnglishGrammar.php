@@ -268,6 +268,7 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 1,
 					'head' => array(
 						'syntax' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
+						'semantics' => 'isa(this.event, Influence) and tense(this.event, Past)'
 					)
 				),
 			),

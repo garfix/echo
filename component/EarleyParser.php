@@ -5,6 +5,7 @@ namespace agentecho\component;
 use \agentecho\grammar\Grammar;
 use \agentecho\datastructure\LabeledDAG;
 use \agentecho\Settings;
+use agentecho\exception\SemanticParseException;
 
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in
@@ -187,21 +188,13 @@ class EarleyParser
 		// go through all rules that have the next consequent as their antecedent
 		foreach ($this->getRulesForAntecedent($nextConsequent) as $newRule) {
 
-# correct? probably not!
-if (isset($newRule[0]['semantics'])) {
-//	$Semantics = $this->createSemanticStructure($newRule[0]['semantics']);
-	$Semantics = null;
-} else {
-	$Semantics =  null;
-}
-
 			$predictedState = array(
 				'rule' => $newRule,
 				'dotPosition' => self::CONSEQUENT,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
 				'dag' => self::createLabeledDag($newRule),
-				'semantics' => $Semantics,
+				'semantics' => null,
 			);
 			$this->enqueue($predictedState, $endWordIndex);
 		}
@@ -235,10 +228,6 @@ if (isset($newRule[0]['semantics'])) {
 			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
 			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
 			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
-
-if ($Semantics === null) {
-	$a = 0;
-}
 
 			$scannedState = array(
 				'rule' => array(
@@ -369,8 +358,6 @@ if ($Semantics === null) {
 
 			if ($this->applySemantics($state)) {
 
-#echo $state['semantics']."\n";
-
 				if (!$this->isStateInChart($state, $position)) {
 
 					$this->pushState($state, $position);
@@ -397,6 +384,8 @@ if ($Semantics === null) {
 	{
 		$head = reset($state['rule']);
 		if (!isset($head['semantics'])) {
+
+			// this rule does not have semantics attached to it: it must always succeed
 			return true;
 		} else {
 			$semanticSpecification = $head['semantics'];
@@ -417,8 +406,12 @@ if ($Semantics === null) {
 			}
 
 			$Applier = new SemanticApplier();
-			$sem = $Applier->apply($Rule, $childSemantics);
-			$state['semantics'] = $sem;
+
+			// combine the semantics of the children to determine the semantics of the parent
+			$Semantics = $Applier->apply($Rule, $childSemantics);
+			$state['semantics'] = $Semantics;
+		} else {
+			$i = 0;
 		}
 
 		return true;
