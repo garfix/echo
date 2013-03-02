@@ -56,6 +56,10 @@ class SemanticStructureParser
 	 */
 	public function parse($string)
 	{
+		if ($string == "") {
+			return null;
+		}
+
 		// name(a, "John") and name(b, "Mary") and love(a, b)
 		$tokens = $this->tokenize($string);
 		if (!$tokens) {

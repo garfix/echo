@@ -15,6 +15,7 @@ class SemanticStructureParseException extends EchoException
 	{
 		$this->pos = $pos;
 		$this->string = $string;
+		$this->message = self::COULD_NOT_PARSE;
 	}
 
 	public function __toString()

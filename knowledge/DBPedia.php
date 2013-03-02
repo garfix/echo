@@ -20,6 +20,9 @@ use agentecho\datastructure\Predication;
  * Docs:
  * - SPARQL 1.1 spec:       http://www.w3.org/TR/sparql11-query/
  * - SPARQL cheat sheet:    http://www.slideshare.net/LeeFeigenbaum/sparql-cheat-sheet
+ *
+ * Online:
+ * - http://dbpedia.org/sparql
  */
 class DBPedia extends KnowledgeSource
 {
@@ -310,6 +313,7 @@ class DBPedia extends KnowledgeSource
 	private function  queryDBPedia($query)
 	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
+# $result = false;
 
 		if ($result === false) {
 
@@ -521,6 +525,16 @@ $sparql = (string)$Query;
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
 				$Query->where("{ { ?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object} } UNION { ?{$subject} <http://dbpedia.org/ontology/deathDate> ?{$object} } }");
+				break;
+			case 'author':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$object} <http://dbpedia.org/ontology/author> ?{$subject}");
+				break;
+			case 'influence':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$object} <http://dbpedia.org/ontology/influencedBy> ?{$subject}");
 				break;
 			default:
 				$i = 0;

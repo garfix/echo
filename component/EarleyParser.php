@@ -2,10 +2,11 @@
 
 namespace agentecho\component;
 
-use \agentecho\grammar\Grammar;
-use \agentecho\datastructure\LabeledDAG;
-use \agentecho\Settings;
-use agentecho\exception\SemanticParseException;
+use agentecho\grammar\Grammar;
+use agentecho\datastructure\LabeledDAG;
+use agentecho\Settings;
+use agentecho\exception\SemanticsNotFoundException;
+use agentecho\exception\RuleWithoutSemanticsException;
 
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in
@@ -229,6 +230,10 @@ class EarleyParser
 			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
 			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
 
+			if ($Semantics === false) {
+				throw new SemanticsNotFoundException($endWord);
+			}
+
 			$scannedState = array(
 				'rule' => array(
 					array('cat' => $nextConsequent),
@@ -385,6 +390,15 @@ class EarleyParser
 		$head = reset($state['rule']);
 		if (!isset($head['semantics'])) {
 
+			// real rules must have semantics
+			if (isset($head['features'])) {
+				$ruleText = array();
+				foreach ($state['rule'] as $component) {
+					$ruleText[] = $component['cat'];
+				}
+				throw new RuleWithoutSemanticsException(implode(' ', $ruleText));
+			}
+
 			// this rule does not have semantics attached to it: it must always succeed
 			return true;
 		} else {
@@ -394,16 +408,7 @@ class EarleyParser
 		$Rule = self::createSemanticStructure($semanticSpecification);
 		if ($Rule) {
 
-			$childSemantics = array();
-
-			$i = 1;
-			foreach ($state['children'] as $childNodeId) {
-#todo: does not handle multiple categories (i.e. S => NP NP)
-				$cat = $state['rule'][$i]['cat'];
-				$childState = $this->treeInfo['states'][$childNodeId];
-				$childSemantics[$cat] = $childState['semantics'];
-				$i++;
-			}
+			$childSemantics = $this->listChildSemantics($state);
 
 			$Applier = new SemanticApplier();
 
@@ -415,6 +420,46 @@ class EarleyParser
 		}
 
 		return true;
+	}
+
+	/**
+	 * Create an array of semantics for each of the state's children.
+	 * Deals with cases like S => NP NP
+	 * @param array $state
+	 * @return array
+	 */
+	private function listChildSemantics(array $state)
+	{
+		$childSemantics = array();
+
+		$i = 1;
+		foreach ($state['children'] as $childNodeId) {
+			$cat = $state['rule'][$i]['cat'];
+			$childState = $this->treeInfo['states'][$childNodeId];
+
+			// childId = NP, if there is already an NP, turn it into NP1, and name the current NP "NP2"
+			$childId = $cat;
+			$childIdIndex = 0;
+			while (isset($childSemantics[$childId])) {
+				// there exists already a child id like this
+				if ($childIdIndex == 0) {
+					// it is an id without an index
+					// rename the existing NP to NP1
+					$value = $childSemantics[$cat];
+					unset($childSemantics[$cat]);
+					$childIdIndex++;
+					$childId = $cat . $childIdIndex;
+					$childSemantics[$childId] = $value;
+				}
+				// create the next id
+				$childIdIndex++;
+				$childId = $cat . $childIdIndex;
+			}
+			$childSemantics[$childId] = $childState['semantics'];
+			$i++;
+		}
+
+		return $childSemantics;
 	}
 
 	private function pushState($state, $position)
@@ -479,7 +524,7 @@ class EarleyParser
 	public static function createSemanticStructure($semanticSpecification)
 	{
 		if ($semanticSpecification === null) {
-			return null;
+			return false;
 		} else {
 			$Parser = new SemanticStructureParser();
 			$SemanticStructure = $Parser->parse($semanticSpecification);

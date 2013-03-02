@@ -57,11 +57,13 @@ class DataMapper
 		/** @var DataMapping $Mapping */
 		foreach ($this->map as $Mapping) {
 
+			$prePredications = $Mapping->getPreList()->getPredications();
+
 			/** @var A zero-based indexed array that keeps track of all predications that match each precondition */
-			$matchingPredicationsPerPrecondition = array();
+			$matchingPredicationsPerPrecondition = array_fill(0, count($prePredications), array());
 
 			// go through all preconditions of the mapping
-			foreach ($Mapping->getPreList()->getPredications() as $conditionIndex => $PrePredication) {
+			foreach ($prePredications as $conditionIndex => $PrePredication) {
 
 				// check this precondition with all predications
 				/** @var Predication $PrePredication */

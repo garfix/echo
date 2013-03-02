@@ -2,19 +2,19 @@
 
 namespace agentecho\component;
 
-use \agentecho\component\KnowledgeManager;
+use agentecho\component\KnowledgeManager;
 use agentecho\phrasestructure\Sentence;
-use \agentecho\phrasestructure\Entity;
-use \agentecho\phrasestructure\Adverb;
-use \agentecho\phrasestructure\Date;
-use \agentecho\phrasestructure\SentenceBuilder;
-use \agentecho\datastructure\PredicationList;
+use agentecho\phrasestructure\Entity;
+use agentecho\phrasestructure\Adverb;
+use agentecho\phrasestructure\Date;
+use agentecho\phrasestructure\SentenceBuilder;
+use agentecho\datastructure\PredicationList;
 use agentecho\component\InferenceEngine;
-use agentecho\knowledge\PredicationListKnowledgeSource;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
 use agentecho\component\QuestionExpander;
+use agentecho\exception\ParseException;
 
 /**
  * This class answers question and processes imperatives.
@@ -64,11 +64,10 @@ if ($NEW) {
 
 		} elseif ($sentenceType == 'wh-question') {
 
-			$answer = $this->answerQuestionWithSemantics($Semantics);
-			if (!$answer) {
-				if (!$NEW) {
-					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
-				}
+			if ($NEW) {
+				$answer = $this->answerQuestionWithSemantics($Semantics);
+			} else {
+				$answer = $this->KnowledgeManager->answerQuestion($Sentence);
 			}
 
 			// incorporate the answer in the original question
@@ -157,12 +156,37 @@ if ($NEW) {
 
 	public function answerQuestionWithSemantics(PredicationList $PredicationList)
 	{
+		$bindings = $this->createBindings($PredicationList);
+
+#todo: there should be only 1 result, or all results are identical
+
+		// the variable 'request' in $bindings should hold the answer
+		if ($bindings) {
+
+			$firstBinding = reset($bindings);
+			if (isset($firstBinding['request'])) {
+				$response = $firstBinding['request'];
+			} else {
+				$response = $firstBinding['S_request'];
+			}
+
+		} else {
+
+			$response = null;
+
+		}
+
+		return $response;
+	}
+
+	private function createBindings(PredicationList $PredicationList)
+	{
 		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
 
 		// extract the question predication
 		$predications = $PredicationList->getPredications();
 		if (!$predications) {
-			return null;
+			return array();
 		}
 
 		// replace all request properties with variables
@@ -197,23 +221,7 @@ $a = (string)$ExpandedQuestion;
 			}
 		}
 
-		// the variable 'request' in $bindings should hold the answer
-		if ($bindings) {
-
-			$firstBinding = reset($bindings);
-			if (isset($firstBinding['request'])) {
-				$response = $firstBinding['request'];
-			} else {
-				$response = $firstBinding['S_request'];
-			}
-
-		} else {
-
-			$response = null;
-
-		}
-
-		return $response;
+		return $bindings;
 	}
 
 	/**
@@ -241,16 +249,31 @@ $a = (string)$ExpandedQuestion;
 
 	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
 	{
-		$InferenceEngine = new InferenceEngine();
+		$bindings = $this->createBindings($PredicationList);
 
-		$knowledgeSources = array_merge(array(new PredicationListKnowledgeSource($PredicationList)), $this->KnowledgeManager->getKnowledgeSources());
-
-		// extract the question predication
-		$predications = $PredicationList->getPredications();
-		if (!$predications) {
-			return null;
+		if (count($bindings) > 1) {
+			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
 		}
 
+		return !empty($bindings);
+//
+//		// the variable 'request' in $bindings should hold the answer
+//		if ($bindings) {
+//
+//			$firstBinding = reset($bindings);
+//			if (isset($firstBinding['request'])) {
+//				$response = $firstBinding['request'];
+//			} else {
+//				$response = $firstBinding['S_request'];
+//			}
+//
+//		} else {
+//
+//			$response = null;
+//
+//		}
+//
+//		return $response;
 	}
 
 	private function changeRequestPropertyInVariable(Predication $Predication)

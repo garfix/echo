@@ -78,7 +78,12 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// Drive! / Book that flight / She died
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
+					array('cat' => 'S',
+						'semantics' => '
+							S.sem = VP.sem;
+							S.event = VP.event
+						',
+						'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 
@@ -87,7 +92,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Who Is John? / How many children had Lord Byron?
 				// present tense
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
+					array('cat' => 'S',
+						'semantics' => '
+							S.sem = WhNP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+							S.event = VP.event;
+							S.subject = NP.object;
+							S.object = WhNP.object
+						',
+						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
@@ -96,7 +108,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Where was John born?
 				// NP delivers deepDirectObject
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
+					array('cat' => 'S',
+						'semantics' => '
+							S.sem = WnNP.sem and auxPsv.sem and NP.sem and VP.sem;
+							S.event = VP.event;
+							S.object = NP.object
+						',
+						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
 					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
@@ -110,7 +128,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
+					array('cat' => 'S',
+#todo not used
+						'semantics' => '
+							S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+							S.event = VP.event;
+							S.subject = NP.object
+						',
+						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('deepDirectObject' => '?syntax-1')))),
@@ -119,9 +144,8 @@ abstract class SimpleGrammar extends BaseGrammar
 				// Was the car driven by John?
 				array(
 					array('cat' => 'S',
-2 NP's! => testApplyRuleWithTwoNPs
 						'semantics' => '
-							S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject);
+							S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 							S.event = VP.event;
 							S.subject = NP2.object;
 							S.object = NP1.object
@@ -138,7 +162,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
+					array('cat' => 'S',
+						'semantics' => '
+							S.sem = aux.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
+							S.event = NP2.object;
+							S.subject = NP1.object
+						',
+						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
 					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
@@ -217,13 +247,27 @@ abstract class SimpleGrammar extends BaseGrammar
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'VP',
+						'semantics' => '
+							S.sem = verb.sem and NP.sem and object(S.event, S.object);
+							S.event = VP.event;
+							S.object = NP.object
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 				// John gives Mary flowers
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'VP',
+						'semantics' => '
+							S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
+							S.event = VP.event;
+							S.subject = NP1.object;
+							S.object = NP2.object
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+# is this used? the order is wrong!
 					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax-3', 'deepIndirectObject' => '?syntax-2')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
@@ -232,7 +276,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				// verb is the head constituent (head-1)
 				// NP forms the object of verb
 				array(
-					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+					array('cat' => 'VP',
+#todo not used
+						'semantics' => '
+							VP.sem = verb.sem and PP.sem;
+							VP.event = verb.event
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax')))),
 					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
@@ -241,7 +291,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 #todo: this interpreation is counterintuitive, especially for 'who'
 					// where, when, who
-					array('cat' => 'WhNP', 'features' => array('head' => array('syntax' => array(
+					array('cat' => 'WhNP',
+
+'semantics' => '
+	WhNP.sem = whword.sem
+',
+
+						'features' => array('head' => array('syntax' => array(
 						'preposition' => array(
 							'type' => 'preposition',
 							'category' => '?cat',
@@ -289,7 +345,13 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 				// the car
 				array(
-					array('cat' => 'NP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
+					array('cat' => 'NP',
+#todo not used
+						'semantics' => '
+							NP.sem = DP.sem and NBar.sem;
+							NP.object = NBar.object
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
 					array('cat' => 'DP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('determiner' => '?syntax-2')))),
 				),
@@ -318,7 +380,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 				// car in the lot
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'NBar',
+#todo not used
+						'semantics' => '
+							NBar.sem = NBar.sem and PP.sem;
+							NBar.object = NBar.object;
+							NBar.object = PP.superObject
+						',
+						'features' => array('head-1' => array('syntax-1' => null))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax-2')))),
 					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
@@ -327,7 +396,15 @@ abstract class SimpleGrammar extends BaseGrammar
 			'PP' => array(
 				// in the lot
 				array(
-					array('cat' => 'PP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'preposition')))),
+					array('cat' => 'PP',
+						#todo not used
+						'semantics' => '
+							PP.sem = preposition.sem and NP.sem;
+							PP.superObject = preposition.superObject;
+							PP.subObject = preposition.subObject;
+							PP.subObject = NP.object
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'preposition')))),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
@@ -337,12 +414,22 @@ abstract class SimpleGrammar extends BaseGrammar
 			'DP' => array(
 				// the
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => array('syntax' => array('type' => 'determiner')))),
+					array('cat' => 'DP',
+#todo not used
+					'semantics' => '
+						DP.sem = determiner.sem
+					',
+					'features' => array('head-1' => array('syntax' => array('type' => 'determiner')))),
 					array('cat' => 'determiner', 'features' => array('head-1' => null)),
 				),
 				// Byron's
 				array(
-					array('cat' => 'DP', 'features' => array('head-1' => array('syntax-1' => array('type' => 'determiner')))),
+					array('cat' => 'DP',
+						'semantics' => '
+							DP.sem = NP.sem and possessiveMarker.sem;
+							DP.object = NP.object
+						',
+						'features' => array('head-1' => array('syntax-1' => array('type' => 'determiner')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
 				),

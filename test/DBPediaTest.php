@@ -38,8 +38,6 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	{
 		global $NEW;
 
-$NEW = 0;
-
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Echo->addGrammar($English = new EnglishGrammar());
@@ -51,7 +49,8 @@ $NEW = 0;
 $NEW = 1;
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
-return;
+$NEW = 0;
+#return;
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
 
@@ -109,7 +108,6 @@ return;
 
 $NEW = 1;
 
-//		$this->markTestSkipped();
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = new EnglishGrammar());
 
@@ -120,7 +118,7 @@ $NEW = 1;
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
 
-		$this->assertSame("She was xx years old.", $answer);
+		$this->assertSame("She was 53 years old.", $answer);
 
 	}
 }

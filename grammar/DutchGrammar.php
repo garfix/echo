@@ -30,17 +30,22 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'possessiveMarker',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'possessive'),
+					'semantics' => ''
 				))
 			),
 			'auteur' => array(
 				'form' => 'auteur',
 				'part-of-speech' => 'noun',
-				'features' => array('head' => array('syntax' => array('category' => 'author')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'author'),
+					'semantics' => ''))
 			),
 			'ben' => array(
 				'form' => 'ben',
 				'part-of-speech' => 'verb',
-				'features' => array('person' => 1, 'number' => 'singular')
+				'features' => array('person' => 1, 'number' => 'singular', 'head' => array(
+					'semantics' => ''
+				))
 			),
 			'beïnvloed' => array(
 				'form' => 'beïnvloed',
@@ -49,6 +54,7 @@ class DutchGrammar extends SimpleGrammar
 					'arguments' => 1,
 					'head' => array(
 						'syntax' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
+						'semantics' => ''
 					)
 				)
 			),
@@ -58,47 +64,61 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'agreement' => array('person' => 2, 'number' => 'singular'),
 					'syntax' => array('predicate' => 'book'),
+					'semantics' => ''
 				))
 			),
 			'de' => array(
 				'form' => 'de',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('syntax' => array('category' => 'the')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'the'),
+					'semantics' => ''))
 			),
 			'die' => array(
 				'form' => 'die',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('syntax' => array('category' => 'that')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'that'),
+					'semantics' => ''))
 			),
 			'door_prep' => array(
 				'form' => 'door',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'by'),
+					'semantics' => ''
 				))
 			),
 			'door_psv' => array(
 				'form' => 'door',
 				'part-of-speech' => 'passivisationPreposition',
-				'features' => array('head' => array())
+				'features' => array('head' => array(
+					'semantics' => ''
+				))
 			),
 			'dochter' => array(
 				'form' => 'dochter',
 				'part-of-speech' => 'noun',
 				'features' => array(
 					'head' => array(
-						'syntax' => array('category' => 'daughter')
+						'syntax' => array('category' => 'daughter'),
+						'semantics' => ''
 					)
 				),
 			),
 			'een' => array(
 				'form' => 'een',
 				'part-of-speech' => 'determiner',
-				'features' => array('head' => array('syntax' => array('category' => 'a')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'a'),
+					'semantics' => ''))
 			),
 			'en' => array(
 				'form' => 'en',
 				'part-of-speech' => 'conjunction',
+				'features' => array('head' => array(
+					'semantics' => ''
+				))
 			),
 			'geboren' => array(
 				'form' => 'geboren',
@@ -106,6 +126,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'bear'),
+						'semantics' => ''
 					)
 				),
 			),
@@ -115,6 +136,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
+						'semantics' => ''
 					)
 				)
 			),
@@ -124,12 +146,16 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'have', 'tense' => 'past'),
+						'semantics' => ''
 					)
 				)
 			),
 			'het' => array(
 				'form' => 'het',
 				'part-of-speech' => 'article',
+				'features' => array('head' => array(
+					'semantics' => ''
+				))
 			),
 			'hoeveel' => array(
 				'form' => 'hoeveel',
@@ -139,6 +165,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array(
 							'deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true, 'category' => 'many')),
 						),
+						'semantics' => '',
 						'variables' => array('role' => '?arg')
 					)
 				)
@@ -146,19 +173,24 @@ class DutchGrammar extends SimpleGrammar
 			'ik' => array(
 				'form' => 'ik',
 				'part-of-speech' => 'pronoun',
-				'features' => array('person' => 1, 'number' => 'singular')
+				'features' => array('person' => 1, 'number' => 'singular', 'head' => array(
+					'semantics' => ''
+				))
 			),
 			'in' => array(
 				'form' => 'in',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'in'),
+					'semantics' => ''
 				))
 			),
 			'ja' => array(
 				'form' => 'ja',
 				'part-of-speech' => 'adverb',
-				'features' => array('head' => array('syntax' => array('category' => 'yes')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'yes'),
+					'semantics' => ''))
 			),
 			'januari' => array(
 				'form' => 'januari',
@@ -166,6 +198,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'january', 'monthIndex' => 1),
+						'semantics' => ''
 					),
 				),
 			),
@@ -175,7 +208,8 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
-						'syntax' => array('category' => 'child')
+						'syntax' => array('category' => 'child'),
+						'semantics' => ''
 					)
 				),
 			),
@@ -184,6 +218,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'to'),
+					'semantics' => ''
 				))
 			),
 			'noem' => array(
@@ -192,6 +227,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'name'),
+						'semantics' => ''
 					)
 				)
 			),
@@ -200,6 +236,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'on'),
+					'semantics' => ''
 				))
 			),
 			'van' => array(
@@ -207,6 +244,7 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'of'),
+					'semantics' => ''
 				))
 			),
 			'vlucht' => array(
@@ -214,7 +252,8 @@ class DutchGrammar extends SimpleGrammar
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
 					'agreement' => array('person' => 3, 'number' => 'singular'),
-					'syntax' => array('category' => 'flight')
+					'syntax' => array('category' => 'flight'),
+					'semantics' => ''
 				)),
 			),
 			'was_aux' => array(
@@ -223,6 +262,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be'),
+						'semantics' => ''
 					)
 				),
 			),
@@ -232,6 +272,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
+						'semantics' => ''
 					)
 				),
 			),
@@ -241,6 +282,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
+						'semantics' => ''
 					)
 				),
 			),
@@ -250,18 +292,23 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
+						'semantics' => ''
 					)
 				),
 			),
 			'waar' => array(
 				'form' => 'waar',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('syntax' => array('category' => 'where')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'where'),
+					'semantics' => ''))
 			),
 			'wanneer' => array(
 				'form' => 'wanneer',
 				'part-of-speech' => 'whword',
-				'features' => array('head' => array('syntax' => array('category' => 'when')))
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'when'),
+					'semantics' => ''))
 			),
 		);
 	}

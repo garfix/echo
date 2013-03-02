@@ -32,6 +32,7 @@ class SemanticApplier
 	 */
 	public function apply($Rule, $childNodeSemantics)
 	{
+$a = (string)$Rule;
 		if ($Rule instanceof AssignmentList) {
 
 			// A rule consists of one or more assignments

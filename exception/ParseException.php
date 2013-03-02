@@ -6,6 +6,7 @@ class ParseException extends EchoException
 {
 	const COULD_NOT_PARSE = 'Could not parse the part that starts with "%s"';
 	const NO_SEMANTICS_AT_TOP_LEVEL = 'No semantic rule was defined at sentence level.';
+	const DB_MORE_THAN_ONE_RESULT = 'The database returned more than one result. Please add more semantic constraints.';
 
 	private $lexicalItems = null;
 	private $lastParsedIndex = null;
