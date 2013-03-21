@@ -7,14 +7,14 @@ namespace agentecho\datastructure;
  */
 class GoalClause
 {
-	/** @var Predication $Goal */
+	/** @var PredicationList $Goal */
 	private $Goal;
 
 	/** @var PredicationList $Means */
 	private $Means;
 
 	/**
-	 * @param \agentecho\datastructure\Predication $Goal
+	 * @param \agentecho\datastructure\PredicationList $Goal
 	 */
 	public function setGoal($Goal)
 	{
@@ -22,7 +22,7 @@ class GoalClause
 	}
 
 	/**
-	 * @return \agentecho\datastructure\Predication
+	 * @return \agentecho\datastructure\PredicationList
 	 */
 	public function getGoal()
 	{

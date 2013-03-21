@@ -13,8 +13,10 @@ use agentecho\component\InferenceEngine;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
-use agentecho\component\QuestionExpander;
 use agentecho\exception\ParseException;
+use agentecho\component\Aggregator;
+use agentecho\component\Assigner;
+use agentecho\exception\MissingRequestFieldException;
 
 /**
  * This class answers question and processes imperatives.
@@ -166,8 +168,10 @@ if ($NEW) {
 			$firstBinding = reset($bindings);
 			if (isset($firstBinding['request'])) {
 				$response = $firstBinding['request'];
-			} else {
+			} elseif (isset($firstBinding['S_request'])) {
 				$response = $firstBinding['S_request'];
+			} else {
+				throw new MissingRequestFieldException();
 			}
 
 		} else {
@@ -177,6 +181,17 @@ if ($NEW) {
 		}
 
 		return $response;
+	}
+
+	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
+	{
+		$bindings = $this->createBindings($PredicationList);
+
+		if (count($bindings) > 1) {
+			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
+		}
+
+		return !empty($bindings);
 	}
 
 	private function createBindings(PredicationList $PredicationList)
@@ -194,38 +209,59 @@ if ($NEW) {
 			$this->changeRequestPropertyInVariable($Predication);
 		}
 
-		$QuestionExpander = new QuestionExpander();
+#		$QuestionExpander = new QuestionExpander();
 
 		// first explode the predications into all possible solution paths
 		// this is an array of predicationlists (or predication-arrays)
-		$ruleSources = $this->KnowledgeManager->getRuleSources();
-		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
+		$ruleSources = $this->KnowledgeManager->getElaborators();
+#		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
+
+#todo: multiple
+$ruleSource = reset($ruleSources);
+
+		$DataMapper = $ruleSource;
+		$DataMapper->setAllowUnprocessedPredications();
+		$DataMapper->setIterate();
+
+		$ExpandedQuestion = $DataMapper->mapPredications($PredicationList);
 
 		$bindings = array();
 
-		foreach ($expandedQuestions as $ExpandedQuestion) {
+		$Exception = null;
+
+		#foreach ($expandedQuestions as $ExpandedQuestion) {
 
 			foreach ($knowledgeSources as $KnowledgeSource) {
 $a = (string)$ExpandedQuestion;
-				// execute the query
-				$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
 
-				if ($newBindings) {
+				try {
+					// execute the query
+					$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
 
-					// perform the translations
-					$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
+					if ($newBindings) {
 
-					$bindings = array_merge($bindings, $newBindings);
+						// perform the translations
+						$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
+
+						$bindings = array_merge($bindings, $newBindings);
+					}
+
+				} catch (\Exception $E) {
+					$Exception = $E;
 				}
 
 			}
+		#}
+
+		if (empty($bindings) && !is_null($Exception)) {
+			throw $Exception;
 		}
 
 		return $bindings;
 	}
 
 	/**
-	 * Invokes all `let`-predications in $Predications on $bindings
+	 * Invokes all `let`- and `aggregate`- predications in $Predications on $bindings
 	 *
 	 * @param $newBindings
 	 * @param \agentecho\datastructure\PredicationList $Predications
@@ -234,46 +270,25 @@ $a = (string)$ExpandedQuestion;
 	 */
 	private function performTranslations($bindings, PredicationList $Predications)
 	{
-		$FunctionInvoker = new FunctionInvoker();
+		$Assigner = new Assigner();
+		$Aggregator = new Aggregator();
 
 		foreach ($bindings as &$binding) {
 			foreach ($Predications->getPredications() as $Predication) {
 				if ($Predication->getPredicate() == 'let') {
-					$binding = $FunctionInvoker->applyLet($Predication, $binding);
+					$binding = $Assigner->applyLet($Predication, $binding);
 				}
 			}
 		}
 
-		return $bindings;
-	}
+		foreach ($Predications->getPredications() as $Predication) {
+			if ($Predication->getPredicate() == 'aggregate') {
 
-	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
-	{
-		$bindings = $this->createBindings($PredicationList);
-
-		if (count($bindings) > 1) {
-			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
+				$bindings = array($Aggregator->applyAggregate($Predication, $bindings));
+			}
 		}
 
-		return !empty($bindings);
-//
-//		// the variable 'request' in $bindings should hold the answer
-//		if ($bindings) {
-//
-//			$firstBinding = reset($bindings);
-//			if (isset($firstBinding['request'])) {
-//				$response = $firstBinding['request'];
-//			} else {
-//				$response = $firstBinding['S_request'];
-//			}
-//
-//		} else {
-//
-//			$response = null;
-//
-//		}
-//
-//		return $response;
+		return $bindings;
 	}
 
 	private function changeRequestPropertyInVariable(Predication $Predication)

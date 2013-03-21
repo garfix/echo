@@ -141,8 +141,8 @@ abstract class BaseGrammar implements Grammar
 
 	public function getSemanticsForWord($word, $partOfSpeech)
 	{
-		if (isset($this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'])) {
-			return $this->wordIndex[$word][$partOfSpeech]['features']['head']['semantics'];
+		if (isset($this->wordIndex[$word][$partOfSpeech]['semantics'])) {
+			return $this->wordIndex[$word][$partOfSpeech]['semantics'];
 		} elseif ($partOfSpeech == 'propernoun') {
 			// presume proper noun
 			return 'name(this.object, "' . $word . '")';

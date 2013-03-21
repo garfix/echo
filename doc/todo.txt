@@ -22,5 +22,5 @@ Volgende zinnen:
 
 Nu:
 
-* Maak van de output "53 years"
 * Schrijf alle DBPedia queries om naar de nieuwe klasse
+* Maak van de output "53 years"

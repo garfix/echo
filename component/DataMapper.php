@@ -8,6 +8,8 @@ use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
 use agentecho\component\Utils;
+use agentecho\datastructure\FunctionApplication;
+use agentecho\exception\DataMappingFailedException;
 
 /**
  * This class maps logical predications to database relations, based on a declarative representation found in a map-file.
@@ -17,6 +19,10 @@ use agentecho\component\Utils;
 class DataMapper
 {
 	private $map = array();
+
+	private $allowUnprocessedPredications = false;
+
+	private $iterate = false;
 
 	public function __construct($mapFile)
 	{
@@ -33,6 +39,16 @@ class DataMapper
 		}
 	}
 
+	public function setAllowUnprocessedPredications($allow = true)
+	{
+		$this->allowUnprocessedPredications = $allow;
+	}
+
+	public function setIterate($iterate = true)
+	{
+		$this->iterate = $iterate;
+	}
+
 	/**
 	 * Maps all predications in $Predications to their relation counterparts (also predications) in $mapFile.
 	 * One or more predications may be mapped to zero or more relations.
@@ -44,6 +60,31 @@ class DataMapper
 	 * @return PredicationList|false
 	 */
 	public function mapPredications(PredicationList $Predications)
+	{
+		$newPredications = $this->performMapping($Predications);
+
+		if ($this->iterate) {
+
+			// iterate until stable
+
+			$same = false;
+
+			while (!$same) {
+
+				$iteratedPredications = $this->performMapping($newPredications);
+
+				$same = ($iteratedPredications == $newPredications);
+
+				$newPredications = $iteratedPredications;
+
+			}
+
+		}
+
+		return $newPredications;
+	}
+
+	private function performMapping(PredicationList $Predications)
 	{
 		/** @var $newPredications Store the newly created predications */
 		$newPredications = array();
@@ -64,6 +105,7 @@ class DataMapper
 
 			// go through all preconditions of the mapping
 			foreach ($prePredications as $conditionIndex => $PrePredication) {
+
 
 				// check this precondition with all predications
 				/** @var Predication $PrePredication */
@@ -110,23 +152,11 @@ class DataMapper
 
 					// rename the variables in the new predication
 					foreach ($NewPredication->getArguments() as $Argument) {
-						if ($Argument instanceof Variable) {
-							$varName = $Argument->getName();
 
-							// does the variable occur in the map?
-							if (isset($argumentMap[$varName])) {
-								// yes, use it
-								$newName = $argumentMap[$varName]->getName();
-							} else {
-								// no, create a new variable
-								$newName = PredicationUtils::createUnusedVariableName($usedVariables);
-								// make sure this variable will not be used again in this predicationlist
-								$usedVariables[$newName] = $newName;
-								// use this same variable when used in this mapping rule
-								$argumentMap[$varName] = new Variable($newName);
-							}
-							$Argument->setName($newName);
-						}
+						$this->replaceVariables($Argument, $argumentMap, $usedVariables);
+
+
+
 					}
 
 					$newPredications[] = $NewPredication;
@@ -134,16 +164,60 @@ class DataMapper
 			}
 		}
 
-		// check if all predications are used
-		if (count($usedPredications) != count($Predications->getPredications())) {
-			return false;
+		// which predications were not involved in the mapping?
+		$missingPredications = array_diff_key($Predications->getPredications(), $usedPredications);
+
+		if ($this->allowUnprocessedPredications) {
+
+			// add the unused predications to the new ones
+
+			$newPredications = array_merge($missingPredications, $newPredications);
+
+		} else {
+
+			// check if all predications are used
+
+			if (count($usedPredications) != count($Predications->getPredications())) {
+
+				throw new DataMappingFailedException(implode(', ', $missingPredications));
+			}
+
 		}
+
+		$uniquePredications = array_unique($newPredications);
 
 		$NewPredicationList = new PredicationList();
 #todo: many true() results are combined into one; is this a problem? can it happen to other relations?
-		$newPredications2 = array_unique($newPredications);
-		$NewPredicationList->setPredications($newPredications2);
+		$NewPredicationList->setPredications($uniquePredications);
 		return $NewPredicationList;
+	}
+
+	private function replaceVariables($Term, array &$argumentMap, array &$usedVariables)
+	{
+		if ($Term instanceof Variable) {
+			$varName = $Term->getName();
+
+			// does the variable occur in the map?
+			if (isset($argumentMap[$varName])) {
+				// yes, use it
+				$newName = $argumentMap[$varName]->getName();
+			} else {
+				// no, create a new variable
+				$newName = PredicationUtils::createUnusedVariableName($usedVariables);
+				// make sure this variable will not be used again in this predicationlist
+				$usedVariables[$newName] = $newName;
+				// use this same variable when used in this mapping rule
+				$argumentMap[$varName] = new Variable($newName);
+			}
+			$Term->setName($newName);
+
+		} elseif ($Term instanceof FunctionApplication) {
+
+			foreach ($Term->getArguments() as $Argument) {
+				$this->replaceVariables($Argument, $argumentMap, $usedVariables);
+			}
+
+		}
 	}
 
 	private function merge($oldValues, $newValues)

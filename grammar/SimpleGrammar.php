@@ -97,7 +97,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.sem = WhNP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 							S.event = VP.event;
 							S.subject = NP.object;
-							S.object = WhNP.object
+							S.object = WhNP.object;
+							S.request = WhNP.request
 						',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
@@ -110,9 +111,11 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = WnNP.sem and auxPsv.sem and NP.sem and VP.sem;
+							S.sem = WhNP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object);
+							S.event = WhNP.event;
 							S.event = VP.event;
-							S.object = NP.object
+							S.object = NP.object;
+							S.request = WhNP.request
 						',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
 					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),

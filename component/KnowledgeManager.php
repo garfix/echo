@@ -2,9 +2,9 @@
 
 namespace agentecho\component;
 
-use \agentecho\knowledge\KnowledgeSource;
-use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\PredicationList;
+use agentecho\knowledge\KnowledgeSource;
+use agentecho\phrasestructure\Sentence;
+use agentecho\component\DataMapper;
 use agentecho\knowledge\RuleSource;
 
 /**
@@ -16,6 +16,8 @@ class KnowledgeManager implements ProperNounIdentifier
 	private $knowledgeSources = array();
 
 	private $ruleSources = array();
+
+	private $elaborators = array();
 
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
@@ -35,6 +37,16 @@ class KnowledgeManager implements ProperNounIdentifier
 	public function getRuleSources()
 	{
 		return $this->ruleSources;
+	}
+
+	public function addElaborator(DataMapper $Elaborator)
+	{
+		$this->elaborators[] = $Elaborator;
+	}
+
+	public function getElaborators()
+	{
+		return $this->elaborators;
 	}
 
     public function checkQuestion(Sentence $Sentence)

@@ -5,6 +5,7 @@ namespace agentecho\test;
 require_once __DIR__ . '/../component/Autoload.php';
 
 use \agentecho\AgentEcho;
+use agentecho\component\DataMapper;
 use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
@@ -40,6 +41,8 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+//$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
+		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.echo'));
 		$Echo->addGrammar($English = new EnglishGrammar());
 		$Echo->addGrammar($Dutch = new DutchGrammar());
 
@@ -47,29 +50,32 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		// S => aux NP VP ; DBPedia
 $NEW = 1;
-		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
-		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
-$NEW = 0;
-#return;
-		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
-		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
+//		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
+//		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
+//		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
+//		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
+//
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("How many children did Lord Byron have?");
+//		$this->assertSame('Lord Byron had 2 children.', $answer);
+//		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
+//		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
 
 		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("How many children did Lord Byron have?");
-		$this->assertSame('Lord Byron had 2 children.', $answer);
-		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
-		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
+//		$answer = $Conversation->answer("Where was Lord Byron born?");
+//		$this->assertSame('Lord Byron was born in London.', $answer);
+//		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
+//		$this->assertSame('Lord Byron werd geboren in London.', $answer);
 
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("Where was Lord Byron born?");
-		$this->assertSame('Lord Byron was born in London.', $answer);
-		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-		$this->assertSame('Lord Byron werd geboren in London.', $answer);
+$Conversation->setCurrentGrammar($English);
+$Conversation->setCurrentGrammar($Dutch);
+
+$NEW = 1;
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("When was Lord Byron born?");
 		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
-
+$NEW = 0;
 		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
 		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
 
@@ -112,7 +118,8 @@ $NEW = 1;
 		$Echo->addGrammar($English = new EnglishGrammar());
 
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
-		$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
+		//$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
+		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.echo'));
 
 		$Conversation = $Echo->startConversation();
 

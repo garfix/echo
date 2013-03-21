@@ -13,6 +13,7 @@ use agentecho\datastructure\PredicationList;
 use agentecho\component\DataMapper;
 use agentecho\datastructure\SparqlQuery;
 use agentecho\datastructure\Predication;
+use agentecho\exception\DataMappingFailedException;
 
 /**
  * An adapter for DBPedia.
@@ -455,7 +456,8 @@ class DBPedia extends KnowledgeSource
 		// turn the expanded question into a set of database relations
 		$Relations = $this->getDataMapper()->mapPredications($Question);
 
-		if ($Relations !== false) {
+
+//		if ($Relations !== false) {
 
 			// convert the database relations into a query
 			$Query = $this->createDatabaseQuery($Relations);
@@ -464,11 +466,11 @@ $sparql = (string)$Query;
 
 			$resultSets = $this->processQuery($Query);
 
-		} else {
-
-			$resultSets = array();
-
-		}
+//		} else {
+//
+//			throw new DataMappingFailedException();
+//
+//		}
 
 		return $resultSets;
 	}
@@ -500,10 +502,24 @@ $sparql = (string)$Query;
 		switch ($predicate) {
 			case 'true';
 				break;
-			case 'born':
+			case 'born_at':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
 				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object}");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			case 'born_in':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				// link to the place id
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthPlace> _:placeId");
+				// link place id to place name
+				$Query->where("_:placeId rdfs:label ?{$object}");
+				// place name should be in english
+				$Query->where("FILTER(lang(?{$object}) = 'en')");
+				// place should be city
+				$Query->where("_:place dbpedia-owl:city _:placeId");
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
@@ -535,6 +551,13 @@ $sparql = (string)$Query;
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
 				$Query->where("?{$object} <http://dbpedia.org/ontology/influencedBy> ?{$subject}");
+				break;
+			case 'child':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/child> ?{$object}");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
 				break;
 			default:
 				$i = 0;

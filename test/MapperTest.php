@@ -30,7 +30,13 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and yellow(?b, ?c) and blue(?c, ?d)', 'oak(?b, ?a) and oak(?d, ?c) and pine(?b, ?s1) and larch(?s1, ?c)');
 
 		// some predicate could not be matched
-		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and pink(?b, ?c)', false);
+		$exception = false;
+		try {
+			$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and pink(?b, ?c)', false);
+		} catch (\agentecho\exception\DataMappingFailedException $E) {
+			$exception = true;
+		}
+		$this->assertTrue($exception);
 	}
 
 	private function performMapper(SemanticStructureParser $Parser, DataMapper $Mapper, $in, $out)

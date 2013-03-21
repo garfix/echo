@@ -11,25 +11,6 @@ use agentecho\datastructure\Variable;
  */
 class FunctionInvoker
 {
-	/**
-	 * In a let(?a, ?b), place the result of ?b in ?a.
-	 *
-	 * @param Predication $LetPredication
-	 * @param array $arguments
-	 */
-	public function applyLet(Predication $LetPredication, array $arguments)
-	{
-		$Variable = $LetPredication->getFirstArgument();
-		$varName = $Variable->getName();
-		$Value = $LetPredication->getSecondArgument();
-
-		if ($Value instanceof FunctionApplication) {
-			$arguments[$varName] = $this->applyFunctionApplication($Value, $arguments);
-		}
-
-		return $arguments;
-	}
-
 	public function applyFunctionApplication(FunctionApplication $FunctionApplication, $arguments)
 	{
 		$Function = $this->getFunction($FunctionApplication->getName());

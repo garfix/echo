@@ -140,15 +140,15 @@ class SemanticStructureParser
 	 */
 	private function parseGoalClause(array $tokens, $pos, &$GoalClause)
 	{
-		if ($pos = $this->parsePredication($tokens, $pos, $Predication)) {
+		if ($pos = $this->parsePredicationList($tokens, $pos, $GoalList)) {
 
 			if ($pos = $this->parseSingleToken(self::T_IMPLICATION, $tokens, $pos)) {
 
-				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList)) {
+				if ($pos = $this->parsePredicationList($tokens, $pos, $MeansList)) {
 
 					$GoalClause = new GoalClause();
-					$GoalClause->setGoal($Predication);
-					$GoalClause->setMeans($PredicationList);
+					$GoalClause->setGoal($GoalList);
+					$GoalClause->setMeans($MeansList);
 					return $pos;
 				}
 			}
@@ -563,15 +563,15 @@ class SemanticStructureParser
 	{
 		if ($newPos = $this->parseProperty($tokens, $pos, $argument)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $argument)) {
+//		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $argument)) {
+//			$pos = $newPos;
+		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseConstant($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseVariable($tokens, $pos, $argument)) {
-			$pos = $newPos;
-		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;

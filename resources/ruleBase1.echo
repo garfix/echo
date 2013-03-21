@@ -1,3 +1,4 @@
-manner(?e, ?q) :- isa(?e, Old) and subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b)))
-time(?e, ?t) :- at_time(?e, ?f) and time1(?f, ?t)
-time1(?e, ?t) :- isa(?e, Die) and subject(?e, ?s) and die(?s, ?t)
+manner(?e, ?q) and isa(?e, Old) => subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b)))
+time(?e, ?t) => at_time(?e, ?f) and time1(?f, ?t)
+time1(?e, ?t) => isa(?e, Die) and subject(?e, ?s) and die(?s, ?t)
+manner(?o, ?q) and many(?o) => aggregate(?q, count(?o))

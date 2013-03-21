@@ -5,12 +5,13 @@ namespace agentecho;
 // start autoloading based on namespaces
 require_once __DIR__ . '/component/Autoload.php';
 
-use \agentecho\component\KnowledgeManager;
-use \agentecho\component\Conversation;
-use \agentecho\component\Parser;
-use \agentecho\knowledge\KnowledgeSource;
+use agentecho\component\KnowledgeManager;
+use agentecho\component\Conversation;
+use agentecho\component\Parser;
+use agentecho\knowledge\KnowledgeSource;
 use agentecho\knowledge\RuleSource;
-use \agentecho\grammar\Grammar;
+use agentecho\grammar\Grammar;
+use agentecho\component\DataMapper;
 
 /**
  * Echo is a conversational agent.
@@ -59,6 +60,11 @@ class AgentEcho
 	public function addRuleSource(RuleSource $RuleSource)
 	{
 		$this->KnowledgeManager->addRuleSource($RuleSource);
+	}
+
+	public function addElaborator(DataMapper $Elaborator)
+	{
+		$this->KnowledgeManager->addElaborator($Elaborator);
 	}
 
 	public function addGrammar(Grammar $Grammar)

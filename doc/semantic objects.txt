@@ -2,7 +2,7 @@ S:
 - event
 - subject
 - object
-- request
+- request (bij wh-questions)
 
 NP:
 - object

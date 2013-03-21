@@ -108,15 +108,15 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testParsePredicationWithPredicationList()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = 'question(?q, first(?q, ?e) and second(?e, "answer"))';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
+//	public function testParsePredicationWithPredicationList()
+//	{
+//		$Parser = new SemanticStructureParser();
+//
+//		$string = 'question(?q, first(?q, ?e) and second(?e, "answer"))';
+//		$Structure = $Parser->parse($string);
+//		$serialized = $Parser->serialize($Structure);
+//		$this->assertEquals($string, $serialized);
+//	}
 
 	public function testParseLambdaExpressionWithOneVariable()
 	{
@@ -183,6 +183,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Parser = new SemanticStructureParser();
 
 		$string = 'grandfather(?x, ?z) :- father(?x, ?y) and father(?y, ?z)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testMultiplePredicationGoal()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'wet(?x) and cold(?x) :- rains(?x)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

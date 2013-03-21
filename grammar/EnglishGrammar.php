@@ -42,30 +42,33 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'possessive'),
-						'semantics' => ''
 					),
-				)
+				),
+				'semantics' => ''
 			),
 			'a' => array(
 				'form' => 'a',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
-					'syntax' => array('category' => 'a'),
-					'semantics' => ''))
+					'syntax' => array('category' => 'a')
+				)),
+				'semantics' => ''
 			),
 			'an' => array(
 				'form' => 'an',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'a'),
-					'semantics' => ''))
+					)
+				),
+				'semantics' => ''
 			),
 			'and' => array(
 				'form' => 'and',
 				'part-of-speech' => 'conjunction',
 				'features' => array('head' => array(
-					'semantics' => ''
-				))
+				)),
+				'semantics' => ''
 			),
 			'am' => array(
 				'form' => 'am',
@@ -74,9 +77,9 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 1, 'number' => 'singular'),
 						'syntax' => array('predicate' => 'be', 'tense' => 'present'),
-						'semantics' => ''
 					),
-				)
+				),
+				'semantics' => ''
 			),
 			'are' => array(
 				'form' => 'are',
@@ -84,17 +87,18 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'agreement' => array('person' => 1, 'number' => 'plural'),
-						'semantics' => ''
 					),
-					'arguments' => 1)
+					'arguments' => 1
+				),
+				'semantics' => ''
 			),
 			'author' => array(
 				'form' => 'author',
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'author'),
-					'semantics' => 'isa(this.object, Author)',
-				))
+				)),
+				'semantics' => 'isa(this.object, Author)'
 			),
 			'book_v' => array(
 				'form' => 'book',
@@ -104,16 +108,17 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 2, 'number' => 'singular'),
 						'syntax' => array('predicate' => 'book'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'book_n' => array(
 				'form' => 'book',
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'book'),
-					'semantics' => '')),
+				)),
+				'semantics' => ''
 			),
 			'born' => array(
 				'form' => 'born',
@@ -121,26 +126,27 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'bear'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => 'isa(this.event, Bear)'
 			),
 			'by_prp' => array(
 				'form' => 'by',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'by'),
-					'semantics' => '',
-				))
+				)),
+				'semantics' => '',
 			),
 			'by_psv' => array(
 				'form' => 'by',
 				'part-of-speech' => 'passivisationPreposition',
 				'features' => array(
 					'head' => array(
-						'semantics' => '',
+
 					)
-				)
+				),
+				'semantics' => '',
 			),
 			'children' => array(
 				'form' => 'children',
@@ -149,9 +155,9 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
 						'syntax' => array('category' => 'child'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => 'isa(this.object, Child)'
 			),
 			'daughter' => array(
 				'form' => 'daughter',
@@ -159,9 +165,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'daughter'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'did_aux' => array(
 				'form' => 'did',
@@ -169,9 +175,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('tense' => 'past'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'did_auxDo' => array(
 				'form' => 'did',
@@ -179,9 +185,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('tense' => 'past'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'die_smp' => array(
 				'form' => 'die',
@@ -190,9 +196,9 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 0,
 					'head' => array(
 						'syntax' => array('predicate' => 'die', 'tense' => 'present', 'form' => 'simple'),
-						'semantics' => ''
 					)
-				)
+				),
+				'semantics' => ''
 			),
 			'die_inf' => array(
 				'form' => 'die',
@@ -201,9 +207,9 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 0,
 					'head' => array(
 						'syntax' => array('predicate' => 'die', 'verb_form' => 'infinitive'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'died' => array(
 				'form' => 'died',
@@ -212,10 +218,11 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 0,
 					'head' => array(
 						'syntax' => array('predicate' => 'die', 'tense' => 'past'),
-						'semantics' => 'isa(this.event, Die)'
+
 // and tense(this.event, Past)
 					)
 				),
+				'semantics' => 'isa(this.event, Die)'
 			),
 			'flight' => array(
 				'form' => 'flight',
@@ -224,9 +231,9 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
 						'syntax' => array('category' => 'flight'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'flowers' => array(
 				'form' => 'flowers',
@@ -235,9 +242,9 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'plural'),
 						'syntax' => array('category' => 'flower'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'gives' => array(
 				'form' => 'gives',
@@ -245,9 +252,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'give', 'tense' => 'present'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'had' => array(
 				'form' => 'had',
@@ -255,9 +262,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'have', 'tense' => 'past'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'have' => array(
 				'form' => 'have',
@@ -265,9 +272,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'have'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => 'isa(this.event, Have)'
 			),
 			'how_1' => array(
 				'form' => 'how',
@@ -275,7 +282,10 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('manner' => array('question' => 'object')),
-						'semantics' => ''))
+
+					)
+				),
+				'semantics' => ''
 			),
 			'how_2' => array(
 				'form' => 'how',
@@ -284,9 +294,9 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'syntax' => array('deepDirectObject{?arg}' => array('determiner' => array('type' => 'determiner', 'question' => true))),
 						'variables' => array('role' => '?arg'),
-						'semantics' => 'manner(this.object, this.request)'
 					)
 				),
+				'semantics' => 'manner(this.object, this.request)'
 			),
 			'i' => array(
 				'form' => 'i',
@@ -295,18 +305,18 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 1, 'number' => 'singular'),
 						'syntax' => array('category' => 'firstPerson'),
-						'semantics' => ''
 					),
 					'capitalize' => true
 				),
+				'semantics' => ''
 			),
 			'in' => array(
 				'form' => 'in',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'in'),
-					'semantics' => ''
-				))
+				)),
+				'semantics' => ''
 			),
 			'influenced' => array(
 				'form' => 'influenced',
@@ -315,9 +325,9 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 1,
 					'head' => array(
 						'syntax' => array('predicate' => 'influence', 'tense' => 'past', 'form' => 'participle'),
-						'semantics' => 'isa(this.event, Influence) and tense(this.event, Past)'
 					)
 				),
+				'semantics' => 'isa(this.event, Influence) and tense(this.event, Past)'
 			),
 			'january' => array(
 				'form' => 'january',
@@ -325,17 +335,19 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'january', 'monthIndex' => 1),
-						'semantics' => ''
 					),
 					'capitalize' => true
-				)
+				),
+				'semantics' => ''
 			),
 			'many' => array(
 				'form' => 'many',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'many'),
-					'semantics' => ''))
+
+				)),
+				'semantics' => 'many(this.object)'
 			),
 			'married' => array(
 				'form' => 'married',
@@ -343,9 +355,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
-						'semantics' => ''
 					)
-				)
+				),
+				'semantics' => ''
 			),
 			'name' => array(
 				'form' => 'name',
@@ -353,17 +365,17 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'name'),
-						'semantics' => ''
 					)
-				)
+				),
+				'semantics' => ''
 			),
 			'of' => array(
 				'form' => 'of',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'of'),
-					'semantics' => 'belong_to(this.superObject, this.subObject)'
-				))
+				)),
+				'semantics' => 'belong_to(this.superObject, this.subObject)'
 			),
 			'old' => array(
 				'form' => 'old',
@@ -371,17 +383,17 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('category' => 'old'),
-						'semantics' => 'isa(this.object, Old)'
 					)
 				),
+				'semantics' => 'isa(this.object, Old)'
 			),
 			'on' => array(
 				'form' => 'on',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'on'),
-					'semantics' => ''
-				))
+				)),
+				'semantics' => ''
 			),
 			'sees' => array(
 				'form' => 'sees',
@@ -390,9 +402,9 @@ class EnglishGrammar extends SimpleGrammar
 					'arguments' => 1,
 					'head' => array(
 						'syntax' => array('predicate' => 'see', 'tense' => 'present'),
-						'semantics' => ''
 					)
 				),
+				'semantics' => ''
 			),
 			'she' => array(
 				'form' => 'she',
@@ -401,32 +413,33 @@ class EnglishGrammar extends SimpleGrammar
 					'head' => array(
 						'agreement' => array('person' => 3, 'number' => 'singular'),
 						'syntax' => array('category' => 'subject'), // thirdPerson?
-						'semantics' => 'isa(this.object, Female) and reference(this.object)'
 					)
-				)
+				),
+				'semantics' => 'isa(this.object, Female) and reference(this.object)'
 			),
 			'the' => array(
 				'form' => 'the',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'the'),
-					'semantics' => '',
-				))
+				)),
+				'semantics' => '',
 			),
 			'that' => array(
 				'form' => 'that',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'that'),
-					'semantics' => ''))
+				)),
+				'semantics' => ''
 			),
 			'to' => array(
 				'form' => 'to',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'to'),
-					'semantics' => ''
-				))
+				)),
+				'semantics' => ''
 			),
 			'was_aux' => array(
 				'form' => 'was',
@@ -434,9 +447,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
-						'semantics' => 'tense(this.event, Past)'
 					)
 				),
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'was_be' => array(
 				'form' => 'was',
@@ -444,9 +457,9 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
-						'semantics' => 'tense(this.event, Past)'
 					)
 				),
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'was_psv' => array(
 				'form' => 'was',
@@ -454,31 +467,33 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array(
 					'head' => array(
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
-						'semantics' => 'tense(this.event, Past)'
 					)
 				),
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'when' => array(
 				'form' => 'when',
 				'part-of-speech' => 'whword',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
-					'semantics' => 'at_time(this.superEvent, this.subEvent)'
-				))
+				)),
+				'semantics' => 'at_time(this.superEvent, this.subEvent)'
 			),
 			'where' => array(
 				'form' => 'where',
 				'part-of-speech' => 'whword',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'where'),
-					'semantics' => ''))
+				)),
+				'semantics' => 'location(this.event, this.request)'
 			),
 			'who' => array(
 				'form' => 'who',
 				'part-of-speech' => 'whword',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'identity'),
-					'semantics' => ''))
+				)),
+				'semantics' => ''
 			),
 			'yes' => array(
 				'form' => 'yes',
@@ -535,10 +550,11 @@ class EnglishGrammar extends SimpleGrammar
 			array(
 				array('cat' => 'S',
 					'semantics' => '
-						S.sem = WnNP.sem and auxDo.sem and NP.sem and VP.sem;
+						S.sem = WhNP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 						S.event = VP.event;
 						S.subject = NP.object;
-						S.object = WhNP.object
+						S.object = WhNP.object;
+						S.request = WhNP.request
 					',
 					'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
 				array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),

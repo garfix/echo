@@ -116,6 +116,10 @@ class Predication extends Term
 			if ($Argument instanceof Variable) {
 				$varName = $Argument->getName();
 				$match[$varName] = $hisArguments[$index];
+			} elseif ($Argument instanceof Constant || $Argument instanceof Atom) {
+				if ($Argument != $hisArguments[$index]) {
+					return false;
+				}
 			}
 		}
 
