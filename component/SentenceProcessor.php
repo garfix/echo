@@ -209,12 +209,9 @@ if ($NEW) {
 			$this->changeRequestPropertyInVariable($Predication);
 		}
 
-#		$QuestionExpander = new QuestionExpander();
-
 		// first explode the predications into all possible solution paths
 		// this is an array of predicationlists (or predication-arrays)
 		$ruleSources = $this->KnowledgeManager->getElaborators();
-#		$expandedQuestions = $QuestionExpander->findExpandedQuestions($PredicationList, $ruleSources);
 
 #todo: multiple
 $ruleSource = reset($ruleSources);

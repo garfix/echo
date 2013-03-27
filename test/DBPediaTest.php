@@ -50,22 +50,24 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		// S => aux NP VP ; DBPedia
 $NEW = 1;
-//		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
-//		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
-//		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
-//		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
-//
-//		// S => WhNP aux NP VP
-//		$answer = $Conversation->answer("How many children did Lord Byron have?");
-//		$this->assertSame('Lord Byron had 2 children.', $answer);
-//		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
-//		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
+		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
+		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
+		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
+		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
 
 		// S => WhNP aux NP VP
-//		$answer = $Conversation->answer("Where was Lord Byron born?");
-//		$this->assertSame('Lord Byron was born in London.', $answer);
-//		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-//		$this->assertSame('Lord Byron werd geboren in London.', $answer);
+		$answer = $Conversation->answer("How many children did Lord Byron have?");
+		$this->assertSame('Lord Byron had 2 children.', $answer);
+
+		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
+		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
+
+//$Conversation->setCurrentGrammar($English);
+		// S => WhNP aux NP VP
+		$answer = $Conversation->answer("Where was Lord Byron born?");
+		$this->assertSame('Lord Byron was born in London.', $answer);
+		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
+		$this->assertSame('Lord Byron werd geboren in London.', $answer);
 
 $Conversation->setCurrentGrammar($English);
 $Conversation->setCurrentGrammar($Dutch);

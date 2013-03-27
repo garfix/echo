@@ -7,13 +7,13 @@ S:
 NP:
 - object
 
-whword
-- subEvent
-- SuperEvent
+wh-adverb
+- superEvent
+- adjunct
 
 SBar:
-- subEvent
 - superEvent
+- subEvent
 
 preposition:
 - subObject

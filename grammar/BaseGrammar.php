@@ -71,7 +71,8 @@ abstract class BaseGrammar implements Grammar
 			'numeral',
 			'verb',
 			'propernoun',
-			'whword', // WH-word that may not be followed by an NP (e.g. who)
+#			'whword', // WH-word that may not be followed by an NP (e.g. who)
+			'whAdverb', // adverb with a wh-word function: when, where, how ( http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html )
 			'whwordNP', // WH-word that may be followed by an NP (e.g. which, what)
 			'aux',
 			'auxBe', // am, are, is, ...

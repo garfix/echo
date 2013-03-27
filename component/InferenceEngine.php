@@ -204,7 +204,7 @@ class InferenceEngine
 	{
 #echo $GoalClause."\n";
 
-		$Goal = $GoalClause->getGoal();
+		$Goal = $GoalClause->getGoal()->getPredication(0);
 		$Means = $GoalClause->getMeans();
 
 		// map the variable bindings from the predication to the goal clause

@@ -40,7 +40,7 @@ class RuleBase implements RuleSource
 		$index = array();
 
 		foreach ($this->rules as $GoalClause) {
-			$Goal = $GoalClause->getGoal();
+			$Goal = $GoalClause->getGoal()->getPredication(0);
 			$predicate = $Goal->getPredicate();
 			$argumentCount = count($Goal->getArguments());
 			$index[$predicate][$argumentCount][] = $GoalClause;

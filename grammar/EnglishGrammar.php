@@ -278,7 +278,8 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'how_1' => array(
 				'form' => 'how',
-				'part-of-speech' => 'whword',
+#				'part-of-speech' => 'whword',
+				'part-of-speech' => 'whAdverb',
 				'features' => array(
 					'head' => array(
 						'syntax' => array('manner' => array('question' => 'object')),
@@ -296,7 +297,8 @@ class EnglishGrammar extends SimpleGrammar
 						'variables' => array('role' => '?arg'),
 					)
 				),
-				'semantics' => 'manner(this.object, this.request)'
+#				'semantics' => 'manner(this.object, this.request)'
+				'semantics' => 'manner(this.object, this.adjunct)'
 			),
 			'i' => array(
 				'form' => 'i',
@@ -473,23 +475,29 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'when' => array(
 				'form' => 'when',
-				'part-of-speech' => 'whword',
+#				'part-of-speech' => 'whword',
+				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
 				)),
-				'semantics' => 'at_time(this.superEvent, this.subEvent)'
+#				'semantics' => 'at_time(this.superEvent, this.subEvent)'
+				'semantics' => 'at_time(this.event, this.adjunct)'
 			),
 			'where' => array(
 				'form' => 'where',
-				'part-of-speech' => 'whword',
+#				'part-of-speech' => 'whword',
+				// http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html
+				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'where'),
 				)),
-				'semantics' => 'location(this.event, this.request)'
+#				'semantics' => 'location(this.event, this.request)'
+				'semantics' => 'location(this.event, this.adjunct)'
 			),
 			'who' => array(
 				'form' => 'who',
-				'part-of-speech' => 'whword',
+#				'part-of-speech' => 'whword',
+				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'identity'),
 				)),
@@ -550,14 +558,14 @@ class EnglishGrammar extends SimpleGrammar
 			array(
 				array('cat' => 'S',
 					'semantics' => '
-						S.sem = WhNP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+						S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 						S.event = VP.event;
 						S.subject = NP.object;
-						S.object = WhNP.object;
-						S.request = WhNP.request
+						S.object = WhADVP.object;
+						S.request = WhADVP.request
 					',
 					'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
-				array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
+				array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
 				array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
 				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),

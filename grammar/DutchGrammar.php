@@ -173,7 +173,7 @@ class DutchGrammar extends SimpleGrammar
 						'variables' => array('role' => '?arg')
 					)
 				),
-				'semantics' => 'manner(this.object, this.request) and many(this.object)'
+				'semantics' => 'manner(this.object, this.adjunct) and many(this.object)'
 			),
 			'ik' => array(
 				'form' => 'ik',
@@ -304,15 +304,15 @@ class DutchGrammar extends SimpleGrammar
 			),
 			'waar' => array(
 				'form' => 'waar',
-				'part-of-speech' => 'whword',
+				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'where'),
 				)),
-				'semantics' => 'location(this.event, this.request)'
+				'semantics' => 'location(this.event, this.adjunct)'
 			),
 			'wanneer' => array(
 				'form' => 'wanneer',
-				'part-of-speech' => 'whword',
+				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
 				)),

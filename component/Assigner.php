@@ -3,6 +3,8 @@
 namespace agentecho\component;
 
 use agentecho\component\FunctionInvoker;
+use agentecho\datastructure\FunctionApplication;
+use agentecho\datastructure\Predication;
 
 /**
  * @author Patrick van Bergen

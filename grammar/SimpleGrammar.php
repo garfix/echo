@@ -94,14 +94,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = WhNP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+							S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 							S.event = VP.event;
 							S.subject = NP.object;
-							S.object = WhNP.object;
-							S.request = WhNP.request
+							S.object = WhADVP.object;
+							S.request = WhADVP.request
 						',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				),
@@ -111,14 +111,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = WhNP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object);
-							S.event = WhNP.event;
+							S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object);
+							S.event = WhADVP.event;
 							S.event = VP.event;
 							S.object = NP.object;
-							S.request = WhNP.request
+							S.request = WhADVP.request
 						',
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
-					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-1' => null))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
 					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepDirectObject' => '?syntax-2')))),
@@ -183,14 +183,14 @@ abstract class SimpleGrammar extends BaseGrammar
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
 
 'semantics' => '
-	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
-	S.event = WhNP.object;
+	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	S.event = WhADVP.object;
 	S.event = auxBe.event;
 	S.subject = NP.object;
-	S.request = WhNP.request
+	S.request = WhADVP.request
 '
 					),
-					array('cat' => 'WhNP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
 					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 				),
@@ -221,15 +221,15 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'SBar', 'features' => array('head' => array('syntax' =>
 						array('type' => 'relativeClause', 'clause' => '?syntax-2',	'complementizer' => '?cat'))),
 'semantics' => '
-	SBar.sem = whword.sem and S.sem;
-	SBar.superEvent = whword.superEvent;
-	SBar.subEvent = whword.subEvent;
+	SBar.sem = whAdverb.sem and S.sem;
+	SBar.superEvent = whAdverb.event;
+	SBar.subEvent = whAdverb.adjunct;
 	SBar.subEvent = S.event
 '
 
 
 					),
-					array('cat' => 'whword', 'features' => array('head' => array(
+					array('cat' => 'whAdverb', 'features' => array('head' => array(
 						'syntax' => array('category' => '?cat')))),
 					array('cat' => 'S', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
@@ -291,13 +291,18 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 			),
 			'WhNP' => array(
+
+			),
+			'WhADVP' => array(
 				array(
 #todo: this interpreation is counterintuitive, especially for 'who'
 					// where, when, who
-					array('cat' => 'WhNP',
+					array('cat' => 'WhADVP',
 
 'semantics' => '
-	WhNP.sem = whword.sem
+	WhADVP.sem = whAdverb.sem;
+	WhADVP.request = whAdverb.adjunct;
+	WhADVP.event = whAdverb.event
 ',
 
 						'features' => array('head' => array('syntax' => array(
@@ -309,16 +314,16 @@ abstract class SimpleGrammar extends BaseGrammar
 							)
 						)))),
 					),
-					array('cat' => 'whword', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+					array('cat' => 'whAdverb', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 				),
 				// which car, how many children
 				array(
-					array('cat' => 'WhNP',
+					array('cat' => 'WhADVP',
 'semantics' => '
-	WhNP.sem = whwordNP.sem and NP.sem;
-	WhNP.object = whwordNP.object;
-	WhNP.object = NP.object;
-	WhNP.request = whwordNP.request
+	WhADVP.sem = whwordNP.sem and NP.sem;
+	WhADVP.object = whwordNP.object;
+	WhADVP.object = NP.object;
+	WhADVP.request = whwordNP.adjunct
 ',
 						'features' => array('head-1' => null)),
 					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
