@@ -453,6 +453,7 @@ class DBPedia extends KnowledgeSource
 
 	public function answer(PredicationList $Question)
 	{
+$b = (string)$Question;
 		// turn the expanded question into a set of database relations
 		$Relations = $this->getDataMapper()->mapPredications($Question);
 
@@ -514,6 +515,20 @@ $sparql = (string)$Query;
 				$object = (string)$Relation->getArgument(1)->getName();
 				// link to the place id
 				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthPlace> _:placeId");
+				// link place id to place name
+				$Query->where("_:placeId rdfs:label ?{$object}");
+				// place name should be in english
+				$Query->where("FILTER(lang(?{$object}) = 'en')");
+				// place should be city
+				$Query->where("_:place dbpedia-owl:city _:placeId");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			case 'die_in':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				// link to the place id
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/deathPlace> _:placeId");
 				// link place id to place name
 				$Query->where("_:placeId rdfs:label ?{$object}");
 				// place name should be in english

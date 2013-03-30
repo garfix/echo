@@ -167,7 +167,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('category' => 'daughter'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.object, Daughter)'
 			),
 			'did_aux' => array(
 				'form' => 'did',
@@ -198,7 +198,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'die', 'tense' => 'present', 'form' => 'simple'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Die)'
 			),
 			'die_inf' => array(
 				'form' => 'die',
@@ -209,7 +209,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'die', 'verb_form' => 'infinitive'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Die)'
 			),
 			'died' => array(
 				'form' => 'died',
@@ -475,28 +475,23 @@ class EnglishGrammar extends SimpleGrammar
 			),
 			'when' => array(
 				'form' => 'when',
-#				'part-of-speech' => 'whword',
 				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
 				)),
-#				'semantics' => 'at_time(this.superEvent, this.subEvent)'
 				'semantics' => 'at_time(this.event, this.adjunct)'
 			),
 			'where' => array(
 				'form' => 'where',
-#				'part-of-speech' => 'whword',
 				// http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html
 				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'where'),
 				)),
-#				'semantics' => 'location(this.event, this.request)'
 				'semantics' => 'location(this.event, this.adjunct)'
 			),
 			'who' => array(
 				'form' => 'who',
-#				'part-of-speech' => 'whword',
 				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'identity'),
@@ -553,6 +548,7 @@ class EnglishGrammar extends SimpleGrammar
 		$rules = parent::getParseRules();
 
 		// How many children did John have?
+		// Where did Lord Byron die?
 		// NP delivers deep subject
 		$rules['S'][] =
 			array(
@@ -562,7 +558,8 @@ class EnglishGrammar extends SimpleGrammar
 						S.event = VP.event;
 						S.subject = NP.object;
 						S.object = WhADVP.object;
-						S.request = WhADVP.request
+						S.request = WhADVP.request;
+						S.event = WhADVP.event
 					',
 					'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
 				array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),

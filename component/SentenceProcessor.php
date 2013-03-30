@@ -133,7 +133,9 @@ if ($NEW) {
 
 			if ($isQuestion) {
 
-				if (!$NEW) {
+				if ($NEW) {
+					$answer = $this->answerQuestionWithSemantics($Semantics);
+				} else {
 					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
 				}
 

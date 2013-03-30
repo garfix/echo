@@ -107,7 +107,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('category' => 'daughter'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.object, Daughter)'
 			),
 			'een' => array(
 				'form' => 'een',
@@ -280,7 +280,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'werd_aux' => array(
 				'form' => 'werd',
@@ -290,7 +290,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'werd_psv' => array(
 				'form' => 'werd',
@@ -300,7 +300,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'be', 'tense' => 'past'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'tense(this.event, Past)'
 			),
 			'waar' => array(
 				'form' => 'waar',
@@ -316,7 +316,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'when'),
 				)),
-				'semantics' => ''
+				'semantics' => 'at_time(this.event, this.adjunct)'
 			),
 		);
 	}

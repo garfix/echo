@@ -80,8 +80,9 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = VP.sem;
-							S.event = VP.event
+							S.sem = VP.sem and object(S.event, S.object);
+							S.event = VP.event;
+							S.object = VP.object
 						',
 						'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
 					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => null))),
@@ -162,13 +163,14 @@ abstract class SimpleGrammar extends BaseGrammar
 				),
 
 				// Was John a fool?
+				// Was Ada Lovelace the daughter of Lord Byron?
 				// The verb is 'be'
 #todo see NLU, p.243: de tweede NP gaat als predicaat dienen
 				array(
 					array('cat' => 'S',
 						'semantics' => '
 							S.sem = aux.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
-							S.event = NP2.object;
+							S.subject = NP2.object;
 							S.subject = NP1.object
 						',
 						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
