@@ -211,14 +211,36 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($Structure->getMeans()->getPredication(1)->getArgument(1) instanceof \agentecho\datastructure\FunctionApplication);
 	}
 
-	public function testDataMapping()
+	public function testMap()
 	{
 		$Parser = new SemanticStructureParser();
 
+		// single mapping with multiple consequents
 		$string = 'age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2) and diff(?d2, ?d1, ?a)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
+
+		// a series of datamappings
+		$string = 'a(?x) => b(?x); c(?x) => d(?x); e(?x) => f(?x)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		// trailing semicolon
+		$string = 'a(?x) => b(?x); c(?x) => d(?x);';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals('a(?x) => b(?x); c(?x) => d(?x)', $serialized);
+
+		// comment
+		$string = '
+			a(?x) => b(?x);
+			// comment
+			c(?x) => d(?x)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals('a(?x) => b(?x); c(?x) => d(?x)', $serialized);
 	}
 
 	public function testTokenizerFail()

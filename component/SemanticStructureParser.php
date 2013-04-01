@@ -15,6 +15,7 @@ use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\GoalClause;
 use agentecho\datastructure\DataMapping;
+use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 
 /**
@@ -40,6 +41,7 @@ class SemanticStructureParser
 	// two chars
 	const T_IMPLICATION = 'implication';
 	const T_TRANSFORMATION = 'transformation';
+	const T_COMMENT = 'comment';
 	// content
 	const T_IDENTIFIER = 'identifier';
 	const T_STRING = 'string';
@@ -91,9 +93,9 @@ class SemanticStructureParser
 
 	private function parseMain(array $tokens, $pos, &$Result)
 	{
-		if ($newPos = $this->parseGoalClause($tokens, $pos, $Result)) {
+		if ($newPos = $this->parseMap($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseDataMapping($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parseGoalClause($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePropertyAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -128,6 +130,37 @@ class SemanticStructureParser
 		}
 
 		return $pos;
+	}
+
+	private function parseMap(array $tokens, $pos, &$Map)
+	{
+		$mappings = array();
+
+		// first mapping
+		if ($newPos = $this->parseDataMapping($tokens, $pos, $Mapping)) {
+			$mappings[] = $Mapping;
+			$pos = $newPos;
+
+			// zero or more semicolon - mapping combinations
+			while ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
+				$pos = $newPos;
+
+				if ($newPos = $this->parseDataMapping($tokens, $pos, $Mapping)) {
+					$mappings[] = $Mapping;
+					$pos = $newPos;
+				}
+			}
+
+
+			if (!empty($mappings)) {
+				$Map = new Map();
+				$Map->setMappings($mappings);
+				return $pos;
+			}
+
+		}
+
+		return false;
 	}
 
 	/**
@@ -171,21 +204,9 @@ class SemanticStructureParser
 
 				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList2)) {
 
-//					// optional: transformations
-//					$Transformations = null;
-//					if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
-//						$pos = $newPos;
-//
-//						$pos = $this->parseVariableAssignmentList($tokens, $pos, $Transformations);
-//						if (!$pos) {
-//							return false;
-//						}
-//					}
-
 					$DataMapping = new DataMapping();
 					$DataMapping->setPreList($PredicationList1);
 					$DataMapping->setPostList($PredicationList2);
-//					$DataMapping->setTransformations($Transformations);
 					return $pos;
 				}
 			}
@@ -563,8 +584,6 @@ class SemanticStructureParser
 	{
 		if ($newPos = $this->parseProperty($tokens, $pos, $argument)) {
 			$pos = $newPos;
-//		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $argument)) {
-//			$pos = $newPos;
 		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseConstant($tokens, $pos, $argument)) {
@@ -741,7 +760,7 @@ class SemanticStructureParser
 			$result = $token['contents'];
 			$pos++;
 			return $pos;
-		} elseif ($token['id'] == self::T_WHITESPACE) {
+		} elseif (in_array($token['id'], array(self::T_WHITESPACE, self::T_COMMENT))) {
 			$pos++;
 			return $this->parseSingleToken($tokenId, $tokens, $pos, $result);
 		} else {
@@ -771,12 +790,11 @@ class SemanticStructureParser
 
 			$char = $string[$pos];
 
-
 			if ($char == ' ' || $char == "\t" || $char == "\r" || $char == "\n") {
 				if (preg_match('/(\s+)/', $string, $matches, 0, $pos)) {
 					$id = self::T_WHITESPACE;
 					$contents = $matches[1];
-					$pos += strlen(($contents)) - 1;
+					$pos += strlen($contents) - 1;
 				}
 			} elseif ($char == "\"" || $string[$pos] == "'") {
 				$endPos = strpos($string, $char, $pos + 1);
@@ -788,6 +806,12 @@ class SemanticStructureParser
 				} else {
 					$this->lastPosParsed = $pos;
 					return false;
+				}
+			} elseif ($char == '/') {
+				if (preg_match('#(//[^\n]*)#', $string, $matches, 0, $pos)) {
+					$id = self::T_COMMENT;
+					$contents = $matches[1];
+					$pos += strlen($contents) - 1;
 				}
 			} elseif (substr($string, $pos, 2) == ':-') {
 				$id = self::T_IMPLICATION;

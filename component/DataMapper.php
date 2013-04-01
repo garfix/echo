@@ -4,6 +4,7 @@ namespace agentecho\component;
 
 use agentecho\component\SemanticStructureParser;
 use agentecho\datastructure\DataMapping;
+use agentecho\datastructure\Map;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
@@ -26,16 +27,12 @@ class DataMapper
 
 	public function __construct($mapFile)
 	{
-		$lines = file($mapFile);
+		$string = file_get_contents($mapFile);
 		$Parser = new SemanticStructureParser();
 
-		foreach ($lines as $line) {
-
-			$Term = $Parser->parse($line);
-
-			if ($Term instanceof DataMapping) {
-				$this->map[] = $Term;
-			}
+		$Term = $Parser->parse($string);
+		if ($Term instanceof Map) {
+			$this->map = $Term->getMappings();
 		}
 	}
 
