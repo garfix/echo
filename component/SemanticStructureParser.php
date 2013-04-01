@@ -8,7 +8,6 @@ use agentecho\datastructure\Constant;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Property;
-use agentecho\datastructure\LambdaExpression;
 use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Assignment;
 use agentecho\datastructure\TermList;
@@ -106,8 +105,6 @@ class SemanticStructureParser
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
-			$pos = $newPos;
-		} elseif ($newPos = $this->parseLambdaExpression($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -216,45 +213,7 @@ class SemanticStructureParser
 	}
 
 	/**
-	 * Parses {?x : P(?x)}
-	 *
-	 * @param array $tokens
-	 * @param $pos
-	 * @param $LambdaExpression
-	 * @return bool
-	 */
-	private function parseLambdaExpression(array $tokens, $pos, &$LambdaExpression)
-	{
-		if ($newPos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
-			$pos = $newPos;
-
-			if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
-				$pos = $newPos;
-
-				if ($newPos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
-					$pos = $newPos;
-
-					if ($newPos = $this->parseTerm($tokens, $pos, $Term)) {
-						$pos = $newPos;
-
-						if ($newPos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
-							$pos = $newPos;
-
-							$LambdaExpression = new LambdaExpression();
-							$LambdaExpression->setVariable($Variable);
-							$LambdaExpression->setTerm($Term);
-							return $pos;
-						}
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Parses any lambda calculus term.
+	 * Parses any term.
 	 *
 	 * @param array $tokens
 	 * @param $pos
@@ -266,8 +225,6 @@ class SemanticStructureParser
 		if ($newPos = $this->parseProperty($tokens, $pos, $Term)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredication($tokens, $pos, $Term)) {
-			$pos = $newPos;
-		} elseif ($newPos = $this->parseLambdaExpression($tokens, $pos, $Term)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;

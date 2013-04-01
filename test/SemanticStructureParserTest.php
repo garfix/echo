@@ -108,36 +108,6 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-//	public function testParsePredicationWithPredicationList()
-//	{
-//		$Parser = new SemanticStructureParser();
-//
-//		$string = 'question(?q, first(?q, ?e) and second(?e, "answer"))';
-//		$Structure = $Parser->parse($string);
-//		$serialized = $Parser->serialize($Structure);
-//		$this->assertEquals($string, $serialized);
-//	}
-
-	public function testParseLambdaExpressionWithOneVariable()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = '{?x : dog(?x)}';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
-	public function testParseLambdaExpressionWithTwoVariables()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = '{?x : {?y : greater(?x, ?y)}}';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
 	public function testAssignmentWithProperty()
 	{
 		$Parser = new SemanticStructureParser();

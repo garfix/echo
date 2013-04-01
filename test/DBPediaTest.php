@@ -42,7 +42,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 //$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
-		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.echo'));
+		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Echo->addGrammar($English = new EnglishGrammar());
 		$Echo->addGrammar($Dutch = new DutchGrammar());
 
@@ -50,44 +50,46 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		// S => aux NP VP ; DBPedia
 $NEW = 1;
-		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
-		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
-		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
-		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
-
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("How many children did Lord Byron have?");
-		$this->assertSame('Lord Byron had 2 children.', $answer);
-
-		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
-		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
-
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("Where was Lord Byron born?");
-		$this->assertSame('Lord Byron was born in London.', $answer);
-		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-		$this->assertSame('Lord Byron werd geboren in London.', $answer);
-
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("When was Lord Byron born?");
-		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
-		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
-		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
-
-		$answer = $Conversation->answer("Where did Lord Byron die?");
-		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
-
-//$Conversation->setCurrentGrammar($English);
-
-		// S => aux NP NP
-		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
-		$this->assertSame('Yes, Ada Lovelace was the daughter of Lord Byron.', $answer);
-		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
-		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
-$NEW = 0;
+//		$Conversation->setCurrentGrammar($English);
+//		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
+//		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
+//		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
+//		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
+//
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("How many children did Lord Byron have?");
+//		$this->assertSame('Lord Byron had 2 children.', $answer);
+//
+//		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
+//		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
+//
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("Where was Lord Byron born?");
+//		$this->assertSame('Lord Byron was born in London.', $answer);
+//		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
+//		$this->assertSame('Lord Byron werd geboren in London.', $answer);
+//
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("When was Lord Byron born?");
+//		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
+//		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
+//		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
+//
+//		$answer = $Conversation->answer("Where did Lord Byron die?");
+//		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
+//
+////$Conversation->setCurrentGrammar($English);
+//
+//		// S => aux NP NP
+//		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
+//		$this->assertSame('Yes, Ada Lovelace was the daughter of Lord Byron.', $answer);
+//		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
+//		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
+$Conversation->setCurrentGrammar($English);
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->assertSame("Allegra Byron and Ada Lovelace", $answer);
+$NEW = 0;
 
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->assertSame("Allegra Byron en Ada Lovelace", $answer);
@@ -117,7 +119,7 @@ $NEW = 1;
 
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		//$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
-		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.echo'));
+		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		$Conversation = $Echo->startConversation();
 
