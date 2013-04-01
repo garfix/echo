@@ -118,7 +118,6 @@ $NEW = 1;
 		$Echo->addGrammar($English = new EnglishGrammar());
 
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
-		//$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		$Conversation = $Echo->startConversation();

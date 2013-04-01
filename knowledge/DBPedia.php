@@ -538,7 +538,7 @@ $sparql = (string)$Query;
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
-			case 'die':
+			case 'die_at':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
 				$Query->where("?{$subject} <http://dbpedia.org/ontology/deathDate> ?{$object}");
