@@ -44,7 +44,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('category' => 'possessive'),
 					),
 				),
-				'semantics' => ''
+				'semantics' => 'belong_to(this.superObject, this.subObject)'
 			),
 			'a' => array(
 				'form' => 'a',
@@ -369,7 +369,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'name'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Name)'
 			),
 			'of' => array(
 				'form' => 'of',

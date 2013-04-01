@@ -22,3 +22,7 @@ preposition:
 PP:
 - subObject
 - superObject
+
+DP:
+- subObject
+- superObject

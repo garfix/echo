@@ -248,15 +248,16 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'verb', 'features' => array('head-1' => null)),
 				),
 				// book that flight! / sees the book
+				// Name Lord Byron's children.
 				// verb is the head constituent (head-1)
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
 					array('cat' => 'VP',
 						'semantics' => '
-							S.sem = verb.sem and NP.sem and object(S.event, S.object);
-							S.event = VP.event;
-							S.object = NP.object
+							VP.sem = verb.sem and NP.sem and object(VP.event, VP.object);
+							VP.event = VP.event;
+							VP.object = NP.object
 						',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax')), 'arguments' => 1)),
@@ -356,10 +357,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// the car
 				array(
 					array('cat' => 'NP',
-#todo not used
 						'semantics' => '
 							NP.sem = DP.sem and NBar.sem;
-							NP.object = NBar.object
+							NP.object = NBar.object;
+							NP.object = DP.superObject
 						',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
 					array('cat' => 'DP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
@@ -389,9 +390,9 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 				// car in the lot
+				// the author of Paradise Lost
 				array(
 					array('cat' => 'NBar',
-#todo not used
 						'semantics' => '
 							NBar.sem = NBar.sem and PP.sem;
 							NBar.object = NBar.object;
@@ -437,7 +438,9 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'DP',
 						'semantics' => '
 							DP.sem = NP.sem and possessiveMarker.sem;
-							DP.object = NP.object
+							DP.subObject = possessiveMarker.subObject;
+							DP.superObject = possessiveMarker.superObject;
+							DP.subObject = NP.object
 						',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'determiner')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
