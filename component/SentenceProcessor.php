@@ -75,6 +75,8 @@ if ($NEW) {
 			// incorporate the answer in the original question
 			if ($answer !== false) {
 
+				$answer = reset($answer);
+
 				$Answer = $Sentence;
 
 				#todo: this should be made more generic
@@ -164,7 +166,9 @@ if ($NEW) {
 
 	public function answerQuestionWithSemantics(PredicationList $PredicationList)
 	{
-		$bindings = $this->createBindings($PredicationList);
+		$Interpretation = $this->interpret($PredicationList);
+
+		$bindings = $this->createBindings($Interpretation);
 
 #todo: there should be only 1 result, or all results are identical
 
@@ -172,20 +176,18 @@ if ($NEW) {
 		if ($bindings) {
 
 			// find the first argument of the request-predication
-			$Request = $PredicationList->getPredicationByPredicate('request');
+			$Request = $Interpretation->getPredicationByPredicate('request');
 
 			if ($Request) {
 				$argument = $Request->getFirstArgument()->getName();
 
-				$firstBinding = reset($bindings);
-	//			if (isset($firstBinding['request'])) {
-	//				$response = $firstBinding['request'];
-	//			} elseif (isset($firstBinding['S_request'])) {
-	//				$response = $firstBinding['S_request'];
-				if (isset($firstBinding[$argument])) {
-					$response = $firstBinding[$argument];
-				} else {
-					throw new MissingRequestFieldException();
+				$response = array();
+				foreach ($bindings as $binding) {
+					if (isset($binding[$argument])) {
+						$response[] = $binding[$argument];
+					} else {
+						throw new MissingRequestFieldException();
+					}
 				}
 			} else {
 				throw new MissingRequestFieldException();
@@ -200,23 +202,10 @@ if ($NEW) {
 		return $response;
 	}
 
-	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
+	private function interpret(PredicationList $RawSemantics)
 	{
-		$bindings = $this->createBindings($PredicationList);
-
-		if (count($bindings) > 1) {
-			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
-		}
-
-		return !empty($bindings);
-	}
-
-	private function createBindings(PredicationList $PredicationList)
-	{
-		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
-
 		// extract the question predication
-		$predications = $PredicationList->getPredications();
+		$predications = $RawSemantics->getPredications();
 		if (!$predications) {
 			return array();
 		}
@@ -237,10 +226,28 @@ $ruleSource = reset($ruleSources);
 		$DataMapper->setAllowUnprocessedPredications();
 		$DataMapper->setIterate();
 
-		$ExpandedQuestion = $DataMapper->mapPredications($PredicationList);
+		$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
 
+		return $ExpandedQuestion;
+	}
+
+	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
+	{
+		$Interpretation = $this->interpret($PredicationList);
+
+		$bindings = $this->createBindings($Interpretation);
+
+		if (count($bindings) > 1) {
+			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
+		}
+
+		return !empty($bindings);
+	}
+
+	private function createBindings(PredicationList $ExpandedQuestion)
+	{
+		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
 		$bindings = array();
-
 		$Exception = null;
 
 		foreach ($knowledgeSources as $KnowledgeSource) {

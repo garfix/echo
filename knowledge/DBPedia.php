@@ -459,20 +459,12 @@ $b = (string)$Question;
 		$Relations = $this->getDataMapper()->mapPredications($Question);
 
 
-//		if ($Relations !== false) {
-
-			// convert the database relations into a query
-			$Query = $this->createDatabaseQuery($Relations);
+		// convert the database relations into a query
+		$Query = $this->createDatabaseQuery($Relations);
 
 $sparql = (string)$Query;
 
-			$resultSets = $this->processQuery($Query);
-
-//		} else {
-//
-//			throw new DataMappingFailedException();
-//
-//		}
+		$resultSets = $this->processQuery($Query);
 
 		return $resultSets;
 	}
@@ -555,6 +547,8 @@ $sparql = (string)$Query;
 				} else {
 					$object = (string)$Relation->getArgument(1)->getName();
 					$Query->where("{ { ?{$subject} rdfs:label ?{$object} } UNION { ?{$subject} dbpprop:birthName ?{$object} } }");
+					$Query->where("FILTER(lang(?{$object}) = 'en')");
+					$Query->select("?{$object}");
 				}
 				$Query->select("?{$subject}");
 				break;

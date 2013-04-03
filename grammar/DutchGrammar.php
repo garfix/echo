@@ -31,7 +31,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'possessive'),
 				)),
-				'semantics' => ''
+				'semantics' => 'belong_to(this.superObject, this.subObject)'
 			),
 			'auteur' => array(
 				'form' => 'auteur',
@@ -235,7 +235,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'name'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Name)'
 			),
 			'op' => array(
 				'form' => 'op',

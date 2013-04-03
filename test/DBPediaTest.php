@@ -78,22 +78,20 @@ $NEW = 1;
 		$answer = $Conversation->answer("Where did Lord Byron die?");
 		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
 
-//$Conversation->setCurrentGrammar($English);
-
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
 		$this->assertSame('Yes, Ada Lovelace was the daughter of Lord Byron.', $answer);
 		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
 		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
-$Conversation->setCurrentGrammar($English);
+
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->assertSame("Allegra Byron and Ada Lovelace", $answer);
-$NEW = 0;
 
+//$Conversation->setCurrentGrammar($Dutch);
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->assertSame("Allegra Byron en Ada Lovelace", $answer);
-
+$NEW = 0;
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->assertSame("Yes, Lord Byron was married to Anne Isabella Milbanke.", $answer);
