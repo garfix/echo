@@ -3,6 +3,7 @@
 namespace agentecho\knowledge;
 
 use agentecho\Settings;
+use agentecho\datastructure\Constant;
 use agentecho\phrasestructure\PhraseStructure;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Determiner;
@@ -547,9 +548,14 @@ $sparql = (string)$Query;
 				break;
 			case 'name':
 				$subject = (string)$Relation->getArgument(0)->getName();
-				$object = (string)$Relation->getArgument(1)->getName();
-				$ucName = ucwords($object);
-				$Query->where("{ { ?{$subject} rdfs:label '$ucName'@en } UNION { ?{$subject} dbpprop:birthName '$ucName'@en } }");
+				if ($Relation->getArgument(1) instanceof Constant) {
+					$object = (string)$Relation->getArgument(1)->getName();
+					$ucName = ucwords($object);
+					$Query->where("{ { ?{$subject} rdfs:label '$ucName'@en } UNION { ?{$subject} dbpprop:birthName '$ucName'@en } }");
+				} else {
+					$object = (string)$Relation->getArgument(1)->getName();
+					$Query->where("{ { ?{$subject} rdfs:label ?{$object} } UNION { ?{$subject} dbpprop:birthName ?{$object} } }");
+				}
 				$Query->select("?{$subject}");
 				break;
 			case 'time_property':

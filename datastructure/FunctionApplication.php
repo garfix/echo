@@ -21,6 +21,11 @@ class FunctionApplication
 		$this->arguments = $arguments;
 	}
 
+	public function setArgument($index, $Argument)
+	{
+		$this->arguments[$index] = $Argument;
+	}
+
 	/**
 	 * @return array
 	 */

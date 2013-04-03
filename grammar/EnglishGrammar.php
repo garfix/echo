@@ -297,7 +297,6 @@ class EnglishGrammar extends SimpleGrammar
 						'variables' => array('role' => '?arg'),
 					)
 				),
-#				'semantics' => 'manner(this.object, this.request)'
 				'semantics' => 'manner(this.object, this.adjunct)'
 			),
 			'i' => array(
@@ -554,7 +553,7 @@ class EnglishGrammar extends SimpleGrammar
 			array(
 				array('cat' => 'S',
 					'semantics' => '
-						S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+						S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
 						S.event = VP.event;
 						S.subject = NP.object;
 						S.object = WhADVP.object;

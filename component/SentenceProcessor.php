@@ -139,17 +139,21 @@ if ($NEW) {
 					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
 				}
 
-				$entities = array();
+				if ($answer !== null) {
 
-				foreach ($answer as $name) {
+					$entities = array();
 
-                       $Entity = new Entity();
-                       $Entity->setName($name);
+					foreach ($answer as $name) {
 
-                       $entities[] = $Entity;
+	                       $Entity = new Entity();
+	                       $Entity->setName($name);
+
+	                       $entities[] = $Entity;
+					}
+
+					$Answer = SentenceBuilder::buildConjunction($entities);
+
 				}
-
-				$Answer = SentenceBuilder::buildConjunction($entities);
 
 			}
 
@@ -167,11 +171,22 @@ if ($NEW) {
 		// the variable 'request' in $bindings should hold the answer
 		if ($bindings) {
 
-			$firstBinding = reset($bindings);
-			if (isset($firstBinding['request'])) {
-				$response = $firstBinding['request'];
-			} elseif (isset($firstBinding['S_request'])) {
-				$response = $firstBinding['S_request'];
+			// find the first argument of the request-predication
+			$Request = $PredicationList->getPredicationByPredicate('request');
+
+			if ($Request) {
+				$argument = $Request->getFirstArgument()->getName();
+
+				$firstBinding = reset($bindings);
+	//			if (isset($firstBinding['request'])) {
+	//				$response = $firstBinding['request'];
+	//			} elseif (isset($firstBinding['S_request'])) {
+	//				$response = $firstBinding['S_request'];
+				if (isset($firstBinding[$argument])) {
+					$response = $firstBinding[$argument];
+				} else {
+					throw new MissingRequestFieldException();
+				}
 			} else {
 				throw new MissingRequestFieldException();
 			}
@@ -228,29 +243,26 @@ $ruleSource = reset($ruleSources);
 
 		$Exception = null;
 
-		#foreach ($expandedQuestions as $ExpandedQuestion) {
-
-			foreach ($knowledgeSources as $KnowledgeSource) {
+		foreach ($knowledgeSources as $KnowledgeSource) {
 $a = (string)$ExpandedQuestion;
 
-				try {
-					// execute the query
-					$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
+			try {
+				// execute the query
+				$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
 
-					if ($newBindings) {
+				if ($newBindings) {
 
-						// perform the translations
-						$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
+					// perform the translations
+					$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
 
-						$bindings = array_merge($bindings, $newBindings);
-					}
-
-				} catch (\Exception $E) {
-					$Exception = $E;
+					$bindings = array_merge($bindings, $newBindings);
 				}
 
+			} catch (\Exception $E) {
+				$Exception = $E;
 			}
-		#}
+
+		}
 
 		if (empty($bindings) && !is_null($Exception)) {
 			throw $Exception;

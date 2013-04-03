@@ -28,6 +28,36 @@ class PredicationList extends  Term
 	}
 
 	/**
+	 * Returns all predications in this list with a given predicate.
+	 *
+	 * @param $predicate
+	 * @return array An array of predications
+	 */
+	public function getPredicationsByPredicate($predicate)
+	{
+		$results = array();
+
+		foreach ($this->predications as $Predication) {
+			if ($Predication->getPredicate() == $predicate) {
+				$results[] = $Predication;
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Returns the first found predication with a given predicate.
+	 *
+	 * @param Predication|false $predicate
+	 */
+	public function getPredicationByPredicate($predicate)
+	{
+		$results = $this->getPredicationsByPredicate($predicate);
+		return empty($results) ? false : reset($results);
+	}
+
+	/**
 	 * Returns a name => name list of the names of the variables used in this list.
 	 * @return array
 	 */

@@ -46,3 +46,4 @@ reference(?a) => true();
 let(?a, ?b) => true();
 aggregate(?a, ?b) => true();
 manner(?o, ?q) and isa(?o, Child) => true();
+request(?a) => true()

@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\component\SemanticStructureParser;
+use agentecho\datastructure\Constant;
 use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\PredicationList;
@@ -147,14 +148,8 @@ class DataMapper
 				foreach ($Mapping->getPostList()->getPredications() as $PostPredication) {
 					$NewPredication = $PostPredication->createClone();
 
-					// rename the variables in the new predication
-					foreach ($NewPredication->getArguments() as $Argument) {
-
-						$this->replaceVariables($Argument, $argumentMap, $usedVariables);
-
-
-
-					}
+					// replace the variables in the new predication
+					$this->replaceVariables($NewPredication, $argumentMap, $usedVariables);
 
 					$newPredications[] = $NewPredication;
 				}
@@ -191,30 +186,52 @@ class DataMapper
 
 	private function replaceVariables($Term, array &$argumentMap, array &$usedVariables)
 	{
-		if ($Term instanceof Variable) {
-			$varName = $Term->getName();
+		$newArguments = array();
 
-			// does the variable occur in the map?
-			if (isset($argumentMap[$varName])) {
-				// yes, use it
-				$newName = $argumentMap[$varName]->getName();
-			} else {
-				// no, create a new variable
-				$newName = PredicationUtils::createUnusedVariableName($usedVariables);
-				// make sure this variable will not be used again in this predicationlist
-				$usedVariables[$newName] = $newName;
-				// use this same variable when used in this mapping rule
-				$argumentMap[$varName] = new Variable($newName);
-			}
-			$Term->setName($newName);
+		foreach ($Term->getArguments() as $Argument) {
 
-		} elseif ($Term instanceof FunctionApplication) {
+			if ($Argument instanceof Variable) {
+				$varName = $Argument->getName();
 
-			foreach ($Term->getArguments() as $Argument) {
+				// does the variable occur in the map?
+				if (isset($argumentMap[$varName])) {
+					// yes, use it
+					if ($argumentMap[$varName] instanceof Constant) {
+						$NewArgument = $argumentMap[$varName]->createClone();
+					} else {
+						$newName = $argumentMap[$varName]->getName();
+						$Argument->setName($newName);
+						$NewArgument = $Argument;
+					}
+				} else {
+					// no, create a new variable
+					$newName = PredicationUtils::createUnusedVariableName($usedVariables);
+					// make sure this variable will not be used again in this predicationlist
+					$usedVariables[$newName] = $newName;
+					// use this same variable when used in this mapping rule
+					$argumentMap[$varName] = new Variable($newName);
+					$Argument->setName($newName);
+					$NewArgument = $Argument;
+				}
+
+
+			} elseif ($Argument instanceof FunctionApplication) {
+
 				$this->replaceVariables($Argument, $argumentMap, $usedVariables);
+				$NewArgument = $Argument;
+
+			} else {
+
+				// Atom
+
+				$NewArgument = $Argument;
+
 			}
 
+			$newArguments[] = $NewArgument;
 		}
+
+		$Term->setArguments($newArguments);
 	}
 
 	private function merge($oldValues, $newValues)

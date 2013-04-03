@@ -95,7 +95,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+							S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
 							S.event = VP.event;
 							S.subject = NP.object;
 							S.object = WhADVP.object;
@@ -112,7 +112,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'S',
 						'semantics' => '
-							S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object);
+							S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object) and request(S.request);
 							S.event = WhADVP.event;
 							S.event = VP.event;
 							S.object = NP.object;
@@ -185,7 +185,7 @@ abstract class SimpleGrammar extends BaseGrammar
 						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
 
 'semantics' => '
-	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and request(S.request);
 	S.event = WhADVP.object;
 	S.event = auxBe.event;
 	S.subject = NP.object;
