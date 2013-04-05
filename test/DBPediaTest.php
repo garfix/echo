@@ -4,12 +4,11 @@ namespace agentecho\test;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
-use \agentecho\AgentEcho;
+use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
-use \agentecho\knowledge\DBPedia;
-use \agentecho\grammar\EnglishGrammar;
-use \agentecho\grammar\DutchGrammar;
-use \agentecho\component\Conversation;
+use agentecho\knowledge\DBPedia;
+use agentecho\grammar\EnglishGrammar;
+use agentecho\grammar\DutchGrammar;
 
 /**
  * Question answering
@@ -19,27 +18,10 @@ use \agentecho\component\Conversation;
  */
 class DBPediaTest extends \PHPUnit_Framework_TestCase
 {
-	/**
-	 * @return Conversation
-	 */
-	private function startEnglishConversation()
-	{
-		$Echo = new AgentEcho();
-		$Echo->addKnowledgeSource(new DBPedia());
-		$Echo->addGrammar($English = new EnglishGrammar());
-
-		$Conversation = $Echo->startConversation();
-
-		return $Conversation;
-	}
-
 	public function test()
 	{
-		global $NEW;
-
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
-//$Echo->addRuleSource(new RuleBase(__DIR__ . '/../resources/ruleBase1.echo'));
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Echo->addGrammar($English = new EnglishGrammar());
 		$Echo->addGrammar($Dutch = new DutchGrammar());
@@ -47,7 +29,6 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Conversation = $Echo->startConversation();
 
 		// S => aux NP VP ; DBPedia
-$NEW = 1;
 		$Conversation->setCurrentGrammar($English);
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
@@ -91,10 +72,8 @@ $NEW = 1;
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->assertSame("Yes, Lord Byron was married to Anne Isabella Milbanke.", $answer);
-
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
 		$this->assertSame("Yes, Anne Isabella Milbanke was married to Lord Byron.", $answer);
-
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 		$this->assertSame("Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.", $answer);
 	}
@@ -105,10 +84,6 @@ $NEW = 1;
 	 */
 	public function testCalculatedAnswer()
 	{
-		global $NEW;
-
-$NEW = 1;
-
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = new EnglishGrammar());
 

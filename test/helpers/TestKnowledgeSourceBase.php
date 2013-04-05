@@ -11,12 +11,6 @@ use agentecho\datastructure\PredicationList;
  */
 class TestKnowledgeSourceBase extends KnowledgeSource
 {
-#todo I don't want these functions here
-
-	public function isProperNoun($identifier) {}
-	public function answerQuestion(Sentence $Sentence) {}
-    public function checkQuestion(Sentence $Sentence) {}
-	public function bind($predicate, array $arguments) {}
 	public function answer(PredicationList $Question) {}
 
 	/**

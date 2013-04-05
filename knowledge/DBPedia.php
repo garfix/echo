@@ -2,14 +2,10 @@
 
 namespace agentecho\knowledge;
 
-use agentecho\Settings;
 use agentecho\datastructure\Constant;
-use agentecho\phrasestructure\PhraseStructure;
 use agentecho\phrasestructure\Sentence;
-use agentecho\phrasestructure\Determiner;
 use agentecho\phrasestructure\Entity;
 use agentecho\phrasestructure\Clause;
-use agentecho\phrasestructure\Preposition;
 use agentecho\datastructure\PredicationList;
 use agentecho\component\DataMapper;
 use agentecho\datastructure\SparqlQuery;
@@ -39,6 +35,11 @@ class DBPedia extends KnowledgeSource
 		$this->dataMapFile = $dataMapFile;
 	}
 
+#todo Note! This function is not currently used
+	/**
+	 * @param $identifier
+	 * @return bool
+	 */
 	public function isProperNoun($identifier)
 	{
 		$resources = $this->getResourcesByName($identifier);
@@ -66,246 +67,12 @@ class DBPedia extends KnowledgeSource
 		return $resources[$name];
 	}
 
-
-    public function checkQuestion(Sentence $Sentence)
-   	{
-   		$clauses = array();
-   		$select = '';
-        $sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
-
-   		if (Settings::$debugKnowledge) r($clauses);
-
-   		$result = $this->query($clauses, $select);
-
-   		if (Settings::$debugKnowledge) { r($result); echo "\n"; }
-
-   		return $result;
-   	}
-
-	public function answerQuestion(Sentence $Sentence)
-	{
-		$clauses = array();
-		$select = '';
-		$sentenceType = $Sentence->getSentenceType();
-		$this->interpretPhrase($Sentence, $sentenceType, $clauses, $select, null);
-
-		$result = $this->query($clauses, $select);
-
-		if ($sentenceType == 'wh-question') {
-			if (count($result == 1)) {
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-				if (is_array($result)) {
-					$result = reset($result);
-				}
-			}
-		}
-		if ($sentenceType == 'imperative') {
-			$values = array();
-			foreach ($result as $resultVal) {
-				$values[] = reset($resultVal);
-			}
-			$result = $values;
-		}
-
-		return $result;
-	}
-
-	private function interpretPhrase(PhraseStructure $Phrase, $sentenceType, &$clauses, &$select, $parentId)
-	{
-		$subjectId = $Phrase->getHashCode();
-
-		// yes-no-question
-		if ($sentenceType == 'yes-no-question') {
-			$select = 'COUNT(*)';
-		}
-
-		// imperative 'name'
-		if ($Phrase instanceof Sentence) {
-
-			/** @var Sentence $Sentence */
-			$Sentence = $Phrase;
-
-			if ($sentenceType == 'imperative') {
-
-				/** @var Clause $Clause */
-				$Clause = $Sentence->getClause();
-
-                if ($Clause->getPredicate() == 'name') {
-
-                    $select = '?name';
-                    $deepDeepDirectObject = $Clause->getDeepDirectObject()->getHashCode();
-                    $clauses[] = "?{$deepDeepDirectObject} rdfs:label ?name";
-                    $clauses[] = 'FILTER(lang(?name) = "en")';
-                }
-			}
-		}
-
-		// how many?
-		if ($Phrase instanceof Determiner) {
-
-            /** @var Determiner $Determiner */
-       		$Determiner = $Phrase;
-
-			if ($Determiner->isQuestion()) {
-				if ($Determiner->getCategory() == 'many') {
-					$select = 'COUNT(?' . $parentId . ')';
-				}
-			}
-		}
-
-		if ($Phrase instanceof Preposition) {
-
-			/** @var Preposition $Preposition */
-			$Preposition = $Phrase;
-
-			$category = $Preposition->getCategory();
-			$Object = $Preposition->getObject();
-
-			if ($category == 'where') {
-				if ($Object->isQuestion()) {
-					$clauses[] = "?{$Object->getHashCode()} rdfs:label ?location";
-					$clauses[] = 'FILTER(lang(?location) = "en")';
-					$select = '?location';
-				}
-			}
-			if ($category == 'when') {
-				if ($Object->isQuestion()) {
-					$select = '?' . $Object->getHashCode();
-				}
-			}
-
-		}
-
-		// rdfs:label
-        if ($Phrase instanceof Entity) {
-
-            /** @var Entity $Entity */
-       		$Entity = $Phrase;
-
-            if ($name = $Entity->getName()) {
-	            $ucName = ucwords($name);
-	            $clauses[] = "{ { ?{$subjectId} rdfs:label '$ucName'@en } UNION { ?{$subjectId} dbpprop:birthName '$ucName'@en } }";
-            }
-
-    		// http://dbpedia.org/property/children
-            if ($Entity->getCategory() == 'child') {
-                if ($Determiner = $Entity->getDeterminer()) {
-                    if ($Object = $Determiner->getObject()) {
-                        $objectId = $Object->getHashCode();
-                        $clauses[] = "?{$objectId} <http://dbpedia.org/property/children> ?{$subjectId}";
-                    }
-                }
-            }
-
-	        // http://dbpedia.org/ontology/author
-	        if ($Entity->getCategory() == 'author') {
-
-		        /** @var Preposition $Preposition */
-		        $Preposition = $Entity->getPreposition();
-		        $objectId = $Preposition->getObject()->getHashCode();
-
-		        $clauses[] = "?{$objectId} <http://dbpedia.org/ontology/author> ?{$subjectId}";
-	        }
-        }
-
-		// http://dbpedia.org/ontology/influencedBy
-		if ($Phrase instanceof Clause) {
-
-            /** @var Clause $Clause */
-            $Clause = $Phrase;
-
-			$predicate = $Clause->getPredicate();
-
-			// http://dbpedia.org/ontology/influencedBy
-			if ($predicate == 'influence') {
-				$subject = $Clause->getDeepSubject()->getHashCode();
-				$deepDeepDirectObject = $Clause->getDeepDirectObject()->getHashCode();
-
-				$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/influencedBy> ?{$subject}";
-			}
-
-			// http://dbpedia.org/ontology/child (1)
-			if ($predicate == 'have') {
-				$subject = $Clause->getDeepSubject()->getHashCode();
-				$deepDeepDirectObject = $Clause->getDeepDirectObject()->getHashCode();
-
-				if ($Clause->getDeepDirectObject()->getCategory() == 'child') {
-					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/child> ?{$deepDeepDirectObject}";
-				}
-			}
-
-			// http://dbpedia.org/ontology/birthPlace
-			if ($predicate == 'bear') {
-				$Preposition = $Clause->getPreposition();
-				if ($Preposition->getCategory() == 'where') {
-					$locationId = $Preposition->getObject()->getHashCode();
-					$deepDeepDirectObject = $Clause->getDeepDirectObject()->getHashCode();
-					$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/birthPlace> ?{$locationId}";
-					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
-				}
-
-				if ($Preposition->getCategory() == 'when') {
-					$timeId = $Preposition->getObject()->getHashCode();
-					$deepDeepDirectObject = $Clause->getDeepDirectObject()->getHashCode();
-					$clauses[] = "?{$deepDeepDirectObject} <http://dbpedia.org/ontology/birthDate> ?{$timeId}";
-				}
-
-			}
-
-			// http://dbpedia.org/ontology/deathPlace
-			if ($predicate == 'die') {
-				$Preposition = $Clause->getPreposition();
-				if ($Preposition && $Preposition->getCategory() == 'where') {
-					$locationId = $Preposition->getObject()->getHashCode();
-					$subject = $Clause->getDeepSubject()->getHashCode();
-					$clauses[] = "?{$subject} <http://dbpedia.org/ontology/deathPlace> ?{$locationId}";
-					$clauses[] = "_:place dbpedia-owl:city ?{$locationId}";
-				}
-			}
-
-			// http://dbpedia.org/ontology/child (2)
-			if ($predicate == 'be') {
-				$childId = $Clause->getDeepSubject()->getHashCode();
-				$DeepDirectObject = $Clause->getDeepDirectObject();
-				$Preposition = $DeepDirectObject->getPreposition();
-				if ($Preposition) {
-					$Object = $Preposition->getObject();
-					$parentId = $Object->getHashCode();
-
-					if ($Clause->getDeepDirectObject()->getCategory() == 'daughter') {
-						$clauses[] = "?{$parentId} <http://dbpedia.org/ontology/child> ?{$childId}";
-					}
-				}
-			}
-
-			// http://dbpedia/ontology/spouse
-			if ($predicate == 'marry') {
-				$person1 = $Clause->getDeepDirectObject()->getHashCode();
-				$Preposition = $Clause->getPreposition();
-				$person2 = $Preposition->getObject()->getHashCode();
-
-				// spouse: a symmetric relation
-				$clauses[] = "{ { ?{$person1} dbpprop:spouse ?{$person2} } UNION { ?{$person2} dbpprop:spouse ?{$person1} } }";
-			}
-		}
-
-		// interpret child elements
-        foreach ($Phrase->getChildPhrases() as $ChildPhrase) {
-            $this->interpretPhrase($ChildPhrase, $sentenceType, $clauses, $select, $subjectId);
-        }
-	}
-
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
 	 */
 	private function query(array $where, $select = '*')
 	{
 		$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $where) . "\n}";
-
-//r($query);
 
 		$value = $this->queryDBPedia($query);
 
@@ -335,8 +102,7 @@ class DBPedia extends KnowledgeSource
 				}
 			}
 		}
-	//r($query);
-	//r($result);
+
 		if (isset($result['results']['bindings'][0]['callret-0'])) {
 
 			// single value
@@ -411,45 +177,6 @@ class DBPedia extends KnowledgeSource
 		}
 		$json = json_encode($cache);
 		file_put_contents($path, $json);
-	}
-
-	public function bind($predicate, array $arguments)
-	{
-		$resultSets = array();
-
-		if ($predicate == 'BIRTHDATE') {
-			// presume that name is not null
-			list($name, $date) = $arguments;
-
-			$clauses = array();
-			// name
-			$clauses[] = "{ { ?person rdfs:label '$name'@en } UNION { ?person dbpprop:birthName '$name'@en } }";
-			// birth date
-			$dateClause = $date ? $date : '?date';
-			$clauses[] = "?person <http://dbpedia.org/ontology/birthDate> {$dateClause}";
-
-			foreach ($this->querySingleColumn($clauses, '?date') as $date) {;
-				$resultSets[] = array($name, $date);
-			}
-		}
-
-		if ($predicate == 'DEATHDATE') {
-			// presume that name is not null
-			list($name, $date) = $arguments;
-
-			$clauses = array();
-			// name
-			$clauses[] = "{ { ?person rdfs:label '$name'@en } UNION { ?person dbpprop:birthName '$name'@en } }";
-			// death date
-			$dateClause = $date ? $date : '?date';
-			$clauses[] = "?person <http://dbpedia.org/ontology/deathDate> {$dateClause}";
-
-			foreach ($this->querySingleColumn($clauses, '?date') as $date) {
-				$resultSets[] = array($name, $date);
-			}
-		}
-
-		return $resultSets;
 	}
 
 	public function answer(PredicationList $Question)
@@ -582,7 +309,7 @@ $sparql = (string)$Query;
 				$Query->select("?{$object}");
 				break;
 			default:
-				$i = 0;
+				die('Relation not defined: ' . $predicate);
 				break;
 		}
 	}

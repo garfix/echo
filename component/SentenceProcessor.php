@@ -47,13 +47,7 @@ class SentenceProcessor
 		if ($sentenceType == 'yes-no-question') {
 
 			// since this is a yes-no question, check the statement
-
-
-if ($NEW) {
-	$result = $this->answerYesNoQuestionWithSemantics($Semantics);
-} else {
-			$result = $this->KnowledgeManager->checkQuestion($Sentence);
-}
+			$result = $this->answerYesNoQuestionWithSemantics($Semantics);
 
 			if ($result) {
 				$Answer = $Sentence;
@@ -66,11 +60,7 @@ if ($NEW) {
 
 		} elseif ($sentenceType == 'wh-question') {
 
-			if ($NEW) {
-				$answer = $this->answerQuestionWithSemantics($Semantics);
-			} else {
-				$answer = $this->KnowledgeManager->answerQuestion($Sentence);
-			}
+			$answer = $this->answerQuestionWithSemantics($Semantics);
 
 			// incorporate the answer in the original question
 			if ($answer !== false) {
@@ -135,11 +125,7 @@ if ($NEW) {
 
 			if ($isQuestion) {
 
-				if ($NEW) {
-					$answer = $this->answerQuestionWithSemantics($Semantics);
-				} else {
-					$answer = $this->KnowledgeManager->answerQuestion($Sentence);
-				}
+				$answer = $this->answerQuestionWithSemantics($Semantics);
 
 				if ($answer !== null) {
 
