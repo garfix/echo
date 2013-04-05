@@ -133,7 +133,6 @@ abstract class SimpleGrammar extends BaseGrammar
 				// NP forms the object of VP's verb
 				array(
 					array('cat' => 'S',
-#todo not used
 						'semantics' => '
 							S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
 							S.event = VP.event;
@@ -283,10 +282,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				// NP forms the object of verb
 				array(
 					array('cat' => 'VP',
-#todo not used
 						'semantics' => '
 							VP.sem = verb.sem and PP.sem;
-							VP.event = verb.event
+							VP.event = verb.event;
+							VP.event = PP.superObject
 						',
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
 					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax')))),

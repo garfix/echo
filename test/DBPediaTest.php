@@ -10,8 +10,6 @@ use \agentecho\knowledge\DBPedia;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\component\Conversation;
-use agentecho\component\RuleBase;
-use agentecho\knowledge\EchoKnowledgeSource;
 
 /**
  * Question answering
@@ -87,19 +85,18 @@ $NEW = 1;
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->assertSame("Allegra Byron and Ada Lovelace", $answer);
-
-//$Conversation->setCurrentGrammar($Dutch);
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->assertSame("Allegra Byron en Ada Lovelace", $answer);
-$NEW = 0;
+
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
 		$this->assertSame("Yes, Lord Byron was married to Anne Isabella Milbanke.", $answer);
+
 		$answer = $Conversation->answer("Was Anne Isabella Milbanke married to Lord Byron?");
 		$this->assertSame("Yes, Anne Isabella Milbanke was married to Lord Byron.", $answer);
+
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 		$this->assertSame("Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.", $answer);
-
 	}
 
 	/**

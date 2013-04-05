@@ -143,7 +143,7 @@ class DutchGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Marry)'
 			),
 			'had' => array(
 				'form' => 'had',
@@ -225,7 +225,7 @@ class DutchGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'to'),
 				)),
-				'semantics' => ''
+				'semantics' => 'to(this.superObject, this.subObject)'
 			),
 			'noem' => array(
 				'form' => 'noem',

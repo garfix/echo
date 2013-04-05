@@ -574,6 +574,13 @@ $sparql = (string)$Query;
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
+			case 'marry':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("{ { ?{$subject} dbpprop:spouse ?{$object} } UNION { ?{$object} dbpprop:spouse ?{$subject} } }");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
 			default:
 				$i = 0;
 				break;

@@ -358,7 +358,7 @@ class EnglishGrammar extends SimpleGrammar
 						'syntax' => array('predicate' => 'marry', 'tense' => 'past'),
 					)
 				),
-				'semantics' => ''
+				'semantics' => 'isa(this.event, Marry)'
 			),
 			'name' => array(
 				'form' => 'name',
@@ -440,7 +440,7 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'to'),
 				)),
-				'semantics' => ''
+				'semantics' => 'to(this.superObject, this.subObject)'
 			),
 			'was_aux' => array(
 				'form' => 'was',

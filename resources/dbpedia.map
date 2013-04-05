@@ -37,6 +37,9 @@ isa(?child, Daughter) and belong_to(?child, ?parent) => child(?parent, ?child);
 // child
 isa(?child, Child) and belong_to(?child, ?parent) => child(?parent, ?child);
 
+// married to
+isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
+
 // unimportant predicates
 isa(?a, ?b) => true();
 subject(?a, ?b) => true();
