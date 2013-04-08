@@ -59,7 +59,7 @@ class Conversation
 		$Parser = new Parser();
 		$Parser->setGrammars($this->grammars);
 		$Parser->setCurrentGrammar($this->CurrentGrammar);
-		$Parser->setProperNounIdentifiers($this->KnowledgeManager);
+		$Parser->setProperNounIdentifiers($this->KnowledgeManager->getKnowledgeSources());
 
 		try {
 
@@ -69,30 +69,23 @@ class Conversation
 			// update the current grammar from the language found in this sentence
 			$this->CurrentGrammar = $Parser->getCurrentGrammar();
 
-#todo: what do we need the context for? is it necessary to keep it at this level of abstraction?
-
 			// extract the Sentence
 			$Sentence = $SentenceContext->getRootObject();
 
-$Semantics = $SentenceContext->getSemantics();
+			// extract semantics
+			$Semantics = $SentenceContext->getSemantics();
 
 			// update the subject of the conversation
 			$ContextProcessor = new ContextProcessor();
 			$ContextProcessor->updateSubject($Sentence, $this->ConversationContext);
 
-#The subject of a sentence is always S.subject
-#$ContextProcessor->updateSemanticSubject($Semantics, $this->ConversationContext);
-
 			// resolve pronouns
 			$PronounProcessor = new PronounProcessor();
 			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
 
-if (!$Semantics) {
-	$Semantics = new \agentecho\datastructure\PredicationList();
-}
+			// replace references
+			$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
 
-$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
-//echo($Semantics);exit;
 			// process the sentence
 			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
 			$Response = $SentenceProcessor->process($Sentence, $Semantics);
@@ -102,6 +95,7 @@ $PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
 			$answer = $Producer->produce($Response, $this->CurrentGrammar);
 
 			// substitute proper nouns by pronouns
+#todo
 
 		} catch (EchoException $E) {
 

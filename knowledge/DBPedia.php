@@ -59,8 +59,8 @@ class DBPedia extends KnowledgeSource
 
 		if (!isset($resources[$name])) {
 
-			$triple = array(" { { ?object rdfs:label '$name'@en } UNION { ?object dbpprop:birthName '$name'@en } }");
-			$resources[$name] = $this->querySingleColumn(array($triple), '?object');
+			$where = array(" { { ?object rdfs:label '$name'@en } UNION { ?object dbpprop:birthName '$name'@en } }");
+			$resources[$name] = $this->querySingleColumn($where, '?object');
 
 		}
 

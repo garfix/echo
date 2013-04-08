@@ -29,7 +29,6 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Conversation = $Echo->startConversation();
 
 		// S => aux NP VP ; DBPedia
-		$Conversation->setCurrentGrammar($English);
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
@@ -76,6 +75,8 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame("Yes, Anne Isabella Milbanke was married to Lord Byron.", $answer);
 		$answer = $Conversation->answer("Was Lord Byron getrouwd met Anne Isabella Milbanke?");
 		$this->assertSame("Ja, Lord Byron was getrouwd met Anne Isabella Milbanke.", $answer);
+
+		//$answer = $Conversation->answer("Was Cleopatra older than all of her husbands?");
 	}
 
 	/**

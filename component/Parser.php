@@ -41,9 +41,9 @@ class Parser
 		return $this->CurrentGrammar;
 	}
 
-	public function setProperNounIdentifiers()
+	public function setProperNounIdentifiers(array $properNounIdentifiers)
 	{
-		$this->properNounIdentifiers = array();
+		$this->properNounIdentifiers = $properNounIdentifiers;
 	}
 
 	//public function parseSentenceGivenMultipleGrammars($input)

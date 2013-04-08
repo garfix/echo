@@ -9,8 +9,6 @@ Ooit:
  * Sentence: verplaats voice naar clause
  * Maak een aparte taal voor syntax unification constraints
  * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
- * Wil je nog wel atoms gebruiken (misschien liever alleen constanten)
- * Maak dat je aan het eind van een assignmentlist een ; mag zetten
  * Maak commentaarregels
  * Maak includes
 
@@ -19,9 +17,9 @@ Volgende zinnen:
 * Maak een zin waarin een bijwoord voorkomt.
 * Maak een zin waarin een een determiner relevant is (Bv. geef me alle inwoners van London ouder dan 80 jaar)
 * "When did Lord Byron pass away?" -> interpret the expression into 'die'
+* Was Cleopatra older than all of her husbands?
 
 Nu:
 
-* Schrijf alle DBPedia queries om naar de nieuwe klasse
 * Maak van de output "53 years"
 * Noem de object in NP.object: entity, om verwarring met het syntactische object te voorkomen

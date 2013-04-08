@@ -155,15 +155,16 @@ class Lexer
 
 			$properNoun = implode(' ', $words);
 
-			foreach ($properNounIdentifiers as $Identifier) {
-				if ($Identifier->isProperNoun($properNoun)) {
-					return $words;
-				}
-			}
-
 			if ($Grammar->isProperNoun($words)) {
 				return $words;
 			}
+
+#todo: this is a very heavy operation; can we do without?
+//			foreach ($properNounIdentifiers as $Identifier) {
+//				if ($Identifier->isProperNoun($properNoun)) {
+//					return $words;
+//				}
+//			}
 
 			// remove last word
 			array_pop($words);
