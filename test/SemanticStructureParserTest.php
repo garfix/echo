@@ -213,6 +213,16 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('a(?x) => b(?x); c(?x) => d(?x)', $serialized);
 	}
 
+	public function testAssignmentWithOperation()
+	{
+		$Parser = new SemanticStructureParser();
+
+		$string = 'PN.name = propernoun1.text + " " + propernoun2.text';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testTokenizerFail()
 	{
 		$Parser = new SemanticStructureParser();
