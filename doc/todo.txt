@@ -12,6 +12,8 @@ Ooit:
  * Maak commentaarregels
  * Maak includes
 
+ Zorg ervoor dat het compleet, simpel en robuust is. Dat is veel belangrijker dan dat het bijzondere dingen kan!!!
+
 Volgende zinnen:
 * Maak een zin waarin een bijvoeglijk naamwoord voorkomt.
 * Maak een zin waarin een bijwoord voorkomt.

@@ -39,8 +39,6 @@ class SentenceProcessor
 	 */
 	public function process(Sentence $Sentence, PredicationList $Semantics)
 	{
-		global $NEW;
-
 		$Answer = null;
 
 		$sentenceType = $Sentence->getSentenceType();
@@ -63,7 +61,7 @@ class SentenceProcessor
 			$answer = $this->answerQuestionWithSemantics($Semantics);
 
 			// incorporate the answer in the original question
-			if ($answer !== false) {
+			if ($answer !== null) {
 
 				$answer = reset($answer);
 

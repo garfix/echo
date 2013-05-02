@@ -57,4 +57,49 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertSame('name(S.subject, "John") and isa(S.object, Car) and isa(S.event, Drive) and subject(S.event, S.subject) and object(S.event, S.object)', (string)$Result);
 	}
+
+	public function testChildAssignments()
+	{
+		$Parser = new SemanticStructureParser();
+		$Applier = new SemanticApplier();
+
+		/** @var AssignmentList $Rule  */
+		$Rule = $Parser->parse("
+			PN.sem = name(PN.object, propernoun1.text + ' ' + propernoun2.text);
+			PN.object = propernoun1.object;
+			PN.object = propernoun2.object
+		");
+
+		$childNodeTexts = array(
+			'propernoun1' => 'John',
+			'propernoun2' => 'Wilks',
+		);
+
+		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
+
+		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
+	}
+//
+//	public function testChildAssignments2()
+//	{
+//		$Parser = new SemanticStructureParser();
+//		$Applier = new SemanticApplier();
+//
+//		/** @var AssignmentList $Rule  */
+//		$Rule = $Parser->parse("
+//			PN.sem = name(PN.object, PN.name);
+//			PN.name = propernoun1.text + ' ' + propernoun2.text;
+//			PN.object = propernoun1.object;
+//			PN.object = propernoun2.object
+//		");
+//
+//		$childNodeTexts = array(
+//			'propernoun1' => 'John',
+//			'propernoun2' => 'Wilks',
+//		);
+//
+//		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
+//
+//		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
+//	}
 }

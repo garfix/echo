@@ -39,21 +39,21 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {category: firstPerson, number: singular}, Preposition: Preposition {category: identity, Object: Entity {number: singular, question: 1}}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		$Sentence = $Parser->parseFirstLine('Was Lord Byron influenced by the author of Paradise Lost?');
-		$this->assertSame('[S [aux was][NP [propernoun Lord Byron]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [propernoun Paradise Lost]]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('Sentence {sentenceType: yes-no-question, Clause: Clause {predicate: influence, DeepSubject: Entity {category: author, Determiner: Determiner {category: the, question: }, number: singular, Preposition: Preposition {category: of, Object: Entity {name: Paradise Lost, number: singular}}}, DeepDirectObject: Entity {name: Lord Byron, number: singular}, tense: past}, voice: passive}', $Sentence->getObjectString());
+		$this->assertSame('[S [aux was][NP [PN [propernoun Lord][propernoun Byron]]][VP [verb influenced]][passivisationPreposition by][NP [DP [determiner the]][NBar [NBar [noun author]][PP [preposition of][NP [PN [propernoun Paradise][propernoun Lost]]]]]]]', $Sentence->getSyntaxString());
+		$this->assertSame('Sentence {sentenceType: yes-no-question, Clause: Clause {predicate: influence, DeepSubject: Entity {category: author, Determiner: Determiner {category: the, question: }, number: singular, Preposition: Preposition {category: of, Object: Entity {name: Paradise, lastname: Lost, number: singular}}}, DeepDirectObject: Entity {name: Lord, lastname: Byron, number: singular}, tense: past}, voice: passive}', $Sentence->getObjectString());
 
 		$Sentence = $Parser->parseFirstLine('How many children did Lord Byron have?');
-		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: have, DeepSubject: Entity {name: Lord Byron, number: singular}, DeepDirectObject: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: have, DeepSubject: Entity {name: Lord, lastname: Byron, number: singular}, DeepDirectObject: Entity {category: child, Determiner: Determiner {category: many, question: 1}, number: singular}, tense: past}, voice: active}', $Sentence->getObjectString());
 
 		// S => NP VP
 		$Sentence = $Parser->parseFirstLine('John sees the book');
-		$this->assertSame('[S [NP [propernoun John]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]', $Sentence->getSyntaxString());
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]', $Sentence->getSyntaxString());
 		$this->assertSame('Sentence {sentenceType: declarative, Clause: Clause {predicate: see, DeepSubject: Entity {name: John, number: singular}, DeepDirectObject: Entity {category: book, Determiner: Determiner {category: the, question: }, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		// agreement success
 		// S => NP VP
 		$Sentence = $Parser->parseFirstLine('I am Patrick');
-		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [propernoun Patrick]]]]', $Sentence->getSyntaxString());
+		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [PN [propernoun Patrick]]]]]', $Sentence->getSyntaxString());
 		$this->assertSame('Sentence {sentenceType: declarative, Clause: Clause {predicate: be, DeepSubject: Entity {category: firstPerson, number: singular}, DeepDirectObject: Entity {name: Patrick, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 
 		// agreement fail
@@ -79,7 +79,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		//$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when Lady Lovelace was born?");
 
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
-		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
+		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary, lastname: Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
 		$this->assertSame('manner(S.event, S.request) and isa(S.event, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and request(S.request) and at_time(S.event, S_SBar.subEvent) and isa(S_SBar_S.subject, Female) and reference(S_SBar_S.subject) and isa(S_SBar.subEvent, Die) and subject(S_SBar.subEvent, S_SBar_S.subject)', $Sentence->getSemanticsString());
 	}
 }

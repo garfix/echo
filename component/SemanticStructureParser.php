@@ -16,6 +16,7 @@ use agentecho\datastructure\GoalClause;
 use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
+use agentecho\datastructure\BinaryOperation;
 
 /**
  *
@@ -47,6 +48,8 @@ class SemanticStructureParser
 	const T_WHITESPACE = 'whitespace';
 	// keywords
 	const T_AND = 'and';
+	// operators
+	const T_PLUS = '+';
 
 
 	private $lastPosParsed = 0;
@@ -222,7 +225,9 @@ class SemanticStructureParser
 	 */
 	private function parseTerm(array $tokens, $pos, &$Term)
 	{
-		if ($newPos = $this->parseProperty($tokens, $pos, $Term)) {
+		if ($newPos = $this->parseOperation($tokens, $pos, $Term)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Term)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredication($tokens, $pos, $Term)) {
 			$pos = $newPos;
@@ -371,6 +376,50 @@ class SemanticStructureParser
 		}
 
 		return false;
+	}
+
+	private function parseOperation(array $tokens, $pos, &$Operation)
+	{
+		// first operand
+		if ($newPos = $this->parseOperand($tokens, $pos, $Operand1)) {
+			$pos = $newPos;
+
+			if ($newPos = $this->parseOperator($tokens, $pos, $operator)) {
+				$pos = $newPos;
+
+				if (($newPos = $this->parseOperation($tokens, $pos, $Operand2)) ||
+					($newPos = $this->parseOperand($tokens, $pos, $Operand2))) {
+
+					$pos = $newPos;
+
+					$Operation = new BinaryOperation();
+					$Operation->setOperator($operator);
+					$Operation->setOperands(array($Operand1, $Operand2));
+					return $pos;
+
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function parseOperator(array $tokens, $pos, &$operator)
+	{
+		if ($pos = $this->parseSingleToken(self::T_PLUS, $tokens, $pos, $operator)) {
+			return $pos;
+		}
+
+		return false;
+	}
+
+	private function parseOperand(array $tokens, $pos, &$Operand)
+	{
+		if ($newPos = $this->parseConstant($tokens, $pos, $Operand)) {
+			return $newPos;
+		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Operand)) {
+			return $newPos;
+		}
 	}
 
 	private function parseTermList(array $tokens, $pos, &$TermList)
@@ -539,7 +588,9 @@ class SemanticStructureParser
 
 	private function parseArgument(array $tokens, $pos, &$argument)
 	{
-		if ($newPos = $this->parseProperty($tokens, $pos, $argument)) {
+		if ($newPos = $this->parseOperation($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseProperty($tokens, $pos, $argument)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
 			$pos = $newPos;
@@ -740,7 +791,8 @@ class SemanticStructureParser
 			':' => self::T_COLON,
 			';' => self::T_SEMICOLON,
 			'?' => self::T_QUESTION_MARK,
-			'=' => self::T_EQUALS_SIGN
+			'=' => self::T_EQUALS_SIGN,
+			'+' => self::T_PLUS,
 		);
 
 		for ($pos = 0; $pos < $stringLength; $pos++) {

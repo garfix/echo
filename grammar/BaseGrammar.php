@@ -71,7 +71,6 @@ abstract class BaseGrammar implements Grammar
 			'numeral',
 			'verb',
 			'propernoun',
-#			'whword', // WH-word that may not be followed by an NP (e.g. who)
 			'whAdverb', // adverb with a wh-word function: when, where, how ( http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html )
 			'whwordNP', // WH-word that may be followed by an NP (e.g. which, what)
 			'aux',
@@ -82,6 +81,7 @@ abstract class BaseGrammar implements Grammar
 			'passivisationPreposition',
 			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
 			'punctuationMark',
+			'insertion'
 		));
 	}
 
@@ -106,7 +106,16 @@ abstract class BaseGrammar implements Grammar
 
 			// all words can be proper nouns
 			if ($partOfSpeech == 'propernoun') {
-				$result = true;
+
+				// if they're not known to be an existing word in the language
+				if (!isset($this->wordIndex[$word])) {
+
+					// and start with a capital
+					if (preg_match('/^[A-Z]/', $word)) {
+						$result = true;
+					}
+				}
+
 			}
 		}
 
@@ -134,19 +143,19 @@ abstract class BaseGrammar implements Grammar
 					'syntax' => array(
 						'name' => $word,
 					),
-//					'semantics' => 'name(this.object, "' . $word . '")'
 				)
 			);
 		}
 	}
 
+	# todo: replace this function with a semantic rule?
 	public function getSemanticsForWord($word, $partOfSpeech)
 	{
 		if (isset($this->wordIndex[$word][$partOfSpeech]['semantics'])) {
 			return $this->wordIndex[$word][$partOfSpeech]['semantics'];
 		} elseif ($partOfSpeech == 'propernoun') {
 			// presume proper noun
-			return 'name(this.object, "' . $word . '")';
+			return '';
 		} else {
 			return null;
 		}
@@ -181,7 +190,6 @@ abstract class BaseGrammar implements Grammar
 		} else {
 			$word = $this->getWord($partOfSpeech, $features);
 			if (!$word) {
-r($features);
 				$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
 				$E->setValue($partOfSpeech);
 				throw $E;

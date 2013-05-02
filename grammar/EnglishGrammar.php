@@ -418,11 +418,18 @@ class EnglishGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.object, Female) and reference(this.object)'
 			),
-			'the' => array(
+			'the_det' => array(
 				'form' => 'the',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'the'),
+				)),
+				'semantics' => '',
+			),
+			'the_ins' => array(
+				'form' => 'the',
+				'part-of-speech' => 'insertion',
+				'features' => array('head' => array(
 				)),
 				'semantics' => '',
 			),

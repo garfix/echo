@@ -19,9 +19,9 @@ class ConversationTest extends \PHPUnit_Framework_TestCase
 		$Conversation = $Echo->startConversation();
 		// proper error feedback
 		$answer = $Conversation->answer('rwyrwur');
-		$this->assertSame("Word not found: rwyrwur", $answer);
+		$this->assertSame('Could not parse the part that starts with "rwyrwur"', $answer);
 
 		$answer = $Conversation->answer('We rwyrwur born');
-		$this->assertSame("Word not found: rwyrwur", $answer);
+		$this->assertSame('Could not parse the part that starts with "We rwyrwur born"', $answer);
 	}
 }

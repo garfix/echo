@@ -15,6 +15,8 @@ class Entity extends PhraseStructure implements EntityStructure
 	protected $data = array(
 		'category' => null,
 		'name' => null,
+		'middlename' => null,
+		'lastname' => null,
 		'Determiner' => null,
 		'number' => self::SINGULAR,
 		'question' => null,
@@ -63,6 +65,26 @@ class Entity extends PhraseStructure implements EntityStructure
 	public function getName()
 	{
 		return $this->data['name'];
+	}
+
+	public function setMiddlename($name)
+	{
+		$this->data['middlename'] = $name;
+	}
+
+	public function getMiddlename()
+	{
+		return $this->data['middlename'];
+	}
+
+	public function setLastname($name)
+	{
+		$this->data['lastname'] = $name;
+	}
+
+	public function getLastname()
+	{
+		return $this->data['lastname'];
 	}
 
 	public function setNumber($number)

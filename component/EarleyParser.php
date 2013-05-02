@@ -412,8 +412,11 @@ class EarleyParser
 
 			$Applier = new SemanticApplier();
 
+#todo: don't calculate these over and over again
+			$childNodeTexts = $this->listChildTexts($state);
+
 			// combine the semantics of the children to determine the semantics of the parent
-			$Semantics = $Applier->apply($Rule, $childSemantics);
+			$Semantics = $Applier->apply($Rule, $childSemantics, $childNodeTexts);
 			$state['semantics'] = $Semantics;
 		} else {
 			$i = 0;
@@ -436,30 +439,64 @@ class EarleyParser
 		foreach ($state['children'] as $childNodeId) {
 			$cat = $state['rule'][$i]['cat'];
 			$childState = $this->treeInfo['states'][$childNodeId];
-
-			// childId = NP, if there is already an NP, turn it into NP1, and name the current NP "NP2"
-			$childId = $cat;
-			$childIdIndex = 0;
-			while (isset($childSemantics[$childId])) {
-				// there exists already a child id like this
-				if ($childIdIndex == 0) {
-					// it is an id without an index
-					// rename the existing NP to NP1
-					$value = $childSemantics[$cat];
-					unset($childSemantics[$cat]);
-					$childIdIndex++;
-					$childId = $cat . $childIdIndex;
-					$childSemantics[$childId] = $value;
-				}
-				// create the next id
-				$childIdIndex++;
-				$childId = $cat . $childIdIndex;
-			}
+			$childId = $this->getChildId($childSemantics, $cat);
 			$childSemantics[$childId] = $childState['semantics'];
 			$i++;
 		}
 
 		return $childSemantics;
+	}
+
+	private function getChildId(array &$childSemantics, $cat)
+	{
+		// childId = NP, if there is already an NP, turn it into NP1, and name the current NP "NP2"
+		$childId = $cat;
+		$childIdIndex = 0;
+
+		// check if the category previously raised to index 1
+		if  (isset($childSemantics[$cat . '1'])) {
+			$childId = $cat . '1';
+			$childIdIndex = 1;
+		}
+
+		while (isset($childSemantics[$childId])) {
+			// there exists already a child id like this
+			if ($childIdIndex == 0) {
+				// it is an id without an index
+				// rename the existing NP to NP1
+				$value = $childSemantics[$cat];
+				unset($childSemantics[$cat]);
+				$childIdIndex++;
+				$childId = $cat . $childIdIndex;
+				$childSemantics[$childId] = $value;
+			}
+			// create the next id
+			$childIdIndex++;
+			$childId = $cat . $childIdIndex;
+		}
+
+		return $childId;
+	}
+
+	private function listChildTexts(array $state)
+	{
+		$childTexts = array();
+
+		$i = 1;
+		foreach ($state['children'] as $childNodeId) {
+			$cat = $state['rule'][$i]['cat'];
+			$childState = $this->treeInfo['states'][$childNodeId];
+			$childId = $this->getChildId($childTexts, $cat);
+			$childTexts[$childId] = implode(' ', $this->getWordRange($childState['startWordIndex'], $childState['endWordIndex'] - 1));
+			$i++;
+		}
+
+		return $childTexts;
+	}
+
+	private function getWordRange($startIndex, $endIndex)
+	{
+		return array_slice($this->words, $startIndex, $endIndex - $startIndex + 1);
 	}
 
 	private function pushState($state, $position)

@@ -26,3 +26,6 @@ PP:
 DP:
 - subObject
 - superObject
+
+All objects:
+- text

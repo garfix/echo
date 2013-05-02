@@ -221,6 +221,11 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
+
+		$string = 'PN.sem = name(PN.subject, propernoun1.text + " " + propernoun2.text)';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
 	}
 
 	public function testTokenizerFail()

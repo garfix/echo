@@ -2,12 +2,15 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\SemanticStructure;
 use agentecho\datastructure\TermList;
+use agentecho\datastructure\Constant;
+use agentecho\exception\ConfigurationException;
 
 /**
  * @author Patrick van Bergen
@@ -15,6 +18,8 @@ use agentecho\datastructure\TermList;
 class SemanticApplier
 {
 	/**
+	 * Applies $Rule to $childNodeSemantics to produce a new semantic structure (a predication list)
+	 *
 	 * @param AssignmentList $Rule It is an assignmentlist now; it may grow out into a complete program
 	 *
 	 * Example (an Assignmentlist that can be paraphrased as):
@@ -24,15 +29,15 @@ class SemanticApplier
 	 *	S.request = WhNP.request
 	 *
 	 * @param array $childNodeSemantics An array of [cat => SemanticStructure]
+	 * @param array $childNodeTexts An array of [cat => sentence text associated with these nodes]
 	 *
 	 * Example:
 	 *  NP => isa(this.object, Old)
 	 *
-	 * @return SemanticStructure
+	 * @return SemanticStructure A predication list
 	 */
-	public function apply($Rule, $childNodeSemantics)
+	public function apply($Rule, $childNodeSemantics, $childNodeTexts = array())
 	{
-$a = (string)$Rule;
 		if ($Rule instanceof AssignmentList) {
 
 			// A rule consists of one or more assignments
@@ -67,7 +72,7 @@ $a = (string)$Rule;
 			}
 
 			// create the predication list from this semantic attachment and the child nodes
-			$Semantics = $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $parentSyntacticCategory);
+			$Semantics = $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $childNodeTexts, $parentSyntacticCategory);
 
 			return $Semantics;
 		}
@@ -87,7 +92,7 @@ $a = (string)$Rule;
 	 *
 	 * @return PredicationList
 	 */
-	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, $parentSyntacticCategory)
+	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, array $childNodeTexts, $parentSyntacticCategory)
 	{
 		$predications = array();
 
@@ -100,7 +105,7 @@ $a = (string)$Rule;
 				if ($Term->getName() == 'sem') {
 
 					// add the child node's predications to this node's predications
-					$childPredications = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory);
+					$childPredications = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childNodeTexts, $childPropertyBindings, $parentSyntacticCategory);
 
 					$predications = array_merge($predications, $childPredications);
 
@@ -110,8 +115,7 @@ $a = (string)$Rule;
 
 			} elseif ($Term instanceof Predication) {
 
-				/** @var Predication $ClonedPredication  */
-				$ClonedPredication = $Term->createClone();
+				$ClonedPredication = $this->calculatePredicationArguments($Term, $childNodeTexts);
 
 				$predications[] = $ClonedPredication;
 
@@ -140,15 +144,28 @@ $a = (string)$Rule;
 	}
 
 	/**
-	 * @param $Term A property like noun.sem
-	 * @param $childNodeSemantics
-	 * @param $childPropertyBindings
-	 * @return mixed
+	 * Given a semantic attachment like
+	 *    S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	 * this function processes WhNP.sem, auxBe.sem, and NP.sem as $Term
+	 * and returns the semantics of the child node (i.e. WnNP, auxBe, or NP)
+	 *
+	 * $Term example:
+	 *      WhNP.sem
+	 *
+	 * $childPropertyBindings example:
+	 *      ['object' => NP.object]
+	 *
+	 * $childNodeSemantics example:
+	 *      'NP' => isa(this.object, Old)
+	 *
+	 * @return array
 	 */
-	private function inheritChildNodeSemantics(Property $Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory)
+	private function inheritChildNodeSemantics(Property $Term, array $childNodeSemantics, array $childNodeTexts, array $childPropertyBindings, $parentSyntacticCategory)
 	{
+		// take the category of the term (i.e. NP or NP1)
 		$childId = $Term->getObject()->getName();
 
+		// look up the semantics of the child node, copy it, and replace its properties by the properties of the current node
 		if (isset($childNodeSemantics[$childId])) {
 			$childPredications = $childNodeSemantics[$childId]->getPredications();
 
@@ -227,4 +244,90 @@ $a = (string)$Rule;
 			}
 		}
 	}
+
+	/*
+	 * For predications like
+	 *
+	 *     name(this.object, propernoun1.text + ' ' + propernoun2.text)
+	 *
+	 * replace the argument
+	 *
+	 *     propernoun1.text + ' ' + propernoun2.text
+	 *
+	 * with the constant
+	 *
+	 *     "Lord Byron"
+	 *
+	 * @return Predication
+	 */
+	private function calculatePredicationArguments(Predication $Predication, array $childNodeTexts)
+	{
+		/** @var Predication $NewPredication  */
+		$NewPredication = $Predication->createClone();
+
+		foreach ($NewPredication->getArguments() as $index => $Argument) {
+
+			$NewPredication->setArgument($index, $this->calculateArgument($Argument, $childNodeTexts));
+
+		}
+
+		return $NewPredication;
+	}
+
+	private function calculateArgument($Argument, array $childNodeTexts)
+	{
+		if ($Argument instanceof BinaryOperation) {
+
+			$operator = $Argument->getOperator();
+			$operands = $Argument->getOperands();
+
+			$calculatedOperands = array();
+			foreach ($operands as $Operand) {
+				$calculatedOperands[] = $this->calculateArgument($Operand, $childNodeTexts);
+			}
+
+			if ($operator == '+') {
+
+				$scalarOperands = array();
+
+				foreach ($calculatedOperands as $Operand) {
+
+					if ($Operand instanceof Constant) {
+						$scalarOperands[] = $Operand->getName();
+					} elseif ($Operand instanceof Property) {
+
+						$category = $Operand->getObject()->getName();
+						$propertyName = $Operand->getName();
+
+						if ($propertyName == 'text') {
+
+							if (isset($childNodeTexts[$category])) {
+								$scalarOperands[] = $childNodeTexts[$category];
+							} else {
+								die('error1');
+							}
+
+						} else {
+							die('error2');
+						}
+
+					} else {
+						die('error3');
+					}
+
+				}
+
+				$NewArgument = new Constant(implode('', $scalarOperands));
+
+			} else {
+				die('error4');
+			}
+
+		} else {
+			$NewArgument = $Argument;
+		}
+
+		return $NewArgument;
+	}
+
 }

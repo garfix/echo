@@ -337,11 +337,11 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'NP',
 'semantics' => '
-	NP.sem = propernoun.sem;
-	NP.object = propernoun.object
+	NP.sem = PN.sem;
+	NP.object = PN.object
 ',
 						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
-					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+					array('cat' => 'PN', 'features' => array('head-1' => null)),
 				),
 				// he
 				array(
@@ -400,6 +400,58 @@ abstract class SimpleGrammar extends BaseGrammar
 						'features' => array('head-1' => array('syntax-1' => null))),
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax-2')))),
 					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+				),
+			),
+			// Proper Name
+			'PN' => array(
+				// John
+				array(
+					array('cat' => 'PN',
+'semantics' => '
+	PN.sem = propernoun.sem;
+	PN.object = propernoun.object
+',
+						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+				),
+				// Lord Byron, Ada Lovelace
+				array(
+					array('cat' => 'PN',
+'semantics' => '
+	PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text);
+	PN.object = propernoun1.object;
+	PN.object = propernoun2.object
+',
+						'features' => array('head' => array('syntax' => array('name' => '?firstname', 'lastname' => '?lastname', 'type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?firstname')))),
+					array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
+				),
+				// Anne Isabella Milbanke
+				array(
+					array('cat' => 'PN',
+'semantics' => '
+	PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
+	PN.object = propernoun1.object;
+	PN.object = propernoun2.object;
+	PN.object = propernoun3.object
+',
+						'features' => array('head' => array('syntax' => array('name' => '?firstname', 'middlename' => '?middlename', 'lastname' => '?lastname', 'type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?firstname')))),
+					array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?middlename')))),
+					array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
+				),
+				// Jan de Wit
+				array(
+					array('cat' => 'PN',
+'semantics' => '
+	PN.sem = propernoun1.sem and propernoun2.sem;
+	PN.object = propernoun1.object;
+	PN.object = propernoun2.object;
+',
+						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+					array('cat' => 'insertion', 'features' => array('head-1' => null)),
+					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
 				),
 			),
 			// Prepositional Phrase
@@ -630,15 +682,57 @@ abstract class SimpleGrammar extends BaseGrammar
 						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
 					)
 				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//					)
+//				),
+
 				array(
 					'condition' => array('head' => array('syntax' => array('name' => null))),
 					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
+						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
+					)
+				),
+			),
+			'PN' => array(
+
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null))),
+//					'rule' => array(
+//						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//					)
+//				),
+				array(
+					'condition' => array('head' => array('syntax' => array('name' => null, 'middlename' => null, 'lastname' => null))),
+					'rule' => array(
+						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
 						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?middlename')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
 					)
 				),
 
+				array(
+					'condition' => array('head' => array('syntax' => array('name' => null, 'lastname' => null))),
+					'rule' => array(
+						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'lastname' => '?lastname')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
+					)
+				),
 
+				array(
+					'condition' => array('head' => array('syntax' => array('name' => null))),
+					'rule' => array(
+						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+					)
+				),
 
 			),
 			'VP' => array(

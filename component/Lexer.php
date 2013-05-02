@@ -129,48 +129,13 @@ class Lexer
 
 			} else {
 
-				$involvedWords = $this->findLongestProperNoun($Sentence, array_slice($words, $i, self::LONGEST_PROPER_NOUN), $Grammar, $properNounIdentifiers);
+				$lexicalItems[] = $word;
 
-				if ($involvedWords === false) {
-
-					$E = new LexicalItemException(LexicalItemException::WORD_NOT_FOUND);
-					$E->setWord($word);
-					throw $E;
-
-				} else {
-					$properNoun = implode(' ', $involvedWords);
-					$lexicalItems[] = $properNoun;
-					$i += count($involvedWords) - 1;
-				}
 			}
 		}
 
 		$Sentence->lexicalItems = $lexicalItems;
 		return true;
-	}
-
-	private function findLongestProperNoun(SentenceContext $Sentence, $words, Grammar $Grammar, array $properNounIdentifiers)
-	{
-		while (count($words) > 0) {
-
-			$properNoun = implode(' ', $words);
-
-			if ($Grammar->isProperNoun($words)) {
-				return $words;
-			}
-
-#todo: this is a very heavy operation; can we do without?
-//			foreach ($properNounIdentifiers as $Identifier) {
-//				if ($Identifier->isProperNoun($properNoun)) {
-//					return $words;
-//				}
-//			}
-
-			// remove last word
-			array_pop($words);
-		}
-
-		return false;
 	}
 
 	private function getNextToken($string, &$index)

@@ -185,6 +185,8 @@ class Parser
 				$Entity = $this->buildObjectStructure($value);
 				$E->$func($Entity);
 
+			} else {
+				$i = 0;
 			}
 
 		}

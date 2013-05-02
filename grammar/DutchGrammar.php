@@ -68,11 +68,18 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'de' => array(
+			'de_det' => array(
 				'form' => 'de',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'the'),
+				)),
+				'semantics' => ''
+			),
+			'de_ins' => array(
+				'form' => 'de',
+				'part-of-speech' => 'insertion',
+				'features' => array('head' => array(
 				)),
 				'semantics' => ''
 			),

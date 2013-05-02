@@ -36,4 +36,19 @@ class BinaryOperation
 	{
 		return $this->operands[0] . ' ' . $this->operator . ' ' . $this->operands[1];
 	}
+
+	public function createClone()
+	{
+		$Operation = new BinaryOperation();
+
+		$Operation->setOperator($this->getOperator());
+
+		$operands = array();
+		foreach ($this->getOperands() as $Operand) {
+			$operands[] = $Operand->createClone();
+		}
+		$Operation->setOperands($operands);
+
+		return $Operation;
+	}
 }
