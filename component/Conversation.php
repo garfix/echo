@@ -59,7 +59,6 @@ class Conversation
 		$Parser = new Parser();
 		$Parser->setGrammars($this->grammars);
 		$Parser->setCurrentGrammar($this->CurrentGrammar);
-		$Parser->setProperNounIdentifiers($this->KnowledgeManager->getKnowledgeSources());
 
 		try {
 

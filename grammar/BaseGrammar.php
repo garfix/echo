@@ -108,13 +108,13 @@ abstract class BaseGrammar implements Grammar
 			if ($partOfSpeech == 'propernoun') {
 
 				// if they're not known to be an existing word in the language
-				if (!isset($this->wordIndex[$word])) {
+//				if (!isset($this->wordIndex[$word])) {
 
 					// and start with a capital
 					if (preg_match('/^[A-Z]/', $word)) {
 						$result = true;
 					}
-				}
+//				}
 
 			}
 		}

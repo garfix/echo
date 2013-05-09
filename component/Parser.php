@@ -20,9 +20,6 @@ class Parser
 	 * and the grammar that was last used to successfully parse a sentence */
 	private $CurrentGrammar = null;
 
-	/** @var array $properNounIdentifiers A list of ProperNounIdentifier objects that are used to determine if a piece of text is a proper noun */
-	private $properNounIdentifiers = array();
-
 	public function setGrammars(array $grammars)
 	{
 		$this->grammars = $grammars;
@@ -39,11 +36,6 @@ class Parser
 	public function getCurrentGrammar()
 	{
 		return $this->CurrentGrammar;
-	}
-
-	public function setProperNounIdentifiers(array $properNounIdentifiers)
-	{
-		$this->properNounIdentifiers = $properNounIdentifiers;
 	}
 
 	//public function parseSentenceGivenMultipleGrammars($input)
@@ -128,7 +120,7 @@ class Parser
 	{
 		// analyze words
 		$Lexer = new Lexer();
-		$Lexer->analyze($input, $Sentence, $Grammar, $this->properNounIdentifiers);
+		$Lexer->analyze($input, $Sentence, $Grammar);
 
 		// create a phrase specification from these lexical items
 		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);

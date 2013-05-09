@@ -28,7 +28,7 @@ class Lexer
 	 * @param $Sentence
 	 * @throws LexicalItemException
 	 */
-	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar, array $properNounIdentifiers)
+	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($string, $Sentence);
@@ -40,7 +40,7 @@ class Lexer
 		// make words lowercase
 		// glue together words that should form a single lexical item
 #todo: split lowercasing and gluing
-		$this->glue($Sentence, $Grammar, $properNounIdentifiers);
+		$this->glue($Sentence, $Grammar);
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Lexer
 	 * @param SentenceContext $Sentence
 	 * @throws LexicalItemException
 	 */
-	private function glue(SentenceContext $Sentence, Grammar $Grammar, array $properNounIdentifiers)
+	private function glue(SentenceContext $Sentence, Grammar $Grammar)
 	{
 		$lexicalItems = array();
 		$words = $Sentence->words;

@@ -10,7 +10,7 @@ use agentecho\knowledge\RuleSource;
 /**
  * This object provides a single interface for multiple KnowledgeSources.
  */
-class KnowledgeManager implements ProperNounIdentifier
+class KnowledgeManager
 {
 	/** @var Sources of information that are needed to answer questions */
 	private $knowledgeSources = array();
@@ -66,23 +66,6 @@ class KnowledgeManager implements ProperNounIdentifier
 		foreach ($this->knowledgeSources as $KnowledgeSource) {
 			$result = $KnowledgeSource->answerQuestion($Sentence);
 			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Is $identifier a proper noun in any of the knowledge sources?
-	 * @param $identifier
-	 * @return bool
-	 */
-	public function isProperNoun($identifier)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->isProperNoun($identifier);
-			if ($result) {
 				return $result;
 			}
 		}
