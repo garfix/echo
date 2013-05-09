@@ -7,22 +7,6 @@ namespace agentecho\grammar;
  */
 abstract class SimpleGrammar extends BaseGrammar
 {
-	/**
-	 * Returns true if $words for a proper noun.
-	 * @param $words
-	 * @return bool
-	 */
-	public function isProperNoun($words)
-	{
-		// Sjaak
-		// Sjaak Zwart
-		// Kees Willem Zwart
-		// Sjaak (de|van|van de|van der) Zwart
-		$exp = '/^([A-Z][a-z]+)( [A-Z][a-z]+)?( (de |van |van de |van der )?[A-Z][a-z]+)?$/';
-
-		return preg_match($exp, implode(' ', $words));
-	}
-
 	public function unglue($word)
 	{
 		return array($word);
@@ -332,6 +316,7 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
+			// Complete: See The Structure of Modern English (p. 171)
 			'NP' => array(
 				// John
 				array(
@@ -376,7 +361,7 @@ abstract class SimpleGrammar extends BaseGrammar
 					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 			),
-			// For N-bar, see 'The structure of modern english' - Brinton (2000) - p. 175
+			// Complete: see 'The structure of modern english' - Brinton (2000) - p. 175
 			'NBar' => array(
 				// car
 				array(
@@ -387,6 +372,17 @@ abstract class SimpleGrammar extends BaseGrammar
 '
 					),
 					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
+				),
+				// blue car
+				array(
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
+'semantics' => '
+	NBar.sem = noun.sem;
+	NBar.object = noun.object
+'
+					),
+					array('cat' => 'AP', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 				// car in the lot
 				// the author of Paradise Lost
@@ -469,6 +465,16 @@ abstract class SimpleGrammar extends BaseGrammar
 						'features' => array('head-1' => array('syntax-1' => array('type' => 'preposition')))),
 					array('cat' => 'preposition', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
+				),
+			),
+			// Adjectival Phrase
+			'AP' => array(
+				// red
+				array(
+					array('cat' => 'AP',
+						'semantics' => '',
+						'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
 			),
 			// Determiner Phrase

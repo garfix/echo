@@ -65,6 +65,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		}
 		$this->assertSame(true, $caught);
 
+		// NBar -> AP NBar
+		$Sentence = $Parser->parseFirstLine('John reads the red book');
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb reads][NP [DP [determiner the]][NBar [AP [adjective red]][NBar [noun book]]]]]]', $Sentence->getSyntaxString());
+
+		// NBar -> AP NBar -> (AP NBar) PP
+		$Sentence = $Parser->parseFirstLine('John reads the red book in bed');
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb reads][NP [DP [determiner the]][NBar [NBar [AP [adjective red]][NBar [noun book]]][PP [preposition in][NP [NBar [noun bed]]]]]]]]', $Sentence->getSyntaxString());
+
 		// S => NP VP NP NP
 		$Sentence = $Parser->parseFirstLine("John gives Mary flowers.");
 		$this->assertSame('Sentence {sentenceType: declarative, Clause: Clause {predicate: give, DeepSubject: Entity {name: John, number: singular}, DeepDirectObject: Entity {category: flower, number: singular}, DeepIndirectObject: Entity {name: Mary, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());

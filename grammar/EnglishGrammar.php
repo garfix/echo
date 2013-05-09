@@ -100,6 +100,14 @@ class EnglishGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'isa(this.object, Author)'
 			),
+			'bed' => array(
+				'form' => 'bed',
+				'part-of-speech' => 'noun',
+				'features' => array('head' => array(
+					'syntax' => array('category' => 'bed'),
+				)),
+				'semantics' => 'isa(this.object, Bed)'
+			),
 			'book_v' => array(
 				'form' => 'book',
 				'part-of-speech' => 'verb',
@@ -394,6 +402,26 @@ class EnglishGrammar extends SimpleGrammar
 				'features' => array('head' => array(
 					'syntax' => array('category' => 'on'),
 				)),
+				'semantics' => ''
+			),
+			'reads' => array(
+				'form' => 'reads',
+				'part-of-speech' => 'verb',
+				'features' => array(
+					'head' => array(
+						'syntax' => array('predicate' => 'read', 'tense' => 'present'),
+					)
+				),
+				'semantics' => ''
+			),
+			'red' => array(
+				'form' => 'red',
+				'part-of-speech' => 'adjective',
+				'features' => array(
+					'head' => array(
+						'syntax' => array(),
+					)
+				),
 				'semantics' => ''
 			),
 			'sees' => array(
