@@ -476,6 +476,40 @@ abstract class SimpleGrammar extends BaseGrammar
 						'features' => array('head-1' => array('syntax-1' => null))),
 					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
 				),
+				// fiercely barking
+				array(
+					array('cat' => 'AP',
+						'semantics' => '',
+						'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'AdvP', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
+				),
+				// bright red
+				array(
+					array('cat' => 'AP',
+						'semantics' => '',
+						'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'degreeAdverb', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
+				),
+			),
+			// Adverbial Phrase
+			'AdvP' => array(
+				// quickly
+				array(
+					array('cat' => 'AdvP',
+						'semantics' => '',
+						'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'adverb', 'features' => array('head-1' => array('syntax-1' => null))),
+				),
+				// very quickly
+				array(
+					array('cat' => 'AdvP',
+						'semantics' => '',
+						'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'degreeAdverb', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'adverb', 'features' => array('head-1' => array('syntax-1' => null))),
+				),
 			),
 			// Determiner Phrase
 			// See 'The structure of modern english' - Brinton (2000) - p. 170

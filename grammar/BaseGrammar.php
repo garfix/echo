@@ -65,6 +65,7 @@ abstract class BaseGrammar implements Grammar
 			'adjective',
 			'adverb',
 			'conjunction',
+			'degreeAdverb',
 			'determiner',
 			'noun',
 			'pronoun',

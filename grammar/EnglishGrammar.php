@@ -100,6 +100,13 @@ class EnglishGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'isa(this.object, Author)'
 			),
+			'barking' => array(
+				'form' => 'barking',
+				'part-of-speech' => 'adjective',
+				'features' => array('head' => array(
+				)),
+				'semantics' => ''
+			),
 			'bed' => array(
 				'form' => 'bed',
 				'part-of-speech' => 'noun',
@@ -138,6 +145,15 @@ class EnglishGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Bear)'
 			),
+			'bright' => array(
+				'form' => 'bright',
+				'part-of-speech' => 'degreeAdverb',
+				'features' => array(
+					'head' => array(
+					)
+				),
+				'semantics' => ''
+			),
 			'by_prp' => array(
 				'form' => 'by',
 				'part-of-speech' => 'preposition',
@@ -155,6 +171,13 @@ class EnglishGrammar extends SimpleGrammar
 					)
 				),
 				'semantics' => '',
+			),
+			'calms' => array(
+				'form' => 'calms',
+				'part-of-speech' => 'verb',
+				'features' => array('head' => array(
+				)),
+				'semantics' => ''
 			),
 			'children' => array(
 				'form' => 'children',
@@ -231,6 +254,20 @@ class EnglishGrammar extends SimpleGrammar
 					)
 				),
 				'semantics' => 'isa(this.event, Die)'
+			),
+			'dog' => array(
+				'form' => 'dog',
+				'part-of-speech' => 'noun',
+				'features' => array('head' => array(
+				)),
+				'semantics' => ''
+			),
+			'fiercely' => array(
+				'form' => 'fiercely',
+				'part-of-speech' => 'adverb',
+				'features' => array('head' => array(
+				)),
+				'semantics' => ''
 			),
 			'flight' => array(
 				'form' => 'flight',
@@ -476,6 +513,13 @@ class EnglishGrammar extends SimpleGrammar
 					'syntax' => array('category' => 'to'),
 				)),
 				'semantics' => 'to(this.superObject, this.subObject)'
+			),
+			'very' => array(
+				'form' => 'very',
+				'part-of-speech' => 'degreeAdverb',
+				'features' => array('head' => array(
+				)),
+				'semantics' => ''
 			),
 			'was_aux' => array(
 				'form' => 'was',

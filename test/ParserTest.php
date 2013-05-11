@@ -78,6 +78,32 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Sentence {sentenceType: declarative, Clause: Clause {predicate: give, DeepSubject: Entity {name: John, number: singular}, DeepDirectObject: Entity {category: flower, number: singular}, DeepIndirectObject: Entity {name: Mary, number: singular}, tense: present}, voice: active}', $Sentence->getObjectString());
 	}
 
+	public function testParseDegreeAdverb()
+	{
+		$Parser = new Parser();
+		$Parser->setCurrentGrammar(new EnglishGrammar());
+
+		// AP -> degreeAdverb adjective
+		$Sentence = $Parser->parseFirstLine('John reads the bright red book');
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb reads][NP [DP [determiner the]][NBar [AP [degreeAdverb bright][adjective red]][NBar [noun book]]]]]]', $Sentence->getSyntaxString());
+	}
+
+	public function testParseAdverbialPhrase()
+	{
+		$Parser = new Parser();
+		$Parser->setCurrentGrammar(new EnglishGrammar());
+
+		// examples from "The structure of modern english" (p. 173)
+
+		// AdvP -> adverb
+		$Sentence = $Parser->parseFirstLine('John calms the fiercely barking dog');
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb calms][NP [DP [determiner the]][NBar [AP [AdvP [adverb fiercely]][adjective barking]][NBar [noun dog]]]]]]', $Sentence->getSyntaxString());
+
+		// AdvP -> degreeAdverb adverb
+		$Sentence = $Parser->parseFirstLine('John calms the very fiercely barking dog');
+		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb calms][NP [DP [determiner the]][NBar [AP [AdvP [degreeAdverb very][adverb fiercely]][adjective barking]][NBar [noun dog]]]]]]', $Sentence->getSyntaxString());
+	}
+
 	public function testCalculatedAnswerSemantics()
 	{
 		$Parser = new Parser();
