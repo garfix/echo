@@ -33,15 +33,6 @@ class LabeledDAG
 	 *	    'verb' => array('head' => array('syntax' => array('subject' => '?sem1'))),
 	 *	);
 	 *
-	 * Example 3:
-	 * Using indexes to solve the same problem as in example 2. It is a shortcut that can be used in some cases.
-	 * In this example 'head-1' forms the label 'head' and both 'head-1's point to the same node.
-	 *
-	 * 	$tree = array(
-	 *	    'noun' => array('head-1' => array('tense' => null, 'person' => null)),
-	 *	    'verb' => array('head-1' => array('tense' => null, 'person' => null)),
-	 *	);
-	 *
 	 */
 	public function __construct($tree = null)
 	{
@@ -128,7 +119,7 @@ class LabeledDAG
 		// extract the name and id of the feature
 		$regexp =
 			'/^' .
-			'(?P<name1>[a-z][a-z@_0-9]*)(-(?P<id1>\d+))?' .
+			'(?P<name1>[a-z][a-z@_0-9]*)' .
 			'(\{\?(?P<name2>[a-z][a-z@_0-9]*)\})?' .
 			'$/i';
 
@@ -140,7 +131,7 @@ class LabeledDAG
 			$internalLabel = $matches['name2'];
 			$externalLabel = $matches['name1'];
 		} else {
-			$id = isset($matches['id1']) ? $matches['id1'] : self::createUniqueId();
+			$id = self::createUniqueId();
 			$internalLabel = $matches['name1'] . '-' . $id;
 			$externalLabel = $matches['name1'];
 		}
@@ -232,8 +223,6 @@ class LabeledDAG
 
 			} elseif (isset($thisNode['children'])) {
 
-				r($thisNode);
-				r($newNode);
 				trigger_error('This node has children while new node has a value.', E_USER_ERROR);
 
 			} else {
@@ -252,7 +241,6 @@ class LabeledDAG
 
 			} elseif (isset($thisNode['value'])) {
 
-				r($thisNode);
 				trigger_error('This node has a value while new node has children.', E_USER_ERROR);
 
 			}
@@ -506,7 +494,7 @@ class LabeledDAG
 
 		} else {
 
-			foreach ($node['children'] as $label => $internalChildLabel) {
+			foreach ($node['children'] as $internalChildLabel) {
 				$this->traverse($internalChildLabel, $path, $paths);
 			}
 

@@ -639,11 +639,11 @@ class EnglishGrammar extends SimpleGrammar
 						S.request = WhADVP.request;
 						S.event = WhADVP.event
 					',
-					'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
-				array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
-				array('cat' => 'auxDo', 'features' => array('head-1' => array('agreement' => '?agr'))),
+					'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s1'))),
+				array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
+				array('cat' => 'auxDo', 'features' => array('head{?h1}' => array('agreement' => '?agr'))),
 				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-				array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
+				array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax-2')))),
 			);
 
 		return $rules;

@@ -46,16 +46,16 @@ abstract class SimpleGrammar extends BaseGrammar
 	S.event = VP.event;
 	S.subject = NP.object
 ',
-						'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?syntax-1'))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?s1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax')))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax')))),
 				),
 				// Lady Lovelace was born
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?syntax-2'))),
+					array('cat' => 'S', 'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?s2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
 					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-2' => array('deepSubject' => '?syntax')))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s2}' => array('deepSubject' => '?syntax')))),
 				),
 
 				// imperative
@@ -68,8 +68,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.event = VP.event;
 							S.object = VP.object
 						',
-						'features' => array('head-1' => array('sentenceType' => 'imperative', 'clause' => '?syntax-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'imperative', 'clause{?s1}' => null))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 
 				// non-subject questions
@@ -85,9 +85,9 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.object = WhADVP.object;
 							S.request = WhADVP.request
 						',
-						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-1'))),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepSubject' => '?syntax-2')))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s1'))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				),
 
@@ -102,17 +102,17 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.object = NP.object;
 							S.request = WhADVP.request
 						',
-						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?syntax-1'))),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?s1'))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
 					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-1' => array('deepDirectObject' => '?syntax-2')))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepDirectObject' => '?syntax-2')))),
 				),
 
 				// yes-no questions
 
 				// Was John driving?
-				// VP is the head constituent (head-1)
+				// VP is the head constituent (head{?h1})
 				// aux, NP, and VP agree (agreement-2)
 				// NP forms the object of VP's verb
 				array(
@@ -122,10 +122,10 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.event = VP.event;
 							S.subject = NP.object
 						',
-						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
 					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('deepDirectObject' => '?syntax-1')))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('deepDirectObject' => '?syntax-1')))),
 				),
 
 				// Was the car driven by John?
@@ -137,12 +137,12 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.subject = NP2.object;
 							S.object = NP1.object
 						',
-						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?syntax-3'))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?s3'))),
 					array('cat' => 'aux'),
-					array('cat' => 'NP', 'features' => array('head-2' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-					array('cat' => 'VP', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
+					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
 					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head-3' => array('syntax' => '?syntax-2'))),
+					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
 
 				// Was John a fool?
@@ -156,8 +156,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.subject = NP2.object;
 							S.subject = NP1.object
 						',
-						'features' => array('head-1' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?syntax-3'))),
-					array('cat' => 'aux', 'features' => array('head-1' => array('agreement-2' => null, 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
+						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
+					array('cat' => 'aux', 'features' => array('head{?h1}' => array('agreement' => null, 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
 				),
@@ -165,7 +165,7 @@ abstract class SimpleGrammar extends BaseGrammar
 				// How old was Mary Shelley?
 				array(
 					array('cat' => 'S',
-						'features' => array('head-1' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?syntax-3', 'relativeClause' => '?syntax-4')),
+						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s3', 'relativeClause' => '?syntax-4')),
 
 'semantics' => '
 	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and request(S.request);
@@ -175,14 +175,14 @@ abstract class SimpleGrammar extends BaseGrammar
 	S.request = WhADVP.request
 '
 					),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax-3' => array('deepDirectObject' => null)))),
-					array('cat' => 'auxBe', 'features' => array('head-1' => array('agreement' => '?agr', 'syntax-3' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
+					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax{?s3}' => array('deepDirectObject' => null)))),
+					array('cat' => 'auxBe', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
 					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
 				),
 
 				// How old was Mary Shelley when she died?
 				array(
-					array('cat' => 'S', 'features' => array('head-1' => array('relativeClause' => '?syntax-1')),
+					array('cat' => 'S', 'features' => array('head{?h1}' => array('relativeClause' => '?syntax-1')),
 # todo: should accept S1 and S2
 'semantics' => '
 	S.sem = S.sem and SBar.sem;
@@ -194,7 +194,7 @@ abstract class SimpleGrammar extends BaseGrammar
 '
 
 					),
-					array('cat' => 'S', 'features' => array('head-1' => null)),
+					array('cat' => 'S', 'features' => array('head{?h1}' => null)),
 					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
 				)
 
@@ -227,12 +227,12 @@ abstract class SimpleGrammar extends BaseGrammar
 	VP.sem = verb.sem;
 	VP.event = verb.event
 ',
-						'features' => array('head-1' => array('syntax' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => null)),
+						'features' => array('head{?h1}' => array('syntax' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head{?h1}' => null)),
 				),
 				// book that flight! / sees the book
 				// Name Lord Byron's children.
-				// verb is the head constituent (head-1)
+				// verb is the head constituent (head{?h1})
 				// the verb has only 1 argument (arguments)
 				// NP forms the object of verb
 				array(
@@ -242,8 +242,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							VP.event = VP.event;
 							VP.object = NP.object
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax')), 'arguments' => 1)),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('deepDirectObject' => '?syntax')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 				// John gives Mary flowers
@@ -255,14 +255,14 @@ abstract class SimpleGrammar extends BaseGrammar
 							S.subject = NP1.object;
 							S.object = NP2.object
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'clause')))),
 # is this used? the order is wrong!
-					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('deepDirectObject' => '?syntax-3', 'deepIndirectObject' => '?syntax-2')), 'arguments' => 1)),
+					array('cat' => 'verb', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('deepDirectObject' => '?syntax-3', 'deepIndirectObject' => '?syntax-2')), 'arguments' => 1)),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
 				),
 				// driven by John
-				// verb is the head constituent (head-1)
+				// verb is the head constituent (head{?h1})
 				// NP forms the object of verb
 				array(
 					array('cat' => 'VP',
@@ -271,8 +271,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							VP.event = verb.event;
 							VP.event = PP.superObject
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'clause')))),
-					array('cat' => 'verb', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax')))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'clause')))),
+					array('cat' => 'verb', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('preposition' => '?syntax')))),
 					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
@@ -311,8 +311,8 @@ abstract class SimpleGrammar extends BaseGrammar
 	WhADVP.object = NP.object;
 	WhADVP.request = whwordNP.adjunct
 ',
-						'features' => array('head-1' => null)),
-					array('cat' => 'whwordNP', 'features' => array('head-1' => array('variables' => array('role' => '?syntax')))),
+						'features' => array('head{?h1}' => null)),
+					array('cat' => 'whwordNP', 'features' => array('head{?h1}' => array('variables' => array('role' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
@@ -325,8 +325,8 @@ abstract class SimpleGrammar extends BaseGrammar
 	NP.sem = PN.sem;
 	NP.object = PN.object
 ',
-						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
-					array('cat' => 'PN', 'features' => array('head-1' => null)),
+						'features' => array('head{?h1}' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'PN', 'features' => array('head{?h1}' => null)),
 				),
 				// he
 				array(
@@ -335,8 +335,8 @@ abstract class SimpleGrammar extends BaseGrammar
 	NP.sem = pronoun.sem;
 	NP.object = pronoun.object
 ',
-						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
-					array('cat' => 'pronoun', 'features' => array('head-1' => null)),
+						'features' => array('head{?h1}' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'pronoun', 'features' => array('head{?h1}' => null)),
 				),
 				// the car
 				array(
@@ -346,9 +346,9 @@ abstract class SimpleGrammar extends BaseGrammar
 							NP.object = NBar.object;
 							NP.object = DP.superObject
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'entity')))),
 					array('cat' => 'DP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('determiner' => '?syntax-2')))),
+					array('cat' => 'NBar', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('determiner' => '?syntax-2')))),
 				),
 				// (large) car (in the lot)
 				array(
@@ -357,32 +357,32 @@ abstract class SimpleGrammar extends BaseGrammar
 	NP.sem = NBar.sem;
 	NP.object = NBar.object
 ',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'entity')))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'entity')))),
+					array('cat' => 'NBar', 'features' => array('head{?h1}' => array('syntax{?s1}' => null))),
 				),
 			),
 			// Complete: see 'The structure of modern english' - Brinton (2000) - p. 175
 			'NBar' => array(
 				// car
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
+					array('cat' => 'NBar', 'features' => array('head{?h1}' => array('syntax' => '?s1')),
 'semantics' => '
 	NBar.sem = noun.sem;
 	NBar.object = noun.object
 '
 					),
-					array('cat' => 'noun', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'noun', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 				// blue car
 				array(
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null)),
+					array('cat' => 'NBar', 'features' => array('head{?h1}' => array('syntax' => '?s1')),
 'semantics' => '
 	NBar.sem = noun.sem;
 	NBar.object = noun.object
 '
 					),
-					array('cat' => 'AP', 'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => null))),
+					array('cat' => 'AP', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'NBar', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 				// car in the lot
 				// the author of Paradise Lost
@@ -393,8 +393,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							NBar.object = NBar.object;
 							NBar.object = PP.superObject
 						',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'NBar', 'features' => array('head-1' => array('syntax-1' => array('preposition' => '?syntax-2')))),
+						'features' => array('head' => array('syntax' => '?s1'))),
+					array('cat' => 'NBar', 'features' => array('head' => array('syntax{?s1}' => array('preposition' => '?syntax-2')))),
 					array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 				),
 			),
@@ -407,8 +407,8 @@ abstract class SimpleGrammar extends BaseGrammar
 	PN.sem = propernoun.sem;
 	PN.object = propernoun.object
 ',
-						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
-					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+						'features' => array('head{?h1}' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head{?h1}' => null)),
 				),
 				// Lord Byron, Ada Lovelace
 				array(
@@ -444,10 +444,10 @@ abstract class SimpleGrammar extends BaseGrammar
 	PN.object = propernoun1.object;
 	PN.object = propernoun2.object;
 ',
-						'features' => array('head-1' => array('syntax' => array('type' => 'entity')))),
-					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
-					array('cat' => 'insertion', 'features' => array('head-1' => null)),
-					array('cat' => 'propernoun', 'features' => array('head-1' => null)),
+						'features' => array('head{?h1}' => array('syntax' => array('type' => 'entity')))),
+					array('cat' => 'propernoun', 'features' => array('head{?h1}' => null)),
+					array('cat' => 'insertion', 'features' => array('head{?h1}' => null)),
+					array('cat' => 'propernoun', 'features' => array('head{?h1}' => null)),
 				),
 			),
 			// Prepositional Phrase
@@ -462,8 +462,8 @@ abstract class SimpleGrammar extends BaseGrammar
 							PP.subObject = preposition.subObject;
 							PP.subObject = NP.object
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'preposition')))),
-					array('cat' => 'preposition', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'preposition')))),
+					array('cat' => 'preposition', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => null, 'object' => '?syntax')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
 				),
 			),
@@ -473,24 +473,24 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'AP',
 						'semantics' => '',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'adjective', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 				// fiercely barking
 				array(
 					array('cat' => 'AP',
 						'semantics' => '',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'AdvP', 'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'AdvP', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'adjective', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 				// bright red
 				array(
 					array('cat' => 'AP',
 						'semantics' => '',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'degreeAdverb', 'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'adjective', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'degreeAdverb', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'adjective', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 			),
 			// Adverbial Phrase
@@ -499,16 +499,16 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					array('cat' => 'AdvP',
 						'semantics' => '',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'adverb', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'adverb', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 				// very quickly
 				array(
 					array('cat' => 'AdvP',
 						'semantics' => '',
-						'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'degreeAdverb', 'features' => array('head-1' => array('syntax-1' => null))),
-					array('cat' => 'adverb', 'features' => array('head-1' => array('syntax-1' => null))),
+						'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'degreeAdverb', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+					array('cat' => 'adverb', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
 				),
 			),
 			// Determiner Phrase
@@ -521,8 +521,8 @@ abstract class SimpleGrammar extends BaseGrammar
 					'semantics' => '
 						DP.sem = determiner.sem
 					',
-					'features' => array('head-1' => array('syntax' => array('type' => 'determiner')))),
-					array('cat' => 'determiner', 'features' => array('head-1' => null)),
+					'features' => array('head{?h1}' => array('syntax' => array('type' => 'determiner')))),
+					array('cat' => 'determiner', 'features' => array('head{?h1}' => null)),
 				),
 				// Byron's
 				array(
@@ -533,9 +533,9 @@ abstract class SimpleGrammar extends BaseGrammar
 							DP.superObject = possessiveMarker.superObject;
 							DP.subObject = NP.object
 						',
-						'features' => array('head-1' => array('syntax-1' => array('type' => 'determiner')))),
+						'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => 'determiner')))),
 					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax'))),
-					array('cat' => 'possessiveMarker', 'features' => array('head-1' => array('syntax-1' => array('type' => null, 'object' => '?syntax')))),
+					array('cat' => 'possessiveMarker', 'features' => array('head{?h1}' => array('syntax{?s1}' => array('type' => null, 'object' => '?syntax')))),
 				),
 			)
 		);
@@ -560,13 +560,13 @@ abstract class SimpleGrammar extends BaseGrammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?syntax-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+							'deepDirectObject' => '?s2', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?s3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-2' => null))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense-1' => null)))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax{?s2}' => null))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => null)))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?s3'))),
 					),
 				),
 
@@ -575,10 +575,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense-1' => null, 'predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb-1' => null)))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense' => '?t1', 'predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense-1' => null)))),
+						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => '?t1')))),
 						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('predicate' => '?pred')))),
 						array('cat' => 'passivisationPreposition', 'features' => array()),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-1'))),
@@ -591,12 +591,12 @@ abstract class SimpleGrammar extends BaseGrammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepSubject' => '?syntax-1', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+							'deepSubject' => '?syntax-1', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
 					),
 				),
 
@@ -623,13 +623,13 @@ abstract class SimpleGrammar extends BaseGrammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?syntax-2', 'adverb-1' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+							'deepDirectObject' => '?s2', 'adverb' => '?adverb-1', 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-2' => null))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?s2'))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
 						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax-3' => null))),
+						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
 					),
 				),
 
@@ -639,8 +639,8 @@ abstract class SimpleGrammar extends BaseGrammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('deepIndirectObject' => null))),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'deepIndirectObject' => '?syntax-3')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => '?syntax-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
@@ -651,10 +651,10 @@ abstract class SimpleGrammar extends BaseGrammar
 				array(
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('predicate' => 'be'))),
 					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb-1' => null)))),
+						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
 						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),//'agreement-2' => null, 'predicate' => '?pred', array('tense' => '?tense')
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
 				),
@@ -665,8 +665,8 @@ abstract class SimpleGrammar extends BaseGrammar
 					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
 					'rule' => array(
 						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement-2' => null, 'syntax-1' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement-2' => null, 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
 						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
 					),
 				),

@@ -11,21 +11,21 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 	function testLabeledDAGs()
 	{
 		$tree1 = array(
-			'aaa' => array('head-1' => null),
-			'bbb' => array('head' => array('agreement-2' => null)),
-			'ccc' => array('head-1' => array('agreement-2' => null)),
+			'aaa' => array('head' => '?h1'),
+			'bbb' => array('head' => array('agreement' => '?agr')),
+			'ccc' => array('head{?h1}' => array('agreement' => '?agr')),
 		);
 
 		$tree2 = array(
-			'aaa' => array('head-1' => array('tense-2' => 'past', 'agreement' => 'yes')),
-			'ddd' => array('head-1' => null),
-			'eee' => array('head' => array('tense-2' => null)),
+			'aaa' => array('head{?h1}' => array('tense{?t2}' => 'past', 'agreement' => 'yes')),
+			'ddd' => array('head' => '?h1'),
+			'eee' => array('head' => array('tense' => '?t2')),
 		);
 
 		$tree3 = array(
-			'colors-1' => array('red-1' => 1, 'blue' => 2),
+			'colors' => array('red' => 1, 'blue' => 2),
 			'dogs' => array('blackie' => 3, 'johnson' => 4),
-			'skies' => array('structures' => array('a' => array('c-1' => null), 'b' => array('c-1' => 5)))
+			'skies' => array('structures' => array('a' => array('c' => '?c1'), 'b' => array('c{?c1}' => 5)))
 		);
 
 		$tree4 = array(
@@ -43,8 +43,8 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$tree7 = array(
-			'NP' => array('head-1' => null),
-			'pronoun' => array('head-1' => null),
+			'NP' => array('head' => '?head1'),
+			'pronoun' => array('head' => '?head1'),
 		);
 
 		$tree8 = array(
@@ -52,8 +52,8 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$tree9 = array(
-			'VP' => array('head-1' => null),
-			'verb' => array('head-1' => array('agreement' => null)),
+			'VP' => array('head' => '?head1'),
+			'verb' => array('head{?head1}' => array('agreement' => null)),
 			'NP' => array()
 		);
 
@@ -61,8 +61,8 @@ class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$tree11 = array(
-			'a' => array('head-1' => null),
-			'b' => array('head-1' => null),
+			'a' => array('head' => '?head1'),
+			'b' => array('head' => '?head1'),
 		);
 
 		$F1 = new LabeledDAG($tree1);
