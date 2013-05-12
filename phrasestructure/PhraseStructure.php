@@ -39,13 +39,6 @@ abstract class PhraseStructure
 		return $className[0] . ' {' . implode(', ',  $parts) . '}';
 	}
 
-	public function getHashCode()
-	{
-		// I added 't' because DBPedia give the wrong results for some reason
-#todo: check if it can go
-		return sha1(serialize($this)) . 't';
-	}
-
     public function getChildPhrases()
     {
         $children = array();

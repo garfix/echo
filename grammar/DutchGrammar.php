@@ -17,7 +17,7 @@ class DutchGrammar extends SimpleGrammar
 	protected function getLexicon()
 	{
 		return array(
-			',' => array(
+			array(
 				'form' => ',',
 				'part-of-speech' => 'punctuationMark',
 				'features' => array(
@@ -25,7 +25,7 @@ class DutchGrammar extends SimpleGrammar
 					'space' => 'after_only'
 				)
 			),
-			'\'s' => array(
+			array(
 				'form' => '\'s',
 				'part-of-speech' => 'possessiveMarker',
 				'features' => array('head' => array(
@@ -33,7 +33,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'belong_to(this.superObject, this.subObject)'
 			),
-			'auteur' => array(
+			array(
 				'form' => 'auteur',
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
@@ -41,14 +41,14 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'isa(this.object, Author)'
 			),
-			'ben' => array(
+			array(
 				'form' => 'ben',
 				'part-of-speech' => 'verb',
 				'features' => array('person' => 1, 'number' => 'singular', 'head' => array(
 				)),
 				'semantics' => ''
 			),
-			'beïnvloed' => array(
+			array(
 				'form' => 'beïnvloed',
 				'part-of-speech' => 'verb',
 				'features' => array(
@@ -59,7 +59,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Influence) and tense(this.event, Past)'
 			),
-			'boek' => array(
+			array(
 				'form' => 'boek',
 				'part-of-speech' => 'verb',
 				'features' => array('head' => array(
@@ -68,7 +68,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'de_det' => array(
+			array(
 				'form' => 'de',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
@@ -76,14 +76,14 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'de_ins' => array(
+			array(
 				'form' => 'de',
 				'part-of-speech' => 'insertion',
 				'features' => array('head' => array(
 				)),
 				'semantics' => ''
 			),
-			'die' => array(
+			array(
 				'form' => 'die',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
@@ -91,7 +91,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'door_prep' => array(
+			array(
 				'form' => 'door',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
@@ -99,14 +99,14 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'door_psv' => array(
+			array(
 				'form' => 'door',
 				'part-of-speech' => 'passivisationPreposition',
 				'features' => array('head' => array(
 				)),
 				'semantics' => ''
 			),
-			'dochter' => array(
+			array(
 				'form' => 'dochter',
 				'part-of-speech' => 'noun',
 				'features' => array(
@@ -116,7 +116,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.object, Daughter)'
 			),
-			'een' => array(
+			array(
 				'form' => 'een',
 				'part-of-speech' => 'determiner',
 				'features' => array('head' => array(
@@ -125,14 +125,14 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'en' => array(
+			array(
 				'form' => 'en',
 				'part-of-speech' => 'conjunction',
 				'features' => array('head' => array(
 				)),
 				'semantics' => ''
 			),
-			'geboren' => array(
+			array(
 				'form' => 'geboren',
 				'part-of-speech' => 'verb',
 				'features' => array(
@@ -142,7 +142,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Bear)'
 			),
-			'getrouwd' => array(
+			array(
 				'form' => 'getrouwd',
 				'part-of-speech' => 'verb',
 				'features' => array(
@@ -152,7 +152,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Marry)'
 			),
-			'had' => array(
+			array(
 				'form' => 'had',
 				'part-of-speech' => 'verb',
 				'features' => array(
@@ -162,14 +162,14 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Have)'
 			),
-			'het' => array(
+			array(
 				'form' => 'het',
 				'part-of-speech' => 'article',
 				'features' => array('head' => array(
 				)),
 				'semantics' => ''
 			),
-			'hoeveel' => array(
+			array(
 				'form' => 'hoeveel',
 				'part-of-speech' => 'whwordNP',
 				'features' => array(
@@ -182,14 +182,14 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'manner(this.object, this.adjunct) and many(this.object)'
 			),
-			'ik' => array(
+			array(
 				'form' => 'ik',
 				'part-of-speech' => 'pronoun',
 				'features' => array('person' => 1, 'number' => 'singular', 'head' => array(
 				)),
 				'semantics' => ''
 			),
-			'in' => array(
+			array(
 				'form' => 'in',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
@@ -197,7 +197,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'ja' => array(
+			array(
 				'form' => 'ja',
 				'part-of-speech' => 'adverb',
 				'features' => array('head' => array(
@@ -205,7 +205,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'januari' => array(
+			array(
 				'form' => 'januari',
 				'part-of-speech' => 'noun',
 				'features' => array(
@@ -215,7 +215,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => ''
 			),
-			'kinderen' => array(
+			array(
 				'form' => 'kinderen',
 				'part-of-speech' => 'noun',
 				'features' => array(
@@ -226,7 +226,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.object, Child)'
 			),
-			'met' => array(
+			array(
 				'form' => 'met',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
@@ -234,7 +234,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'to(this.superObject, this.subObject)'
 			),
-			'noem' => array(
+			array(
 				'form' => 'noem',
 				'part-of-speech' => 'verb',
 				'features' => array(
@@ -244,7 +244,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'isa(this.event, Name)'
 			),
-			'op' => array(
+			array(
 				'form' => 'op',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
@@ -252,7 +252,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'van' => array(
+			array(
 				'form' => 'van',
 				'part-of-speech' => 'preposition',
 				'features' => array('head' => array(
@@ -260,7 +260,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'belong_to(this.superObject, this.subObject)'
 			),
-			'vlucht' => array(
+			array(
 				'form' => 'vlucht',
 				'part-of-speech' => 'noun',
 				'features' => array('head' => array(
@@ -269,7 +269,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => ''
 			),
-			'was_aux' => array(
+			array(
 				'form' => 'was',
 				'part-of-speech' => 'aux',
 				'features' => array(
@@ -279,7 +279,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => ''
 			),
-			'was_be' => array(
+			array(
 				'form' => 'was',
 				'part-of-speech' => 'auxBe',
 				'features' => array(
@@ -289,7 +289,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'tense(this.event, Past)'
 			),
-			'werd_aux' => array(
+			array(
 				'form' => 'werd',
 				'part-of-speech' => 'aux',
 				'features' => array(
@@ -299,7 +299,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'tense(this.event, Past)'
 			),
-			'werd_psv' => array(
+			array(
 				'form' => 'werd',
 				'part-of-speech' => 'auxPsv',
 				'features' => array(
@@ -309,7 +309,7 @@ class DutchGrammar extends SimpleGrammar
 				),
 				'semantics' => 'tense(this.event, Past)'
 			),
-			'waar' => array(
+			array(
 				'form' => 'waar',
 				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
@@ -317,7 +317,7 @@ class DutchGrammar extends SimpleGrammar
 				)),
 				'semantics' => 'location(this.event, this.adjunct)'
 			),
-			'wanneer' => array(
+			array(
 				'form' => 'wanneer',
 				'part-of-speech' => 'whAdverb',
 				'features' => array('head' => array(
