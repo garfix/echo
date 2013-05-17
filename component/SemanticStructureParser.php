@@ -2,13 +2,13 @@
 
 namespace agentecho\component;
 
+use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Property;
-use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Assignment;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
@@ -17,6 +17,7 @@ use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
+use agentecho\datastructure\LabeledDAG;
 
 /**
  *
@@ -45,6 +46,7 @@ class SemanticStructureParser
 	// content
 	const T_IDENTIFIER = 'identifier';
 	const T_STRING = 'string';
+	const T_NUMBER = 'number';
 	const T_WHITESPACE = 'whitespace';
 	// keywords
 	const T_AND = 'and';
@@ -109,6 +111,8 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
+			$pos = $newPos;
 		} else {
 			$pos = false;
 		}
@@ -130,6 +134,85 @@ class SemanticStructureParser
 		}
 
 		return $pos;
+	}
+
+	private function parseLabeledDag(array $tokens, $pos, &$LabeledDag)
+	{
+		if ($pos = $this->parseLabeledDagTree($tokens, $pos, $tree)) {
+
+			$LabeledDag = new LabeledDAG($tree);
+
+			return $pos;
+		}
+
+		return false;
+	}
+
+	private function parseLabeledDagTree(array $tokens, $pos, &$tree)
+	{
+		$tree = array();
+
+		// {
+		if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+
+					// reference variable (optional)
+					if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
+						$pos = $newPos;
+						$variable = (string)$Variable;
+					} else {
+						$variable = null;
+					}
+
+					// constant or tree
+					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
+						$pos = $newPos;
+						$value = (string)$constant;
+					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
+						$pos = $newPos;
+						$value = $number;
+					} elseif ($newPos = $this->parseLabeledDagTree($tokens, $pos, $subTree)) {
+						$pos = $newPos;
+						$value = $subTree;
+					} elseif ($variable !== null) {
+						// there is just the reference variable
+						$value = $variable;
+						$variable = null;
+					} else {
+						return false;
+					}
+
+					// add field
+					if ($variable !== null) {
+						$label .= '{' . $variable . '}';
+					}
+					$tree[$label] = $value;
+
+				} else {
+					return false;
+				}
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			// }
+			if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
+				return $pos;
+			}
+		}
+
+		return false;
 	}
 
 	private function parseMap(array $tokens, $pos, &$Map)
@@ -842,8 +925,13 @@ class SemanticStructureParser
 				if (preg_match('/(\w+)/', $string, $matches, 0, $pos)) {
 					$id = self::T_IDENTIFIER;
 					$contents = $matches[1];
-					$pos += strlen(($contents)) - 1;
+					$pos += strlen($contents) - 1;
 				}
+			} elseif (preg_match('/(\d+)/', $string, $matches, 0, $pos)) {
+				// number
+				$id = self::T_NUMBER;
+				$contents = $matches[1];
+				$pos += strlen($contents) - 1;
 			} else {
 				$this->lastPosParsed = $pos;
 				return false;

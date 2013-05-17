@@ -36,7 +36,7 @@ class LabeledDAG
 	 */
 	public function __construct($tree = null)
 	{
-		$this->createNode('root', $tree);
+		$this->createNode('root', $tree, false);
 	}
 
 	/**
@@ -63,11 +63,12 @@ class LabeledDAG
 					$name = $label;
 					$internalSubLabel = substr($subTree, 1);
 					$subTree = null;
+					$isReference = false;
 
 				} else {
 
 					// create a $name for the user and $internalLabel for internal node management
-					list($name, $internalSubLabel) = $this->extractLabel($label);
+					list($name, $internalSubLabel, $isReference) = $this->extractLabel($label);
 
 				}
 
@@ -76,6 +77,7 @@ class LabeledDAG
 
 				// add an child to the node
 				$node['children'][$name] = $internalSubLabel;
+				$node['isReference'][$name] = $isReference;
 			}
 		}
 
@@ -130,13 +132,15 @@ class LabeledDAG
 		if (!empty($matches['name2'])) {
 			$internalLabel = $matches['name2'];
 			$externalLabel = $matches['name1'];
+			$isReference = true;
 		} else {
 			$id = self::createUniqueId();
 			$internalLabel = $matches['name1'] . '-' . $id;
 			$externalLabel = $matches['name1'];
+			$isReference = false;
 		}
 
-		return array($externalLabel, $internalLabel);
+		return array($externalLabel, $internalLabel, $isReference);
 	}
 
 	/**
@@ -441,7 +445,7 @@ class LabeledDAG
 		return $tree;
 	}
 
-	public function __toString()
+	public function __toString1()
 	{
 		// a single path from start to end
 		$path = array();
@@ -468,6 +472,60 @@ class LabeledDAG
 		}
 
 		return $string;
+	}
+
+	public function __toString()
+	{
+		$string = $this->serializeItem($this->nodes['root']);
+		return $string;
+	}
+
+	private function serializeItem($node)
+	{
+		if (is_array($node)) {
+			$string = '{';
+
+			$i = 0;
+			if (isset($node['children'])) {
+				foreach ($node['children'] as $label => $subTree) {
+
+					// ,
+					$string .= ($i > 0) ? ', ' : '';
+
+					// label:
+					$string .= $label . ': ';
+
+					// reference? show ?variable and subtree
+					if (!empty($node['isReference'][$label])) {
+
+						$string .= '?' . $subTree . ' ';
+						$string .= $this->serializeItem($this->nodes[$subTree]);
+
+					} else {
+
+						// variable
+						if (strpos($subTree, '-') === false) {
+							$string .= '?' . $subTree;
+						// value
+						} else {
+							$string .= $this->serializeItem($this->nodes[$subTree]);
+						}
+					}
+
+					$i++;
+				}
+			} elseif (isset($node['value'])) {
+				return $node['value'];
+			} else {
+				die('error');
+			}
+
+			$string .= '}';
+			return $string;
+
+		} else {
+			return $node;
+		}
 	}
 
 	/**

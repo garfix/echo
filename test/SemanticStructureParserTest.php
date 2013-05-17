@@ -228,6 +228,20 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testLabeledDag()
+	{
+		$Parser = new SemanticStructureParser();
+		$string = '{noun: {head: {tense: ?t, person: 1}}, verb: {head: {tense: ?t}}}';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		$string = '{noun: {head: {syntax: ?sem1 {role: ?role}}}, verb: {head: {syntax: ?sem1}}}';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testTokenizerFail()
 	{
 		$Parser = new SemanticStructureParser();
