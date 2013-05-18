@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class LabeledSet
+class AssociativeArray
 {
 	private $values = array();
 
@@ -34,7 +34,7 @@ class LabeledSet
 
 	public function createClone()
 	{
-		$Clone = new LabeledSet();
+		$Clone = new AssociativeArray();
 
 		foreach ($this->values as $key => $value) {
 

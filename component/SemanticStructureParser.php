@@ -18,7 +18,7 @@ use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\LabeledDAG;
-use agentecho\datastructure\LabeledSet;
+use agentecho\datastructure\AssociativeArray;
 
 /**
  *
@@ -116,7 +116,7 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseLabeledSet($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parseAssociativeArray($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -141,7 +141,7 @@ class SemanticStructureParser
 		return $pos;
 	}
 
-	private function parseLabeledSet($tokens, $pos, &$LabeledSet)
+	private function parseAssociativeArray($tokens, $pos, &$AssociativeArray)
 	{
 		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
 
@@ -176,10 +176,10 @@ class SemanticStructureParser
 
 			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
 
-				$LabeledSet = new LabeledSet();
+				$AssociativeArray = new AssociativeArray();
 
 				foreach ($values as $key => $value) {
-					$LabeledSet->set($key, $value);
+					$AssociativeArray->set($key, $value);
 				}
 
 				return $pos;

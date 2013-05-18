@@ -242,7 +242,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testLabeledSet()
+	public function testAssociativeArray()
 	{
 		$Parser = new SemanticStructureParser();
 		$string = '[form: "Wachten", partOfSpeech: "verb"]';
