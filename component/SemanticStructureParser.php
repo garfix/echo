@@ -18,6 +18,7 @@ use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\LabeledDAG;
+use agentecho\datastructure\LabeledSet;
 
 /**
  *
@@ -32,6 +33,8 @@ class SemanticStructureParser
 	const T_BRACKET_CLOSE = 'bracket close';
 	const T_CURLY_BRACKET_OPEN = 'curly bracket open';
 	const T_CURLY_BRACKET_CLOSE = 'curly bracket close';
+	const T_SQUARE_BRACKET_OPEN = 'square bracket open';
+	const T_SQUARE_BRACKET_CLOSE = 'square bracket close';
 	// single
 	const T_COMMA = 'comma';
 	const T_DOT = 'dot';
@@ -113,6 +116,8 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseLabeledSet($tokens, $pos, $Result)) {
+			$pos = $newPos;
 		} else {
 			$pos = false;
 		}
@@ -134,6 +139,55 @@ class SemanticStructureParser
 		}
 
 		return $pos;
+	}
+
+	private function parseLabeledSet($tokens, $pos, &$LabeledSet)
+	{
+		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
+
+			$values = array();
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+				}
+
+				// value
+				if ($newPos = $this->parseConstant($tokens, $pos, $value)) {
+					$pos = $newPos;
+				} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $value)) {
+					$pos = $newPos;
+				} else {
+					return false;
+				}
+
+				$values[$label] = $value;
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
+
+				$LabeledSet = new LabeledSet();
+
+				foreach ($values as $key => $value) {
+					$LabeledSet->set($key, $value);
+				}
+
+				return $pos;
+
+			}
+		}
+
+		return false;
 	}
 
 	private function parseLabeledDag(array $tokens, $pos, &$LabeledDag)
@@ -869,6 +923,8 @@ class SemanticStructureParser
 			')' => self::T_BRACKET_CLOSE,
 			'{' => self::T_CURLY_BRACKET_OPEN,
 			'}' => self::T_CURLY_BRACKET_CLOSE,
+			'[' => self::T_SQUARE_BRACKET_OPEN,
+			']' => self::T_SQUARE_BRACKET_CLOSE,
 			',' => self::T_COMMA,
 			'.' => self::T_DOT,
 			':' => self::T_COLON,
