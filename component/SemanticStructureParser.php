@@ -19,6 +19,7 @@ use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\AssociativeArray;
+use agentecho\datastructure\ProductionRule;
 
 /**
  *
@@ -112,6 +113,8 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Result)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseProductionRule($tokens, $pos, $Result)) {
+			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
@@ -139,6 +142,33 @@ class SemanticStructureParser
 		}
 
 		return $pos;
+	}
+
+	private function parseProductionRule($tokens, $pos, &$ProductionRule)
+	{
+		if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $antecedent)) {
+
+			if ($pos = $this->parseSingleToken(self::T_TRANSFORMATION, $tokens, $pos)) {
+
+				$consequents = array();
+
+				while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $consequent)) {
+					$pos = $newPos;
+					$consequents[] = $consequent;
+				}
+
+				if (empty($consequents)) {
+					return false;
+				}
+
+				$ProductionRule = new ProductionRule();
+				$ProductionRule->setAntecedent($antecedent);
+				$ProductionRule->setConsequents($consequents);
+				return $pos;
+			}
+		}
+
+		return false;
 	}
 
 	private function parseAssociativeArray($tokens, $pos, &$AssociativeArray)

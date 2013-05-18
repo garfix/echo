@@ -256,6 +256,20 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testProductionRule()
+	{
+		$Parser = new SemanticStructureParser();
+		$string = 'S => NP VP';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		$string = 'S => VP NP1 NP2';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testTokenizerFail()
 	{
 		$Parser = new SemanticStructureParser();
