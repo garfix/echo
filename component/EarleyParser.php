@@ -7,6 +7,7 @@ use agentecho\datastructure\LabeledDAG;
 use agentecho\Settings;
 use agentecho\exception\SemanticsNotFoundException;
 use agentecho\exception\RuleWithoutSemanticsException;
+use agentecho\component\parser\SemanticStructureParser;
 
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in

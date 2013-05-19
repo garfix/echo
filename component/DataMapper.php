@@ -2,7 +2,7 @@
 
 namespace agentecho\component;
 
-use agentecho\component\SemanticStructureParser;
+use agentecho\component\parser\SemanticStructureParser;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;

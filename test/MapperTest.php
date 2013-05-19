@@ -2,7 +2,7 @@
 
 namespace agentecho\test;
 
-use agentecho\component\SemanticStructureParser;
+use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\DataMapper;
 
 require_once __DIR__ . '/../component/Autoload.php';

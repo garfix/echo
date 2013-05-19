@@ -11,6 +11,7 @@ Ooit:
  * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
  * Maak commentaarregels
  * Maak includes
+ * GrammarRule moet een eigen structuur worden en niet slechts een associative array: check de labels en de label-waarden op correctheid
 
  Zorg ervoor dat het compleet, simpel en robuust is. Dat is veel belangrijker dan dat het bijzondere dingen kan!!!
 

@@ -2,7 +2,8 @@
 
 namespace agentecho\test;
 
-use agentecho\component\SemanticStructureParser;
+use agentecho\component\parser\SemanticStructureParser;
+use agentecho\component\parser\GrammarRulesParser;
 use agentecho\exception\SemanticStructureParseException;
 
 require_once __DIR__ . '/../component/Autoload.php';
@@ -142,7 +143,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.object';
+		$string = '{S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.object}';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -242,15 +243,27 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testAssociativeArray()
+	public function testGrammarRule()
 	{
 		$Parser = new SemanticStructureParser();
-		$string = '[form: "Wachten", partOfSpeech: "verb"]';
+		$string = '[rule: S => NP VP, features: {a: 1}]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
 
-		$string = '[form: "Wachten", features: {tense: "past"}]';
+	}
+
+	public function testGrammarRules()
+	{
+		$Parser = new GrammarRulesParser();
+
+		$string = '[rule: S => NP VP, features: {a: 1}] [rule: S => VP, features: {b: 1, c: 1}]';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		// empty string
+		$string = '';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

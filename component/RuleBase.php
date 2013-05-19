@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\knowledge\RuleSource;
+use agentecho\component\parser\SemanticStructureParser;
 
 /**
  * A wrapper around a set of GoalClauses, loaded from file.

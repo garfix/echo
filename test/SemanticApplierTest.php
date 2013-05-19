@@ -2,7 +2,7 @@
 
 namespace agentecho\test;
 
-use agentecho\component\SemanticStructureParser;
+use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\SemanticApplier;
 
 require_once __DIR__ . '/../component/Autoload.php';
@@ -18,11 +18,11 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("
+		$Rule = $Parser->parse("{
 			S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
 			S.event = VP.event;
 			S.subject = NP.object
-		");
+		}");
 
 		$childNodeSemantics = array(
 			'NP' => $Parser->parse("name(NP.object, 'John')"),
@@ -40,12 +40,12 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("
+		$Rule = $Parser->parse("{
 			S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 			S.event = VP.event;
 			S.subject = NP1.object;
 			S.object = NP2.object
-		");
+		}");
 
 		$childNodeSemantics = array(
 			'NP1' => $Parser->parse("name(NP.object, 'John')"),
@@ -64,11 +64,11 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("
+		$Rule = $Parser->parse("{
 			PN.sem = name(PN.object, propernoun1.text + ' ' + propernoun2.text);
 			PN.object = propernoun1.object;
 			PN.object = propernoun2.object
-		");
+		}");
 
 		$childNodeTexts = array(
 			'propernoun1' => 'John',
@@ -79,27 +79,4 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
 	}
-//
-//	public function testChildAssignments2()
-//	{
-//		$Parser = new SemanticStructureParser();
-//		$Applier = new SemanticApplier();
-//
-//		/** @var AssignmentList $Rule  */
-//		$Rule = $Parser->parse("
-//			PN.sem = name(PN.object, PN.name);
-//			PN.name = propernoun1.text + ' ' + propernoun2.text;
-//			PN.object = propernoun1.object;
-//			PN.object = propernoun2.object
-//		");
-//
-//		$childNodeTexts = array(
-//			'propernoun1' => 'John',
-//			'propernoun2' => 'Wilks',
-//		);
-//
-//		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
-//
-//		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
-//	}
 }

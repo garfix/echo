@@ -2,6 +2,7 @@
 
 namespace agentecho\grammar;
 
+use agentecho\component\parser\GrammarRulesParser;
 use \agentecho\exception\ProductionException;
 
 /**
@@ -9,6 +10,8 @@ use \agentecho\exception\ProductionException;
  */
 abstract class BaseGrammar implements Grammar
 {
+	protected $GrammarRules = null;
+
 	protected $parseRules = null;
 	protected $generationRules = null;
 	protected $lexicon = null;
@@ -44,6 +47,14 @@ abstract class BaseGrammar implements Grammar
 
 		$this->indexLexiconFeatures();
 		$this->indexLexiconWords();
+	}
+
+	protected function loadGrammar($filePath)
+	{
+		$text = file_get_contents($filePath);
+		$Parser = new GrammarRulesParser();
+		$objects = $Parser->parse($text);
+		$this->GrammarRules = $objects;
 	}
 
 	protected abstract function getLexicon();

@@ -3,7 +3,7 @@
 namespace agentecho\test;
 
 use \agentecho\component\InferenceEngine;
-use \agentecho\component\SemanticStructureParser;
+use \agentecho\component\parser\SemanticStructureParser;
 use \agentecho\component\RuleBase;
 use agentecho\test\helpers\TestKnowledgeSource1;
 use agentecho\test\helpers\TestKnowledgeSource2;
