@@ -1,4 +1,6 @@
 [
+	// John drives / She died
+
 	rule:
 		S => NP VP,
 	features: {

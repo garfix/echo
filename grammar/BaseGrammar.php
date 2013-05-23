@@ -3,6 +3,7 @@
 namespace agentecho\grammar;
 
 use agentecho\component\parser\GrammarRulesParser;
+use agentecho\datastructure\GrammarRules;
 use \agentecho\exception\ProductionException;
 
 /**
@@ -36,6 +37,8 @@ abstract class BaseGrammar implements Grammar
 	 */
 	protected $matchIndex = null;
 
+	protected $grammarRuleIndex = array();
+
 	protected $wordIndex = null;
 
 	public function __construct()
@@ -53,8 +56,19 @@ abstract class BaseGrammar implements Grammar
 	{
 		$text = file_get_contents($filePath);
 		$Parser = new GrammarRulesParser();
-		$objects = $Parser->parse($text);
-		$this->GrammarRules = $objects;
+		$Rules = $Parser->parse($text);
+		$this->GrammarRules = $Rules;
+
+		$this->indexGrammarRules($Rules);
+	}
+
+	private function indexGrammarRules(GrammarRules $GrammarRules)
+	{
+		foreach ($GrammarRules->getRules() as $GrammarRule) {
+			$ProductionRule = $GrammarRule->getRule();
+			$antecedent = $ProductionRule->getAntecedent();
+			$this->grammarRuleIndex[$antecedent][] = $GrammarRule;
+		}
 	}
 
 	protected abstract function getLexicon();
@@ -132,6 +146,22 @@ abstract class BaseGrammar implements Grammar
 		}
 
 		return $result;
+	}
+
+	public function getRulesForAntecedent($antecedent)
+	{
+		if (isset($this->grammarRuleIndex[$antecedent])) {
+			$rules = $this->grammarRuleIndex[$antecedent];
+		} else {
+			$rules = array();
+		}
+
+		if (isset($this->parseRules[$antecedent])) {
+			$rules = array_merge($rules, $this->parseRules[$antecedent]);
+		}
+
+		return $rules;
+
 	}
 
 	/**

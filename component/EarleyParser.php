@@ -2,6 +2,7 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\GrammarRule;
 use agentecho\grammar\Grammar;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\Settings;
@@ -184,11 +185,16 @@ class EarleyParser
 	{
 		$this->showDebug('predict', $state);
 
-		$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
+		if ($state['rule'] instanceof GrammarRule) {
+			$nextConsequent = $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		} else {
+			$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
+		}
+
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
-		foreach ($this->getRulesForAntecedent($nextConsequent) as $newRule) {
+		foreach ($this->Grammar->getRulesForAntecedent($nextConsequent) as $newRule) {
 
 			$predictedState = array(
 				'rule' => $newRule,
@@ -202,16 +208,6 @@ class EarleyParser
 		}
 	}
 
-	public function getRulesForAntecedent($antecedent)
-	{
-		$parseRules = $this->Grammar->getParseRules();
-		if (isset($parseRules[$antecedent])) {
-			return $parseRules[$antecedent];
-		} else {
-			return array();
-		}
-	}
-
 	/**
 	 * If the current consequent in $state (which non-abstract, like noun, verb, adjunct) is one
 	 * of the parts of speech associated with the current $word in the sentence,
@@ -221,7 +217,12 @@ class EarleyParser
 	{
 		$this->showDebug('scan', $state);
 
-		$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
+		if ($state['rule'] instanceof GrammarRule) {
+			$nextConsequent = $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		} else {
+			$nextConsequent = $state['rule'][$state['dotPosition']]['cat'];
+		}
+
 		$endWordIndex = $state['endWordIndex'];
 		$endWord = $this->words[$endWordIndex];
 
@@ -266,20 +267,47 @@ class EarleyParser
 		$this->showDebug('complete', $completedState);
 
 		$treeComplete = false;
-		$completedAntecedent = $completedState['rule'][self::ANTECEDENT]['cat'];
+
+		if ($completedState['rule'] instanceof GrammarRule) {
+			$completedAntecedent = $completedState['rule']->getRule()->getAntecedent();
+		} else {
+			$completedAntecedent = $completedState['rule'][self::ANTECEDENT]['cat'];
+		}
+
+
+
 
 		foreach ($this->chart[$completedState['startWordIndex']] as $chartedState) {
 
 			$dotPosition = $chartedState['dotPosition'];
 			$rule = $chartedState['rule'];
 
+
+
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition >= count($rule)) || ($rule[$dotPosition]['cat'] != $completedAntecedent)) {
-				continue;
+
+			if ($rule instanceof GrammarRule) {
+
+				if (($dotPosition > $rule->getRule()->getConsequentCount()) || ($rule->getRule()->getConsequentCategory($dotPosition - 1) != $completedAntecedent)) {
+					continue;
+				}
+
+			} else {
+
+
+				if (($dotPosition >= count($rule)) || ($rule[$dotPosition]['cat'] != $completedAntecedent)) {
+					continue;
+				}
+
 			}
 
 			$completedAntecedentLabel = $completedAntecedent . '@' . '0';
-			$chartedConsequentLabel = $rule[$dotPosition]['cat'] . '@' . $dotPosition;
+
+			if ($rule instanceof GrammarRule) {
+				$chartedConsequentLabel = $rule->getRule()->getConsequentCategory($dotPosition - 1) . '@' . $dotPosition;
+			} else {
+				$chartedConsequentLabel = $rule[$dotPosition]['cat'] . '@' . $dotPosition;
+			}
 
 			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedentLabel, $chartedConsequentLabel);
 			if ($NewDag !== false) {
@@ -320,11 +348,23 @@ class EarleyParser
 		$advancedState['children'][] = $completedState['id'];
 
 		// rule complete?
-		$consequentCount = count($chartedState['rule']) - 1;
+
+		if ($chartedState['rule'] instanceof GrammarRule) {
+			$consequentCount = $chartedState['rule']->getRule()->getConsequentCount();
+		} else {
+			$consequentCount = count($chartedState['rule']) - 1;
+		}
+
 		if ($chartedState['dotPosition'] == $consequentCount) {
 
 			// complete sentence?
-			if ($chartedState['rule'][self::ANTECEDENT]['cat'] == 'gamma') {
+			if ($chartedState['rule'] instanceof GrammarRule) {
+				$antecedent = $chartedState['rule']->getRule()->getAntecedent();
+			} else {
+				$antecedent = $chartedState['rule'][self::ANTECEDENT]['cat'];
+			}
+
+			if ($antecedent == 'gamma') {
 
 				// that matches all words?
 				if ($completedState['endWordIndex'] == count($this->words)) {
@@ -388,25 +428,31 @@ class EarleyParser
 	 */
 	private function applySemantics(array &$state)
 	{
-		$head = reset($state['rule']);
-		if (!isset($head['semantics'])) {
+		if ($state['rule'] instanceof GrammarRule) {
+			$Rule = $state['rule']->getSemantics();
+		} else {
 
-			// real rules must have semantics
-			if (isset($head['features'])) {
-				$ruleText = array();
-				foreach ($state['rule'] as $component) {
-					$ruleText[] = $component['cat'];
+			$head = reset($state['rule']);
+			if (!isset($head['semantics'])) {
+
+				// real rules must have semantics
+				if (isset($head['features'])) {
+					$ruleText = array();
+					foreach ($state['rule'] as $component) {
+						$ruleText[] = $component['cat'];
+					}
+					throw new RuleWithoutSemanticsException(implode(' ', $ruleText));
 				}
-				throw new RuleWithoutSemanticsException(implode(' ', $ruleText));
+
+				// this rule does not have semantics attached to it: it must always succeed
+				return true;
+			} else {
+				$semanticSpecification = $head['semantics'];
 			}
 
-			// this rule does not have semantics attached to it: it must always succeed
-			return true;
-		} else {
-			$semanticSpecification = $head['semantics'];
+			$Rule = self::createSemanticStructure($semanticSpecification);
 		}
 
-		$Rule = self::createSemanticStructure($semanticSpecification);
 		if ($Rule) {
 
 			$childSemantics = $this->listChildSemantics($state);
@@ -438,7 +484,13 @@ class EarleyParser
 
 		$i = 1;
 		foreach ($state['children'] as $childNodeId) {
-			$cat = $state['rule'][$i]['cat'];
+
+			if ($state['rule'] instanceof GrammarRule) {
+				$cat = $state['rule']->getRule()->getConsequentCategory($i - 1);
+			} else {
+				$cat = $state['rule'][$i]['cat'];
+			}
+
 			$childState = $this->treeInfo['states'][$childNodeId];
 			$childId = $this->getChildId($childSemantics, $cat);
 			$childSemantics[$childId] = $childState['semantics'];
@@ -485,7 +537,13 @@ class EarleyParser
 
 		$i = 1;
 		foreach ($state['children'] as $childNodeId) {
-			$cat = $state['rule'][$i]['cat'];
+
+			if ($state['rule'] instanceof GrammarRule) {
+				$cat = $state['rule']->getRule()->getConsequentCategory($i - 1);
+			} else {
+				$cat = $state['rule'][$i]['cat'];
+			}
+
 			$childState = $this->treeInfo['states'][$childNodeId];
 			$childId = $this->getChildId($childTexts, $cat);
 			$childTexts[$childId] = implode(' ', $this->getWordRange($childState['startWordIndex'], $childState['endWordIndex'] - 1));
@@ -534,21 +592,47 @@ class EarleyParser
 
 	private function isIncomplete(array $state)
 	{
-		$consequentCount = count($state['rule']);
+		if ($state['rule'] instanceof GrammarRule) {
+			$consequentCount = $state['rule']->getRule()->getConsequentCount() + 1;
+		} else {
+			$consequentCount = count($state['rule']);
+		}
+
 		return ($state['dotPosition'] < $consequentCount);
 	}
 
 	private function getNextCat(array $state)
 	{
-		return $state['rule'][$state['dotPosition']]['cat'];
+		if ($state['rule'] instanceof GrammarRule) {
+			return $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		} else {
+			return $state['rule'][$state['dotPosition']]['cat'];
+		}
+
 	}
 
 	/**
 	 * @param array $rule
 	 * @return LabeledDAG
 	 */
-	public static function createLabeledDag(array $rule)
+	public static function createLabeledDag($rule)
 	{
+		if ($rule instanceof GrammarRule) {
+			$Dag =  $rule->getFeatures();
+
+#todo simplify using plain consequents
+			$i = 0;
+			$cat = $rule->getRule()->getAntecedent();
+			$Dag->renameLabel($cat, $cat . '@' . $i);
+			$i++;
+			foreach ($rule->getRule()->getConsequentCategories() as $cat) {
+				$Dag->renameLabel($cat, $cat . '@' . $i);
+				$i++;
+			}
+
+			return $Dag;
+		}
+
 		$tree = array();
 		foreach ($rule as $index => $line) {
 			if (isset($line['features'])) {
@@ -596,15 +680,31 @@ class EarleyParser
 			$start = $state['startWordIndex'];
 			$end = $state['endWordIndex'];
 
-			$post = array();
-			for ($i = self::CONSEQUENT; $i < count($rule); $i++) {
+			if ($rule instanceof GrammarRule) {
+
+				$post = array();
+				for ($i = self::CONSEQUENT; $i < $rule->getRule()->getConsequentCount() + 1; $i++) {
+					if ($i == $dotPosition) {
+						$post[] = '.';
+					}
+					$post[] = $rule->getRule()->getConsequentCategory($i - 1);
+				}
 				if ($i == $dotPosition) {
 					$post[] = '.';
 				}
-				$post[] = $rule[$i]['cat'];
-			}
-			if ($i == $dotPosition) {
-				$post[] = '.';
+
+			} else {
+
+				$post = array();
+				for ($i = self::CONSEQUENT; $i < count($rule); $i++) {
+					if ($i == $dotPosition) {
+						$post[] = '.';
+					}
+					$post[] = $rule[$i]['cat'];
+				}
+				if ($i == $dotPosition) {
+					$post[] = '.';
+				}
 			}
 
 			echo
@@ -651,7 +751,11 @@ class EarleyParser
 	{
 		$rule = $state['rule'];
 
-		$antecedent = $rule[self::ANTECEDENT]['cat'];
+		if ($rule instanceof GrammarRule) {
+			$antecedent = $rule->getRule()->getAntecedent();
+		} else {
+			$antecedent = $rule[self::ANTECEDENT]['cat'];
+		}
 
 		if ($antecedent == 'gamma') {
 			$constituentId = $state['children'][0];
@@ -664,7 +768,11 @@ class EarleyParser
 		);
 
 		if ($this->Grammar->isPartOfSpeech($antecedent)) {
-			$branch['word'] = $rule[self::CONSEQUENT]['cat'];
+			if ($rule instanceof GrammarRule) {
+				$branch['word'] = $rule->getRule()->getConsequentCategory(0);
+			} else {
+				$branch['word'] = $rule[self::CONSEQUENT]['cat'];
+			}
 		}
 
 		$dagTree = $state['dag']->getTree();

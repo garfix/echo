@@ -33,17 +33,17 @@ abstract class SimpleGrammar extends BaseGrammar
 				// VP is the head constituent (head-1)
 				// VP and NP agree (agreement-2)
 				// NP forms the subject of VP's verb
-				array(
-					array('cat' => 'S',
-'semantics' => '{
-	S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
-	S.event = VP.event;
-	S.subject = NP.object
-}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?s1'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax')))),
-				),
+//				array(
+//					array('cat' => 'S',
+//'semantics' => '{
+//	S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+//	S.event = VP.event;
+//	S.subject = NP.object
+//}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => '?s1'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax')))),
+//				),
 				// Lady Lovelace was born
 				array(
 					array('cat' => 'S', 'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?s2'))),

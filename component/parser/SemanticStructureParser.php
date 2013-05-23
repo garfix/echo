@@ -271,7 +271,7 @@ class SemanticStructureParser
 					// constant or tree
 					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
 						$pos = $newPos;
-						$value = (string)$constant;
+						$value = $constant->getName();
 					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
 						$pos = $newPos;
 						$value = $number;
