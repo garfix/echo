@@ -174,7 +174,12 @@ class Parser
 
 				$func = 'set' . $name;
 
+				if (!$value) {
+					$i = 0;
+				}
+
 				$Entity = $this->buildObjectStructure($value);
+
 				$E->$func($Entity);
 
 			} else {

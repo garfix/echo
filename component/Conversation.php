@@ -81,9 +81,11 @@ class Conversation
 			// resolve pronouns
 			$PronounProcessor = new PronounProcessor();
 			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
-
+$a = (string)$Semantics;
 			// replace references
 			$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
+
+$b = (string)$Semantics;
 
 			// process the sentence
 			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);

@@ -269,7 +269,7 @@ class EarleyParser
 		$treeComplete = false;
 
 		if ($completedState['rule'] instanceof GrammarRule) {
-			$completedAntecedent = $completedState['rule']->getRule()->getAntecedent();
+			$completedAntecedent = $completedState['rule']->getRule()->getAntecedentCategory();
 		} else {
 			$completedAntecedent = $completedState['rule'][self::ANTECEDENT]['cat'];
 		}
@@ -359,7 +359,7 @@ class EarleyParser
 
 			// complete sentence?
 			if ($chartedState['rule'] instanceof GrammarRule) {
-				$antecedent = $chartedState['rule']->getRule()->getAntecedent();
+				$antecedent = $chartedState['rule']->getRule()->getAntecedentCategory();
 			} else {
 				$antecedent = $chartedState['rule'][self::ANTECEDENT]['cat'];
 			}
@@ -492,7 +492,13 @@ class EarleyParser
 			}
 
 			$childState = $this->treeInfo['states'][$childNodeId];
-			$childId = $this->getChildId($childSemantics, $cat);
+
+			if ($state['rule'] instanceof GrammarRule) {
+				$childId = $state['rule']->getRule()->getConsequent($i - 1);
+			} else {
+				$childId = $this->getChildId($childSemantics, $cat);
+			}
+
 			$childSemantics[$childId] = $childState['semantics'];
 			$i++;
 		}
@@ -623,10 +629,11 @@ class EarleyParser
 #todo simplify using plain consequents
 			$i = 0;
 			$cat = $rule->getRule()->getAntecedent();
-			$Dag->renameLabel($cat, $cat . '@' . $i);
+			$Dag->renameLabel($cat, $rule->getRule()->getAntecedentCategory() . '@' . $i);
 			$i++;
-			foreach ($rule->getRule()->getConsequentCategories() as $cat) {
-				$Dag->renameLabel($cat, $cat . '@' . $i);
+			foreach ($rule->getRule()->getConsequents() as $cat) {
+
+				$Dag->renameLabel($cat, $rule->getRule()->getConsequentCategory($i - 1) . '@' . $i);
 				$i++;
 			}
 
@@ -752,7 +759,7 @@ class EarleyParser
 		$rule = $state['rule'];
 
 		if ($rule instanceof GrammarRule) {
-			$antecedent = $rule->getRule()->getAntecedent();
+			$antecedent = $rule->getRule()->getAntecedentCategory();
 		} else {
 			$antecedent = $rule[self::ANTECEDENT]['cat'];
 		}

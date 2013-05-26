@@ -44,153 +44,153 @@ abstract class SimpleGrammar extends BaseGrammar
 //					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
 //					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax')))),
 //				),
-				// Lady Lovelace was born
-				array(
-					array('cat' => 'S', 'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?s2'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
-					array('cat' => 'aux'),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s2}' => array('deepSubject' => '?syntax')))),
-				),
+//				// Lady Lovelace was born
+//				array(
+//					array('cat' => 'S', 'features' => array('head{?h1}' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => '?s2'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax'))),
+//					array('cat' => 'aux'),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s2}' => array('deepSubject' => '?syntax')))),
+//				),
 
 				// imperative
 
-				// Drive! / Book that flight / She died
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = VP.sem and object(S.event, S.object);
-							S.event = VP.event;
-							S.object = VP.object
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'imperative', 'clause{?s1}' => null))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
-				),
+//				// Drive! / Book that flight / She died
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = VP.sem and object(S.event, S.object);
+//							S.event = VP.event;
+//							S.object = VP.object
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'imperative', 'clause{?s1}' => null))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('syntax' => '?s1'))),
+//				),
 
 				// non-subject questions
 
-				// Who Is John? / How many children had Lord Byron?
-				// present tense
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
-							S.event = VP.event;
-							S.subject = NP.object;
-							S.object = WhADVP.object;
-							S.request = WhADVP.request
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s1'))),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax-2')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-				),
+//				// Who Is John? / How many children had Lord Byron?
+//				// present tense
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
+//							S.event = VP.event;
+//							S.subject = NP.object;
+//							S.object = WhADVP.object;
+//							S.request = WhADVP.request
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s1'))),
+//					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax-2')))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
+//				),
 
-				// Where was John born?
-				// NP delivers deepDirectObject
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object) and request(S.request);
-							S.event = WhADVP.event;
-							S.event = VP.event;
-							S.object = NP.object;
-							S.request = WhADVP.request
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?s1'))),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
-					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepDirectObject' => '?syntax-2')))),
-				),
+//				// Where was John born?
+//				// NP delivers deepDirectObject
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object) and request(S.request);
+//							S.event = WhADVP.event;
+//							S.event = VP.event;
+//							S.object = NP.object;
+//							S.request = WhADVP.request
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'passive', 'clause' => '?s1'))),
+//					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
+//					array('cat' => 'auxPsv', 'features' => array('head' => array('agreement' => '?agr'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepDirectObject' => '?syntax-2')))),
+//				),
 
 				// yes-no questions
 
-				// Was John driving?
-				// VP is the head constituent (head{?h1})
-				// aux, NP, and VP agree (agreement-2)
-				// NP forms the object of VP's verb
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
-							S.event = VP.event;
-							S.subject = NP.object
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
-					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('deepDirectObject' => '?syntax-1')))),
-				),
+//				// Was John driving?
+//				// VP is the head constituent (head{?h1})
+//				// aux, NP, and VP agree (agreement-2)
+//				// NP forms the object of VP's verb
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+//							S.event = VP.event;
+//							S.subject = NP.object
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
+//					array('cat' => 'aux', 'features' => array('head' => array('agreement' => '?agr'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('deepDirectObject' => '?syntax-1')))),
+//				),
 
-				// Was the car driven by John?
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
-							S.event = VP.event;
-							S.subject = NP2.object;
-							S.object = NP1.object
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?s3'))),
-					array('cat' => 'aux'),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
-					array('cat' => 'passivisationPreposition'),
-					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-				),
+//				// Was the car driven by John?
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+//							S.event = VP.event;
+//							S.subject = NP2.object;
+//							S.object = NP1.object
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'passive', 'clause' => '?s3'))),
+//					array('cat' => 'aux'),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//					array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('predicate' => null, 'deepSubject' => '?syntax-2', 'deepDirectObject' => '?syntax-1')))),
+//					array('cat' => 'passivisationPreposition'),
+//					array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+//				),
 
-				// Was John a fool?
-				// Was Ada Lovelace the daughter of Lord Byron?
-				// The verb is 'be'
-#todo see NLU, p.243: de tweede NP gaat als predicaat dienen
-				array(
-					array('cat' => 'S',
-						'semantics' => '{
-							S.sem = aux.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
-							S.subject = NP2.object;
-							S.subject = NP1.object
-						}',
-						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
-					array('cat' => 'aux', 'features' => array('head{?h1}' => array('agreement' => null, 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-				),
+//				// Was John a fool?
+//				// Was Ada Lovelace the daughter of Lord Byron?
+//				// The verb is 'be'
+//#todo see NLU, p.243: de tweede NP gaat als predicaat dienen
+//				array(
+//					array('cat' => 'S',
+//						'semantics' => '{
+//							S.sem = aux.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
+//							S.subject = NP2.object;
+//							S.subject = NP1.object
+//						}',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'yes-no-question', 'voice' => 'active', 'clause' => '?s3'))),
+//					array('cat' => 'aux', 'features' => array('head{?h1}' => array('agreement' => null, 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
+//				),
 
-				// How old was Mary Shelley?
-				array(
-					array('cat' => 'S',
-						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s3', 'relativeClause' => '?syntax-4')),
+//				// How old was Mary Shelley?
+//				array(
+//					array('cat' => 'S',
+//						'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s3', 'relativeClause' => '?syntax-4')),
+//
+//'semantics' => '{
+//	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and request(S.request);
+//	S.event = WhADVP.object;
+//	S.event = auxBe.event;
+//	S.subject = NP.object;
+//	S.request = WhADVP.request
+//}'
+//					),
+//					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax{?s3}' => array('deepDirectObject' => null)))),
+//					array('cat' => 'auxBe', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
+//					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//				),
 
-'semantics' => '{
-	S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and request(S.request);
-	S.event = WhADVP.object;
-	S.event = auxBe.event;
-	S.subject = NP.object;
-	S.request = WhADVP.request
-}'
-					),
-					array('cat' => 'WhADVP', 'features' => array('head' => array('syntax{?s3}' => array('deepDirectObject' => null)))),
-					array('cat' => 'auxBe', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s3}' => array('type' => 'clause', 'deepSubject' => '?syntax-1')))),
-					array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-				),
-
-				// How old was Mary Shelley when she died?
-				array(
-					array('cat' => 'S', 'features' => array('head{?h1}' => array('relativeClause' => '?syntax-1')),
-# todo: should accept S1 and S2
-'semantics' => '{
-	S.sem = S.sem and SBar.sem;
-	S.event = S.event;
-	S.subject = S.subject;
-	S.object = S.object;
-	S.event = SBar.superEvent;
-	S.request = S.request
-}'
-
-					),
-					array('cat' => 'S', 'features' => array('head{?h1}' => null)),
-					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
-				)
+//				// How old was Mary Shelley when she died?
+//				array(
+//					array('cat' => 'S', 'features' => array('head{?h1}' => array('relativeClause' => '?syntax-1')),
+//# todo: should accept S1 and S2
+//'semantics' => '{
+//	S.sem = S.sem and SBar.sem;
+//	S.event = S.event;
+//	S.subject = S.subject;
+//	S.object = S.object;
+//	S.event = SBar.superEvent;
+//	S.request = S.request
+//}'
+//
+//					),
+//					array('cat' => 'S', 'features' => array('head{?h1}' => null)),
+//					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
+//				)
 
 			),
 			// S-Bar, see 'The structure of modern english' - Brinton (2000) - p. 230

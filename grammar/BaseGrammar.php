@@ -66,7 +66,7 @@ abstract class BaseGrammar implements Grammar
 	{
 		foreach ($GrammarRules->getRules() as $GrammarRule) {
 			$ProductionRule = $GrammarRule->getRule();
-			$antecedent = $ProductionRule->getAntecedent();
+			$antecedent = $ProductionRule->getAntecedentCategory();
 			$this->grammarRuleIndex[$antecedent][] = $GrammarRule;
 		}
 	}
