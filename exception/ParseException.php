@@ -11,18 +11,19 @@ class ParseException extends EchoException
 	private $lexicalItems = null;
 	private $lastParsedIndex = null;
 
-	public function setLexicalItems($lexicalItems, $lastParsedIndex)
+	public function __construct($messageText, $lexicalItems = null, $lastParsedIndex = null)
 	{
+		$this->messageText = $messageText;
 		$this->lexicalItems = $lexicalItems;
 		$this->lastParsedIndex = $lastParsedIndex;
+		$this->buildMessage();
 	}
 
-	public function __toString()
+	public function buildMessage()
 	{
-		if ($this->lexicalItems != null) {
-			return sprintf($this->getMessage(), implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)));
-		} else {
-			return $this->getMessage();
-		}
+		$this->message =
+			($this->lexicalItems !== null) ?
+			sprintf($this->messageText, implode(' ', array_slice($this->lexicalItems, $this->lastParsedIndex, 4))) :
+			$this->messageText;
 	}
 }

@@ -188,22 +188,440 @@
 	}
 ]
 
-				// How old was Mary Shelley when she died?
-//				array(
-//					array('cat' => 'S', 'features' => array('head{?h1}' => array('relativeClause' => '?syntax-1')),
-//# todo: should accept S1 and S2
-//'semantics' => '{
-//	S.sem = S.sem and SBar.sem;
-//	S.event = S.event;
-//	S.subject = S.subject;
-//	S.object = S.object;
-//	S.event = SBar.superEvent;
-//	S.request = S.request
-//}'
-//
-//					),
-//					array('cat' => 'S', 'features' => array('head{?h1}' => null)),
-//					array('cat' => 'SBar', 'features' => array('head' => array('syntax' => '?syntax-1'))),
-//				)
+[
+	// S-Bar, see 'The structure of modern english' - Brinton (2000) - p. 230
 
-// next rules: try to remove stuff!!
+	rule:
+		SBar => whAdverb S,
+	features: {
+		SBar: { head: { syntax: { type: 'relativeClause', clause: ?s2, complementizer: ?cat } } },
+		whAdverb: { head: { syntax: { category: ?cat } } },
+		S: { head: { syntax: ?s2 } }
+	},
+	semantics: {
+		SBar.sem = whAdverb.sem and S.sem;
+		SBar.superEvent = whAdverb.event;
+		SBar.subEvent = whAdverb.adjunct;
+		SBar.subEvent = S.event
+	}
+]
+
+[
+	// drives
+
+	rule:
+		VP => verb,
+	features: {
+		VP: { head: ?h1 {syntax: { type: 'clause' } } },
+		verb: { head: ?h1 }
+	},
+	semantics: {
+		VP.sem = verb.sem;
+		VP.event = verb.event
+	}
+]
+
+[
+	// book that flight! / sees the book
+	// Name Lord Byron's children.
+
+	rule:
+		VP => verb NP,
+	features: {
+		VP: { head: ?h1 {syntax: ?s1 { type: 'clause' } } },
+		verb: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?object } } },
+		NP: { head: { syntax: ?object } }
+	},
+	semantics: {
+		VP.sem = verb.sem and NP.sem and object(VP.event, VP.object);
+		VP.event = verb.event;
+		VP.object = NP.object
+	}
+]
+
+[
+	// gives Mary flowers
+
+	rule:
+		VP => verb NP1 NP2,
+	features: {
+		VP: { head: ?h1 {syntax: ?s1 { type: 'clause' } } },
+		verb: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?directObject, deepIndirectObject: ?indirectObject } } },
+		NP1: { head: { syntax: ?indirectObject } },
+		NP2: { head: { syntax: ?directObject } }
+	},
+	semantics: {
+		S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
+		S.event = VP.event;
+		S.subject = NP1.object;
+		S.object = NP2.object
+	}
+]
+
+[
+	// driven by John
+
+	rule:
+		VP => verb PP,
+	features: {
+		VP: { head: ?h1 { syntax: ?s1 { type: 'clause' } } },
+		verb: { head: ?h1 { syntax: ?s1 { preposition: ?prep } } },
+		PP: { head: { syntax: ?prep } }
+	},
+	semantics: {
+		VP.sem = verb.sem and PP.sem;
+		VP.event = verb.event;
+		VP.event = PP.superObject
+	}
+]
+
+[
+	// where, when, who
+
+	// TODO: this interpretation is counterintuitive, especially for 'who'
+
+	rule:
+        WhADVP => whAdverb,
+    features: {
+        WhADVP: { head: { syntax: { preposition: { type: 'preposition', category: ?cat, object: { type: 'entity', question: 1 } } } } },
+        whAdverb: { head: { syntax: { category: ?cat } } }
+    },
+    semantics: {
+        WhADVP.sem = whAdverb.sem;
+        VWhADVP.request = whAdverb.adjunct;
+        WhADVP.event = whAdverb.event
+    }
+]
+
+[
+	// which car, how many children
+
+	rule:
+        WhADVP => whwordNP NP,
+    features: {
+        WhADVP: { head: ?h1 },
+        whwordNP: { head: ?h1 { variables: { role: ?role } } },
+        NP: { head: { syntax: ?role } }
+    },
+    semantics: {
+		WhADVP.sem = whwordNP.sem and NP.sem;
+		WhADVP.object = whwordNP.object;
+		WhADVP.object = NP.object;
+		WhADVP.request = whwordNP.adjunct
+    }
+]
+
+[
+	// John
+
+	rule:
+        NP => PN,
+    features: {
+        NP: { head: ?h1 { syntax: { type: 'entity' } } },
+        PN: { head: ?h1 }
+    },
+    semantics: {
+		NP.sem = PN.sem;
+        NP.object = PN.object
+    }
+]
+
+[
+	// he
+
+	rule:
+        NP => pronoun,
+    features: {
+        NP: { head: ?h1 { syntax: { type: 'entity' } } },
+        pronoun: { head: ?h1 }
+    },
+    semantics: {
+		NP.sem = pronoun.sem;
+        NP.object = pronoun.object
+    }
+]
+
+[
+	// he
+
+	rule:
+        NP => DP NBar,
+    features: {
+        NP: { head: ?h1 { syntax: ?s1 { type: 'entity' } } },
+        DP: { head: { syntax: ?entity } },
+        NBar: { head: ?h1 { syntax: ?s1 { determiner: ?entity } } }
+    },
+    semantics: {
+		NP.sem = DP.sem and NBar.sem;
+        NP.object = NBar.object;
+        NP.object = DP.superObject
+    }
+]
+
+[
+	// (large) car (in the lot)
+
+	rule:
+        NP => NBar,
+    features: {
+        NP: { head: ?h1 { syntax: ?s1 { type: 'entity' } } },
+        NBar: { head: ?h1 { syntax: ?s1 } }
+    },
+    semantics: {
+		NP.sem = NBar.sem;
+        NP.object = NBar.object
+    }
+]
+
+[
+	// car
+
+	rule:
+        NBar => noun,
+    features: {
+        NBar: { head: ?h1 },
+        noun: { head: ?h1 }
+    },
+    semantics: {
+		NBar.sem = noun.sem;
+        NBar.object = noun.object
+    }
+]
+
+[
+	// blue car
+
+	rule:
+        NBar1 => AP NBar2,
+    features: {
+        NBar1: { head: ?h1 },
+        AP: { },
+        NBar2: { head: ?h1 }
+    },
+    semantics: {
+		NBar1.sem = AP.sem and NBar2.sem;
+        NBar1.object = NBar2.object
+    }
+]
+
+[
+	// car in the lot
+	// the author of Paradise Lost
+
+	// TODO: change NBar into NBar1 (strange DBPedia fail)
+
+	rule:
+        NBar => NBar2 PP,
+    features: {
+        NBar: { head: { syntax: ?s1 } },
+        NBar2: { head: { syntax: ?s1 { preposition: ?prep } } },
+        PP: { head: { syntax: ?prep } }
+    },
+    semantics: {
+		NBar.sem = NBar2.sem and PP.sem;
+        NBar.object = NBar2.object;
+        NBar.object = PP.superObject
+    }
+]
+
+// Proper Name
+
+[
+	// John
+
+	rule:
+        PN => propernoun,
+    features: {
+        PN: { head: ?h1 { syntax: { type: 'entity' } } },
+        propernoun: { head: ?h1 }
+    },
+    semantics: {
+		PN.sem = propernoun.sem;
+        PN.object = propernoun.object
+    }
+]
+
+[
+	// Lord Byron, Ada Lovelace
+
+	rule:
+        PN => propernoun1 propernoun2,
+    features: {
+        PN: { head: { syntax: { type: 'entity', name: ?firstName, lastname: ?lastName } } },
+        propernoun1: { head: { syntax: { name: ?firstName } } },
+        propernoun2: { head: { syntax: { name: ?lastName } } }
+    },
+    semantics: {
+		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text);
+        PN.object = propernoun1.object;
+        PN.object = propernoun2.object
+    }
+]
+
+[
+	// Lord Byron, Ada Lovelace
+
+	rule:
+        PN => propernoun1 propernoun2 propernoun3,
+    features: {
+        PN: { head: { syntax: { type: 'entity', name: ?firstName, middlename: ?middleName, lastname: ?lastName } } },
+        propernoun1: { head: { syntax: { name: ?firstName } } },
+        propernoun2: { head: { syntax: { name: ?middleName } } },
+        propernoun3: { head: { syntax: { name: ?lastName } } },
+    },
+    semantics: {
+		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
+        PN.object = propernoun1.object;
+        PN.object = propernoun2.object;
+        PN.object = propernoun3.object
+    }
+]
+
+[
+	// Jan de Wit
+
+	rule:
+        PN => propernoun1 insertion propernoun2,
+    features: {
+        PN: { head: ?h1 { syntax: { type: 'entity', name: ?firstName, insertion: ?insertion, lastname: ?lastName } } },
+        propernoun1: { head: { syntax: { name: ?firstName } } },
+        insertion: { head: { syntax: { insertion: ?insertion} } },
+        propernoun2: { head: { syntax: { name: ?lastName } } }
+    },
+    semantics: {
+        PN.sem = name(PN.object, propernoun1.text + " " + insertion.text + " " + propernoun2.text);
+        PN.object = propernoun1.object;
+        PN.object = propernoun2.object
+    }
+]
+
+// Prepositional Phrase
+
+[
+	rule:
+		PP => preposition NP,
+	features: {
+		PP: { head: ?h1 { syntax: ?s1 { type: 'preposition'} } },
+		preposition: { head: ?h1 { syntax: ?s1 { object: ?object } } },
+		NP: { head: { syntax: ?object } }
+	},
+	semantics: {
+		PP.sem = preposition.sem and NP.sem;
+		PP.superObject = preposition.superObject;
+		PP.subObject = preposition.subObject;
+		PP.subObject = NP.object
+	}
+]
+
+// Adjectival Phrase
+
+[
+	// red
+
+	rule:
+		AP => adjective,
+	features: {
+		AP: { head: ?h1 },
+		adjective: { head: ?h1 }
+	},
+	semantics: {
+		AP.sem = adjective.sem
+	}
+]
+
+[
+	// fiercely barking
+
+	rule:
+		AP => AdvP adjective,
+	features: {
+		AP: { head: ?h1 },
+		AdvP: { head: ?h1 },
+		adjective: { head: ?h1 }
+	},
+	semantics: {
+		AP.sem = AdvP.sem and adjective.sem
+	}
+]
+
+[
+	// bright red
+
+	rule:
+		AP => degreeAdverb adjective,
+	features: {
+		AP: { head: ?h1 },
+		degreeAdverb: { head: ?h1 },
+		adjective: { head: ?h1 }
+	},
+	semantics: {
+		AP.sem = degreeAdverb.sem and adjective.sem
+	}
+]
+
+// Adverbial Phrase
+
+[
+	// quickly
+
+	rule:
+        AdvP => adverb,
+    features: {
+        AdvP: { head: ?h1 },
+        adverb: { head: ?h1 }
+    },
+    semantics: {
+        AP.sem = AdvP.sem and adverb.sem
+    }
+]
+
+[
+	// very quickly
+
+	rule:
+        AdvP => degreeAdverb adverb,
+    features: {
+        AdvP: { head: ?h1 },
+        degreeAdverb: { head: ?h1 },
+        adverb: { head: ?h1 }
+    },
+    semantics: {
+        AP.sem = AdvP.sem and degreeAdverb.sem and adverb.sem
+    }
+]
+
+// Determiner Phrase
+
+[
+	// the
+
+	// TODO NOT USED
+
+	rule:
+        DP => determiner,
+    features: {
+        DP: { head: ?h1 { syntax: { type: 'determiner' } } },
+        determiner: { head: ?h1 }
+    },
+    semantics: {
+        DP.sem = determiner.sem
+    }
+]
+
+[
+	// Byron's
+
+	rule:
+        DP => NP possessiveMarker,
+    features: {
+        DP: { head: ?h1 { syntax: ?s1 { type: 'determiner' } } },
+        NP: { head: { syntax: ?object } },
+        possessiveMarker: { head: ?h1 { syntax: ?s1 { object: ?object }}}
+    },
+    semantics: {
+        DP.sem = NP.sem and possessiveMarker.sem;
+        DP.subObject = possessiveMarker.subObject;
+        DP.superObject = possessiveMarker.superObject;
+        DP.subObject = NP.object
+    }
+]

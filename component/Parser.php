@@ -129,8 +129,7 @@ class Parser
 
 		if (!$result['success']) {
 
-			$E = new ParseException(ParseException::COULD_NOT_PARSE);
-			$E->setLexicalItems($Sentence->lexicalItems, $result['lastParsedIndex'] - 1);
+			$E = new ParseException(ParseException::COULD_NOT_PARSE, $Sentence->lexicalItems, $result['lastParsedIndex'] - 1);
 
 			throw $E;
 		}

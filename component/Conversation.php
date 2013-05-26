@@ -100,14 +100,13 @@ $b = (string)$Semantics;
 
 		} catch (EchoException $E) {
 
-			$message = $E->getMessage();
-
 			if ($E instanceof EchoException) {
-				$translatedMessage = Translations::translate($message, $Parser->getCurrentGrammar()->getLanguageCode());
-				$E->setMessage($translatedMessage);
+				$translatedMessage = Translations::translate($E->getMessageText(), $Parser->getCurrentGrammar()->getLanguageCode());
+				$E->setMessageText($translatedMessage);
+				$E->buildMessage();
 			}
 
-			$answer = (string)$E;
+			$answer = $E->getMessage();
 		}
 
 		return $answer;

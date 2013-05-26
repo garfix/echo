@@ -219,6 +219,8 @@ $ruleSource = reset($ruleSources);
 	{
 		$Interpretation = $this->interpret($PredicationList);
 
+		$a = (string)$Interpretation;
+
 		$bindings = $this->createBindings($Interpretation);
 
 		if (count($bindings) > 1) {

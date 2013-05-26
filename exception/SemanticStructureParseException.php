@@ -15,11 +15,12 @@ class SemanticStructureParseException extends EchoException
 	{
 		$this->pos = $pos;
 		$this->string = $string;
-		$this->message = self::COULD_NOT_PARSE;
+		$this->messageText = self::COULD_NOT_PARSE;
+		$this->buildMessage();
 	}
 
-	public function __toString()
+	public function buildMessage()
 	{
-		return sprintf($this->getMessage(), substr($this->string, 10));
+		$this->message = sprintf($this->messageText, substr($this->string, $this->pos, 40));
 	}
 }
