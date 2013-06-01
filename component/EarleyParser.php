@@ -18,9 +18,6 @@ use agentecho\component\parser\SemanticStructureParser;
  */
 class EarleyParser
 {
-	const ANTECEDENT = 0;
-	const CONSEQUENT = 1;
-
 	/** @var Grammar Contains call-backs for all language-specific information */
 	private $Grammar = null;
 
@@ -121,7 +118,7 @@ class EarleyParser
 
 		$initialState = array(
 			'rule' => $Rule,
-			'dotPosition' => self::CONSEQUENT,
+			'dotPosition' => 1,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
 			'dag' => new LabeledDAG(),
@@ -196,10 +193,10 @@ class EarleyParser
 
 			$predictedState = array(
 				'rule' => $newRule,
-				'dotPosition' => self::CONSEQUENT,
+				'dotPosition' => 1,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
-				'dag' => self::createLabeledDag($newRule),
+				'dag' => $newRule->getFeatures(),
 				'semantics' => null,
 			);
 			$this->enqueue($predictedState, $endWordIndex);
@@ -223,7 +220,7 @@ class EarleyParser
 		if ($this->Grammar->isWordAPartOfSpeech($endWord, $nextConsequent)) {
 
 			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
-			$DAG = new LabeledDAG(array($nextConsequent . '@' . '0' => $features));
+			$DAG = new LabeledDAG(array($nextConsequent => $features));
 			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
 
 			if ($Semantics === false) {
@@ -279,9 +276,8 @@ class EarleyParser
 				continue;
 			}
 
-			$completedAntecedentLabel = $completedAntecedent . '@' . '0';
-
-			$chartedConsequentLabel = $rule->getRule()->getConsequentCategory($dotPosition - 1) . '@' . $dotPosition;
+			$completedAntecedentLabel = $completedAntecedent;
+			$chartedConsequentLabel = $rule->getRule()->getConsequent($dotPosition - 1);
 
 			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedentLabel, $chartedConsequentLabel);
 			if ($NewDag !== false) {
@@ -425,12 +421,12 @@ class EarleyParser
 	{
 		$childSemantics = array();
 
-		$i = 1;
+		$i = 0;
 		foreach ($state['children'] as $childNodeId) {
 
 			$childState = $this->treeInfo['states'][$childNodeId];
 
-			$childId = $state['rule']->getRule()->getConsequent($i - 1);
+			$childId = $state['rule']->getRule()->getConsequent($i);
 
 			$childSemantics[$childId] = $childState['semantics'];
 			$i++;
@@ -474,10 +470,10 @@ class EarleyParser
 	{
 		$childTexts = array();
 
-		$i = 1;
+		$i = 0;
 		foreach ($state['children'] as $childNodeId) {
 
-			$cat = $state['rule']->getRule()->getConsequentCategory($i - 1);
+			$cat = $state['rule']->getRule()->getConsequentCategory($i);
 
 			$childState = $this->treeInfo['states'][$childNodeId];
 			$childId = $this->getChildId($childTexts, $cat);
@@ -537,28 +533,6 @@ class EarleyParser
 		return $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
 	}
 
-	/**
-	 * @param array $rule
-	 * @return LabeledDAG
-	 */
-	public static function createLabeledDag($rule)
-	{
-		$Dag =  $rule->getFeatures();
-
-#todo simplify using plain consequents
-		$i = 0;
-		$cat = $rule->getRule()->getAntecedent();
-		$Dag->renameLabel($cat, $rule->getRule()->getAntecedentCategory() . '@' . $i);
-		$i++;
-		foreach ($rule->getRule()->getConsequents() as $cat) {
-
-			$Dag->renameLabel($cat, $rule->getRule()->getConsequentCategory($i - 1) . '@' . $i);
-			$i++;
-		}
-
-		return $Dag;
-	}
-
 	public static function createSemanticStructure($semanticSpecification)
 	{
 		if ($semanticSpecification === null) {
@@ -597,8 +571,8 @@ class EarleyParser
 			$end = $state['endWordIndex'];
 
 			$post = array();
-			for ($i = self::CONSEQUENT; $i < $rule->getRule()->getConsequentCount() + 1; $i++) {
-				if ($i == $dotPosition) {
+			for ($i = 0; $i < $rule->getRule()->getConsequentCount(); $i++) {
+				if ($i + 1 == $dotPosition) {
 					$post[] = '.';
 				}
 				$post[] = $rule->getRule()->getConsequentCategory($i - 1);
@@ -610,7 +584,7 @@ class EarleyParser
 			echo
 				str_repeat('    ', $start) .
 				$function . ' ' .
-				$rule[self::ANTECEDENT]['cat'] . ' => ' . implode(' ', $post) . ' ' .
+				$rule[0]['cat'] . ' => ' . implode(' ', $post) . ' ' .
 				"[" . implode(' ', array_slice($this->words, $start, ($end - $start))) . "]\n";
 		}
 	}
@@ -651,7 +625,8 @@ class EarleyParser
 	{
 		$rule = $state['rule'];
 
-		$antecedent = $rule->getRule()->getAntecedentCategory();
+		$antecedent = $rule->getRule()->getAntecedent();
+		$antecedentCategory = $rule->getRule()->getAntecedentCategory();
 
 		if ($antecedent == 'gamma') {
 			$constituentId = $state['children'][0];
@@ -660,7 +635,7 @@ class EarleyParser
 		}
 
 		$branch = array(
-			'part-of-speech' => $antecedent
+			'part-of-speech' => $antecedentCategory
 		);
 
 		if ($this->Grammar->isPartOfSpeech($antecedent)) {
@@ -669,8 +644,9 @@ class EarleyParser
 
 		$dagTree = $state['dag']->getTree();
 		$branch['features'] = null;
-		if (isset($dagTree[$antecedent . '@0'])) {
-			$branch['features'] = $dagTree[$antecedent . '@0'];
+
+		if (isset($dagTree[$antecedent])) {
+			$branch['features'] = $dagTree[$antecedent];
 		}
 
 		$branch['semantics'] = $state['semantics'];
