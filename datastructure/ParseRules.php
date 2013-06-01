@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class GrammarRules
+class ParseRules
 {
 	private $rules = array();
 
@@ -17,6 +17,11 @@ class GrammarRules
 	public function getRules()
 	{
 		return $this->rules;
+	}
+
+	public function append(ParseRules $Rules)
+	{
+		$this->rules = array_merge($this->rules, $Rules->getRules());
 	}
 
 	public function __toString()

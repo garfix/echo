@@ -342,7 +342,7 @@
 ]
 
 [
-	// he
+	// the car
 
 	rule:
         NP => DP NBar,

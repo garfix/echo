@@ -3,7 +3,7 @@
 namespace agentecho\test;
 
 use agentecho\component\parser\SemanticStructureParser;
-use agentecho\component\parser\GrammarRulesParser;
+use agentecho\component\parser\ParseRulesParser;
 use agentecho\exception\SemanticStructureParseException;
 
 require_once __DIR__ . '/../component/Autoload.php';
@@ -243,7 +243,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testGrammarRule()
+	public function testParseRule()
 	{
 		$Parser = new SemanticStructureParser();
 		$string = '[rule: S => NP VP, features: {a: 1}]';
@@ -253,9 +253,9 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 
 	}
 
-	public function testGrammarRules()
+	public function testParseRules()
 	{
-		$Parser = new GrammarRulesParser();
+		$Parser = new ParseRulesParser();
 
 		$string = '[rule: S => NP VP, features: {a: 1}] [rule: S => VP, features: {b: 1, c: 2}]';
 		$Structure = $Parser->parse($string);

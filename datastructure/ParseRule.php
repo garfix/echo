@@ -9,7 +9,7 @@ use agentecho\datastructure\AssignmentList;
 /**
  * @author Patrick van Bergen
  */
-class GrammarRule
+class ParseRule
 {
 	/** @var ProductionRule */
 	private $Rule = null;

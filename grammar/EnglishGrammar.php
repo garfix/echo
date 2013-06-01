@@ -12,6 +12,12 @@ namespace agentecho\grammar;
 
 class EnglishGrammar extends SimpleGrammar
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->loadGrammar(__DIR__ . '/../resources/english.grammar');
+	}
+
 	public function getLanguage()
 	{
 		return 'english';
@@ -619,34 +625,6 @@ class EnglishGrammar extends SimpleGrammar
 	public function isVocal($letter)
 	{
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
-	}
-
-	public function getParseRules()
-	{
-		$rules = parent::getParseRules();
-
-		// How many children did John have?
-		// Where did Lord Byron die?
-		// NP delivers deep subject
-		$rules['S'][] =
-			array(
-				array('cat' => 'S',
-					'semantics' => '{
-						S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
-						S.event = VP.event;
-						S.subject = NP.object;
-						S.object = WhADVP.object;
-						S.request = WhADVP.request;
-						S.event = WhADVP.event
-					}',
-					'features' => array('head{?h1}' => array('sentenceType' => 'wh-question', 'voice' => 'active', 'clause' => '?s1'))),
-				array('cat' => 'WhADVP', 'features' => array('head' => array('syntax' => '?s1'))),
-				array('cat' => 'auxDo', 'features' => array('head{?h1}' => array('agreement' => '?agr'))),
-				array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-2'))),
-				array('cat' => 'VP', 'features' => array('head{?h1}' => array('agreement' => '?agr', 'syntax{?s1}' => array('deepSubject' => '?syntax-2')))),
-			);
-
-		return $rules;
 	}
 
 	public function getGenerationRules()

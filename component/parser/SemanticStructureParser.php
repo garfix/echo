@@ -20,7 +20,7 @@ use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\AssociativeArray;
 use agentecho\datastructure\ProductionRule;
-use agentecho\datastructure\GrammarRule;
+use agentecho\datastructure\ParseRule;
 
 /**
  *
@@ -126,7 +126,7 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseGrammarRule($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parseParseRule($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -179,11 +179,11 @@ class SemanticStructureParser
 		return false;
 	}
 
-	protected function parseGrammarRule($tokens, $pos, &$GrammarRule)
+	protected function parseParseRule($tokens, $pos, &$ParseRule)
 	{
 		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
 
-			$GrammarRule = new GrammarRule();
+			$ParseRule = new ParseRule();
 
 			// label
 			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
@@ -196,20 +196,20 @@ class SemanticStructureParser
 				if ($label == 'rule') {
 
 					if ($pos = $this->parseProductionRule($tokens, $pos, $Rule)) {
-						$GrammarRule->setRule($Rule);
+						$ParseRule->setRule($Rule);
 					}
 
 
 				} elseif ($label == 'semantics') {
 
 					if ($pos = $this->parseAssignmentList($tokens, $pos, $Semantics)) {
-						$GrammarRule->setSemantics($Semantics);
+						$ParseRule->setSemantics($Semantics);
 					}
 
 				} elseif ($label == 'features') {
 
 					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
-						$GrammarRule->setFeatures($Features);
+						$ParseRule->setFeatures($Features);
 					}
 
 				} else {

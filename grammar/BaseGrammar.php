@@ -2,8 +2,8 @@
 
 namespace agentecho\grammar;
 
-use agentecho\component\parser\GrammarRulesParser;
-use agentecho\datastructure\GrammarRules;
+use agentecho\component\parser\ParseRulesParser;
+use agentecho\datastructure\ParseRules;
 use \agentecho\exception\ProductionException;
 
 /**
@@ -11,9 +11,12 @@ use \agentecho\exception\ProductionException;
  */
 abstract class BaseGrammar implements Grammar
 {
-	protected $GrammarRules = null;
+	/** @var ParseRules */
+	protected $ParseRules = null;
 
-	protected $parseRules = null;
+	/** @var array An antecedent-based index of grammar rules */
+	protected $parseRuleIndex = array();
+
 	protected $generationRules = null;
 	protected $lexicon = null;
 
@@ -37,15 +40,12 @@ abstract class BaseGrammar implements Grammar
 	 */
 	protected $matchIndex = null;
 
-	protected $grammarRuleIndex = array();
-
 	protected $wordIndex = null;
 
 	public function __construct()
 	{
 		// structure
 		$this->lexicon = $this->getLexicon();
-		$this->parseRules = $this->getParseRules();
 		$this->generationRules = $this->getGenerationRules();
 
 		$this->indexLexiconFeatures();
@@ -55,19 +55,23 @@ abstract class BaseGrammar implements Grammar
 	protected function loadGrammar($filePath)
 	{
 		$text = file_get_contents($filePath);
-		$Parser = new GrammarRulesParser();
+		$Parser = new ParseRulesParser();
 		$Rules = $Parser->parse($text);
-		$this->GrammarRules = $Rules;
+		if ($this->ParseRules) {
+			$this->ParseRules->append($Rules);
+		} else {
+			$this->ParseRules = $Rules;
+		}
 
-		$this->indexGrammarRules($Rules);
+		$this->indexParseRules($Rules);
 	}
 
-	private function indexGrammarRules(GrammarRules $GrammarRules)
+	private function indexParseRules(ParseRules $ParseRules)
 	{
-		foreach ($GrammarRules->getRules() as $GrammarRule) {
-			$ProductionRule = $GrammarRule->getRule();
+		foreach ($ParseRules->getRules() as $ParseRule) {
+			$ProductionRule = $ParseRule->getRule();
 			$antecedent = $ProductionRule->getAntecedentCategory();
-			$this->grammarRuleIndex[$antecedent][] = $GrammarRule;
+			$this->parseRuleIndex[$antecedent][] = $ParseRule;
 		}
 	}
 
@@ -133,35 +137,29 @@ abstract class BaseGrammar implements Grammar
 			// all words can be proper nouns
 			if ($partOfSpeech == 'propernoun') {
 
-				// if they're not known to be an existing word in the language
-//				if (!isset($this->wordIndex[$word])) {
-
-					// and start with a capital
-					if (preg_match('/^[A-Z]/', $word)) {
-						$result = true;
-					}
-//				}
-
+				// and start with a capital
+				if (preg_match('/^[A-Z]/', $word)) {
+					$result = true;
+				}
 			}
 		}
 
 		return $result;
 	}
 
+	/**
+	 * @param $antecedent
+	 * @return array[ParseRule]
+	 */
 	public function getRulesForAntecedent($antecedent)
 	{
-		if (isset($this->grammarRuleIndex[$antecedent])) {
-			$rules = $this->grammarRuleIndex[$antecedent];
+		if (isset($this->parseRuleIndex[$antecedent])) {
+			$rules = $this->parseRuleIndex[$antecedent];
 		} else {
 			$rules = array();
 		}
 
-		if (isset($this->parseRules[$antecedent])) {
-			$rules = array_merge($rules, $this->parseRules[$antecedent]);
-		}
-
 		return $rules;
-
 	}
 
 	/**

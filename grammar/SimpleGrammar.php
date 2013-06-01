@@ -18,12 +18,6 @@ abstract class SimpleGrammar extends BaseGrammar
 		return array($word);
 	}
 
-	public function getParseRules()
-	{
-		return array(
-		);
-	}
-
 	public function getGenerationRules()
 	{
 		// de volgorde van deze regels wijkt waarschijnlijk af van de syntax regels hierboven;

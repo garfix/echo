@@ -21,12 +21,6 @@ interface Grammar
 	public function getLanguageCode();
 
 	/**
-	 * Returns all grammar rules for parsing.
-	 * @return array
-	 */
-	public function getParseRules();
-
-	/**
 	 * Returns the semantics of a word.
 	 * @param $word
 	 * @param $partOfSpeech
