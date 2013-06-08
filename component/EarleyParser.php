@@ -110,11 +110,11 @@ class EarleyParser
 		$this->chart = array_fill(0, count($this->words) + 1, array());
 
 		// top down parsing starts with queueing the topmost state
-		$ProductionRule = new ProductionRule();
-		$ProductionRule->setAntecedent('gamma');
-		$ProductionRule->setConsequents(array('S'));
+		$Production = new ProductionRule();
+		$Production->setAntecedent('gamma');
+		$Production->setConsequents(array('S'));
 		$Rule = new ParseRule();
-		$Rule->setRule($ProductionRule);
+		$Rule->setProduction($Production);
 
 		$initialState = array(
 			'rule' => $Rule,
@@ -184,12 +184,12 @@ class EarleyParser
 	{
 		$this->showDebug('predict', $state);
 
-		$nextConsequent = $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		$nextConsequent = $state['rule']->getProduction()->getConsequentCategory($state['dotPosition'] - 1);
 
 		$endWordIndex = $state['endWordIndex'];
 
 		// go through all rules that have the next consequent as their antecedent
-		foreach ($this->Grammar->getRulesForAntecedent($nextConsequent) as $newRule) {
+		foreach ($this->Grammar->getParseRulesForAntecedent($nextConsequent) as $newRule) {
 
 			$predictedState = array(
 				'rule' => $newRule,
@@ -212,7 +212,7 @@ class EarleyParser
 	{
 		$this->showDebug('scan', $state);
 
-		$nextConsequent = $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		$nextConsequent = $state['rule']->getProduction()->getConsequentCategory($state['dotPosition'] - 1);
 
 		$endWordIndex = $state['endWordIndex'];
 		$endWord = $this->words[$endWordIndex];
@@ -227,11 +227,11 @@ class EarleyParser
 				throw new SemanticsNotFoundException($endWord);
 			}
 
-			$ProductionRule = new ProductionRule();
-			$ProductionRule->setAntecedent($nextConsequent);
-			$ProductionRule->setConsequents(array($endWord));
+			$Production = new ProductionRule();
+			$Production->setAntecedent($nextConsequent);
+			$Production->setConsequents(array($endWord));
 			$NewRule = new ParseRule();
-			$NewRule->setRule($ProductionRule);
+			$NewRule->setProduction($Production);
 
 			$scannedState = array(
 				'rule' => $NewRule,
@@ -262,7 +262,7 @@ class EarleyParser
 
 		$treeComplete = false;
 
-		$completedAntecedent = $completedState['rule']->getRule()->getAntecedentCategory();
+		$completedAntecedent = $completedState['rule']->getProduction()->getAntecedentCategory();
 
 		foreach ($this->chart[$completedState['startWordIndex']] as $chartedState) {
 
@@ -272,12 +272,12 @@ class EarleyParser
 
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
-			if (($dotPosition > $rule->getRule()->getConsequentCount()) || ($rule->getRule()->getConsequentCategory($dotPosition - 1) != $completedAntecedent)) {
+			if (($dotPosition > $rule->getProduction()->getConsequentCount()) || ($rule->getProduction()->getConsequentCategory($dotPosition - 1) != $completedAntecedent)) {
 				continue;
 			}
 
 			$completedAntecedentLabel = $completedAntecedent;
-			$chartedConsequentLabel = $rule->getRule()->getConsequent($dotPosition - 1);
+			$chartedConsequentLabel = $rule->getProduction()->getConsequent($dotPosition - 1);
 
 			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedentLabel, $chartedConsequentLabel);
 			if ($NewDag !== false) {
@@ -319,12 +319,12 @@ class EarleyParser
 
 		// rule complete?
 
-		$consequentCount = $chartedState['rule']->getRule()->getConsequentCount();
+		$consequentCount = $chartedState['rule']->getProduction()->getConsequentCount();
 
 		if ($chartedState['dotPosition'] == $consequentCount) {
 
 			// complete sentence?
-			$antecedent = $chartedState['rule']->getRule()->getAntecedentCategory();
+			$antecedent = $chartedState['rule']->getProduction()->getAntecedentCategory();
 
 			if ($antecedent == 'gamma') {
 
@@ -426,7 +426,7 @@ class EarleyParser
 
 			$childState = $this->treeInfo['states'][$childNodeId];
 
-			$childId = $state['rule']->getRule()->getConsequent($i);
+			$childId = $state['rule']->getProduction()->getConsequent($i);
 
 			$childSemantics[$childId] = $childState['semantics'];
 			$i++;
@@ -473,7 +473,7 @@ class EarleyParser
 		$i = 0;
 		foreach ($state['children'] as $childNodeId) {
 
-			$cat = $state['rule']->getRule()->getConsequentCategory($i);
+			$cat = $state['rule']->getProduction()->getConsequentCategory($i);
 
 			$childState = $this->treeInfo['states'][$childNodeId];
 			$childId = $this->getChildId($childTexts, $cat);
@@ -523,14 +523,14 @@ class EarleyParser
 
 	private function isIncomplete(array $state)
 	{
-		$consequentCount = $state['rule']->getRule()->getConsequentCount() + 1;
+		$consequentCount = $state['rule']->getProduction()->getConsequentCount() + 1;
 
 		return ($state['dotPosition'] < $consequentCount);
 	}
 
 	private function getNextCat(array $state)
 	{
-		return $state['rule']->getRule()->getConsequentCategory($state['dotPosition'] - 1);
+		return $state['rule']->getProduction()->getConsequentCategory($state['dotPosition'] - 1);
 	}
 
 	public static function createSemanticStructure($semanticSpecification)
@@ -571,11 +571,11 @@ class EarleyParser
 			$end = $state['endWordIndex'];
 
 			$post = array();
-			for ($i = 0; $i < $rule->getRule()->getConsequentCount(); $i++) {
+			for ($i = 0; $i < $rule->getProduction()->getConsequentCount(); $i++) {
 				if ($i + 1 == $dotPosition) {
 					$post[] = '.';
 				}
-				$post[] = $rule->getRule()->getConsequentCategory($i - 1);
+				$post[] = $rule->getProduction()->getConsequentCategory($i - 1);
 			}
 			if ($i == $dotPosition) {
 				$post[] = '.';
@@ -625,8 +625,8 @@ class EarleyParser
 	{
 		$rule = $state['rule'];
 
-		$antecedent = $rule->getRule()->getAntecedent();
-		$antecedentCategory = $rule->getRule()->getAntecedentCategory();
+		$antecedent = $rule->getProduction()->getAntecedent();
+		$antecedentCategory = $rule->getProduction()->getAntecedentCategory();
 
 		if ($antecedent == 'gamma') {
 			$constituentId = $state['children'][0];
@@ -639,7 +639,7 @@ class EarleyParser
 		);
 
 		if ($this->Grammar->isPartOfSpeech($antecedent)) {
-			$branch['word'] = $rule->getRule()->getConsequentCategory(0);
+			$branch['word'] = $rule->getProduction()->getConsequentCategory(0);
 		}
 
 		$dagTree = $state['dag']->getTree();

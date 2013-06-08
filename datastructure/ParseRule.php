@@ -12,7 +12,7 @@ use agentecho\datastructure\AssignmentList;
 class ParseRule
 {
 	/** @var ProductionRule */
-	private $Rule = null;
+	private $Production = null;
 
 	/** @var LabeledDAG */
 	private $Features = null;
@@ -37,19 +37,19 @@ class ParseRule
 	}
 
 	/**
-	 * @param ProductionRule $Rule
+	 * @param ProductionRule $Production
 	 */
-	public function setRule(ProductionRule $Rule)
+	public function setProduction(ProductionRule $Production)
 	{
-		$this->Rule = $Rule;
+		$this->Production = $Production;
 	}
 
 	/**
 	 * @return ProductionRule
 	 */
-	public function getRule()
+	public function getProduction()
 	{
-		return $this->Rule;
+		return $this->Production;
 	}
 
 	/**
@@ -72,8 +72,8 @@ class ParseRule
 	{
 		$values = array();
 
-		if ($this->Rule) {
-			$values[] = 'rule: ' . $this->Rule;
+		if ($this->Production) {
+			$values[] = 'rule: ' . $this->Production;
 		}
 
 		if ($this->Features) {

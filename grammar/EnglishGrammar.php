@@ -15,7 +15,7 @@ class EnglishGrammar extends SimpleGrammar
 	public function __construct()
 	{
 		parent::__construct();
-		$this->loadGrammar(__DIR__ . '/../resources/english.grammar');
+		$this->loadParseGrammar(__DIR__ . '/../resources/english.parse.grammar');
 	}
 
 	public function getLanguage()

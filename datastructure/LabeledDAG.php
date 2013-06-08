@@ -515,9 +515,15 @@ class LabeledDAG
 					$i++;
 				}
 			} elseif (isset($node['value'])) {
-				return $node['value'];
+				if ($node['value'] === true) {
+					return 'true';
+				} elseif ($node['value'] === false) {
+					return 'false';
+				} else {
+					return $node['value'];
+				}
 			} else {
-				die('error');
+				die('error in labeled dag');
 			}
 
 			$string .= '}';

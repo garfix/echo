@@ -2,8 +2,10 @@
 
 namespace agentecho\grammar;
 
+use agentecho\component\parser\GenerationRulesParser;
 use agentecho\component\parser\ParseRulesParser;
 use agentecho\datastructure\ParseRules;
+use agentecho\datastructure\GenerationRules;
 use \agentecho\exception\ProductionException;
 
 /**
@@ -14,10 +16,17 @@ abstract class BaseGrammar implements Grammar
 	/** @var ParseRules */
 	protected $ParseRules = null;
 
-	/** @var array An antecedent-based index of grammar rules */
+	/** @var array An antecedent-based index of parse rules */
 	protected $parseRuleIndex = array();
 
+	/** @var GenerationRules */
+	protected $GenerationRules1 = null;
+
+	/** @var array An antecedent-based index of generation rules */
+	protected $generationRuleIndex = array();
+
 	protected $generationRules = null;
+
 	protected $lexicon = null;
 
 	/**
@@ -52,7 +61,7 @@ abstract class BaseGrammar implements Grammar
 		$this->indexLexiconWords();
 	}
 
-	protected function loadGrammar($filePath)
+	protected function loadParseGrammar($filePath)
 	{
 		$text = file_get_contents($filePath);
 		$Parser = new ParseRulesParser();
@@ -66,12 +75,35 @@ abstract class BaseGrammar implements Grammar
 		$this->indexParseRules($Rules);
 	}
 
+	protected function loadGenerationGrammar($filePath)
+	{
+		$text = file_get_contents($filePath);
+		$Parser = new GenerationRulesParser();
+		$Rules = $Parser->parse($text);
+		if ($this->GenerationRules1) {
+			$this->GenerationRules1->append($Rules);
+		} else {
+			$this->GenerationRules1 = $Rules;
+		}
+
+		$this->indexGenerationRules($Rules);
+	}
+
 	private function indexParseRules(ParseRules $ParseRules)
 	{
 		foreach ($ParseRules->getRules() as $ParseRule) {
-			$ProductionRule = $ParseRule->getRule();
-			$antecedent = $ProductionRule->getAntecedentCategory();
+			$Production = $ParseRule->getProduction();
+			$antecedent = $Production->getAntecedentCategory();
 			$this->parseRuleIndex[$antecedent][] = $ParseRule;
+		}
+	}
+
+	private function indexGenerationRules(GenerationRules $GenerationRules)
+	{
+		foreach ($GenerationRules->getRules() as $GenerationRule) {
+			$Production = $GenerationRule->getProduction();
+			$antecedent = $Production->getAntecedentCategory();
+			$this->generationRuleIndex[$antecedent][] = $GenerationRule;
 		}
 	}
 
@@ -148,13 +180,30 @@ abstract class BaseGrammar implements Grammar
 	}
 
 	/**
+	 * Returns all parse rules with a given  $antecedent
 	 * @param $antecedent
 	 * @return array[ParseRule]
 	 */
-	public function getRulesForAntecedent($antecedent)
+	public function getParseRulesForAntecedent($antecedent)
 	{
 		if (isset($this->parseRuleIndex[$antecedent])) {
 			$rules = $this->parseRuleIndex[$antecedent];
+		} else {
+			$rules = array();
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * Returns all generation rules with a given  $antecedent
+	 * @param $antecedent
+	 * @return array[GenerationRule]
+	 */
+	public function getGenerationRulesForAntecedent($antecedent)
+	{
+		if (isset($this->generationRuleIndex[$antecedent])) {
+			$rules = $this->generationRuleIndex[$antecedent];
 		} else {
 			$rules = array();
 		}

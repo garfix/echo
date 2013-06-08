@@ -5,6 +5,7 @@ namespace agentecho\test;
 use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\parser\ParseRulesParser;
 use agentecho\exception\SemanticStructureParseException;
+use agentecho\component\parser\GenerationRulesParser;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
@@ -243,6 +244,15 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
+	public function testTree()
+	{
+		$Parser = new SemanticStructureParser();
+		$string = '[noun: [head: [tense: true, person: true]], verb: [head: [tense: true]]]';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
 	public function testParseRule()
 	{
 		$Parser = new SemanticStructureParser();
@@ -250,7 +260,6 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
-
 	}
 
 	public function testParseRules()
@@ -258,6 +267,22 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Parser = new ParseRulesParser();
 
 		$string = '[rule: S => NP VP, features: {a: 1}] [rule: S => VP, features: {b: 1, c: 2}]';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		// empty string
+		$string = '';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testGenerationRules()
+	{
+		$Parser = new GenerationRulesParser();
+
+		$string = '[rule: S => NP VP, condition: [b: 2, c: match], features: {a: 1}] [rule: S => VP, condition: [b: 3, c: true], features: {b: 1, c: 2}]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

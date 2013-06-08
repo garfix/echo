@@ -2,6 +2,7 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\GenerationRule;
 use \agentecho\Settings;
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Sentence;
@@ -163,6 +164,10 @@ $words = $lexicalItems;
 
 		list ($rule, $UnifiedDAG) = $result;
 
+		if ($rule instanceof GenerationRule) {
+			return $this->planPhrase2($UnifiedDAG, $rule, $Grammar);
+		}
+
 		$words = array();
 		$partsOfSpeech = array();
 
@@ -211,8 +216,58 @@ $words = $lexicalItems;
 		return array($words, $partsOfSpeech);
 	}
 
+	private function planPhrase2(LabeledDAG $UnifiedDAG, GenerationRule $GenerationRule, Grammar $Grammar)
+	{
+		$words = array();
+		$partsOfSpeech = array();
+
+		$Production = $GenerationRule->getProduction();
+
+		for ($i = 0; $i < $Production->getConsequentCount(); $i++) {
+
+			$consequent = $Production->getConsequentCategory($i);
+
+			if ($Grammar->isPartOfSpeech($consequent)) {
+
+				// find matching entry in lexicon
+				//$value = $UnifiedDAG->getPathValue(array($consequent . '@' . $i));
+				$value = $UnifiedDAG->getPathValue(array($Production->getConsequent($i)));
+				if (!$value) {
+					$value = array();
+				}
+
+				$word = $Grammar->getWordForFeatures($consequent, $value);
+				if ($word === false) {
+					return false;
+				}
+
+				$words[] = $word;
+				$partsOfSpeech[] = $consequent;
+
+			} else {
+
+				// restrict the unified DAG to this consequent
+				//$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
+				$ConsequentDAG = $UnifiedDAG->followPath($Production->getConsequent($i))->renameLabel($Production->getConsequent($i), $Production->getConsequentCategory($i) . '@0');
+
+				// generate words for phrase
+				$result = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
+				if ($result === false) {
+					return false;
+				}
+				list($phraseWords, $phrasePartsOfSpeech) = $result;
+
+				$words =  array_merge($words, $phraseWords);
+				$partsOfSpeech = array_merge($partsOfSpeech, $phrasePartsOfSpeech);
+			}
+
+		}
+
+		return array($words, $partsOfSpeech);
+	}
+
 	/**
-	 * Returns the first rule that have $antecedent and that match $features.
+	 * Returns the first rule that has $antecedent and that matches $features.
 	 *
 	 * Actually it returns an array of two components:
 	 * 1) the 'rule' part of a generation rule
@@ -224,27 +279,71 @@ $words = $lexicalItems;
 	 */
 	private function getRuleForDAG(Grammar $Grammar, $antecedent, LabeledDAG $FeatureDAG)
 	{
-		$generationRules = $Grammar->getGenerationRules();
+		$generationRules = $Grammar->getGenerationRulesForAntecedent($antecedent);
+#$generationRules = array();
 
-		if (!isset($generationRules[$antecedent])) {
+#old
+$allGenerationRules = $Grammar->getGenerationRules();
+if (!empty($allGenerationRules[$antecedent])) {
+	$generationRules = array_merge($generationRules, $allGenerationRules[$antecedent]);
+}
+
+		if (empty($generationRules)) {
 			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
 			$E->setValue($antecedent);
 			throw $E;
 		}
 //r($FeatureDAG);
-		foreach ($generationRules[$antecedent] as $generationRule) {
+		foreach ($generationRules as $GenerationRule) {
 
-			$pattern = array($antecedent . '@0' => $generationRule['condition']);
-//r($pattern);
-			if ($FeatureDAG->match($pattern)) {
+			if ($GenerationRule instanceof GenerationRule) {
 
-				$rawRule = $generationRule['rule'];
-				$Dag = self::createLabeledDag($rawRule);
-//r($Dag);
-				$UnifiedDag = $Dag->unify($FeatureDAG);
-//r($UnifiedDag);
-				if ($UnifiedDag) {
-					return array($rawRule, $UnifiedDag);
+				#todo: find a way so that we don't need to create a DAG for each rule checked!
+
+				$Production = $GenerationRule->getProduction();
+				$antecedent = $Production->getAntecedent();
+
+//				$FeatureDAG = new LabeledDAG(array(
+//					$antecedent => $phraseSpecification
+//				));
+
+				$FeatureDAG2 = clone $FeatureDAG;
+				$FeatureDAG2->renameLabel($antecedent . '@0', $antecedent);
+
+				$pattern = $GenerationRule->getCondition()->getRoot();
+
+//				if (!empty($pattern['S']['head']['clause']) && array_key_exists('deepDirectObject', $pattern['S']['head']['clause'])) {
+//					$i = 0;
+//				}
+
+				if ($FeatureDAG2->match($pattern)) {
+
+					$Dag = $GenerationRule->getFeatures();
+					$UnifiedDag = $Dag->unify($FeatureDAG2);
+
+					if ($UnifiedDag) {
+						return array($GenerationRule, $UnifiedDag);
+					}
+				}
+
+			} else {
+
+				if (!empty($GenerationRule['condition']['head']['clause']) && array_key_exists('deepDirectObject', $GenerationRule['condition']['head']['clause'])) {
+					$i = 0;
+				}
+
+				$pattern = array($antecedent . '@0' => $GenerationRule['condition']);
+	//r($pattern);
+				if ($FeatureDAG->match($pattern)) {
+
+					$rawRule = $GenerationRule['rule'];
+					$Dag = self::createLabeledDag($rawRule);
+	//r($Dag);
+					$UnifiedDag = $Dag->unify($FeatureDAG);
+	//r($UnifiedDag);
+					if ($UnifiedDag) {
+						return array($rawRule, $UnifiedDag);
+					}
 				}
 			}
 		}

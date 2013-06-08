@@ -18,9 +18,11 @@ use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
 use agentecho\datastructure\LabeledDAG;
+use agentecho\datastructure\Tree;
 use agentecho\datastructure\AssociativeArray;
 use agentecho\datastructure\ProductionRule;
 use agentecho\datastructure\ParseRule;
+use agentecho\datastructure\GenerationRule;
 
 /**
  *
@@ -126,6 +128,8 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseTree($tokens, $pos, $Result)) {
+			$pos = $newPos;
 		} elseif ($newPos = $this->parseParseRule($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
@@ -195,8 +199,8 @@ class SemanticStructureParser
 
 				if ($label == 'rule') {
 
-					if ($pos = $this->parseProductionRule($tokens, $pos, $Rule)) {
-						$ParseRule->setRule($Rule);
+					if ($pos = $this->parseProductionRule($tokens, $pos, $Production)) {
+						$ParseRule->setProduction($Production);
 					}
 
 
@@ -204,6 +208,61 @@ class SemanticStructureParser
 
 					if ($pos = $this->parseAssignmentList($tokens, $pos, $Semantics)) {
 						$ParseRule->setSemantics($Semantics);
+					}
+
+				} elseif ($label == 'features') {
+
+					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
+						$ParseRule->setFeatures($Features);
+					}
+
+				} else {
+					return false;
+				}
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
+
+				return $pos;
+
+			}
+		}
+
+		return false;
+	}
+
+	protected function parseGenerationRule($tokens, $pos, &$ParseRule)
+	{
+		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
+
+			$ParseRule = new GenerationRule();
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+				}
+
+				if ($label == 'rule') {
+
+					if ($pos = $this->parseProductionRule($tokens, $pos, $Production)) {
+						$ParseRule->setProduction($Production);
+					}
+
+
+				} elseif ($label == 'condition') {
+
+					if ($pos = $this->parseTree($tokens, $pos, $Tree)) {
+						$ParseRule->setCondition($Tree);
 					}
 
 				} elseif ($label == 'features') {
@@ -272,6 +331,9 @@ class SemanticStructureParser
 					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
 						$pos = $newPos;
 						$value = $constant->getName();
+					} elseif ($newPos = $this->parseBoolean($tokens, $pos, $boolean)) {
+						$pos = $newPos;
+						$value = $boolean;
 					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
 						$pos = $newPos;
 						$value = $number;
@@ -308,6 +370,96 @@ class SemanticStructureParser
 			if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
 				return $pos;
 			}
+		}
+
+		return false;
+	}
+
+	private function parseTree(array $tokens, $pos, &$Tree)
+	{
+		if ($pos = $this->parseTreeBranch($tokens, $pos, $branch)) {
+
+			$Tree = new Tree($branch);
+
+			return $pos;
+		}
+
+		return false;
+	}
+
+	private function parseTreeBranch(array $tokens, $pos, &$branch)
+	{
+		$branch = array();
+
+		// [
+		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+
+					// constant or tree
+					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
+						$pos = $newPos;
+						$value = $constant->getName();
+					} elseif ($newPos = $this->parseBoolean($tokens, $pos, $boolean)) {
+						$pos = $newPos;
+						$value = $boolean;
+					} elseif ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $identifier)) {
+						if ($identifier == 'match') {
+							$pos = $newPos;
+							$value = null;
+						} else {
+							return false;
+						}
+					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
+						$pos = $newPos;
+						$value = $number;
+					} elseif ($newPos = $this->parseTreeBranch($tokens, $pos, $subTree)) {
+						$pos = $newPos;
+						$value = $subTree;
+					} else {
+						return false;
+					}
+
+					$branch[$label] = $value;
+
+				} else {
+					return false;
+				}
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			// ]
+			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
+				return $pos;
+			}
+		}
+
+		return false;
+	}
+
+	private function parseBoolean(array $tokens, $pos, &$boolean)
+	{
+		if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $identifier)) {
+			if ($identifier == 'true') {
+				$boolean = true;
+			} elseif ($identifier == 'false') {
+				$boolean = false;
+			} else {
+				return false;
+			}
+
+			return $pos;
 		}
 
 		return false;

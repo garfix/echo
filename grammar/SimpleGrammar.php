@@ -9,7 +9,8 @@ abstract class SimpleGrammar extends BaseGrammar
 {
 	public function __construct()
 	{
-		$this->loadGrammar(__DIR__ . '/../resources/simple.grammar');
+		$this->loadParseGrammar(__DIR__ . '/../resources/simple.parse.grammar');
+		$this->loadGenerationGrammar(__DIR__ . '/../resources/simple.generation.grammar');
 		parent::__construct();
 	}
 
@@ -33,19 +34,19 @@ abstract class SimpleGrammar extends BaseGrammar
 
 				// passive declarative sentence with a preposition
 				// (yes, ) Lord Byron was born in London
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?s2', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?s3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax{?s2}' => null))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => null)))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?s3'))),
-					),
-				),
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
+//							'deepDirectObject' => '?s2', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?s3'))))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax{?s2}' => null))),
+//						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => null)))),
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?s3'))),
+//					),
+//				),
 
 				// passive declarative sentence
 				// (yes, ) Lord Byron was influenced by John Milton
