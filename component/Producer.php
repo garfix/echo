@@ -281,7 +281,6 @@ $words = $lexicalItems;
 	private function getRuleForDAG(Grammar $Grammar, $antecedent, LabeledDAG $FeatureDAG)
 	{
 		$generationRules = $Grammar->getGenerationRulesForAntecedent($antecedent);
-#$generationRules = array();
 
 #old
 $allGenerationRules = $Grammar->getGenerationRules();
@@ -294,7 +293,7 @@ if (!empty($allGenerationRules[$antecedent])) {
 			$E->setValue($antecedent);
 			throw $E;
 		}
-//r($FeatureDAG);
+
 		foreach ($generationRules as $GenerationRule) {
 
 			if ($GenerationRule instanceof GenerationRule) {
@@ -302,20 +301,13 @@ if (!empty($allGenerationRules[$antecedent])) {
 				#todo: find a way so that we don't need to create a DAG for each rule checked!
 
 				$Production = $GenerationRule->getProduction();
-				$antecedent = $Production->getAntecedent();
-
-//				$FeatureDAG = new LabeledDAG(array(
-//					$antecedent => $phraseSpecification
-//				));
+				$antecedent2 = $Production->getAntecedent();
+				$antecedentCategory = $Production->getAntecedentCategory();
 
 				$FeatureDAG2 = clone $FeatureDAG;
-				$FeatureDAG2->renameLabel($antecedent . '@0', $antecedent);
+				$FeatureDAG2->renameLabel($antecedentCategory . '@0', $antecedent2);
 
 				$pattern = $GenerationRule->getCondition()->getRoot();
-
-//				if (!empty($pattern['S']['head']['clause']) && array_key_exists('deepDirectObject', $pattern['S']['head']['clause'])) {
-//					$i = 0;
-//				}
 
 				if ($FeatureDAG2->match($pattern)) {
 
@@ -329,19 +321,14 @@ if (!empty($allGenerationRules[$antecedent])) {
 
 			} else {
 
-				if (!empty($GenerationRule['condition']['head']['clause']) && array_key_exists('deepDirectObject', $GenerationRule['condition']['head']['clause'])) {
-					$i = 0;
-				}
-
 				$pattern = array($antecedent . '@0' => $GenerationRule['condition']);
-	//r($pattern);
+
 				if ($FeatureDAG->match($pattern)) {
 
 					$rawRule = $GenerationRule['rule'];
 					$Dag = self::createLabeledDag($rawRule);
-	//r($Dag);
 					$UnifiedDag = $Dag->unify($FeatureDAG);
-	//r($UnifiedDag);
+
 					if ($UnifiedDag) {
 						return array($rawRule, $UnifiedDag);
 					}

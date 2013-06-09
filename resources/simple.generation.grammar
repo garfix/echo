@@ -162,25 +162,140 @@
 ]
 
 [
-	// yes, ...
+	// the car in the lot
 
 	rule:
-		NP => NP2 PP,
+		NP1 => NP2 PP,
 	condition:
-		[ NP: [ head: [ syntax: [ category: match, preposition: match ] ] ] ],
+		[ NP1: [ head: [ syntax: [ category: match, preposition: match ] ] ] ],
 	features: {
-		NP: { head: { syntax: { category: ?cat, preposition: ?prep, determiner: ?det } } },
+		NP1: { head: { syntax: { category: ?cat, preposition: ?prep, determiner: ?det } } },
 		NP2: { head: { syntax: { category: ?cat, determiner: ?det } } },
 		PP: { head: { syntax: ?prep } }
 	}
 ]
 
+[
+	// the car
 
-//				array(
-//					'condition' => array('head' => array('syntax' => array('category' => null, 'preposition' => null))),
-//					'rule' => array(
-//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'preposition' => '?syntax', 'determiner' => '?det')))),
-//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => '?det')))),
-//						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
-//					)
-//				),
+	rule:
+		NP => determiner noun,
+	condition:
+		[ NP: [ head: [ syntax: [ category: match, determiner: match ] ] ] ],
+	features: {
+		NP: { head: { syntax: { category: ?cat, determiner: { category: ?det } } } },
+		determiner: { head: { syntax: { category: ?det } } },
+		noun: { head: { syntax: { category: ?cat } } }
+	}
+]
+
+[
+	// car
+
+	rule:
+		NP => noun,
+	condition:
+		[ NP: [ head: [ syntax: [ category: match ] ] ] ],
+	features: {
+		NP: { head: { syntax: { category: ?cat } } },
+		noun: { head: { syntax: { category: ?cat } } }
+	}
+]
+
+[
+	// a name
+
+	rule:
+		NP => PN,
+	condition:
+		[ NP: [ head: [ syntax: [ name: match ] ] ] ],
+	features: {
+		NP: { head: { syntax: { name: ?name, middlename: ?m, lastname: ?l } } },
+		PN: { head: { syntax: { name: ?name, middlename: ?m, lastname: ?l } } }
+	}
+]
+
+[
+	// Anne Isabelle Milbanke
+
+	rule:
+		PN => propernoun1 propernoun2 propernoun3,
+	condition:
+		[ PN: [ head: [ syntax: [ name: match, middlename: match, lastname: match ] ] ] ],
+	features: {
+		PN: { head: { syntax: { name: ?name, middlename: ?m, lastname: ?l } } },
+		propernoun1: { head: { syntax: { name: ?name } } },
+		propernoun2: { head: { syntax: { name: ?m } } },
+		propernoun3: { head: { syntax: { name: ?l } } }
+	}
+]
+
+[
+	// Lord Byron
+
+	rule:
+		PN => propernoun1 propernoun2,
+	condition:
+		[ PN: [ head: [ syntax: [ name: match, lastname: match ] ] ] ],
+	features: {
+		PN: { head: { syntax: { name: ?name, lastname: ?l } } },
+		propernoun1: { head: { syntax: { name: ?name } } },
+		propernoun2: { head: { syntax: { name: ?l } } }
+	}
+]
+
+[
+	// John
+
+	rule:
+		PN => propernoun,
+	condition:
+		[ PN: [ head: [ syntax: [ name: match ] ] ] ],
+	features: {
+		PN: { head: { syntax: { name: ?name } } },
+		propernoun: { head: { syntax: { name: ?name } } }
+	}
+]
+
+[
+	// drives a car
+
+	rule:
+		VP => verb NP,
+	condition:
+		[ VP: [ head: [ syntax: [ predicate: match, category: match ] ] ] ],
+	features: {
+		VP: { head: { syntax: { tense: ?tense, predicate: ?pred } } },
+		verb: { head: { syntax: { tense: ?tense, predciate: ?pred } } },
+		NP: { }
+	}
+]
+
+[
+	// drives
+
+	rule:
+		VP => verb,
+	condition:
+		[ VP: [ head: [ syntax: [ predicate: match ] ] ] ],
+	features: {
+		VP: { head: { syntax: { tense: ?tense, predicate: ?pred } } },
+		verb: { head: { syntax: { tense: ?tense, predicate: ?pred } } }
+	}
+]
+
+[
+	// in the lot
+
+	rule:
+		PP => preposition NP,
+	condition:
+		[ ],
+	features: {
+		PP: { head: { syntax: { category: ?cat, object: ?obj } } },
+		preposition: { head: { syntax: { category: ?cat } } },
+		NP: { head: { syntax: ?obj } }
+	}
+]
+
+

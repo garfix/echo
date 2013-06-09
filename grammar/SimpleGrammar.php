@@ -185,21 +185,21 @@ abstract class SimpleGrammar extends BaseGrammar
 //						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
 //					)
 //				),
-				array(
-					'condition' => array('head' =>array('syntax' =>  array('category' => null, 'determiner' => null))),
-					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => array('category' => '?det'))))),
-						array('cat' => 'determiner', 'features' => array('head' => array('syntax' => array('category' => '?det')))),
-						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
-					)
-				),
-				array(
-					'condition' => array('head' => array('syntax' => array('category' => null))),
-					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
-						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' =>array('syntax' =>  array('category' => null, 'determiner' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => array('category' => '?det'))))),
+//						array('cat' => 'determiner', 'features' => array('head' => array('syntax' => array('category' => '?det')))),
+//						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+//					)
+//				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('category' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+//						array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+//					)
+//				),
 //				array(
 //					'condition' => array('head' => array('syntax' => array('name' => null))),
 //					'rule' => array(
@@ -208,13 +208,13 @@ abstract class SimpleGrammar extends BaseGrammar
 //					)
 //				),
 
-				array(
-					'condition' => array('head' => array('syntax' => array('name' => null))),
-					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
-						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
+//						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
+//					)
+//				),
 			),
 			'PN' => array(
 
@@ -225,32 +225,32 @@ abstract class SimpleGrammar extends BaseGrammar
 //						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
 //					)
 //				),
-				array(
-					'condition' => array('head' => array('syntax' => array('name' => null, 'middlename' => null, 'lastname' => null))),
-					'rule' => array(
-						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?middlename')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null, 'middlename' => null, 'lastname' => null))),
+//					'rule' => array(
+//						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'middlename' => '?middlename', 'lastname' => '?lastname')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?middlename')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
+//					)
+//				),
 
-				array(
-					'condition' => array('head' => array('syntax' => array('name' => null, 'lastname' => null))),
-					'rule' => array(
-						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'lastname' => '?lastname')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null, 'lastname' => null))),
+//					'rule' => array(
+//						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name', 'lastname' => '?lastname')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?lastname')))),
+//					)
+//				),
 
-				array(
-					'condition' => array('head' => array('syntax' => array('name' => null))),
-					'rule' => array(
-						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
-						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('name' => null))),
+//					'rule' => array(
+//						array('cat' => 'PN', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//						array('cat' => 'propernoun', 'features' => array('head' => array('syntax' => array('name' => '?name')))),
+//					)
+//				),
 
 			),
 			'VP' => array(
@@ -264,32 +264,32 @@ abstract class SimpleGrammar extends BaseGrammar
 //						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2')))
 //					)
 //				),
-				array(
-					'condition' => array('head' => array('syntax' => array('predicate' => null, 'category' => null))),
-					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
-						array('cat' => 'NP', 'features' => array())
-					)
-				),
-				array(
-					'condition' => array('head' => array('syntax' => array('predicate' => null))),
-					'rule' => array(
-						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
-						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('predicate' => null, 'category' => null))),
+//					'rule' => array(
+//						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+//						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+//						array('cat' => 'NP', 'features' => array())
+//					)
+//				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('predicate' => null))),
+//					'rule' => array(
+//						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+//						array('cat' => 'verb', 'features' => array('head' => array('syntax' => array('tense' => '?tense', 'predicate' => '?pred')))),
+//					)
+//				),
 			),
-			'PP' => array(
-				array(
-					'condition' => array(),
-					'rule' => array(
-						array('cat' => 'PP', 'features' => array('head' => array('syntax' => array('category' => '?category', 'object' => '?obj')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?category')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?obj'))),
-					)
-				),
-			),
+//			'PP' => array(
+//				array(
+//					'condition' => array(),
+//					'rule' => array(
+//						array('cat' => 'PP', 'features' => array('head' => array('syntax' => array('category' => '?category', 'object' => '?obj')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?category')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?obj'))),
+//					)
+//				),
+//			),
 
 		);
 	}
