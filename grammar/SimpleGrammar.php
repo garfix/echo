@@ -48,35 +48,35 @@ abstract class SimpleGrammar extends BaseGrammar
 //					),
 //				),
 
-				// passive declarative sentence
-				// (yes, ) Lord Byron was influenced by John Milton
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense' => '?t1', 'predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => '?t1')))),
-						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('predicate' => '?pred')))),
-						array('cat' => 'passivisationPreposition', 'features' => array()),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-1'))),
-					)
-				),
+//				// passive declarative sentence
+//				// (yes, ) Lord Byron was influenced by John Milton
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive')),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('tense' => '?t1', 'predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+//						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => '?t1')))),
+//						array('cat' => 'VP', 'features' => array('head' => array('syntax' => array('predicate' => '?pred')))),
+//						array('cat' => 'passivisationPreposition', 'features' => array()),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-1'))),
+//					)
+//				),
 
-				// active declarative sentence with a preposition
-				// Lord Byron died in Missolonghi
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepSubject' => '?syntax-1', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
-					),
-				),
+//				// active declarative sentence with a preposition
+//				// Lord Byron died in Missolonghi
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepSubject' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
+//							'deepSubject' => '?syntax-1', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
+//					),
+//				),
 
 				// active declarative past-tense sentence with a preposition
 				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
@@ -94,97 +94,97 @@ abstract class SimpleGrammar extends BaseGrammar
 //					),
 //				),
 
-				// active declarative sentence with a preposition
-				// Lord Byron was born in London
-				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-							'deepDirectObject' => '?s2', 'adverb' => '?adverb-1', 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?s2'))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
-						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
-					),
-				),
+//				// active declarative sentence with a preposition
+//				// Lord Byron was born in London
+//				// (yes, ) Lord Byron was married to Anne Isabella Milbanke
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
+//							'deepDirectObject' => '?s2', 'adverb' => '?adverb-1', 'preposition' => array('category' => '?prepcat', 'object' => '?syntax-3'))))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?s2'))),
+//						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
+//						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
+//					),
+//				),
+//
+//				// active declarative sentence with third argument
+//				// John gives Mary flowers
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('deepIndirectObject' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'deepIndirectObject' => '?syntax-3')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+//					),
+//				),
 
-				// active declarative sentence with third argument
-				// John gives Mary flowers
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('deepIndirectObject' => null))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'deepIndirectObject' => '?syntax-3')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-3'))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-					),
-				),
+//				// active declarative sentence with 'be' as verb
+//				// (yes, ) Ada Lovelace was the daughter of Lord Byron
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('predicate' => 'be'))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+//					),
+//				),
 
-				// active declarative sentence with 'be' as verb
-				// (yes, ) Ada Lovelace was the daughter of Lord Byron
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active', 'clause' => array('predicate' => 'be'))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2', 'adverb' => '?adverb-1')))),
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-						array('cat' => 'auxBe', 'features' => array('head' => array('syntax' => null))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-					),
-				),
-
-				// simple active declarative sentence
-				// John likes Mary
-				array(
-					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
-						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
-						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
-					),
-				),
-
-				// 'yes' or 'no' answers
-				array(
-					'condition' => array('head' => array('clause' => array('modifier' => null))),
-					'rule' => array(
-						array('cat' => 'S', 'features' => array('head' => array('clause' => array('modifier' => '?modifier-1')))),
-						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => '?modifier-1'))),
-					)
-				),
+//				// simple active declarative sentence
+//				// John likes Mary
+//				array(
+//					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'active')),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense', 'deepSubject' => '?syntax-1', 'deepDirectObject' => '?syntax-2')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => '?syntax-1'))),
+//						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred', 'tense' => '?tense')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?syntax-2'))),
+//					),
+//				),
+//
+//				// 'yes' or 'no' answers
+//				array(
+//					'condition' => array('head' => array('clause' => array('modifier' => null))),
+//					'rule' => array(
+//						array('cat' => 'S', 'features' => array('head' => array('clause' => array('modifier' => '?modifier-1')))),
+//						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => '?modifier-1'))),
+//					)
+//				),
 			),
 
 			'premodifier' => array(
-				// yes, ...
-				array(
-					'condition' => array('head' => array('syntax' => null)),
-					'rule' => array(
-						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
-						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
-					)
-				),
-				// null rule, needed to fill the empty optional clause
-				array(
-					'condition' => array(),
-					'rule' => array()
-				)
+//				// yes, ...
+//				array(
+//					'condition' => array('head' => array('syntax' => null)),
+//					'rule' => array(
+//						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+//						array('cat' => 'adverb', 'features' => array('head' => array('syntax' => array('category' => '?cat')))),
+//						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
+//					)
+//				),
+//				// null rule, needed to fill the empty optional clause
+//				array(
+//					'condition' => array(),
+//					'rule' => array()
+//				)
 			),
 
 			'NP' => array(
-				array(
-					'condition' => array('head' => array('syntax' => array('category' => null, 'preposition' => null))),
-					'rule' => array(
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'preposition' => '?syntax', 'determiner' => '?det')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => '?det')))),
-						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
-					)
-				),
+//				array(
+//					'condition' => array('head' => array('syntax' => array('category' => null, 'preposition' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'preposition' => '?syntax', 'determiner' => '?det')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => '?det')))),
+//						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
+//					)
+//				),
 				array(
 					'condition' => array('head' =>array('syntax' =>  array('category' => null, 'determiner' => null))),
 					'rule' => array(

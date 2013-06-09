@@ -17,19 +17,170 @@
 	}
 ]
 
-	//				// passive declarative sentence with a preposition
-    //				// (yes, ) Lord Byron was born in London
-    //				array(
-    //					'condition' => array('head' => array('sentenceType' => 'declarative', 'voice' => 'passive', 'clause' => array('preposition' => null, 'deepDirectObject' => null))),
-    //					'rule' => array(
-    //						array('cat' => 'S', 'features' => array('head' => array('clause' => array('predicate' => '?pred', 'tense' => '?tense',
-    //							'deepDirectObject' => '?s2', 'adverb' => null, 'preposition' => array('category' => '?prepcat', 'object' => '?s3'))))),
-    //						array('cat' => 'premodifier', 'features' => array('head' => array('syntax' => '?adverb-1'))),
-    //						array('cat' => 'NP', 'features' => array('head' => array('agreement' => '?agr', 'syntax{?s2}' => null))),
-    //						array('cat' => 'auxPsv', 'features' => array('head' => array('syntax' => array('predicate' => 'be', 'tense' => null)))),
-    //						array('cat' => 'VP', 'features' => array('head' => array('agreement' => '?agr', 'syntax' => array('predicate' => '?pred')))),// 'tense' => '?tense')))),
-    //						array('cat' => 'preposition', 'features' => array('head' => array('syntax' => array('category' => '?prepcat')))),
-    //						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?s3'))),
-    //					),
-    //				),
+[
+	// passive declarative sentence
+	// (yes, ) Lord Byron was influenced by John Milton
 
+	rule:
+		S => premodifier NP1 auxPsv VP passivisationPreposition NP2,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'passive' ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, tense: ?t1, deepSubject: ?s1, deepDirectObject: ?s2, adverb: ?adverb } } },
+		premodifier: { head: { syntax: ?adverb } },
+		NP1: { head: { agreement: ?agr, syntax: ?s2 } },
+		auxPsv: { head: { syntax: { predicate: 'be', tense: ?t1 } } },
+		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred } } },
+		passivisationPreposition: { },
+		NP2: { head: {syntax: ?s1 } }
+	}
+]
+
+[
+	// active declarative sentence with a preposition
+	// Lord Byron died in Missolonghi
+
+	rule:
+		S => premodifier NP1 VP preposition NP2,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'active', clause: [ preposition: match, deepSubject: match ] ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepSubject: ?s1, preposition: { category: ?prepcat, object: ?s3 } } } },
+		premodifier: { },
+		NP1: { head: { agreement: ?agr, syntax: ?s1 } },
+		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred, tense: ?tense } } },
+		preposition: { head: { syntax: { category: ?prepcat } } },
+		NP2: { head: {syntax: ?s3 } }
+	}
+]
+
+[
+	// active declarative sentence with a preposition
+	// Lord Byron was born in London
+
+	rule:
+		S => premodifier NP1 auxBe VP preposition NP2,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'active', clause: [ preposition: match, deepDirectObject: match ] ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepDirectObject: ?s2, adverb: ?adverb, preposition: { category: ?prepcat, object: ?s3 } } } },
+		premodifier: { head: { syntax: ?adverb } },
+		NP1: { head: { agreement: ?agr, syntax: ?s2 } },
+		auxBe: { },
+		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred } } },
+		preposition: { head: { syntax: { category: ?prepcat } } },
+		NP2: { head: {syntax: ?s3 } }
+	}
+]
+
+[
+	// active declarative sentence with third argument
+	// John gives Mary flowers
+
+	rule:
+		S => NP1 VP NP2 NP3,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'active', clause: [ deepIndirectObject: match ] ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, deepSubject: ?s1, deepDirectObject: ?s2, deepIndirectObject: ?s3 } } },
+		NP1: { head: { agreement: ?agr, syntax: ?s1 } },
+		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred } } },
+		NP2: { head: { syntax: ?s3 } },
+		NP3: { head: { syntax: ?s2 } }
+	}
+]
+
+[
+	// active declarative sentence with 'be' as verb
+	// (yes, ) Ada Lovelace was the daughter of Lord Byron
+
+	rule:
+		S => premodifier NP1 auxBe NP2,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'active', clause: [ predicate: 'be' ] ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepSubject: ?s1, deepDirectObject: ?s2, adverb: ?adverb } } },
+		premodifier: { head: { syntax: ?adverb } },
+		NP1: { head: { agreement: ?agr, syntax: ?s1 } },
+		auxBe: { },
+		NP2: { head: { syntax: ?s2 } }
+	}
+]
+
+[
+	// simple active declarative sentence
+	// John likes Mary
+
+	rule:
+		S => NP1 VP NP2,
+	condition:
+		[ S: [ head: [ sentenceType: 'declarative', voice: 'active' ] ] ],
+	features: {
+		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepSubject: ?s1, deepDirectObject: ?s2 } } },
+		NP1: { head: { agreement: ?agr, syntax: ?s1 } },
+		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred, tense: ?tense } } },
+		NP2: { head: { syntax: ?s2 } }
+	}
+]
+
+[
+	// 'yes' or 'no' answers
+
+	rule:
+		S => adverb,
+	condition:
+		[ S: [ head: [ modifier: match ] ] ],
+	features: {
+		S: { head: { clause: { modifier: ?modifier } } },
+		adverb: { head: { syntax: ?modifier } }
+	}
+]
+
+[
+	// yes, ...
+
+	rule:
+		premodifier => adverb punctuationMark,
+	condition:
+		[ premodifier: [ head: [ syntax: match ] ] ],
+	features: {
+		premodifier: { head: { syntax: { category: ?cat } } },
+		adverb: { head: { syntax: { category: ?cat } } },
+		punctuationMark: { head: { syntax: { category: 'comma' } } }
+	}
+]
+
+[
+	// null rule, needed to fill the empty optional clause
+
+	rule:
+		premodifier =>,
+	condition:
+		[ ],
+	features: {
+	}
+]
+
+[
+	// yes, ...
+
+	rule:
+		NP => NP2 PP,
+	condition:
+		[ NP: [ head: [ syntax: [ category: match, preposition: match ] ] ] ],
+	features: {
+		NP: { head: { syntax: { category: ?cat, preposition: ?prep, determiner: ?det } } },
+		NP2: { head: { syntax: { category: ?cat, determiner: ?det } } },
+		PP: { head: { syntax: ?prep } }
+	}
+]
+
+
+//				array(
+//					'condition' => array('head' => array('syntax' => array('category' => null, 'preposition' => null))),
+//					'rule' => array(
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'preposition' => '?syntax', 'determiner' => '?det')))),
+//						array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('category' => '?cat', 'determiner' => '?det')))),
+//						array('cat' => 'PP', 'features' => array('head' => array('syntax' => '?syntax')))
+//					)
+//				),

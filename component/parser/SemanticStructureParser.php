@@ -169,10 +169,6 @@ class SemanticStructureParser
 					$consequents[] = $consequent;
 				}
 
-				if (empty($consequents)) {
-					return false;
-				}
-
 				$ProductionRule = new ProductionRule();
 				$ProductionRule->setAntecedent($antecedent);
 				$ProductionRule->setConsequents($consequents);

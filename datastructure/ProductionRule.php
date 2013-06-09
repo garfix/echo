@@ -83,7 +83,7 @@ class ProductionRule
 
 	public function __toString()
 	{
-		return $this->antecedent . ' => ' . implode(' ', $this->consequents);
+		return $this->antecedent . ' =>' . ($this->consequents ? ' ' . implode(' ', $this->consequents) : '');
 	}
 
 	public function createClone()
