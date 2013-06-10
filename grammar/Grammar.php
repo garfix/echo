@@ -28,12 +28,6 @@ interface Grammar
 	 */
 	public function	getSemanticsForWord($word, $partOfSpeech);
 
-	/**
-	 * Returns all grammar rules for generation.
-	 * @return array
-	 */
-	//public function getGenerationRules();
-
 	public function getParseRulesForAntecedent($antecedent);
 	public function getGenerationRulesForAntecedent($antecedent);
 

@@ -20,12 +20,10 @@ abstract class BaseGrammar implements Grammar
 	protected $parseRuleIndex = array();
 
 	/** @var GenerationRules */
-	protected $GenerationRules1 = null;
+	protected $GenerationRules = null;
 
 	/** @var array An antecedent-based index of generation rules */
 	protected $generationRuleIndex = array();
-
-	protected $generationRules = null;
 
 	protected $lexicon = null;
 
@@ -55,7 +53,6 @@ abstract class BaseGrammar implements Grammar
 	{
 		// structure
 		$this->lexicon = $this->getLexicon();
-		$this->generationRules = $this->getGenerationRules();
 
 		$this->indexLexiconFeatures();
 		$this->indexLexiconWords();
@@ -80,10 +77,10 @@ abstract class BaseGrammar implements Grammar
 		$text = file_get_contents($filePath);
 		$Parser = new GenerationRulesParser();
 		$Rules = $Parser->parse($text);
-		if ($this->GenerationRules1) {
-			$this->GenerationRules1->append($Rules);
+		if ($this->GenerationRules) {
+			$this->GenerationRules->append($Rules);
 		} else {
-			$this->GenerationRules1 = $Rules;
+			$this->GenerationRules = $Rules;
 		}
 
 		$this->indexGenerationRules($Rules);

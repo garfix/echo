@@ -282,12 +282,6 @@ $words = $lexicalItems;
 	{
 		$generationRules = $Grammar->getGenerationRulesForAntecedent($antecedent);
 
-#old
-$allGenerationRules = $Grammar->getGenerationRules();
-if (!empty($allGenerationRules[$antecedent])) {
-	$generationRules = array_merge($generationRules, $allGenerationRules[$antecedent]);
-}
-
 		if (empty($generationRules)) {
 			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
 			$E->setValue($antecedent);

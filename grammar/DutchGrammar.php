@@ -4,6 +4,12 @@ namespace agentecho\grammar;
 
 class DutchGrammar extends SimpleGrammar
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->loadGenerationGrammar(__DIR__ . '/../resources/dutch.generation.grammar');
+	}
+
 	public function getLanguage()
 	{
 		return 'dutch';
@@ -338,71 +344,5 @@ class DutchGrammar extends SimpleGrammar
 
 		// default: no action
 		return array($word);
-	}
-
-	public function getGenerationRules()
-	{
-		$rules = parent::getGenerationRules();
-
-		$rules += array(
-
-			'CP' => array(
-				// CP, NP ; non-toplevel conjunction with conjunction at the left hand
-				array(
-					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')), 'subconjunction' => true)),
-					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
-					)
-				),
-				// NP, NP, ; non-toplevel conjunction with entity at the left hand
-				array(
-					'condition' => array('head' => array('subconjunction' => true)),
-					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
-						array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
-					)
-				),
-				// CP en NP ; toplevel conjunction with conjunction at the left hand
-				array(
-					'condition' => array('head' => array('syntax' => array('left' => array('type' => 'conjunction')))),
-					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => '?left', 'subconjunction' => true))),
-						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
-					)
-				),
-				// NP en NP ; toplevel conjunction with entity at the left hand
-				array(
-					'condition' => array(),
-					'rule' => array(
-						array('cat' => 'CP', 'features' => array('head' => array('syntax' => array('left' => '?left', 'right' => '?right')))),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?left'))),
-						array('cat' => 'conjunction'),
-						array('cat' => 'NP', 'features' => array('head' => array('syntax' => '?right'))),
-					)
-				),
-			),
-		);
-
-		$rules['NP'][] =
-
-			// 11 augustus 1979
-			array(
-				'condition' => array('head' => array('syntax' => array('year' => null))),
-				'rule' => array(
-					array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?day')))),
-					array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('monthIndex' => '?month')))),
-					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?year')))),
-				)
-			);
-
-		return $rules;
 	}
 }

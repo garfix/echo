@@ -19,7 +19,7 @@ class GenerationRules
 		return $this->rules;
 	}
 
-	public function append(ParseRules $Rules)
+	public function append(GenerationRules $Rules)
 	{
 		$this->rules = array_merge($this->rules, $Rules->getRules());
 	}

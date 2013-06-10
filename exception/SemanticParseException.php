@@ -21,6 +21,6 @@ class SemanticParseException extends EchoException
 
 	public function __toString()
 	{
-		return sprintf($this->getMessage(), implode(' ', array_splice($this->lexicalItems, $this->lastParsedIndex, 4)));
+		return sprintf($this->getMessage(), implode(' ', array_slice($this->lexicalItems, $this->lastParsedIndex, 4)));
 	}
 }

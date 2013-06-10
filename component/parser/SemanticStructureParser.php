@@ -1143,13 +1143,11 @@ class SemanticStructureParser
 					$contents = $matches[1];
 					$pos += strlen($contents) - 1;
 				}
-			} elseif ($char == "\"" || $string[$pos] == "'") {
-				$endPos = strpos($string, $char, $pos + 1);
-				if ($endPos !== false) {
-					$length = $endPos - $pos + 1;
+			} elseif ($char == "\"" || $char == "'") {
+				if (preg_match("/{$char}([^\n{$char}]+){$char}/", $string, $matches, 0, $pos)) {
 					$id = self::T_STRING;
-					$contents = substr($string, $pos + 1, $length - 2);
-					$pos += $length - 1;
+					$contents = $matches[1];
+					$pos += strlen($matches[0]) - 1;
 				} else {
 					$this->lastPosParsed = $pos;
 					return false;
