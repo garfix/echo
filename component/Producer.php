@@ -148,7 +148,7 @@ $words = $lexicalItems;
 		}
 
 		$FeatureDAG = new LabeledDAG(array(
-			$constituent . "@0" => $phraseSpecification
+			$constituent => $phraseSpecification
 		));
 
 		list($words, $partsOfSpeech) = $this->planPhrase($constituent, $FeatureDAG, $Grammar);
@@ -163,62 +163,8 @@ $words = $lexicalItems;
 			return false;
 		}
 
-		list ($rule, $UnifiedDAG) = $result;
+		list ($GenerationRule, $UnifiedDAG) = $result;
 
-		if ($rule instanceof GenerationRule) {
-			return $this->planPhrase2($UnifiedDAG, $rule, $Grammar);
-		}
-
-		$words = array();
-		$partsOfSpeech = array();
-
-		for ($i = 1; $i < count($rule); $i++) {
-
-			$consequent = $rule[$i]['cat'];
-
-			if (Settings::$debugGenerator) {
-				echo $consequent . "\n";
-			}
-
-			if ($Grammar->isPartOfSpeech($consequent)) {
-
-				// find matching entry in lexicon
-				$value = $UnifiedDAG->getPathValue(array($consequent . '@' . $i));
-				if (!$value) {
-					$value = array();
-				}
-
-				$word = $Grammar->getWordForFeatures($consequent, $value);
-				if ($word === false) {
-					return false;
-				}
-
-				$words[] = $word;
-				$partsOfSpeech[] = $consequent;
-
-			} else {
-
-				// restrict the unified DAG to this consequent
-				$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
-
-				// generate words for phrase
-				$result = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);;
-				if ($result === false) {
-					return false;
-				}
-				list($phraseWords, $phrasePartsOfSpeech) = $result;
-
-				$words =  array_merge($words, $phraseWords);
-				$partsOfSpeech = array_merge($partsOfSpeech, $phrasePartsOfSpeech);
-			}
-
-		}
-
-		return array($words, $partsOfSpeech);
-	}
-
-	private function planPhrase2(LabeledDAG $UnifiedDAG, GenerationRule $GenerationRule, Grammar $Grammar)
-	{
 		$words = array();
 		$partsOfSpeech = array();
 
@@ -231,7 +177,6 @@ $words = $lexicalItems;
 			if ($Grammar->isPartOfSpeech($consequent)) {
 
 				// find matching entry in lexicon
-				//$value = $UnifiedDAG->getPathValue(array($consequent . '@' . $i));
 				$value = $UnifiedDAG->getPathValue(array($Production->getConsequent($i)));
 				if (!$value) {
 					$value = array();
@@ -248,8 +193,7 @@ $words = $lexicalItems;
 			} else {
 
 				// restrict the unified DAG to this consequent
-				//$ConsequentDAG = $UnifiedDAG->followPath($consequent . '@' . $i)->renameLabel($consequent . '@' . $i, $consequent . '@0');
-				$ConsequentDAG = $UnifiedDAG->followPath($Production->getConsequent($i))->renameLabel($Production->getConsequent($i), $Production->getConsequentCategory($i) . '@0');
+				$ConsequentDAG = $UnifiedDAG->followPath($Production->getConsequent($i))->renameLabel($Production->getConsequent($i), $Production->getConsequentCategory($i));
 
 				// generate words for phrase
 				$result = $this->planPhrase($consequent, $ConsequentDAG, $Grammar);
@@ -290,59 +234,30 @@ $words = $lexicalItems;
 
 		foreach ($generationRules as $GenerationRule) {
 
-			if ($GenerationRule instanceof GenerationRule) {
+			#todo: find a way so that we don't need to create a DAG for each rule checked!
 
-				#todo: find a way so that we don't need to create a DAG for each rule checked!
+			$Production = $GenerationRule->getProduction();
+			$antecedent2 = $Production->getAntecedent();
+			$antecedentCategory = $Production->getAntecedentCategory();
 
-				$Production = $GenerationRule->getProduction();
-				$antecedent2 = $Production->getAntecedent();
-				$antecedentCategory = $Production->getAntecedentCategory();
+			$FeatureDAG2 = clone $FeatureDAG;
+			$FeatureDAG2->renameLabel($antecedentCategory, $antecedent2);
 
-				$FeatureDAG2 = clone $FeatureDAG;
-				$FeatureDAG2->renameLabel($antecedentCategory . '@0', $antecedent2);
+			$pattern = $GenerationRule->getCondition()->getRoot();
 
-				$pattern = $GenerationRule->getCondition()->getRoot();
+			if ($FeatureDAG2->match($pattern)) {
 
-				if ($FeatureDAG2->match($pattern)) {
+				$Dag = $GenerationRule->getFeatures();
+				$UnifiedDag = $Dag->unify($FeatureDAG2);
 
-					$Dag = $GenerationRule->getFeatures();
-					$UnifiedDag = $Dag->unify($FeatureDAG2);
-
-					if ($UnifiedDag) {
-						return array($GenerationRule, $UnifiedDag);
-					}
-				}
-
-			} else {
-
-				$pattern = array($antecedent . '@0' => $GenerationRule['condition']);
-
-				if ($FeatureDAG->match($pattern)) {
-
-					$rawRule = $GenerationRule['rule'];
-					$Dag = self::createLabeledDag($rawRule);
-					$UnifiedDag = $Dag->unify($FeatureDAG);
-
-					if ($UnifiedDag) {
-						return array($rawRule, $UnifiedDag);
-					}
+				if ($UnifiedDag) {
+					return array($GenerationRule, $UnifiedDag);
 				}
 			}
+
 		}
 
 		return false;
-	}
-
-	private static function createLabeledDag(array $rule)
-	{
-		$tree = array();
-		foreach ($rule as $index => $line) {
-			if (isset($line['features'])) {
-				$tree[$line['cat'] . '@' . $index] = $line['features'];
-			}
-		}
-
-		return new LabeledDAG($tree);
 	}
 
 	private function getSyntaxToken($phraseStructureClass)
