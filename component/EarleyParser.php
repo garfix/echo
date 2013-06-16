@@ -219,9 +219,8 @@ class EarleyParser
 
 		if ($this->Grammar->isWordAPartOfSpeech($endWord, $nextConsequent)) {
 
-			$features = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
-			$DAG = new LabeledDAG(array($nextConsequent => $features));
-			$Semantics = $this->createSemanticStructure($this->Grammar->getSemanticsForWord($endWord, $nextConsequent));
+			$DAG = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
+			$Semantics = $this->Grammar->getSemanticsForWord($endWord, $nextConsequent);
 
 			if ($Semantics === false) {
 				throw new SemanticsNotFoundException($endWord);
@@ -268,8 +267,6 @@ class EarleyParser
 
 			$dotPosition = $chartedState['dotPosition'];
 			$rule = $chartedState['rule'];
-
-
 
 			// check if the antecedent of the completed state matches the charted state's consequent at the dot position
 			if (($dotPosition > $rule->getProduction()->getConsequentCount()) || ($rule->getProduction()->getConsequentCategory($dotPosition - 1) != $completedAntecedent)) {

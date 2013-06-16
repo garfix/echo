@@ -2,6 +2,8 @@
 
 namespace agentecho\grammar;
 
+use agentecho\datastructure\LabeledDAG;
+
 /**
  * A grammar should describe the rules of a language.
  * It contains the smallest set of callbacks required to implement the language-specific elements of a language.
@@ -52,8 +54,8 @@ interface Grammar
 	public function getWordForFeatures($partOfSpeech, array $features);
 
 	/**
-	 * Returns the features of a word (a tree).
-	 * @return array
+	 * Returns the features for a word, starting with $partOfSpeech as a new root.
+	 * @return LabeledDAG
 	 */
 	public function getFeaturesForWord($word, $partOfSpeech);
 

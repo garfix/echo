@@ -154,8 +154,7 @@ class Parser
 		} elseif (isset($phraseSpecification['type'])) {
 			$className = '\\agentecho\\phrasestructure\\' . ucfirst($phraseSpecification['type']);
 			$E = new $className();
-		} else
-		{
+		} else {
 			$a = 0;
 		}
 

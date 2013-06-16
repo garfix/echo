@@ -7,6 +7,9 @@ namespace agentecho\datastructure;
  */
 class LabeledDAG
 {
+	/** @var  array $originalTree The tree structure passed to the constructor */
+	private $originalTree;
+
 	/** @var An array of nodes. Each node contains either children or a value. */
 	private $nodes = array();
 
@@ -36,7 +39,14 @@ class LabeledDAG
 	 */
 	public function __construct($tree = null)
 	{
+		$this->originalTree = $tree;
+
 		$this->createNode('root', $tree, false);
+	}
+
+	public function getOriginalTree()
+	{
+		return $this->originalTree;
 	}
 
 	/**
@@ -420,6 +430,9 @@ class LabeledDAG
 		}
 	}
 
+	/**
+	 * @return array|null
+	 */
 	public function getTree()
 	{
 		$tree = $this->getTreeForNode('root');
@@ -519,6 +532,8 @@ class LabeledDAG
 					return 'true';
 				} elseif ($node['value'] === false) {
 					return 'false';
+				} elseif (is_string($node['value'])) {
+					return "'" . $node['value'] . "'";
 				} else {
 					return $node['value'];
 				}

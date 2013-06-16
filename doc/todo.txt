@@ -12,6 +12,8 @@ Ooit:
  * Maak commentaarregels
  * Maak includes
  * GrammarRule moet een eigen structuur worden en niet slechts een associative array: check de labels en de label-waarden op correctheid
+ * Regelnummers in parse foutmeldingen
+ * Veel datastructuren moeten immutable zijn; vervang setters daarom door constructor parameters
 
  Zorg ervoor dat het compleet, simpel en robuust is. Dat is veel belangrijker dan dat het bijzondere dingen kan!!!
 

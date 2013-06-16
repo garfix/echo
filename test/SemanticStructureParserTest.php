@@ -6,6 +6,7 @@ use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\parser\ParseRulesParser;
 use agentecho\exception\SemanticStructureParseException;
 use agentecho\component\parser\GenerationRulesParser;
+use agentecho\component\parser\LexiconParser;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
@@ -283,6 +284,22 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Parser = new GenerationRulesParser();
 
 		$string = '[rule: S => NP VP, condition: [b: 2, c: match], features: {a: 1}] [rule: S => VP, condition: [b: 3, c: true], features: {b: 1, c: 2}]';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+
+		// empty string
+		$string = '';
+		$Structure = $Parser->parse($string);
+		$serialized = $Parser->serialize($Structure);
+		$this->assertEquals($string, $serialized);
+	}
+
+	public function testLexicon()
+	{
+		$Parser = new LexiconParser();
+
+		$string = "[form: 'werd', partOfSpeech: 'auxPsv', features: {head: {syntax: {predicate: 'be', tense: 'past'}}}, semantics: tense(this.event, Past)]";
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

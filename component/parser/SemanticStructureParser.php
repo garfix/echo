@@ -23,6 +23,7 @@ use agentecho\datastructure\AssociativeArray;
 use agentecho\datastructure\ProductionRule;
 use agentecho\datastructure\ParseRule;
 use agentecho\datastructure\GenerationRule;
+use agentecho\datastructure\LexicalEntry;
 
 /**
  *
@@ -265,6 +266,66 @@ class SemanticStructureParser
 
 					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
 						$ParseRule->setFeatures($Features);
+					}
+
+				} else {
+					return false;
+				}
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
+
+				return $pos;
+
+			}
+		}
+
+		return false;
+	}
+
+	public function parseLexicalEntry($tokens, $pos, &$LexicalEntry)
+	{
+		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
+
+			$LexicalEntry = new LexicalEntry();
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+				}
+
+				if ($label == 'form') {
+
+					if ($pos = $this->parseString($tokens, $pos, $wordForm)) {
+						$LexicalEntry->setWordForm($wordForm);
+					}
+
+				} elseif ($label == 'partOfSpeech') {
+
+					if ($pos = $this->parseString($tokens, $pos, $partOfSpeech)) {
+						$LexicalEntry->setPartOfSpeech($partOfSpeech);
+					}
+
+				} elseif ($label == 'features') {
+
+					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
+						$LexicalEntry->setFeatures($Features);
+					}
+
+				} elseif ($label == 'semantics') {
+
+					if ($pos = $this->parsePredicationList($tokens, $pos, $Semantics)) {
+						$LexicalEntry->setSemantics($Semantics);
 					}
 
 				} else {
@@ -956,9 +1017,20 @@ class SemanticStructureParser
 
 	private function parseConstant(array $tokens, $pos, &$constant)
 	{
-		if ($newPos = $this->parseSingleToken(self::T_STRING, $tokens, $pos, $string)) {
+		if ($newPos = $this->parseString($tokens, $pos, $string)) {
 			$pos = $newPos;
 			$constant = new Constant($string);
+		} else {
+			$pos = false;
+		}
+		return $pos;
+	}
+
+	private function parseString(array $tokens, $pos, &$string)
+	{
+		if ($newPos = $this->parseSingleToken(self::T_STRING, $tokens, $pos, $quotedString)) {
+			$pos = $newPos;
+			$string = substr($quotedString, 1, strlen($quotedString) - 2);
 		} else {
 			$pos = false;
 		}
@@ -1146,7 +1218,7 @@ class SemanticStructureParser
 			} elseif ($char == "\"" || $char == "'") {
 				if (preg_match("/{$char}([^\n{$char}]+){$char}/", $string, $matches, 0, $pos)) {
 					$id = self::T_STRING;
-					$contents = $matches[1];
+					$contents = $matches[0];
 					$pos += strlen($matches[0]) - 1;
 				} else {
 					$this->lastPosParsed = $pos;
@@ -1183,7 +1255,7 @@ class SemanticStructureParser
 			} elseif (preg_match('/(\d+)/', $string, $matches, 0, $pos)) {
 				// number
 				$id = self::T_NUMBER;
-				$contents = $matches[1];
+				$contents = (double)$matches[1];
 				$pos += strlen($contents) - 1;
 			} else {
 				$this->lastPosParsed = $pos;

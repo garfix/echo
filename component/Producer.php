@@ -2,8 +2,6 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\GenerationRule;
-use \agentecho\Settings;
 use \agentecho\phrasestructure\PhraseStructure;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\datastructure\SentenceContext;
@@ -81,13 +79,16 @@ $words = $lexicalItems;
 			$partOfSpeech = $partsOfSpeech[$i];
 
 			if ($index > 0) {
-				$features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
+				$Features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
 
-				if (empty($features['space']) || ($features['space'] != 'after_only')) {
+				$space = $Features->getPathValue(array($partOfSpeech, 'space'));
+				$capitalize = $Features->getPathValue(array($partOfSpeech, 'capitalize'));
+
+				if ($space != 'after_only') {
 					$text .= ' ';
 				}
 
-				if (!empty($features['capitalize'])) {
+				if ($capitalize) {
 					$word = ucfirst($word);
 				}
 
