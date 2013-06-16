@@ -61,7 +61,7 @@ class EnglishGrammar extends SimpleGrammar
 		return array($word);
 	}
 
-	public function isVocal($letter)
+	private function isVocal($letter)
 	{
 		return in_array($letter, array('a', 'e', 'i', 'o', 'u', 'y'));
 	}

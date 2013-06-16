@@ -20,21 +20,17 @@ abstract class BaseGrammar implements Grammar
 	/** @var ParseRules */
 	protected $ParseRules = null;
 
-#todo: these indexes should be part of the rules class
-	/** @var array An antecedent-based index of parse rules */
-	protected $parseRuleIndex = array();
-
 	/** @var GenerationRules */
 	protected $GenerationRules = null;
 
-	/** @var array An antecedent-based index of generation rules */
-	protected $generationRuleIndex = array();
-
+	/** @var Lexicon $Lexicon */
 	protected $Lexicon = null;
 
 	public function __construct()
 	{
 		$this->Lexicon = new Lexicon();
+		$this->ParseRules = new ParseRules();
+		$this->GenerationRules = new GenerationRules();
 	}
 
 	protected function loadParseGrammar($filePath)
@@ -42,13 +38,9 @@ abstract class BaseGrammar implements Grammar
 		$text = file_get_contents($filePath);
 		$Parser = new ParseRulesParser();
 		$Rules = $Parser->parse($text);
-		if ($this->ParseRules) {
-			$this->ParseRules->append($Rules);
-		} else {
-			$this->ParseRules = $Rules;
+		foreach ($Rules->getRules() as $Rule) {
+			$this->ParseRules->addRule($Rule);
 		}
-
-		$this->indexParseRules($Rules);
 	}
 
 	protected function loadGenerationGrammar($filePath)
@@ -56,13 +48,9 @@ abstract class BaseGrammar implements Grammar
 		$text = file_get_contents($filePath);
 		$Parser = new GenerationRulesParser();
 		$Rules = $Parser->parse($text);
-		if ($this->GenerationRules) {
-			$this->GenerationRules->append($Rules);
-		} else {
-			$this->GenerationRules = $Rules;
+		foreach ($Rules->getRules() as $Rule) {
+			$this->GenerationRules->addRule($Rule);
 		}
-
-		$this->indexGenerationRules($Rules);
 	}
 
 	protected function loadLexicon($filePath)
@@ -72,24 +60,6 @@ abstract class BaseGrammar implements Grammar
 		$Lexicon = $Parser->parse($text);
 		foreach ($Lexicon->getEntries() as $Entry) {
 			$this->Lexicon->addEntry($Entry);
-		}
-	}
-
-	private function indexParseRules(ParseRules $ParseRules)
-	{
-		foreach ($ParseRules->getRules() as $ParseRule) {
-			$Production = $ParseRule->getProduction();
-			$antecedent = $Production->getAntecedentCategory();
-			$this->parseRuleIndex[$antecedent][] = $ParseRule;
-		}
-	}
-
-	private function indexGenerationRules(GenerationRules $GenerationRules)
-	{
-		foreach ($GenerationRules->getRules() as $GenerationRule) {
-			$Production = $GenerationRule->getProduction();
-			$antecedent = $Production->getAntecedentCategory();
-			$this->generationRuleIndex[$antecedent][] = $GenerationRule;
 		}
 	}
 
@@ -168,13 +138,7 @@ abstract class BaseGrammar implements Grammar
 	 */
 	public function getParseRulesForAntecedent($antecedent)
 	{
-		if (isset($this->parseRuleIndex[$antecedent])) {
-			$rules = $this->parseRuleIndex[$antecedent];
-		} else {
-			$rules = array();
-		}
-
-		return $rules;
+		return $this->ParseRules->getRulesForAntecedent($antecedent);
 	}
 
 	/**
@@ -184,13 +148,7 @@ abstract class BaseGrammar implements Grammar
 	 */
 	public function getGenerationRulesForAntecedent($antecedent)
 	{
-		if (isset($this->generationRuleIndex[$antecedent])) {
-			$rules = $this->generationRuleIndex[$antecedent];
-		} else {
-			$rules = array();
-		}
-
-		return $rules;
+		return $this->GenerationRules->getRulesForAntecedent($antecedent);
 	}
 
 	/**
@@ -214,7 +172,12 @@ abstract class BaseGrammar implements Grammar
 		}
 	}
 
-	# todo: replace this function with a semantic rule?
+	/**
+	 * Returns the semantics of a word.
+	 * @param $word
+	 * @param $partOfSpeech
+	 * @return PredicationList|null
+	 */
 	public function getSemanticsForWord($word, $partOfSpeech)
 	{
 		$Entry = $this->Lexicon->getEntry($word, $partOfSpeech);
