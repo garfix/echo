@@ -7,13 +7,12 @@ Ooit:
  * Welke mogen weg? features / head / syntax?
  * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
  * Sentence: verplaats voice naar clause
- * Maak een aparte taal voor syntax unification constraints
  * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
  * Maak commentaarregels
  * Maak includes
- * GrammarRule moet een eigen structuur worden en niet slechts een associative array: check de labels en de label-waarden op correctheid
  * Regelnummers in parse foutmeldingen
  * Veel datastructuren moeten immutable zijn; vervang setters daarom door constructor parameters
+ * Los de todo's op.
 
  Zorg ervoor dat het compleet, simpel en robuust is. Dat is veel belangrijker dan dat het bijzondere dingen kan!!!
 

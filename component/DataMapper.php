@@ -61,9 +61,6 @@ class DataMapper
 	{
 		$newPredications = $this->performMapping($Predications);
 
-$a = (string)$Predications;
-$b = (string)$newPredications;
-
 		if ($this->iterate) {
 
 			// iterate until stable

@@ -30,7 +30,19 @@ interface Grammar
 	 */
 	public function	getSemanticsForWord($word, $partOfSpeech);
 
+
+	/**
+	 * Returns all parse rules with a given  $antecedent
+	 * @param $antecedent
+	 * @return array[ParseRule]
+	 */
 	public function getParseRulesForAntecedent($antecedent);
+
+	/**
+	 * Returns all generation rules with a given  $antecedent
+	 * @param $antecedent
+	 * @return array[GenerationRule]
+	 */
 	public function getGenerationRulesForAntecedent($antecedent);
 
 	/**
