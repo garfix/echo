@@ -173,7 +173,7 @@ class Parser
 				$func = 'set' . $name;
 
 				if (!$value) {
-					$i = 0;
+					throw new \Exception($name . ' has no value');
 				}
 
 				$Entity = $this->buildObjectStructure($value);

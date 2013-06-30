@@ -9,9 +9,10 @@
 		VP: { head: ?h1 { agreement: ?agr, syntax: ?s1 { deepSubject: ?syntax } } }
 	},
 	semantics: {
-		S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
     	S.event = VP.event;
-    	S.subject = NP.object
+    	S.subject = NP.object;
+    	S.object = VP.object
 	}
 ]
 
@@ -206,6 +207,8 @@
 	}
 ]
 
+// Verb Phrase
+
 [
 	// drives
 
@@ -246,15 +249,55 @@
 		VP => verb NP1 NP2,
 	features: {
 		VP: { head: ?h1 {syntax: ?s1 { type: 'clause' } } },
-		verb: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?directObject, deepIndirectObject: ?indirectObject } } },
+		verb: { head: ?h1 { arguments: 2, syntax: ?s1 { deepDirectObject: ?directObject, deepIndirectObject: ?indirectObject } } },
 		NP1: { head: { syntax: ?indirectObject } },
 		NP2: { head: { syntax: ?directObject } }
 	},
 	semantics: {
+
+
+// S ??? => VP
+
 		S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
 		S.event = VP.event;
 		S.subject = NP1.object;
 		S.object = NP2.object
+	}
+]
+
+[
+	// drives quickly
+
+// todo: create test sentence
+
+	rule:
+VPQ => verb AP,
+	features: {
+		VP: { head: ?h1 {arguments: 0, syntax: ?s1 { type: 'clause' } } },
+		verb: { head: ?h1 { syntax: ?s1 } },
+		AP: { }
+	},
+	semantics: {
+		VP.sem = verb.sem and AP.sem;
+		VP.event = verb.event;
+		VP.subject = AP.object
+	}
+]
+
+[
+	// ben 43 jaar oud
+
+	rule:
+		VP => copula AP,
+	features: {
+		VP: { head: ?h1 { arguments: 0, syntax: ?s1 { type: 'clause', complement: ?object } } },
+		copula: { head: ?h1 { syntax: ?s1 } },
+		AP: { head: { syntax: { object: ?object } } }
+	},
+	semantics: {
+		VP.sem = AP.sem;
+		VP.event = AP.event;
+		VP.object = AP.object
 	}
 ]
 
@@ -310,6 +353,8 @@
 		WhADVP.request = whwordNP.adjunct
     }
 ]
+
+// Noun Phrase
 
 [
 	// John
@@ -372,6 +417,8 @@
         NP.object = NBar.object
     }
 ]
+
+// N-Bar
 
 [
 	// car
@@ -559,6 +606,21 @@
 	}
 ]
 
+[
+	// (i am) 43 years old
+
+	rule:
+		AP => NP adjective,
+	features: {
+		AP: { head: { syntax: { object: ?object } } },
+		NP: { },
+		adjective: { head: { syntax: ?object } }
+	},
+	semantics: {
+		AP.sem = NP.sem and adjective.sem
+	}
+]
+
 // Adverbial Phrase
 
 [
@@ -625,3 +687,19 @@
         DP.subObject = NP.object
     }
 ]
+
+[
+	// 43 (years old)
+	// 2 (blue cars)
+
+	rule:
+		DP => numeral,
+	features: {
+		DP: { head: { syntax: { type: 'determiner', object: ?object } } },
+		numeral: { head: { syntax: { value: ?object } } }
+	},
+	semantics: {
+		DP.sem = numeral.sem
+	}
+]
+

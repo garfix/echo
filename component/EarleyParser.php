@@ -228,7 +228,7 @@ class EarleyParser
 
 			$Production = new ProductionRule();
 			$Production->setAntecedent($nextConsequent);
-			$Production->setConsequents(array($endWord));
+			$Production->setConsequents(array($endWord), false);
 			$NewRule = new ParseRule();
 			$NewRule->setProduction($Production);
 

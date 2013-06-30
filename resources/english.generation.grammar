@@ -74,14 +74,3 @@
 		numeral2: { head: { syntax: { value: ?year } } }
 	}
 ]
-
-
-//			array(
-//				'condition' => array('head' => array('syntax' => array('year' => null))),
-//				'rule' => array(
-//					array('cat' => 'NP', 'features' => array('head' => array('syntax' => array('year' => '?year', 'month' => '?month', 'day' => '?day')))),
-//					array('cat' => 'noun', 'features' => array('head' => array('syntax' => array('monthIndex' => '?month')))),
-//					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?day')))),
-//					array('cat' => 'punctuationMark', 'features' => array('head' => array('syntax' => array('category' => 'comma')))),
-//					array('cat' => 'numeral', 'features' => array('head' => array('syntax' => array('value' => '?year')))),
-//				)

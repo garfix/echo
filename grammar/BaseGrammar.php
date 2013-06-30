@@ -5,10 +5,14 @@ namespace agentecho\grammar;
 use agentecho\component\parser\GenerationRulesParser;
 use agentecho\component\parser\LexiconParser;
 use agentecho\component\parser\ParseRulesParser;
+use agentecho\datastructure\Constant;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\ParseRules;
 use agentecho\datastructure\GenerationRules;
+use agentecho\datastructure\Predication;
 use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Property;
+use agentecho\datastructure\Atom;
 use agentecho\exception\ProductionException;
 use agentecho\datastructure\Lexicon;
 
@@ -80,6 +84,7 @@ abstract class BaseGrammar implements Grammar
 			'adjective',
 			'adverb',
 			'conjunction',
+			'copula',
 			'degreeAdverb',
 			'determiner',
 			'noun',
@@ -115,6 +120,14 @@ abstract class BaseGrammar implements Grammar
 		if ($this->Lexicon->isWordAPartOfSpeech($word, $partOfSpeech)) {
 
 			$result = true;
+
+		} elseif (is_numeric($word)) {
+
+			if ($partOfSpeech == 'numeral') {
+
+				return true;
+
+			}
 
 		} else {
 
@@ -161,14 +174,7 @@ abstract class BaseGrammar implements Grammar
 		if ($Entry) {
 			return $Entry->getPrefixedFeatures();
 		} else {
-			return new LabeledDAG(array(
-				$partOfSpeech => array(
-					'head' => array(
-						'agreement' => array('number' => 'singular', 'person' => 1),
-						'syntax' => array(
-							'name' => $word,
-						),
-					))));
+			return new LabeledDAG(array($partOfSpeech => array('head' => array('syntax' => array('name' => $word)))));
 		}
 	}
 
@@ -185,6 +191,19 @@ abstract class BaseGrammar implements Grammar
 			return $Entry->getSemantics();
 		} elseif ($partOfSpeech == 'propernoun') {
 			return new PredicationList();
+		} elseif ($partOfSpeech == 'numeral') {
+			$List = new PredicationList();
+
+			$Prop = new Property();
+			$Prop->setName('object');
+			$Prop->setObject(new Atom('this'));
+
+			$Pred = new Predication();
+			$Pred->setPredicate('determiner');
+			$Pred->setArguments(array($Prop, new Constant($word)));
+
+			$List->setPredications(array($Pred));
+			return $List;
 		} else {
 			return null;
 		}

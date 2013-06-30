@@ -15,7 +15,11 @@
 ] [
 	form: 'ben',
 	partOfSpeech: 'verb',
-	features: { person: 1, number: "singular", head: {}}
+	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+] [
+	form: 'ben',
+	partOfSpeech: 'copula',
+	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
 ] [
 	form: 'beïnvloed',
 	partOfSpeech: 'verb',
@@ -85,7 +89,8 @@
 ] [
 	form: 'ik',
 	partOfSpeech: 'pronoun',
-	features: { person: 1, number: "singular", head: {}}
+	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { category: "firstPerson" } }},
+	semantics: firstPerson(this.object)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
@@ -94,6 +99,11 @@
 	form: 'ja',
 	partOfSpeech: 'adverb',
 	features: { head: { syntax: { category: "yes" } } }
+] [
+	form: 'jaar',
+	partOfSpeech: 'noun',
+	features: { head: { agreement: { number: "singular"}, syntax: { predicate: "year" } } },
+	semantics: isa(this.object, Year)
 ] [
 	form: 'januari',
 	partOfSpeech: 'noun',
@@ -117,6 +127,16 @@
 	form: 'op',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "on" } } }
+] [
+	form: 'oud',
+	partOfSpeech: 'noun',
+	features: { head: { syntax: { predicate: "old" } } },
+	semantics: isa(this.object, Old)
+] [
+	form: 'oud',
+	partOfSpeech: 'adjective',
+	features: { head: { syntax: { predicate: "old" } } },
+	semantics: isa(this.event, Old)
 ] [
 	form: 'van',
 	partOfSpeech: 'preposition',

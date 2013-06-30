@@ -45,14 +45,26 @@ class ProductionRule
 		return $this->antecedentCategory;
 	}
 
-	public function setConsequents($consequents)
+	/**
+	 * Sets the consequents of this rule.
+	 * If $checkForIndexes, the consequents may contain numeric suffixes that discern them.
+	 * The consequent "category" matches the consequent minus the optional suffix.
+	 *
+	 * @param $consequents
+	 * @param bool $checkForIndexes
+	 */
+	public function setConsequents(array $consequents, $checkForIndexes = true)
 	{
 		$this->consequents = $consequents;
 
 		foreach ($this->consequents as $consequent) {
 
-			preg_match('/([^0-9]+)/', $consequent, $matches);
-			$this->consequentCategories[] = $matches[0];
+			if ($checkForIndexes) {
+				preg_match('/([^0-9]+)/', $consequent, $matches);
+				$this->consequentCategories[] = $matches[0];
+			} else {
+				$this->consequentCategories[] = $consequent;
+			}
 		}
 	}
 

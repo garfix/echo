@@ -79,6 +79,10 @@ class SentenceProcessor
 							if ($Determiner->isQuestion()) {
 								$Answer->setSentenceType(Sentence::DECLARATIVE);
 								$Determiner->setQuestion(false);
+
+#todo
+//$Determiner->setUnit($unit);
+
 								$Determiner->setCategory($answer);
 
 								$found = true;
@@ -161,6 +165,9 @@ class SentenceProcessor
 
 			// find the first argument of the request-predication
 			$Request = $Interpretation->getPredicationByPredicate('request');
+
+			// check if there is a unit for the answer
+			$Unit = $Interpretation->getPredicationByPredicate('unit');
 
 			if ($Request) {
 				$argument = $Request->getFirstArgument()->getName();

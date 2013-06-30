@@ -35,38 +35,6 @@ class DBPedia extends KnowledgeSource
 		$this->dataMapFile = $dataMapFile;
 	}
 
-#todo Note! This function is not currently used
-	/**
-	 * @param $identifier
-	 * @return bool
-	 */
-	public function isProperNoun($identifier)
-	{
-		$resources = $this->getResourcesByName($identifier);
-		return !empty($resources);
-	}
-
-	/**
-	 * Returns the URI's of all resources in DBPedia that can be identified by $name
-	 * as either a label or a birth name.
-	 *
-	 * @param $name
-	 * @return array
-	 */
-	private function getResourcesByName($name)
-	{
-		static $resources = array();
-
-		if (!isset($resources[$name])) {
-
-			$where = array(" { { ?object rdfs:label '$name'@en } UNION { ?object dbpprop:birthName '$name'@en } }");
-			$resources[$name] = $this->querySingleColumn($where, '?object');
-
-		}
-
-		return $resources[$name];
-	}
-
 	/**
 	 * @param mixed $query Either a query string or an array of clauses.
 	 */

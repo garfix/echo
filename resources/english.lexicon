@@ -22,7 +22,11 @@
 ] [
 	form: 'am',
 	partOfSpeech: 'verb',
-	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+] [
+	form: 'am',
+	partOfSpeech: 'copula',
+	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
 ] [
 	form: 'are',
 	partOfSpeech: 'verb',
@@ -122,7 +126,7 @@
 ] [
 	form: 'gives',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "give", tense: "present" } } }
+	features: { head: { arguments: 2, syntax: { predicate: "give", tense: "present" } } }
 ] [
 	form: 'had',
 	partOfSpeech: 'verb',
@@ -144,7 +148,8 @@
 ] [
 	form: 'i',
 	partOfSpeech: 'pronoun',
-	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { category: "firstPerson" } }, capitalize: true}
+	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { category: "firstPerson" } }, capitalize: true},
+	semantics: firstPerson(this.object)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
@@ -183,6 +188,11 @@
 	partOfSpeech: 'noun',
 	features: { head: { syntax: { category: "old" } } },
 	semantics: isa(this.object, Old)
+] [
+	form: 'old',
+	partOfSpeech: 'adjective',
+	features: { head: { syntax: { category: "old" } } },
+	semantics: isa(this.event, Old)
 ] [
 	form: 'on',
 	partOfSpeech: 'preposition',
@@ -258,4 +268,9 @@
 	form: 'yes',
 	partOfSpeech: 'adverb',
 	features: { head: { syntax: { category: "yes" } } }
+] [
+	form: 'years',
+	partOfSpeech: 'noun',
+	features: { head: { agreement: { number: "plural"}, syntax: { predicate: "year" } } },
+	semantics: isa(this.object, Year)
 ]
