@@ -1,5 +1,13 @@
 <?php
 
+use agentecho\AgentEcho;
+use agentecho\component\DataMapper;
+use agentecho\grammar\EnglishGrammar;
+use agentecho\knowledge\DBPedia;
+
+require_once __DIR__ . '/component/lineeditor/LineEditor.php';
+require_once __DIR__ . '/../component/Autoload.php';
+
 /**
  * @author Patrick van Bergen
  */
@@ -26,13 +34,17 @@ class Processor
 		$template = file_get_contents(__DIR__ . '/template.html');
 
 		$LineEditor = new LineEditor();
-		$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
 		$LineEditor->setName('q');
+
+		if (isset($_REQUEST['q'])) {
+			$LineEditor->setLinePieces(explode(',', $_REQUEST['q']));
+		} else {
+			$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
+		}
 
 		$submitButton = "<button type='submit'>Ask</button>";
 
 		$javascriptFiles = array();
-		$javascriptFiles[] = 'prototype.js';
 		foreach ($LineEditor->getJavascriptFiles() as $fileName) {
 			$javascriptFiles[] = $fileName;
 		}
@@ -51,6 +63,10 @@ class Processor
 		}
 
 		$body = "<form>" . (string)$LineEditor . $submitButton . "</form>";
+
+		if (isset($_REQUEST['q'])) {
+			$body .= $this->getReponseHtml(implode(' ', explode(',', $_REQUEST['q'])));
+		}
 
 		$tokens = array(
 			'css' => $cssHtml,
@@ -174,7 +190,7 @@ class Processor
 	function getNamesLike($word)
 	{
 		$names = file_get_contents('/home/patrick/Desktop/names.csv');
-		preg_match_all('/^([^\n]*' . $word . '[^\n]*)$/m', $names, $results);
+		preg_match_all('/^([^\n]*' . $word . '[^\n]*)$/mi', $names, $results);
 		$names = $results[1];
 		return array_splice($names, 0, 20);
 	}
@@ -200,17 +216,15 @@ class Processor
 		return $names;
 	}
 
-	//
-	//function getMaxLength($arrays)
-	//{
-	//	$maxLength = 0;
-	//
-	//	foreach ($arrays as $array) {
-	//		$maxLength = max($maxLength, count($array));
-	//	}
-	//
-	//	return $maxLength;
-	//}
-	//
-
+	private function getReponseHtml($sentence)
+	{
+		$Agent = new AgentEcho();
+		$Agent->addGrammar(new EnglishGrammar());
+		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Conversation = $Agent->startConversation();
+var_dump($sentence);
+		$response = $Conversation->answer($sentence);
+		return $response;
+	}
 }

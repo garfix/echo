@@ -53,11 +53,11 @@ class LineEditor
 
 	public function getJavascriptFiles()
 	{
-		return array('LineCell.js', 'LineEditor.js');
+		return array('component/lineeditor/LineCell.js', 'component/lineeditor/LineEditor.js');
 	}
 
 	public function getStylesheet()
 	{
-		return 'LineEditor.css';
+		return 'component/lineeditor/LineEditor.css';
 	}
 }

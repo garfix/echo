@@ -1,0 +1,23 @@
+2013-08-25
+
+In autosuggesting the names of the persons listed in DBPedia, I stumbled against the slowness of the Virtuoso engine.
+Regex queries on names are impossibly slow. In order to have autosuggest anyway, I decided to download the names of
+  the persons from the DBPedia download section:
+
+  http://downloads.dbpedia.org/3.8/en/
+
+  http://downloads.dbpedia.org/3.8/en/labels_en.ttl.bz2
+
+It's still 1.2 GB large and I will need to do a real-time query on it. I will parse the names from the the triples file,
+ and see if a simple preg_match will do. If not, I will import them in a database.
+
+2013-08-26
+
+I decided to download only "persons" and to do this in batches of two initial letters at a time, to circumvent the result limitation of 50.000.
+I used CSV to download.
+
+Here's the query for the names starting with 'C' and 'D':
+
+SELECT DISTINCT ?name WHERE { { { ?person rdfs:label ?name } UNION { ?person dbpprop:birthName ?name } } .  ?person rdf:type dbpedia-owl:Person . FILTER(lang(?name) = 'en') . FILTER regex(?name, '^[cd]', 'i') } ORDER BY ?name
+
+It results in a 5.4 MB file, but fortunately a regular expression finds all occurrences of a partial name in a fraction of a second.
