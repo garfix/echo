@@ -1,0 +1,21 @@
+.lineCellContainer {
+	position: relative;
+}
+
+	.lineCellContainer ul {
+		position: absolute;
+		display: inline-block;
+		border-color: red;
+		top: 22px;
+		left: 0;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		background-color: #FEFEFE;
+		border-width: 0 3px 3px 3px;
+		border-style: outset;
+	}
+
+		.lineCellContainer ul li {
+			padding: 3px;
+		}
