@@ -29,12 +29,12 @@ Popup.prototype.show = function()
 	var left = offset.left;
 	var top = offset.top + input.getHeight();
 
-	this.ul.setStyle({ left: left + 'px', top: top + 'px' });
+	this.ul.setStyle({ left: left + 'px', top: top + 'px', display: 'inherit' });
 }
 
 Popup.prototype.hide = function()
 {
-
+	this.ul.setStyle({ display: 'none' });
 }
 
 Popup.prototype.linkToCell = function(cell)
@@ -94,11 +94,7 @@ Popup.prototype.onClick = function(event)
 	var anchor = event.findElement('a');
 	var text = anchor.innerHTML;
 
-	cell.setText(text);
-
-	cell.lineEditor.updateInputValue();
-
-	cell.lineEditor.focusNextCell(cell);
+	this.selectValue(text);
 }
 
 Popup.prototype.onKeyPress = function(event)
@@ -114,23 +110,37 @@ Popup.prototype.onKeyPress = function(event)
 		} else {
 			cell.input.focus();
 		}
+		event.preventDefault();
+
 	} else if (event.keyCode == Event.KEY_DOWN) {
 
 		var item = event.findElement('li');
 		var nextItem = item.next('li');
 		if (!nextItem) {
-			nextItem = this.getFirstPopupElement();
+			nextItem = this.getFirstElement();
 		}
 
 		nextItem.down('a').focus();
+		event.preventDefault();
+
 	} else if (event.keyCode == Event.KEY_RETURN) {
 
 		var anchor = event.findElement('a');
 		var text = anchor.innerHTML;
-		cell.setText(text);
-		cell.lineEditor.focusNextCell(cell);
+
+		this.selectValue(text);
+		event.preventDefault();
 	}
 
+}
+
+Popup.prototype.selectValue = function(text)
+{
+	var cell = this.cell;
+
+	cell.setText(text);
+	cell.lineEditor.updateInputValue();
+	cell.lineEditor.focusNextCell(cell);
 }
 
 Popup.prototype.getFirstElement = function()
@@ -138,4 +148,16 @@ Popup.prototype.getFirstElement = function()
 	var items = this.ul.childElements();
 
 	return (items.length == 0 ? null : items[0]);
+}
+
+Popup.prototype.getValues = function()
+{
+	var suggests = [];
+	var anchors = this.ul.select('a');
+
+	for (var i = 0; i < anchors.length; i++) {
+		suggests.push(anchors[i].innerHTML);
+	}
+
+	return suggests;
 }

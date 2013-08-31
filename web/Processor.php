@@ -120,16 +120,20 @@ class Processor
 
 		$suggests = array();
 		foreach ($allowedSentences as $allowedSentence) {
-			$allowedWord = $allowedSentence[$wordIndex];
 
-			if ($allowedWord == 'X') {
+			if (isset($allowedSentence[$wordIndex])) {
 
-				$actualWord = $inputWords[$wordIndex];
+				$allowedWord = $allowedSentence[$wordIndex];
 
-				$suggests = array_merge($suggests, $this->getNamesLike($actualWord));
+				if ($allowedWord == 'X') {
 
-			} else {
-				$suggests[] = $allowedWord;
+					$actualWord = $inputWords[$wordIndex];
+
+					$suggests = array_merge($suggests, $this->getNamesLike($actualWord));
+
+				} else {
+					$suggests[] = $allowedWord;
+				}
 			}
 		}
 
@@ -153,17 +157,21 @@ class Processor
 			$success = true;
 
 			for ($i = 0; $i < count($inputWords); $i++) {
-				$word = $sentenceArray[$i];
 				$inputWord = $inputWords[$i];
 
-				if ($word == 'X') {
+				if (isset($sentenceArray[$i])) {
 
-				} elseif ($inputWord == '') {
+					$word = $sentenceArray[$i];
 
-				} elseif (strpos($word, $inputWord) !== 0) {
+					if ($word == 'X') {
 
-					$success = false;
-					break;
+					} elseif ($inputWord == '') {
+
+					} elseif (strpos($word, $inputWord) !== 0) {
+
+						$success = false;
+						break;
+					}
 				}
 			}
 
@@ -223,8 +231,9 @@ class Processor
 		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Conversation = $Agent->startConversation();
-//var_dump($sentence);
+
 		$response = $Conversation->answer($sentence);
+
 		return $response;
 	}
 }

@@ -45,6 +45,8 @@ LineEditor.prototype.createCell = function()
 {
 	var cell = new LineCell(this);
 
+	cell.fitInputToText();
+
 	this.pieceContainer.appendChild(cell.getContainer());
 	this.cells.push(cell);
 
@@ -147,6 +149,7 @@ LineEditor.prototype.focusNextCell = function(cell)
 	}
 
 	nextCell.setFocus();
+	nextCell.setCaretAtStart()
 }
 
 LineEditor.prototype.focusPreviousCell = function(cell)

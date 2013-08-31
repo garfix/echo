@@ -59,6 +59,8 @@ LineCell.prototype.onInput = function(event)
 {
 	this.lineEditor.updateInputValue();
 
+	this.fitInputToText();
+
 	this.lineEditor.loadPopupSuggests(this);
 }
 
@@ -66,10 +68,12 @@ LineCell.prototype.onKeyPress = function(event)
 {
 	if (event.charCode != 0) {
 
-		if (event.charCode == ' ') {
+		if (event.charCode == 32) {
 			if (this.getCaretPosition() == this.getLastCaretPosition()) {
-				this.lineEditor.focusNextCell(this);
-				event.preventDefault();
+				if (this.lineEditor.popup.getValues().indexOf(this.getText()) != -1) {
+					this.lineEditor.focusNextCell(this);
+					event.preventDefault();
+				}
 			}
 		}
 
@@ -84,13 +88,12 @@ LineCell.prototype.onKeyPress = function(event)
 			event.preventDefault();
 		}
 	} else if (event.keyCode == Event.KEY_RIGHT) {
-		if (this.getCaretPosition() == this.getLastCaretPosition()) {
+		var caret = this.getCaretPosition();
+		if (caret && (caret == this.getLastCaretPosition())) {
 			this.lineEditor.focusNextCell(this);
 			event.preventDefault();
 		}
 	}
-
-	this.fitInputToText();
 }
 
 LineCell.prototype.fitInputToText = function()
@@ -103,6 +106,11 @@ LineCell.prototype.fitInputToText = function()
 LineCell.prototype.setCaretAtEnd = function()
 {
 	this.setCaretPosition(this.getLastCaretPosition());
+}
+
+LineCell.prototype.setCaretAtStart = function()
+{
+	this.setCaretPosition(0);
 }
 
 LineCell.prototype.getLastCaretPosition = function()
