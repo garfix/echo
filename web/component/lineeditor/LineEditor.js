@@ -1,8 +1,11 @@
 function LineEditor(editorElement)
 {
+	this.editorElement = editorElement;
 	this.formElement = editorElement.select('input.form')[0];
 	this.pieceContainer = editorElement.select('div.pieces')[0];
+	this.sizeMeter = editorElement.select('span.sizeMeter')[0];
 	this.cells = [];
+	this.popup = new Popup();
 
 	this.init();
 }
@@ -23,6 +26,9 @@ LineEditor.prototype.init = function()
 	// add an empty cell
 	var cell = this.createCell();
 	cell.setFocus();
+
+	// link popup to cell
+	this.popup.linkToCell(cell);
 }
 
 LineEditor.prototype.getLinePieces = function()
@@ -109,6 +115,7 @@ LineEditor.prototype.getWordsUpTo = function(index)
 
 LineEditor.prototype.onCellFocus = function(cell)
 {
+	this.popup.setCell(cell);
 	this.loadPopupSuggests(cell);
 }
 
@@ -116,6 +123,7 @@ LineEditor.prototype.loadPopupSuggests = function(cell)
 {
 	var index = this.getCellIndex(cell);
 	var value = this.getWordsUpTo(index);
+	var lineEditor = this;
 
 	new Ajax.Request('index.php?action=suggest&value=' + value, {
 		onSuccess: function(response) {
@@ -123,9 +131,7 @@ LineEditor.prototype.loadPopupSuggests = function(cell)
 
 			suggests = response.suggests;
 
-			cell.populatePopup(suggests);
-			cell.showPopup();
-
+			lineEditor.popup.populate(suggests);
 		}
 	});
 }
@@ -153,6 +159,15 @@ LineEditor.prototype.focusPreviousCell = function(cell)
 		prevCell.setFocus();
 		prevCell.setCaretAtEnd();
 	}
+}
+
+LineEditor.prototype.calculateWidth = function(text)
+{
+	// place the text in an element that resizes as a result of it
+	this.sizeMeter.innerHTML = text;
+
+	// return this element's current width
+	return this.sizeMeter.getWidth() + 6; // 2 x 3px padding
 }
 
 // create all line editors

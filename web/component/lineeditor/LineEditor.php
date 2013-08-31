@@ -44,8 +44,8 @@ class LineEditor
 		$html = "
 			<div class='lineEditor'>
 				<input class='form' type='text' name= '{$this->name}' value='$value'>
-				<div class='pieces'>
-				</div>
+				<div class='pieces'></div>
+				<span class='sizeMeter'></span>
 			</div>";
 
 		return $html;
@@ -53,7 +53,7 @@ class LineEditor
 
 	public function getJavascriptFiles()
 	{
-		return array('component/lineeditor/LineCell.js', 'component/lineeditor/LineEditor.js');
+		return array('component/lineeditor/Popup.js', 'component/lineeditor/LineCell.js', 'component/lineeditor/LineEditor.js');
 	}
 
 	public function getStylesheet()
