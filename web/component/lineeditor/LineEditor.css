@@ -1,3 +1,25 @@
+.lineEditor {
+	display: inline-block;
+
+}
+
+.pieces {
+	border: 1px solid #A0A0A0;
+	display: inline;
+	background-color: white;
+	padding: 3px;
+}
+
+	.pieces input {
+		display: inline-block;
+		width: auto;
+		background: none;
+		border-style: dotted;
+		border-width: 0px 1px 0px 0px;
+		border-color: #a0a0a0;
+		font-size: 16px;
+	}
+
 .lineCellContainer {
 	position: relative;
 }
@@ -19,3 +41,8 @@
 		.lineCellContainer ul li {
 			padding: 3px;
 		}
+
+ul.popup a {
+	font-family: sans-serif;
+	font-size: 16px;
+}

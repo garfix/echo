@@ -143,5 +143,17 @@ LineEditor.prototype.focusNextCell = function(cell)
 	nextCell.setFocus();
 }
 
+LineEditor.prototype.focusPreviousCell = function(cell)
+{
+	var cellIndex = this.getCellIndex(cell);
+
+	cellIndex--;
+	var prevCell = this.getCellByIndex(cellIndex);
+	if (prevCell) {
+		prevCell.setFocus();
+		prevCell.setCaretAtEnd();
+	}
+}
+
 // create all line editors
 $$('div.lineEditor').each( function(editorElement){ new LineEditor(editorElement); } );

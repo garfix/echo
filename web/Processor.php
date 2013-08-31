@@ -223,7 +223,7 @@ class Processor
 		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Conversation = $Agent->startConversation();
-var_dump($sentence);
+//var_dump($sentence);
 		$response = $Conversation->answer($sentence);
 		return $response;
 	}
