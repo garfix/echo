@@ -66,7 +66,7 @@ Popup.prototype.populate = function(values, selectedText)
 			link.href = '';
 
 			link.onclick = function(e) { popup.onClick(e); return false; }
-			link.onkeypress = function(e) { popup.onKeyPress(e); }
+			link.onkeydown = function(e) { popup.onKeyDown(e); }
 
 			var exp = new RegExp("\\b" + selectedText, 'i');
 			var boldValue = value.replace(exp, '<b>' + selectedText + '</b>');
@@ -94,14 +94,13 @@ Popup.prototype.clear = function()
 
 Popup.prototype.onClick = function(event)
 {
-	var cell = this.cell;
 	var anchor = event.findElement('a');
 	var text = anchor.getAttribute('data-text');
 
 	this.selectValue(text);
 }
 
-Popup.prototype.onKeyPress = function(event)
+Popup.prototype.onKeyDown = function(event)
 {
 	var cell = this.cell;
 
@@ -160,7 +159,7 @@ Popup.prototype.getValues = function()
 	var anchors = this.ul.select('a');
 
 	for (var i = 0; i < anchors.length; i++) {
-		suggests.push(anchors[i].innerHTML);
+		suggests.push(anchors[i].getAttribute('data-text'));
 	}
 
 	return suggests;

@@ -9,7 +9,7 @@ function LineCell(lineEditor)
 	var cell = this;
 
 	input.observe('focus', function(event){ cell.onFocus(event); });
-	input.observe('keypress', function(event){ cell.onKeyPress(event); });
+	input.observe('keydown', function(event){ cell.onKeyDown(event); });
 	input.observe('change', function(event){ cell.onChange(event); });
 	input.observe('input', function(event){ cell.onInput(event); });
 }
@@ -64,16 +64,17 @@ LineCell.prototype.onInput = function(event)
 	this.lineEditor.loadPopupSuggests(this);
 }
 
-LineCell.prototype.onKeyPress = function(event)
+LineCell.prototype.onKeyDown = function(event)
 {
-	if (event.charCode != 0) {
+	console.log(event.keyCode);
+	console.log(event.charCode);
 
-		if (event.charCode == 32) {
-			if (this.getCaretPosition() == this.getLastCaretPosition()) {
-				if (this.lineEditor.popup.getValues().indexOf(this.getText()) != -1) {
-					this.lineEditor.focusNextCell(this);
-					event.preventDefault();
-				}
+	if (event.keyCode == 32) {
+
+		if (this.getCaretPosition() == this.getLastCaretPosition()) {
+			if (this.lineEditor.popup.getValues().indexOf(this.getText()) != -1) {
+				this.lineEditor.focusNextCell(this);
+				event.preventDefault();
 			}
 		}
 

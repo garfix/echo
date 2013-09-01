@@ -205,12 +205,7 @@ class Processor
 		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/mi', $names, $results);
 		$names = $results[1];
 		$names = array_splice($names, 0, 20);
-return $names;
-//		foreach ($names as &$name) {
-//			$name = preg_replace('/\b' . $word . '/i', '<b>' . $word . '</b>', $name);
-//		}
-//
-//		return $names;
+		return $names;
 	}
 
 	private function getReponseHtml($sentence)
