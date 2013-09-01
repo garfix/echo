@@ -47,10 +47,19 @@ LineEditor.prototype.createCell = function()
 
 	cell.fitInputToText();
 
-	this.pieceContainer.appendChild(cell.getContainer());
+	this.pieceContainer.appendChild(cell.getElement());
 	this.cells.push(cell);
 
 	return cell;
+}
+
+LineEditor.prototype.removeCell = function(cell)
+{
+	cell.remove();
+	var index = this.cells.indexOf(cell);
+	if (index != -1) {
+		this.cells.splice(index, 1);
+	}
 }
 
 LineEditor.prototype.updateInputValue = function(event)
@@ -117,8 +126,21 @@ LineEditor.prototype.getWordsUpTo = function(index)
 
 LineEditor.prototype.onCellFocus = function(cell)
 {
+	this.removeEmptyCellAtEnd(cell);
 	this.popup.setCell(cell);
 	this.loadPopupSuggests(cell);
+}
+
+LineEditor.prototype.removeEmptyCellAtEnd = function(cell)
+{
+	var lastCell = this.getLastCell();
+	if (this.cells.length > 1) {
+		if (lastCell != cell) {
+			if (lastCell.getText() == '') {
+				this.removeCell(lastCell);
+			}
+		}
+	}
 }
 
 LineEditor.prototype.loadPopupSuggests = function(cell)

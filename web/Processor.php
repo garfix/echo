@@ -197,8 +197,12 @@ class Processor
 
 	function getNamesLike($word)
 	{
+		$trimmed = trim($word);
+		if (empty($trimmed)) {
+			return array();
+		}
 		$names = file_get_contents('/home/patrick/Desktop/names.csv');
-		preg_match_all('/^([^\n]*' . $word . '[^\n]*)$/mi', $names, $results);
+		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/mi', $names, $results);
 		$names = $results[1];
 		return array_splice($names, 0, 20);
 	}

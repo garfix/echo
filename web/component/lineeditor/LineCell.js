@@ -3,13 +3,8 @@ function LineCell(lineEditor)
 	var input = new Element('input');
 	input.type = 'text';
 
-	var container = new Element('span');
-	container.addClassName('lineCellContainer');
-	container.appendChild(input);
-
 	this.lineEditor = lineEditor;
 	this.input = input;
-	this.container = container;
 
 	var cell = this;
 
@@ -19,14 +14,19 @@ function LineCell(lineEditor)
 	input.observe('input', function(event){ cell.onInput(event); });
 }
 
-LineCell.prototype.getInput = function()
+LineCell.prototype.remove = function()
+{
+	this.input.remove();
+}
+
+LineCell.prototype.getElement = function()
 {
 	return this.input;
 }
 
-LineCell.prototype.getContainer = function()
+LineCell.prototype.getInput = function()
 {
-	return this.container;
+	return this.input;
 }
 
 LineCell.prototype.setText = function(text)
@@ -81,6 +81,11 @@ LineCell.prototype.onKeyPress = function(event)
 		var firstElement = this.lineEditor.popup.getFirstElement();
 		if (firstElement) {
 			firstElement.down('a').focus();
+		}
+	} else if (event.keyCode == Event.KEY_BACKSPACE) {
+		if (this.getCaretPosition() == 0) {
+			this.lineEditor.focusPreviousCell(this);
+			event.preventDefault();
 		}
 	} else if (event.keyCode == Event.KEY_LEFT) {
 		if (this.getCaretPosition() == 0) {
@@ -143,7 +148,7 @@ LineCell.prototype.getCaretPosition = function()
 	}
 
 	// Firefox support
-	else if (oField.selectionStart || oField.selectionStart == '0') {
+	else if (typeof oField.selectionStart != 'undefined') {
 		iCaretPos = oField.selectionStart;
 	}
 
@@ -156,19 +161,17 @@ LineCell.prototype.setCaretPosition = function(caretPos)
 {
 	var elem = this.input;
 
-    if(elem != null) {
-        if(elem.createTextRange) {
-            var range = elem.createTextRange();
-            range.move('character', caretPos);
-            range.select();
-        }
-        else {
-            if(elem.selectionStart) {
-                elem.focus();
-                elem.setSelectionRange(caretPos, caretPos);
-            }
-            else
-                elem.focus();
-        }
-    }
+	if (elem.createTextRange) {
+		var range = elem.createTextRange();
+		range.move('character', caretPos);
+		range.select();
+	}
+	else {
+		if (typeof elem.selectionStart != 'undefined') {
+			elem.focus();
+			elem.setSelectionRange(caretPos, caretPos);
+		}
+		else
+			elem.focus();
+	}
 }
