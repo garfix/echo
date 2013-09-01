@@ -48,7 +48,7 @@ Popup.prototype.linkToCell = function(cell)
 	}
 }
 
-Popup.prototype.populate = function(values)
+Popup.prototype.populate = function(values, selectedText)
 {
 	var popup = this;
 
@@ -68,7 +68,11 @@ Popup.prototype.populate = function(values)
 			link.onclick = function(e) { popup.onClick(e); return false; }
 			link.onkeypress = function(e) { popup.onKeyPress(e); }
 
-			link.insert(value);
+			var exp = new RegExp("\\b" + selectedText, 'i');
+			var boldValue = value.replace(exp, '<b>' + selectedText + '</b>');
+			link.insert(boldValue);
+			link.setAttribute('data-text', value);
+
 			item.appendChild(link);
 			this.ul.appendChild(item);
 		}
@@ -92,7 +96,7 @@ Popup.prototype.onClick = function(event)
 {
 	var cell = this.cell;
 	var anchor = event.findElement('a');
-	var text = anchor.innerHTML;
+	var text = anchor.getAttribute('data-text');
 
 	this.selectValue(text);
 }
@@ -126,7 +130,7 @@ Popup.prototype.onKeyPress = function(event)
 	} else if (event.keyCode == Event.KEY_RETURN) {
 
 		var anchor = event.findElement('a');
-		var text = anchor.innerHTML;
+		var text = anchor.getAttribute('data-text');
 
 		this.selectValue(text);
 		event.preventDefault();

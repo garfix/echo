@@ -204,28 +204,13 @@ class Processor
 		$names = file_get_contents('/home/patrick/Desktop/names.csv');
 		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/mi', $names, $results);
 		$names = $results[1];
-		return array_splice($names, 0, 20);
-	}
-
-	function getNamesLike_old($word)
-	{
-		require_once('/data/agentecho/component/Autoload.php');
-
-		$DBPedia = new \agentecho\knowledge\DBPedia(null);
-		$Query = new \agentecho\datastructure\SparqlQuery();
-		$Query->select("?name");
-		$Query->where("{ { ?person rdfs:label ?name } UNION { ?person dbpprop:birthName ?name } }");
-		$Query->where("FILTER(lang(?name) = 'en')");
-		$Query->where("FILTER regex(?name, '". $word . "', 'i')");
-
-		$results = $DBPedia->processQuery($Query);
-		$names = array();
-		foreach ($results as $result) {
-			$names[] = substr(@iconv('UTF-8', 'cp1252//IGNORE', $result['name']), 0, 40);
-		}
-		sort($names);
-
-		return $names;
+		$names = array_splice($names, 0, 20);
+return $names;
+//		foreach ($names as &$name) {
+//			$name = preg_replace('/\b' . $word . '/i', '<b>' . $word . '</b>', $name);
+//		}
+//
+//		return $names;
 	}
 
 	private function getReponseHtml($sentence)

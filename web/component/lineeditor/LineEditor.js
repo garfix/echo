@@ -155,7 +155,7 @@ LineEditor.prototype.loadPopupSuggests = function(cell)
 
 			suggests = response.suggests;
 
-			lineEditor.popup.populate(suggests);
+			lineEditor.popup.populate(suggests, cell.getText());
 		}
 	});
 }
