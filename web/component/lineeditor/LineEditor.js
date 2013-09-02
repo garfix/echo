@@ -149,7 +149,7 @@ LineEditor.prototype.loadPopupSuggests = function(cell)
 	var value = this.getWordsUpTo(index);
 	var lineEditor = this;
 
-	new Ajax.Request('index.php?action=suggest&value=' + value, {
+	new Ajax.Request('index.php?action=suggest&value=' + encodeURI(value), {
 		onSuccess: function(response) {
 			var response = response.responseJSON;
 

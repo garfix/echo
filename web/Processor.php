@@ -201,8 +201,9 @@ class Processor
 		if (empty($trimmed)) {
 			return array();
 		}
+
 		$names = file_get_contents('/home/patrick/Desktop/names.csv');
-		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/mi', $names, $results);
+		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/miu', $names, $results);
 		$names = $results[1];
 		$names = array_splice($names, 0, 20);
 		return $names;

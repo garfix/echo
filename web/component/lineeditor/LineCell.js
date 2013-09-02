@@ -66,9 +66,6 @@ LineCell.prototype.onInput = function(event)
 
 LineCell.prototype.onKeyDown = function(event)
 {
-	console.log(event.keyCode);
-	console.log(event.charCode);
-
 	if (event.keyCode == 32) {
 
 		if (this.getCaretPosition() == this.getLastCaretPosition()) {
