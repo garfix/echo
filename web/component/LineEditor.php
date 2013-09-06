@@ -1,9 +1,11 @@
 <?php
 
+namespace agentecho\web\component;
+
 /**
  * @author Patrick van Bergen
  */
-class LineEditor
+class LineEditor extends HtmlElement
 {
 	const MAX_WORD_COUNT = 20;
 
@@ -56,8 +58,8 @@ class LineEditor
 		return array('component/lineeditor/Popup.js', 'component/lineeditor/LineCell.js', 'component/lineeditor/LineEditor.js');
 	}
 
-	public function getStylesheet()
+	public function getStyleSheetFiles()
 	{
-		return 'component/lineeditor/LineEditor.css';
+		return array('component/lineeditor/LineEditor.css');
 	}
 }

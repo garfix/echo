@@ -4,8 +4,10 @@ use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
 use agentecho\grammar\EnglishGrammar;
 use agentecho\knowledge\DBPedia;
+use agentecho\web\component\Form;
+use agentecho\web\component\SubmitButton;
+use agentecho\web\component\LineEditor;
 
-require_once __DIR__ . '/component/lineeditor/LineEditor.php';
 require_once __DIR__ . '/../component/Autoload.php';
 
 /**
@@ -24,59 +26,52 @@ class Processor
 
 		} else {
 
-			$this->showMainPage();
+			$this->showMainPage($_REQUEST);
 
 		}
 	}
 
-	private function showMainPage()
+	private function showMainPage($parameters)
 	{
 		$template = file_get_contents(__DIR__ . '/template.html');
 
-		$LineEditor = new LineEditor();
-		$LineEditor->setName('q');
+		$Form = $this->getForm();
+		$body = (string)$Form;
 
-		if (isset($_REQUEST['q'])) {
-			$LineEditor->setLinePieces(explode(',', $_REQUEST['q']));
-		} else {
-			$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
-		}
-
-		$submitButton = "<button type='submit'>Ask</button>";
-
-		$javascriptFiles = array();
-		foreach ($LineEditor->getJavascriptFiles() as $fileName) {
-			$javascriptFiles[] = $fileName;
-		}
-
-		$cssFiles = array();
-		$cssFiles[] = $LineEditor->getStylesheet();
-
-		$javascriptHtml = '';
-		foreach ($javascriptFiles as $javascriptFile) {
-			$javascriptHtml .= "<script src='$javascriptFile'></script>";
-		}
-
-		$cssHtml = '';
-		foreach ($cssFiles as $cssFile) {
-			$cssHtml .= "<link rel='stylesheet' type='text/css' media='screen' href='$cssFile' />";
-		}
-
-		$body = "<form>" . (string)$LineEditor . $submitButton . "</form>";
-
-		if (isset($_REQUEST['q'])) {
-			$body .= $this->getReponseHtml(implode(' ', explode(',', $_REQUEST['q'])));
+		if (isset($parameters['q'])) {
+			$body .= $this->getReponseHtml(implode(' ', explode(',', $parameters['q'])));
 		}
 
 		$tokens = array(
-			'css' => $cssHtml,
+			'css' => $Form->getStyleElements(),
 			'body' => $body,
-			'javascript' => $javascriptHtml,
+			'javascript' => $Form->getJavascriptElements(),
 		);
 
 		$html = $this->createHtml($template, $tokens);
 
 		echo $html;
+	}
+
+	private function getForm()
+	{
+		$SubmitButton = new SubmitButton();
+		$SubmitButton->setTitle('Ask');
+
+		$LineEditor = new LineEditor();
+		$LineEditor->setName('q');
+
+		if (isset($parameters['q'])) {
+			$LineEditor->setLinePieces(explode(',', $parameters['q']));
+		} else {
+			$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
+		}
+
+		$Form = new Form();
+		$Form->add($LineEditor);
+		$Form->add($SubmitButton);
+
+		return $Form;
 	}
 
 	private function createHtml($template, $tokens)
