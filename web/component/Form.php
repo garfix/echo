@@ -9,6 +9,11 @@ class Form extends HtmlElement
 {
 	protected $name = 'form';
 
+	public function setMethodGet()
+	{
+		$this->attributes['method'] = 'get';
+	}
+
 	public function getJavascriptElements()
 	{
 		$javascriptHtml = '';

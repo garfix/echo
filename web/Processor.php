@@ -2,11 +2,13 @@
 
 use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
+use agentecho\grammar\DutchGrammar;
 use agentecho\grammar\EnglishGrammar;
 use agentecho\knowledge\DBPedia;
 use agentecho\web\component\Div;
 use agentecho\web\component\Form;
 use agentecho\web\component\Image;
+use agentecho\web\component\Input;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
 
@@ -17,18 +19,27 @@ require_once __DIR__ . '/../component/Autoload.php';
  */
 class Processor
 {
+	private $language = 'en';
+
 	function run()
 	{
-		if (isset($_REQUEST['action'])) {
+		$parameters = $_REQUEST;
+
+		// language
+		if (isset($parameters['language'])) {
+			$this->language = $parameters['language'];
+		}
+
+		if (isset($parameters['action'])) {
 
 			// Ajax calls
 
-			$action = $_REQUEST['action'];
-			$this->$action($_REQUEST);
+			$action = $parameters['action'];
+			$this->$action($parameters);
 
 		} else {
 
-			$this->showMainPage($_REQUEST);
+			$this->showMainPage($parameters);
 
 		}
 	}
@@ -42,7 +53,7 @@ class Processor
 
 			$Container->add($Text = new Div());
 			$Text->addClass('text');
-			$Text->addText('Ask me something...');
+			$Text->addText($this->translate('Ask me something...'));
 
 			$Container->add($Bird = new Image());
 			$Bird->addClass('bird');
@@ -53,13 +64,20 @@ class Processor
 
 				$Interaction->add($Question = new Div());
 				$Question->addClass('question');
-				$Question->addText('Question');
+				$Question->addText($this->translate('Question'));
 
-				$Interaction->add($Form = $this->getForm());
+				$Interaction->add($Form = $this->getForm($parameters));
 
-		if (isset($parameters['q'])) {
-			$Interaction->addText($this->getReponseHtml(implode(' ', explode(',', $parameters['q']))));
-		}
+				if (isset($parameters['q'])) {
+
+					$response = $this->getReponseHtml(implode(' ', explode(',', $parameters['q'])));
+
+					$Interaction->add($Answer = new Div());
+					$Answer->addClass('answer');
+					$Answer->addText($this->translate('Answer'));
+
+					$Interaction->addText($response);
+				}
 
 		$tokens = array(
 			'css' => $Form->getStyleElements(),
@@ -72,23 +90,31 @@ class Processor
 		echo $html;
 	}
 
-	private function getForm()
+	private function getForm(array $parameters)
 	{
 		$SubmitButton = new SubmitButton();
-		$SubmitButton->setTitle('Ask');
+		$SubmitButton->setTitle($this->translate('Ask'));
 
 		$LineEditor = new LineEditor();
 		$LineEditor->setName('q');
+		$LineEditor->setLanguage($this->language);
 
 		if (isset($parameters['q'])) {
 			$LineEditor->setLinePieces(explode(',', $parameters['q']));
 		} else {
-			$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
+			//$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
 		}
 
 		$Form = new Form();
-		$Form->add($LineEditor);
-		$Form->add($SubmitButton);
+		$Form->setMethodGet();
+
+			$Form->add($LineEditor);
+			$Form->add($SubmitButton);
+
+			$Form->add($Language = new Input());
+			$Language->setType('hidden');
+			$Language->setName('language');
+			$Language->setValue($parameters['language']);
 
 		return $Form;
 	}
@@ -104,9 +130,32 @@ class Processor
 		return $html;
 	}
 
+	public function translate($text)
+	{
+		$texts = array(
+			'nl' => array(
+				'Ask' => 'Vraag',
+				'Question' => 'Vraag',
+				'Answer' => 'Antwoord',
+				'Ask me something...' => 'Vraag maar wat...',
+			)
+		);
+
+		$language = $this->language;
+
+		if ($language == 'en') {
+			return $text;
+		} elseif (isset($texts[$language][$text])) {
+			return $texts[$language][$text];
+		} else {
+			trigger_error('Text not translated:' . $text, E_USER_WARNING);
+			return $text;
+		}
+	}
+
 	public function suggest($params)
 	{
-		$language = 'en';
+		$language = $this->language;
 
 		$sentences = array(
 			'nl' => array(
@@ -119,7 +168,6 @@ class Processor
 				'where did X die',
 				'when did X die',
 			)
-
 		);
 
 		if ($params['value'] == '') {
@@ -226,7 +274,16 @@ class Processor
 	private function getReponseHtml($sentence)
 	{
 		$Agent = new AgentEcho();
-		$Agent->addGrammar(new EnglishGrammar());
+
+		switch ($this->language) {
+			case 'en':
+				$Agent->addGrammar(new EnglishGrammar());
+				break;
+			case 'nl':
+				$Agent->addGrammar(new DutchGrammar());
+				break;
+		}
+
 		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Conversation = $Agent->startConversation();

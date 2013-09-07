@@ -23,6 +23,15 @@ class HtmlElement
 	}
 
 	/**
+	 * @param string $name Like 'data-language'
+	 * @param $value
+	 */
+	public function setDataAttribute($name, $value)
+	{
+		$this->attributes[$name] = $value;
+	}
+
+	/**
 	 * @param string $class
 	 */
 	public function addClass($class)

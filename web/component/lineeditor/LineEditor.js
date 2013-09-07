@@ -148,8 +148,9 @@ LineEditor.prototype.loadPopupSuggests = function(cell)
 	var index = this.getCellIndex(cell);
 	var value = this.getWordsUpTo(index);
 	var lineEditor = this;
+	var language = this.editorElement.getAttribute('data-language');
 
-	new Ajax.Request('index.php?action=suggest&value=' + encodeURI(value), {
+	new Ajax.Request('index.php?action=suggest&value=' + encodeURI(value) + '&language=' + language, {
 		onSuccess: function(response) {
 			var response = response.responseJSON;
 

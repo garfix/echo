@@ -11,8 +11,10 @@ class LineEditor extends HtmlElement
 
 	private $name = 'lineEditor';
 
+	private $language = 'en';
+
 	private $possibleLines = array();
-	private $linePieces = array('');
+	private $linePieces = array();
 
 	public function __construct()
 	{
@@ -22,6 +24,11 @@ class LineEditor extends HtmlElement
 	public function setName($name)
 	{
 		$this->name = $name;
+	}
+
+	public function setLanguage($language)
+	{
+		$this->language = $language;
 	}
 
 	public function setLinePieces(array $linePieces)
@@ -42,10 +49,11 @@ class LineEditor extends HtmlElement
 	public function __toString()
 	{
 		# dit veld bevat de uiteindelijke contents, maar wordt direct hidden gemaakt en vervangen in js door een aantal andere text inputs
-		$value = htmlspecialchars(implode(',', $this->linePieces));
+		$value = implode(',', $this->linePieces);
 
 		$LineEditor = new Div();
 		$LineEditor->addClass('lineEditor');
+		$LineEditor->setDataAttribute('data-language', $this->language);
 
 			$LineEditor->add($Input = new Input());
 			$Input->addClass('form');
