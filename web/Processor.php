@@ -4,7 +4,9 @@ use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
 use agentecho\grammar\EnglishGrammar;
 use agentecho\knowledge\DBPedia;
+use agentecho\web\component\Div;
 use agentecho\web\component\Form;
+use agentecho\web\component\Image;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
 
@@ -35,16 +37,33 @@ class Processor
 	{
 		$template = file_get_contents(__DIR__ . '/template.html');
 
-		$Form = $this->getForm();
-		$body = (string)$Form;
+		$Container = new Div();
+		$Container->addClass('container');
+
+			$Container->add($Text = new Div());
+			$Text->addClass('text');
+			$Text->addText('Ask me something...');
+
+			$Container->add($Bird = new Image());
+			$Bird->addClass('bird');
+			$Bird->setSource('img/lovebird_balloon.jpg');
+
+			$Container->add($Interaction = new Div());
+			$Interaction->addClass('interaction');
+
+				$Interaction->add($Question = new Div());
+				$Question->addClass('question');
+				$Question->addText('Question');
+
+				$Interaction->add($Form = $this->getForm());
 
 		if (isset($parameters['q'])) {
-			$body .= $this->getReponseHtml(implode(' ', explode(',', $parameters['q'])));
+			$Interaction->addText($this->getReponseHtml(implode(' ', explode(',', $parameters['q']))));
 		}
 
 		$tokens = array(
 			'css' => $Form->getStyleElements(),
-			'body' => $body,
+			'body' => (string)$Container,
 			'javascript' => $Form->getJavascriptElements(),
 		);
 

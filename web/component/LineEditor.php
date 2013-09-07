@@ -43,14 +43,23 @@ class LineEditor extends HtmlElement
 	{
 		# dit veld bevat de uiteindelijke contents, maar wordt direct hidden gemaakt en vervangen in js door een aantal andere text inputs
 		$value = htmlspecialchars(implode(',', $this->linePieces));
-		$html = "
-			<div class='lineEditor'>
-				<input class='form' type='text' name= '{$this->name}' value='$value'>
-				<div class='pieces'></div>
-				<span class='sizeMeter'></span>
-			</div>";
 
-		return $html;
+		$LineEditor = new Div();
+		$LineEditor->addClass('lineEditor');
+
+			$LineEditor->add($Input = new Input());
+			$Input->addClass('form');
+			$Input->setType('text');
+			$Input->setName($this->name);
+			$Input->setValue($value);
+
+			$LineEditor->add($Pieces = new Div());
+			$Pieces->addClass('pieces');
+
+			$LineEditor->add($SizeMeter = new Span());
+			$SizeMeter->addClass('sizeMeter');
+
+		return (string)$LineEditor;
 	}
 
 	public function getJavascriptFiles()

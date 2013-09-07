@@ -11,12 +11,18 @@ body {
 	position: relative;
 }
 
+.bird {
+	float:left;
+	width: 502px;
+	height: 371px;
+}
+
 .text {
 	position: absolute;
 	left: 270px;
 	top: 75px;
 }
-.editor {
+.interaction {
 	position: absolute;
 	left: 270px;
 	top: 250px;
