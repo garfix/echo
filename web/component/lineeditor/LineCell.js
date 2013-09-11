@@ -2,6 +2,7 @@ function LineCell(lineEditor)
 {
 	var input = new Element('input');
 	input.type = 'text';
+	input.addClassName('cell');
 
 	this.lineEditor = lineEditor;
 	this.input = input;
@@ -101,7 +102,13 @@ LineCell.prototype.onKeyDown = function(event)
 
 LineCell.prototype.fitInputToText = function()
 {
-	var width = this.lineEditor.calculateWidth(this.getText());
+	var text = this.getText();
+
+	if (text == '') {
+		var width = 50;
+	} else {
+		var width = this.lineEditor.calculateWidth(text);
+	}
 
 	this.input.setStyle({ width: width + 'px'});
 }

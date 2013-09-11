@@ -11,7 +11,7 @@ class HtmlElement
 	protected $children = array();
 	/** @var string[]  */
 	protected $attributes = array();
-
+	/** @var bool */
 	protected $allowChildren = true;
 
 	/**
@@ -55,7 +55,15 @@ class HtmlElement
 	 */
 	public function getJavascriptFiles()
 	{
-		return array();
+		$files = array();
+
+		foreach ($this->children as $Child) {
+			if ($Child instanceof HtmlElement) {
+				$files = array_merge($files, $Child->getJavascriptFiles());
+			}
+		}
+
+		return $files;
 	}
 
 	/**
@@ -63,7 +71,55 @@ class HtmlElement
 	 */
 	public function getStyleSheetFiles()
 	{
-		return array();
+		$files = array();
+
+		foreach ($this->children as $Child) {
+			if ($Child instanceof HtmlElement) {
+				$files = array_merge($files, $Child->getStyleSheetFiles());
+			}
+		}
+
+		return $files;
+	}
+
+	/**
+	 * @param $id
+	 */
+	public function setId($id)
+	{
+		$this->attributes['id'] = $id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getId()
+	{
+		return $this->attributes['id'];
+	}
+
+	public final function getJavascriptElements()
+	{
+		$javascriptHtml = '';
+		foreach ($this->children as $Child) {
+			foreach ($Child->getJavascriptFiles() as $javascriptFile) {
+				$javascriptHtml .= "<script src='$javascriptFile'></script>";
+			}
+		}
+
+		return $javascriptHtml;
+	}
+
+	public final function getStyleElements()
+	{
+		$styleHtml = '';
+		foreach ($this->children as $Child) {
+			foreach ($Child->getStyleSheetFiles() as $styleSheetFile) {
+				$styleHtml .= "<link rel='stylesheet' type='text/css' media='screen' href='$styleSheetFile' />";
+			}
+		}
+
+		return $styleHtml;
 	}
 
 	public function __toString()

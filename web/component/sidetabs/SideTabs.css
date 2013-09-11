@@ -1,0 +1,33 @@
+.tab {
+	position: relative;
+}
+
+.tabLeft {
+	position: absolute;
+	width: 20%;
+}
+
+.tabRight {
+	margin-left: 20%;
+	width: 80%;
+}
+
+.tabButton {
+	display: block;
+	padding: 5px;
+}
+
+	.tabButton.active {
+		border-width: 2px 0 2px 2px;
+		border-style: outset;
+		border-color: #808080;
+		border-radius: 5px;
+	}
+
+.tabPanel {
+	display: none;
+}
+
+	.tabPanel.active {
+		display: block;
+	}

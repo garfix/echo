@@ -4,7 +4,6 @@
 }
 
 .pieces {
-	border: 1px solid #a0a0a0;
 	display: inline;
 	background-color: white;
 	padding: 3px;
@@ -83,3 +82,4 @@ span.sizeMeter {
 	padding: 3px;
 	display: none;
 }
+

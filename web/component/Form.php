@@ -13,28 +13,4 @@ class Form extends HtmlElement
 	{
 		$this->attributes['method'] = 'get';
 	}
-
-	public function getJavascriptElements()
-	{
-		$javascriptHtml = '';
-		foreach ($this->children as $Child) {
-			foreach ($Child->getJavascriptFiles() as $javascriptFile) {
-				$javascriptHtml .= "<script src='$javascriptFile'></script>";
-			}
-		}
-
-		return $javascriptHtml;
-	}
-
-	public function getStyleElements()
-	{
-		$styleHtml = '';
-		foreach ($this->children as $Child) {
-			foreach ($Child->getStyleSheetFiles() as $styleSheetFile) {
-				$styleHtml .= "<link rel='stylesheet' type='text/css' media='screen' href='$styleSheetFile' />";
-			}
-		}
-
-		return $styleHtml;
-	}
 }

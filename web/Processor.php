@@ -1,5 +1,7 @@
 <?php
 
+namespace agentecho\web;
+
 use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
 use agentecho\grammar\DutchGrammar;
@@ -9,6 +11,7 @@ use agentecho\web\component\Div;
 use agentecho\web\component\Form;
 use agentecho\web\component\Image;
 use agentecho\web\component\Input;
+use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
 
@@ -21,10 +24,8 @@ class Processor
 {
 	private $language = 'en';
 
-	function run()
+	function run(array $parameters)
 	{
-		$parameters = $_REQUEST;
-
 		// language
 		if (isset($parameters['language'])) {
 			$this->language = $parameters['language'];
@@ -57,6 +58,7 @@ class Processor
 
 			$Container->add($Bird = new Image());
 			$Bird->addClass('bird');
+			// http://www.clipartsalbum.com/?l=en-us&m=start&c=birds&s=lovebirds&p=1&t=20&q=&e=1&i=180727&r=6
 			$Bird->setSource('img/lovebird_balloon.jpg');
 
 			$Container->add($Interaction = new Div());
@@ -68,21 +70,23 @@ class Processor
 
 				$Interaction->add($Form = $this->getForm($parameters));
 
-				if (isset($parameters['q'])) {
+		if (isset($parameters['q'])) {
 
-					$response = $this->getReponseHtml(implode(' ', explode(',', $parameters['q'])));
+			$response = $this->getResponse(implode(' ', explode(',', $parameters['q'])));
 
-					$Interaction->add($Answer = new Div());
-					$Answer->addClass('answer');
-					$Answer->addText($this->translate('Answer'));
+			$Interaction->add($Answer = new Div());
+			$Answer->addClass('answer');
+			$Answer->addText($this->translate('Answer'));
 
-					$Interaction->addText($response);
-				}
+			$Interaction->addText($response['answer']);
+
+			$Interaction->add($this->getSideTabs($response));
+		}
 
 		$tokens = array(
-			'css' => $Form->getStyleElements(),
+			'css' => $Container->getStyleElements(),
 			'body' => (string)$Container,
-			'javascript' => $Form->getJavascriptElements(),
+			'javascript' => $Container->getJavascriptElements(),
 		);
 
 		$html = $this->createHtml($template, $tokens);
@@ -90,31 +94,39 @@ class Processor
 		echo $html;
 	}
 
+	private function getSideTabs(array $response)
+	{
+		$SideTabs = new SideTabs();
+		$SideTabs->addTab($this->translate('Semantics'), $response['semantics']);
+		$SideTabs->addTab($this->translate('Response'), $response['response']);
+		return $SideTabs;
+	}
+
 	private function getForm(array $parameters)
 	{
-		$SubmitButton = new SubmitButton();
-		$SubmitButton->setTitle($this->translate('Ask'));
-
-		$LineEditor = new LineEditor();
-		$LineEditor->setName('q');
-		$LineEditor->setLanguage($this->language);
-
-		if (isset($parameters['q'])) {
-			$LineEditor->setLinePieces(explode(',', $parameters['q']));
-		} else {
-			//$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron'));
-		}
-
 		$Form = new Form();
 		$Form->setMethodGet();
 
-			$Form->add($LineEditor);
-			$Form->add($SubmitButton);
+			$Form->add($Panel = new Div());
+			$Panel->addClass('editPanel');
+
+				$Panel->add($LineEditor = new LineEditor());
+				$LineEditor->setName('q');
+				$LineEditor->setLanguage($this->language);
+
+				if (isset($parameters['q'])) {
+					$LineEditor->setLinePieces(explode(',', $parameters['q']));
+				} else {
+					$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron', 'born'));
+				}
+
+				$Form->add($SubmitButton = new SubmitButton());
+				$SubmitButton->setTitle($this->translate('Ask'));
 
 			$Form->add($Language = new Input());
 			$Language->setType('hidden');
 			$Language->setName('language');
-			$Language->setValue($parameters['language']);
+			$Language->setValue($this->language);
 
 		return $Form;
 	}
@@ -137,6 +149,8 @@ class Processor
 				'Ask' => 'Vraag',
 				'Question' => 'Vraag',
 				'Answer' => 'Antwoord',
+				'Response' => 'Antwoord',
+				'Semantics' => 'Semantiek',
 				'Ask me something...' => 'Vraag maar wat...',
 			)
 		);
@@ -271,7 +285,7 @@ class Processor
 		return $names;
 	}
 
-	private function getReponseHtml($sentence)
+	private function getResponse($sentence)
 	{
 		$Agent = new AgentEcho();
 
@@ -288,8 +302,6 @@ class Processor
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Conversation = $Agent->startConversation();
 
-		$response = $Conversation->answer($sentence);
-
-		return $response;
+		return $Conversation->getAnswerConstructs($sentence);
 	}
 }

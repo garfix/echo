@@ -48,7 +48,6 @@ class LineEditor extends HtmlElement
 
 	public function __toString()
 	{
-		# dit veld bevat de uiteindelijke contents, maar wordt direct hidden gemaakt en vervangen in js door een aantal andere text inputs
 		$value = implode(',', $this->linePieces);
 
 		$LineEditor = new Div();

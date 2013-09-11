@@ -55,10 +55,18 @@ class Conversation
 	 */
 	public function answer($question)
 	{
+		$constructs = $this->getAnswerConstructs($question);
+		return $constructs['answer'];
+	}
+
+	public function getAnswerConstructs($question)
+	{
 		// prepare the parser
 		$Parser = new Parser();
 		$Parser->setGrammars($this->grammars);
 		$Parser->setCurrentGrammar($this->CurrentGrammar);
+
+		$Semantics = $Response = null;
 
 		try {
 
@@ -81,11 +89,9 @@ class Conversation
 			// resolve pronouns
 			$PronounProcessor = new PronounProcessor();
 			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
-$a = (string)$Semantics;
+
 			// replace references
 			$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
-
-$b = (string)$Semantics;
 
 			// process the sentence
 			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
@@ -109,6 +115,10 @@ $b = (string)$Semantics;
 			$answer = $E->getMessage();
 		}
 
-		return $answer;
+		return array(
+			'answer' => $answer,
+			'semantics' => $Semantics,
+			'response' => $Response,
+		);
 	}
 }

@@ -33,7 +33,11 @@ LineEditor.prototype.init = function()
 
 LineEditor.prototype.getLinePieces = function()
 {
-	return this.formElement.value.split(',');
+	if (this.formElement.value == '') {
+		return [];
+	} else {
+		return this.formElement.value.split(',');
+	}
 }
 
 LineEditor.prototype.getLastCell = function()

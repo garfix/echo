@@ -4,7 +4,7 @@ body {
 }
 
 .container {
-	width: 700px;
+	width: 1000px;
 	margin-top: 100px;
 	margin-left: auto;
 	margin-right: auto;
@@ -22,19 +22,28 @@ body {
 	left: 270px;
 	top: 75px;
 }
+
 .interaction {
 	position: absolute;
 	left: 270px;
 	top: 250px;
 }
+
 .question {
 	font-weight: bold;
 	color: red;
 	margin-bottom: 5px;
 }
+
 .answer {
 	font-weight: bold;
 	color: blue;
-	margin-top: 5px;
+	margin-top: 30px;
 	margin-bottom: 5px;
+}
+
+.editPanel {
+	width: 600px;
+	display: inline-block;
+	border: 1px solid #a0a0a0;
 }
