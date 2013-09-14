@@ -13,6 +13,8 @@ use \agentecho\phrasestructure\Sentence;
  */
 class Parser
 {
+	use EventSender;
+
 	/** @var array $grammars A list of grammars that are used to parse a sentence */
 	private $grammars = array();
 
@@ -20,9 +22,20 @@ class Parser
 	 * and the grammar that was last used to successfully parse a sentence */
 	private $CurrentGrammar = null;
 
+	public function addGrammar(Grammar $Grammar)
+	{
+		$grammars = $this->grammars;
+		$grammars[] = $Grammar;
+
+		$this->setGrammars($grammars);
+	}
+
 	public function setGrammars(array $grammars)
 	{
 		$this->grammars = $grammars;
+		if (count($this->grammars) == 1) {
+			$this->CurrentGrammar = reset($grammars);
+		}
 	}
 
 	public function setCurrentGrammar(Grammar $Grammar)
@@ -42,6 +55,8 @@ class Parser
 	public function parse($input)
 	{
 		$sentences = array();
+
+		$this->send(new Event($input));
 
 		if (trim($input) == '') {
 			return $sentences;

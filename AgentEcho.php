@@ -5,9 +5,12 @@ namespace agentecho;
 // start autoloading based on namespaces
 require_once __DIR__ . '/component/Autoload.php';
 
+use agentecho\component\EventManager;
 use agentecho\component\KnowledgeManager;
 use agentecho\component\Conversation;
 use agentecho\component\Parser;
+use agentecho\component\SentenceProcessor;
+use agentecho\datastructure\ConversationContext;
 use agentecho\knowledge\KnowledgeSource;
 use agentecho\knowledge\RuleSource;
 use agentecho\grammar\Grammar;
@@ -43,13 +46,21 @@ class AgentEcho
 	/** @var A manager for knowledge sources */
 	private $KnowledgeManager;
 
-	/** @var Available grammars */
-	private $grammars = array();
+	/** @var Parser */
+	private $Parser;
+
+	/** @var EventManager $EventManager */
+	private $EventManager;
 
 	public function __construct()
 	{
+		// build the components used by the agent
 		$this->KnowledgeManager = new KnowledgeManager();
-		$this->Parser = new Parser($this);
+		$this->Parser = new Parser();
+		$this->EventManager = new EventManager();
+
+		// set optional dependencies
+		$this->Parser->setEventManager($this->EventManager);
 	}
 
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
@@ -69,29 +80,43 @@ class AgentEcho
 
 	public function addGrammar(Grammar $Grammar)
 	{
-		$this->grammars[] = $Grammar;
+		$this->Parser->addGrammar($Grammar);
 	}
 
-	public function getAvailableGrammars()
-	{
-		return $this->grammars;
-	}
-
-	public function getKnowledgeManager()
-	{
-		return $this->KnowledgeManager;
-	}
-
-	public function getParser()
-	{
-		return $this->Parser;
-	}
-
+	/**
+	 * Starts a new conversation.
+	 * All interactions within this conversation use the same conversation context.
+	 *
+	 * @return Conversation
+	 */
 	public function startConversation()
 	{
-		$Conversation = new Conversation($this->getAvailableGrammars(), $this->getKnowledgeManager());
+		$Conversation = new Conversation($this->KnowledgeManager, $this->Parser);
 
 		return $Conversation;
+	}
+
+	/**
+	 * Asks the agent to respond to $question, without a given context of conversation.
+	 *
+	 * @param $question
+	 * @return string An answer
+	 */
+	public function answer($question)
+	{
+		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+		$ConversationContext = new ConversationContext();
+		return $SentenceProcessor->reply($question, $ConversationContext, $this->Parser);
+	}
+
+	/**
+	 * Add a callback function that will be called whenever an agent event occurs.
+	 *
+	 * @param callable $listener
+	 */
+	public function addListener(callable $listener)
+	{
+		$this->EventManager->addListener($listener);
 	}
 }
 

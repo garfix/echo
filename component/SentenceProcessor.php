@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\component\KnowledgeManager;
+use agentecho\datastructure\ConversationContext;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Entity;
 use agentecho\phrasestructure\Adverb;
@@ -17,6 +18,7 @@ use agentecho\exception\ParseException;
 use agentecho\component\Aggregator;
 use agentecho\component\Assigner;
 use agentecho\exception\MissingRequestFieldException;
+use \agentecho\exception\EchoException;
 
 /**
  * This class answers question and processes imperatives.
@@ -31,6 +33,58 @@ class SentenceProcessor
 	public function __construct(KnowledgeManager $KnowledgeManager)
 	{
 		$this->KnowledgeManager = $KnowledgeManager;
+	}
+
+	public function reply($question, ConversationContext $ConversationContext, Parser $Parser)
+	{
+		try {
+
+			// parse the sentence
+			$SentenceContext = $Parser->parseFirstLine($question);
+
+			// update the current grammar from the language found in this sentence
+			$this->CurrentGrammar = $Parser->getCurrentGrammar();
+
+			// extract the Sentence
+			$Sentence = $SentenceContext->getRootObject();
+
+			// extract semantics
+			$Semantics = $SentenceContext->getSemantics();
+
+			// update the subject of the conversation
+			$ContextProcessor = new ContextProcessor();
+			$ContextProcessor->updateSubject($Sentence, $ConversationContext);
+
+			// resolve pronouns
+			$PronounProcessor = new PronounProcessor();
+			$PronounProcessor->replacePronounsByProperNouns($Sentence, $ConversationContext);
+
+			// replace references
+			$PronounProcessor->replaceReferences($Semantics, $ConversationContext);
+
+			// process the sentence
+			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+			$Response = $SentenceProcessor->process($Sentence, $Semantics);
+
+			// produce the surface text of the response
+			$Producer = new Producer();
+			$answer = $Producer->produce($Response, $this->CurrentGrammar);
+
+			// substitute proper nouns by pronouns
+#todo
+
+		} catch (EchoException $E) {
+
+			if ($E instanceof EchoException) {
+				$translatedMessage = Translations::translate($E->getMessageText(), $Parser->getCurrentGrammar()->getLanguageCode());
+				$E->setMessageText($translatedMessage);
+				$E->buildMessage();
+			}
+
+			$answer = $E->getMessage();
+		}
+
+		return $answer;
 	}
 
 	/**

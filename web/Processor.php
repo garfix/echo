@@ -289,6 +289,14 @@ class Processor
 	{
 		$Agent = new AgentEcho();
 
+		$logs = array();
+
+		$Agent->addListener(function($Event) use (&$logs) {
+			if ($Event->getType() == 'log') {
+				$logs[] = $Event->getContent();
+			}
+		});
+
 		switch ($this->language) {
 			case 'en':
 				$Agent->addGrammar(new EnglishGrammar());
@@ -300,8 +308,13 @@ class Processor
 
 		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
-		$Conversation = $Agent->startConversation();
 
-		return $Conversation->getAnswerConstructs($sentence);
+		$answer = $Agent->answer($sentence);
+
+		return array(
+			'answer' => $answer,
+			'semantics' => $logs[0], # todo
+			'response' => 'response', # todo
+		);
 	}
 }

@@ -7,7 +7,6 @@ use \agentecho\grammar\Grammar;
 use \agentecho\exception\ConfigurationException;
 use \agentecho\phrasestructure\Sentence;
 use \agentecho\datastructure\ConversationContext;
-use \agentecho\exception\EchoException;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -22,29 +21,22 @@ class Conversation
 	/** @var KnowledgeManager The agent having the conversation */
 	private $KnowledgeManager;
 
-	/** @var Start parsing in the last used grammar */
-	private $CurrentGrammar = null;
+	/** @var Parser */
+	private $Parser = null;
 
 	/**
 	 * @throws ConfigurationException
 	 */
-	public function __construct(array $grammars, KnowledgeManager $KnowledgeManager)
+	public function __construct(KnowledgeManager $KnowledgeManager, Parser $Parser)
 	{
 		$this->ConversationContext = new ConversationContext();
-		$this->grammars = $grammars;
 		$this->KnowledgeManager = $KnowledgeManager;
-
-		if (empty($grammars)) {
-			throw new ConfigurationException(ConfigurationException::NO_GRAMMAR);
-		}
-
-		$Grammar = reset($grammars);
-		$this->setCurrentGrammar($Grammar);
+		$this->Parser = $Parser;
 	}
 
 	public function setCurrentGrammar(Grammar $Grammar)
 	{
-		$this->CurrentGrammar = $Grammar;
+		$this->Parser->setCurrentGrammar($Grammar);
 	}
 
 	/**
@@ -55,70 +47,9 @@ class Conversation
 	 */
 	public function answer($question)
 	{
-		$constructs = $this->getAnswerConstructs($question);
-		return $constructs['answer'];
-	}
+		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+		$answer = $SentenceProcessor->reply($question, $this->ConversationContext, $this->Parser);
 
-	public function getAnswerConstructs($question)
-	{
-		// prepare the parser
-		$Parser = new Parser();
-		$Parser->setGrammars($this->grammars);
-		$Parser->setCurrentGrammar($this->CurrentGrammar);
-
-		$Semantics = $Response = null;
-
-		try {
-
-			// parse the sentence
-			$SentenceContext = $Parser->parseFirstLine($question);
-
-			// update the current grammar from the language found in this sentence
-			$this->CurrentGrammar = $Parser->getCurrentGrammar();
-
-			// extract the Sentence
-			$Sentence = $SentenceContext->getRootObject();
-
-			// extract semantics
-			$Semantics = $SentenceContext->getSemantics();
-
-			// update the subject of the conversation
-			$ContextProcessor = new ContextProcessor();
-			$ContextProcessor->updateSubject($Sentence, $this->ConversationContext);
-
-			// resolve pronouns
-			$PronounProcessor = new PronounProcessor();
-			$PronounProcessor->replacePronounsByProperNouns($Sentence, $this->ConversationContext);
-
-			// replace references
-			$PronounProcessor->replaceReferences($Semantics, $this->ConversationContext);
-
-			// process the sentence
-			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
-			$Response = $SentenceProcessor->process($Sentence, $Semantics);
-
-			// produce the surface text of the response
-			$Producer = new Producer();
-			$answer = $Producer->produce($Response, $this->CurrentGrammar);
-
-			// substitute proper nouns by pronouns
-#todo
-
-		} catch (EchoException $E) {
-
-			if ($E instanceof EchoException) {
-				$translatedMessage = Translations::translate($E->getMessageText(), $Parser->getCurrentGrammar()->getLanguageCode());
-				$E->setMessageText($translatedMessage);
-				$E->buildMessage();
-			}
-
-			$answer = $E->getMessage();
-		}
-
-		return array(
-			'answer' => $answer,
-			'semantics' => $Semantics,
-			'response' => $Response,
-		);
+		return $answer;
 	}
 }
