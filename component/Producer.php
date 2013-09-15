@@ -71,7 +71,7 @@ $words = $lexicalItems;
 
 		$text = '';
 
-		// add all words and preceed each one with a space,
+		// add all words and precede each one with a space,
 		// except the first word, and comma's
 		$i = 0;
 		foreach ($words as $index => $word) {

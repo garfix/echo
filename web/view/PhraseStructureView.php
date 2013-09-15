@@ -28,7 +28,7 @@ class PhraseStructureView extends TreeView
 						$elements = array();
 
 						foreach ($value as $elementName => $elementValue) {
-							$elements[] = $this->eol() . $this->indent($depth) . $elementName . ' = ' . (string)$elementValue;
+							$elements[] = $this->eol() . $this->indent($depth) . $elementName . ' = ' . (string)htmlspecialchars($elementValue);
 						}
 
 						$parts[] = $this->markAsAttribute($name) . ' : ' . '[' . implode(', ', $elements) . ']';

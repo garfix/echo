@@ -5,6 +5,7 @@ namespace agentecho\web\view;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Variable;
 
 /**
  * @author Patrick van Bergen
@@ -24,8 +25,10 @@ class PredicationListView extends TreeView
 					$valueHtml = $this->markAsConstant($Argument);
 				} elseif ($Argument instanceof Atom) {
 					$valueHtml = $this->markAsAtom($Argument);
+				} elseif ($Argument instanceof Variable) {
+					$valueHtml = $this->markAsVariable($Argument);
 				} else {
-					$valueHtml = $this->markAsValue($Argument);
+					$valueHtml = $this->markAsValue(htmlspecialchars($Argument));
 				}
 
 				$attributeHtml[] = ' ' . $valueHtml . ' ';

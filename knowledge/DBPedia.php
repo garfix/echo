@@ -153,7 +153,7 @@ class DBPedia extends KnowledgeSource
 $b = (string)$Question;
 		// turn the expanded question into a set of database relations
 		$Relations = $this->getDataMapper()->mapPredications($Question);
-
+		$this->send(new LogEvent(array('relations' => $Relations)));
 
 		// convert the database relations into a query
 		$Query = $this->createDatabaseQuery($Relations);

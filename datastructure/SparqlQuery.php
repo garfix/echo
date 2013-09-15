@@ -15,9 +15,19 @@ class SparqlQuery
 		$this->select[$clause] = $clause;
 	}
 
+	public function getSelects()
+	{
+		return $this->select;
+	}
+
 	public function where($clause)
 	{
 		$this->where[$clause] = $clause;
+	}
+
+	public function getWheres()
+	{
+		return $this->where;
 	}
 
 	public function __toString()

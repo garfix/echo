@@ -21,7 +21,7 @@ class SyntaxView extends TreeView
 				$string .= $this->eol() . $this->getBranchSyntax($constituent, $depth + 1);
 			}
 		} elseif (isset($branch['word'])) {
-			$string .= ' ' . $this->markAsConstant($branch['word']);
+			$string .= ' ' . $this->markAsConstant(htmlspecialchars($branch['word']));
 		}
 
 		$string .= ']';

@@ -4,13 +4,11 @@
 
 .tabLeft {
 	position: absolute;
-	width: 30%;
+	width: 200px;
 }
 
 .tabRight {
-	margin-left: 30%;
-	padding-left: 10px;
-	width: 70%;
+	margin-left: 200px;
 }
 
 .tabButton {

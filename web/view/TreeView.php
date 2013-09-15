@@ -27,6 +27,16 @@ class TreeView
 		return "<span class='atom'>" . $value . "</span>";
 	}
 
+	protected function markAsVariable($value)
+	{
+		return "<span class='variable'>" . $value . "</span>";
+	}
+
+	protected function markAsCondition($value)
+	{
+		return "<span class='condition'>" . $value . "</span>";
+	}
+
 	protected function markAsValue($value)
 	{
 		if ($value === '') {

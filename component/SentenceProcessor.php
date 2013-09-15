@@ -78,6 +78,7 @@ class SentenceProcessor
 
 			// process the sentence
 			$Response = $this->process($Sentence, $Semantics);
+			$this->send(new LogEvent(array('response' => $Response)));
 
 			// produce the surface text of the response
 			$Producer = new Producer();

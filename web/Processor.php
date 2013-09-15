@@ -16,8 +16,10 @@ use agentecho\web\component\Raw;
 use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
+use agentecho\web\view\BindingsView;
 use agentecho\web\view\PhraseStructureView;
 use agentecho\web\view\PredicationListView;
+use agentecho\web\view\SparqlQueryView;
 use agentecho\web\view\SyntaxView;
 
 require_once __DIR__ . '/../component/Autoload.php';
@@ -57,14 +59,14 @@ class Processor
 		$Container = new Div();
 		$Container->addClass('container');
 
-			$Container->add($Text = new Div());
-			$Text->addClass('text');
-			$Text->addText($this->translate('Ask me something...'));
-
 			$Container->add($Bird = new Image());
 			$Bird->addClass('bird');
 			// http://www.clipartsalbum.com/?l=en-us&m=start&c=birds&s=lovebirds&p=1&t=20&q=&e=1&i=180727&r=6
 			$Bird->setSource('img/lovebird_balloon.jpg');
+
+			$Container->add($Text = new Div());
+			$Text->addClass('text');
+			$Text->addText($this->translate('Ask me something...'));
 
 			$Container->add($Interaction = new Div());
 			$Interaction->addClass('interaction');
@@ -85,7 +87,7 @@ class Processor
 
 			$Interaction->addText($response['answer']);
 
-			$Interaction->add($this->getSideTabs($response));
+			$Container->add($this->getSideTabs($response));
 		}
 
 		$tokens = array(
@@ -123,39 +125,26 @@ class Processor
 		} elseif ($key == 'semantics') {
 			$View = new PredicationListView();
 			$html = $View->getHtml($value);
-		} elseif (is_array($value)) {
-			$html = $this->markUpRecursive($value, 0);
+		} elseif ($key == 'interpretation') {
+			$View = new PredicationListView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'relations') {
+			$View = new PredicationListView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'query') {
+			$View = new SparqlQueryView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'response') {
+			$View = new PhraseStructureView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'bindings') {
+			$View = new BindingsView();
+			$html = $View->getHtml($value);
 		} else {
 			$html = htmlspecialchars($value);
 		}
 
 		return new Raw($html);
-	}
-
-	private function markUpRecursive($value, $level)
-	{
-		$html = '';
-
-		$spacing = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
-
-		if (is_array($value)) {
-
-			$html .= '{<br/>';
-
-			foreach($value as $key => $val) {
-				$label = is_numeric($key) ? '' : "<span class='label'>" . $key . '</span> = ';
-				$html .= $spacing . '&nbsp;&nbsp;&nbsp;' . $label . $this->markUpRecursive($val, $level + 1) . '<br />';
-			}
-
-			$html .= $spacing . '},';
-
-		} else {
-
-			return "<span class='value'>" . $value . "</span>";
-
-		}
-
-		return $html;
 	}
 
 	private function getForm(array $parameters)
