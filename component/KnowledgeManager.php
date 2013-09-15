@@ -24,6 +24,9 @@ class KnowledgeManager
 		$this->knowledgeSources[] = $KnowledgeSource;
 	}
 
+	/**
+	 * @return KnowledgeSource[]
+	 */
 	public function getKnowledgeSources()
 	{
 		return $this->knowledgeSources;

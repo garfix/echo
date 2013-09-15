@@ -19,8 +19,4 @@ class Event
 		return $this->content;
 	}
 
-	public function getType()
-	{
-		return 'log';
-	}
 }

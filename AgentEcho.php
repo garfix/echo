@@ -105,6 +105,7 @@ class AgentEcho
 	public function answer($question)
 	{
 		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+		$SentenceProcessor->setEventManager($this->EventManager);
 		$ConversationContext = new ConversationContext();
 		return $SentenceProcessor->reply($question, $ConversationContext, $this->Parser);
 	}

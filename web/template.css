@@ -31,13 +31,13 @@ body {
 
 .question {
 	font-weight: bold;
-	color: red;
+	color: orangered;
 	margin-bottom: 5px;
 }
 
 .answer {
 	font-weight: bold;
-	color: blue;
+	color: green;
 	margin-top: 30px;
 	margin-bottom: 5px;
 }
@@ -47,3 +47,32 @@ body {
 	display: inline-block;
 	border: 1px solid #a0a0a0;
 }
+.label {
+	color: blue;
+}
+.value {
+	color: #EE2C2C;
+}
+.type {
+	color: #668B8B;
+}
+
+.tab {
+	margin-top: 30px;
+	border-top: 1px solid saddlebrown;
+	padding: 3px;
+}
+
+.tabLeft a {
+	font-weight: bold;
+	color: orange;
+}
+
+.tabButton.active {
+	background-color: #FEE5AC;
+
+}
+.tabRight {
+	background-color: #FEE5AC;
+}
+

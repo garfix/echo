@@ -16,11 +16,12 @@ class SideTabs extends HtmlElement
 		$this->setId('sideTabs');
 	}
 
-	public function addTab($title, $contents)
+	public function addTab($title, $contents, $isHtml = false)
 	{
 		$this->tabs[] = array(
 			'title' => $title,
 			'contents' => $contents,
+			'isHtml' => $isHtml,
 		);
 	}
 

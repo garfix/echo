@@ -27,6 +27,8 @@ use \agentecho\exception\EchoException;
  */
 class SentenceProcessor
 {
+	use EventSender;
+
 	/** @var KnowledgeManager The agent having the conversation */
 	private $KnowledgeManager;
 
@@ -35,6 +37,15 @@ class SentenceProcessor
 		$this->KnowledgeManager = $KnowledgeManager;
 	}
 
+	/**
+	 * Returns a response to $question, using $Parser to parse the $question,
+	 * and using $ConversationContext to process pronouns.
+	 *
+	 * @param string $question
+	 * @param ConversationContext $ConversationContext
+	 * @param Parser $Parser
+	 * @return string
+	 */
 	public function reply($question, ConversationContext $ConversationContext, Parser $Parser)
 	{
 		try {
@@ -43,10 +54,12 @@ class SentenceProcessor
 			$SentenceContext = $Parser->parseFirstLine($question);
 
 			// update the current grammar from the language found in this sentence
-			$this->CurrentGrammar = $Parser->getCurrentGrammar();
+			$CurrentGrammar = $Parser->getCurrentGrammar();
 
 			// extract the Sentence
 			$Sentence = $SentenceContext->getRootObject();
+			$this->send(new LogEvent(array('syntax' => $SentenceContext->getPhraseSpecification())));
+			$this->send(new LogEvent(array('phraseSpecification' => $Sentence)));
 
 			// extract semantics
 			$Semantics = $SentenceContext->getSemantics();
@@ -61,14 +74,14 @@ class SentenceProcessor
 
 			// replace references
 			$PronounProcessor->replaceReferences($Semantics, $ConversationContext);
+			$this->send(new LogEvent(array('semantics' => $Semantics)));
 
 			// process the sentence
-			$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
-			$Response = $SentenceProcessor->process($Sentence, $Semantics);
+			$Response = $this->process($Sentence, $Semantics);
 
 			// produce the surface text of the response
 			$Producer = new Producer();
-			$answer = $Producer->produce($Response, $this->CurrentGrammar);
+			$answer = $Producer->produce($Response, $CurrentGrammar);
 
 			// substitute proper nouns by pronouns
 #todo
@@ -91,7 +104,7 @@ class SentenceProcessor
 	 * @param Sentence $Sentence
 	 * @return PhraseStructure
 	 */
-	public function process(Sentence $Sentence, PredicationList $Semantics)
+	private function process(Sentence $Sentence, PredicationList $Semantics)
 	{
 		$Answer = null;
 
@@ -206,7 +219,7 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	public function answerQuestionWithSemantics(PredicationList $PredicationList)
+	private function answerQuestionWithSemantics(PredicationList $PredicationList)
 	{
 		$Interpretation = $this->interpret($PredicationList);
 
@@ -273,6 +286,8 @@ $ruleSource = reset($ruleSources);
 
 		$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
 
+		$this->send(new LogEvent(array('interpretation' => $ExpandedQuestion)));
+
 		return $ExpandedQuestion;
 	}
 
@@ -283,6 +298,7 @@ $ruleSource = reset($ruleSources);
 		$a = (string)$Interpretation;
 
 		$bindings = $this->createBindings($Interpretation);
+		$this->send(new LogEvent(array('bindings' => $bindings)));
 
 		if (count($bindings) > 1) {
 			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
@@ -299,6 +315,8 @@ $ruleSource = reset($ruleSources);
 
 		foreach ($knowledgeSources as $KnowledgeSource) {
 $a = (string)$ExpandedQuestion;
+
+			$KnowledgeSource->setEventManager($this->EventManager);
 
 			try {
 				// execute the query
@@ -321,6 +339,8 @@ $a = (string)$ExpandedQuestion;
 		if (empty($bindings) && !is_null($Exception)) {
 			throw $Exception;
 		}
+
+		$this->send(new LogEvent(array('bindings' => $bindings)));
 
 		return $bindings;
 	}

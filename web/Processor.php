@@ -4,6 +4,7 @@ namespace agentecho\web;
 
 use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
+use agentecho\component\LogEvent;
 use agentecho\grammar\DutchGrammar;
 use agentecho\grammar\EnglishGrammar;
 use agentecho\knowledge\DBPedia;
@@ -11,9 +12,11 @@ use agentecho\web\component\Div;
 use agentecho\web\component\Form;
 use agentecho\web\component\Image;
 use agentecho\web\component\Input;
+use agentecho\web\component\Raw;
 use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
+use agentecho\web\view\SyntaxView;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
@@ -97,9 +100,54 @@ class Processor
 	private function getSideTabs(array $response)
 	{
 		$SideTabs = new SideTabs();
-		$SideTabs->addTab($this->translate('Semantics'), $response['semantics']);
-		$SideTabs->addTab($this->translate('Response'), $response['response']);
+//		$SideTabs->addTab($this->translate('Semantics'), $response['semantics']);
+//		$SideTabs->addTab($this->translate('Response'), $response['response']);
+
+		foreach ($response as $key => $value) {
+			$SideTabs->addTab($key, $this->markUp($key, $value));
+		}
+
 		return $SideTabs;
+	}
+
+	private function markUp($key, $value)
+	{
+		if ($key == 'syntax') {
+			$View = new SyntaxView();
+			$html = $View->getHtml($value);
+		} elseif (is_array($value)) {
+			$html = $this->markUpRecursive($value, 0);
+		} else {
+			$html = htmlspecialchars($value);
+		}
+
+		return new Raw($html);
+	}
+
+	private function markUpRecursive($value, $level)
+	{
+		$html = '';
+
+		$spacing = str_repeat('&nbsp;&nbsp;&nbsp;', $level);
+
+		if (is_array($value)) {
+
+			$html .= '{<br/>';
+
+			foreach($value as $key => $val) {
+				$label = is_numeric($key) ? '' : "<span class='label'>" . $key . '</span> = ';
+				$html .= $spacing . '&nbsp;&nbsp;&nbsp;' . $label . $this->markUpRecursive($val, $level + 1) . '<br />';
+			}
+
+			$html .= $spacing . '},';
+
+		} else {
+
+			return "<span class='value'>" . $value . "</span>";
+
+		}
+
+		return $html;
 	}
 
 	private function getForm(array $parameters)
@@ -292,8 +340,8 @@ class Processor
 		$logs = array();
 
 		$Agent->addListener(function($Event) use (&$logs) {
-			if ($Event->getType() == 'log') {
-				$logs[] = $Event->getContent();
+			if ($Event instanceof LogEvent) {
+				$logs = array_merge($logs, $Event->getParams());
 			}
 		});
 
@@ -311,10 +359,8 @@ class Processor
 
 		$answer = $Agent->answer($sentence);
 
-		return array(
-			'answer' => $answer,
-			'semantics' => $logs[0], # todo
-			'response' => 'response', # todo
-		);
+		$logs['answer'] = $answer;
+
+		return $logs;
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace agentecho\knowledge;
 
+use agentecho\component\LogEvent;
 use agentecho\datastructure\Constant;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Entity;
@@ -158,6 +159,8 @@ $b = (string)$Question;
 		$Query = $this->createDatabaseQuery($Relations);
 
 $sparql = (string)$Query;
+
+		$this->send(new LogEvent(array('query' => $Query)));
 
 		$resultSets = $this->processQuery($Query);
 
