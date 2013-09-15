@@ -50,11 +50,20 @@ body {
 .label {
 	color: blue;
 }
+.attribute {
+	color: #8470FF;
+}
 .value {
 	color: #EE2C2C;
 }
+.constant {
+	color: green;
+}
+.atom {
+	color: #CD7054;
+}
 .type {
-	color: #668B8B;
+	color: #3B3178;
 }
 
 .tab {
@@ -69,10 +78,10 @@ body {
 }
 
 .tabButton.active {
-	background-color: #FEE5AC;
+	background-color: #FEF1B5;
 
 }
 .tabRight {
-	background-color: #FEE5AC;
+	background-color: #FEF1B5;
 }
 

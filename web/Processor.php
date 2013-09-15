@@ -16,6 +16,8 @@ use agentecho\web\component\Raw;
 use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
+use agentecho\web\view\PhraseStructureView;
+use agentecho\web\view\PredicationListView;
 use agentecho\web\view\SyntaxView;
 
 require_once __DIR__ . '/../component/Autoload.php';
@@ -114,6 +116,12 @@ class Processor
 	{
 		if ($key == 'syntax') {
 			$View = new SyntaxView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'phraseSpecification') {
+			$View = new PhraseStructureView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'semantics') {
+			$View = new PredicationListView();
 			$html = $View->getHtml($value);
 		} elseif (is_array($value)) {
 			$html = $this->markUpRecursive($value, 0);

@@ -10,6 +10,7 @@ namespace agentecho\datastructure;
  */
 class PredicationList extends  Term
 {
+	/** @var Predication[] */
 	private $predications = array();
 
 	public function setPredications($predications)
@@ -17,6 +18,9 @@ class PredicationList extends  Term
 		$this->predications = $predications;
 	}
 
+	/**
+	 * @return Predication[]
+	 */
 	public function getPredications()
 	{
 		return $this->predications;
