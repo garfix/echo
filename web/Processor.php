@@ -64,6 +64,12 @@ class Processor
 			// http://www.clipartsalbum.com/?l=en-us&m=start&c=birds&s=lovebirds&p=1&t=20&q=&e=1&i=180727&r=6
 			$Bird->setSource('img/lovebird_balloon.jpg');
 
+			$Container->add($BirdEyes = new Image());
+			$BirdEyes->setId('birdEyes');
+			$BirdEyes->addClass('bird');
+			$BirdEyes->setSource('img/lovebird_eyes.png');
+			$BirdEyes->addStyle('display', 'none');
+
 			$Container->add($Text = new Div());
 			$Text->addClass('text');
 			$Text->addText($this->translate('Ask me something...'));

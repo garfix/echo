@@ -31,6 +31,14 @@ class HtmlElement
 		$this->attributes[$name] = $value;
 	}
 
+	public function addStyle($key, $value)
+	{
+		$this->attributes['style'] =
+			isset($this->attributes['style'])
+			? $this->attributes['style'] . ';' . $key . ':' . $value
+			: $key . ':' . $value;
+	}
+
 	/**
 	 * @param string $class
 	 */
