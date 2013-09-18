@@ -51,6 +51,7 @@ class LineEditor extends HtmlElement
 		$value = implode(',', $this->linePieces);
 
 		$LineEditor = new Div();
+		$LineEditor->setId($this->getId());
 		$LineEditor->addClass('lineEditor');
 		$LineEditor->setDataAttribute('data-language', $this->language);
 

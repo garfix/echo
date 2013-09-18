@@ -66,6 +66,16 @@ LineEditor.prototype.removeCell = function(cell)
 	}
 }
 
+LineEditor.prototype.removeAllCells = function()
+{
+	for (var i = 0; i < this.cells.length; i++) {
+		var cell = this.cells[i];
+		cell.remove();
+	}
+
+	this.cells = [];
+}
+
 LineEditor.prototype.updateInputValue = function(event)
 {
 	var value = '';
@@ -200,5 +210,20 @@ LineEditor.prototype.calculateWidth = function(text)
 	return this.sizeMeter.getWidth() + 6; // 2 x 3px padding
 }
 
+LineEditor.prototype.reset = function()
+{
+	this.removeAllCells();
+
+	// add an empty cell
+	var cell = this.createCell();
+	cell.setFocus();
+
+	// link popup to cell
+	this.popup.linkToCell(cell);
+}
+
 // create all line editors
-$$('div.lineEditor').each( function(editorElement){ new LineEditor(editorElement); } );
+$$('div.lineEditor').each( function(editorElement){
+	var ed = new LineEditor(editorElement);
+	editorElement.ed = ed;
+} );

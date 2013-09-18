@@ -13,6 +13,7 @@ use agentecho\web\component\Form;
 use agentecho\web\component\Image;
 use agentecho\web\component\Input;
 use agentecho\web\component\Raw;
+use agentecho\web\component\ResetButton;
 use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
@@ -110,8 +111,6 @@ class Processor
 	private function getSideTabs(array $response)
 	{
 		$SideTabs = new SideTabs();
-//		$SideTabs->addTab($this->translate('Semantics'), $response['semantics']);
-//		$SideTabs->addTab($this->translate('Response'), $response['response']);
 
 		foreach ($response as $key => $value) {
 			$SideTabs->addTab($key, $this->markUp($key, $value));
@@ -158,11 +157,15 @@ class Processor
 		$Form = new Form();
 		$Form->setMethodGet();
 
+			$Form->add($ResetButton = new ResetButton());
+			$ResetButton->setTitle($this->translate('Clear'));
+
 			$Form->add($Panel = new Div());
 			$Panel->addClass('editPanel');
 
 				$Panel->add($LineEditor = new LineEditor());
 				$LineEditor->setName('q');
+				$LineEditor->setId('lineEditor');
 				$LineEditor->setLanguage($this->language);
 
 				if (isset($parameters['q'])) {
@@ -171,13 +174,15 @@ class Processor
 					$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron', 'born'));
 				}
 
-				$Form->add($SubmitButton = new SubmitButton());
-				$SubmitButton->setTitle($this->translate('Ask'));
+			$Form->add($SubmitButton = new SubmitButton());
+			$SubmitButton->setTitle($this->translate('Ask'));
 
 			$Form->add($Language = new Input());
 			$Language->setType('hidden');
 			$Language->setName('language');
 			$Language->setValue($this->language);
+
+			$Form->onReset('$("lineEditor").ed.reset()');
 
 		return $Form;
 	}

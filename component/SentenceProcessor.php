@@ -317,7 +317,9 @@ $ruleSource = reset($ruleSources);
 		foreach ($knowledgeSources as $KnowledgeSource) {
 $a = (string)$ExpandedQuestion;
 
-			$KnowledgeSource->setEventManager($this->EventManager);
+			if (isset($this->EventManager)) {
+				$KnowledgeSource->setEventManager($this->EventManager);
+			}
 
 			try {
 				// execute the query

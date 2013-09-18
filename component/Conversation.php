@@ -48,7 +48,11 @@ class Conversation
 	public function answer($question)
 	{
 		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
-		$SentenceProcessor->setEventManager($this->EventManager);
+
+		if (isset($this->EventManager)) {
+			$SentenceProcessor->setEventManager($this->EventManager);
+		}
+
 		$answer = $SentenceProcessor->reply($question, $this->ConversationContext, $this->Parser);
 
 		return $answer;

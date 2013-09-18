@@ -13,4 +13,9 @@ class Form extends HtmlElement
 	{
 		$this->attributes['method'] = 'get';
 	}
+
+	public function onReset($javascript)
+	{
+		$this->attributes['onreset'] = $javascript;
+	}
 }
