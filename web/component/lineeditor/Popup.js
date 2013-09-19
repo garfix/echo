@@ -51,32 +51,32 @@ Popup.prototype.linkToCell = function(cell)
 Popup.prototype.populate = function(values, selectedText)
 {
 	var popup = this;
+	var count = 0;
 
 	this.clear();
 
-	if (values.length > 0) {
+	for (var name in values) {
+		var html = values[name];
 
-		for (var i = 0; i < values.length; i++) {
+		count++;
 
-			var value = values[i];
+		var item = new Element('li');
+		var link = new Element('a');
 
-			var item = new Element('li');
-			var link = new Element('a');
+		link.href = '';
 
-			link.href = '';
+		link.onclick = function(e) { popup.onClick(e); return false; }
+		link.onkeydown = function(e) { popup.onKeyDown(e); }
 
-			link.onclick = function(e) { popup.onClick(e); return false; }
-			link.onkeydown = function(e) { popup.onKeyDown(e); }
+		link.insert(html);
+		link.setAttribute('data-text', name);
 
-			var exp = new RegExp("\\b" + selectedText, 'i');
-			var boldValue = value.replace(exp, '<b>' + selectedText + '</b>');
-			link.insert(boldValue);
-			link.setAttribute('data-text', value);
+		item.appendChild(link);
+		this.ul.appendChild(item);
+	}
 
-			item.appendChild(link);
-			this.ul.appendChild(item);
-		}
 
+	if (count > 0) {
 		this.show();
 	} else {
 		this.hide();

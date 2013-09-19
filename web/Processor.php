@@ -249,6 +249,7 @@ class Processor
 		$wordIndex = count($inputWords) > 0 ? count($inputWords) - 1 : 0;
 		$sentenceArrays = $this->getSentenceWords($sentences[$language]);
 		$allowedSentences = $this->getAllowedSentences($sentenceArrays, $inputWords);
+		$actualWord = $inputWords[$wordIndex];
 
 		$suggests = array();
 		foreach ($allowedSentences as $allowedSentence) {
@@ -259,19 +260,21 @@ class Processor
 
 				if ($allowedWord == 'X') {
 
-					$actualWord = $inputWords[$wordIndex];
+					$names = $this->getNamesLike($actualWord);
+					if (empty($names)) {
+						$names = array('' => '<i>{Name famous person}</i>');
+					}
 
-					$suggests = array_merge($suggests, $this->getNamesLike($actualWord));
+					$suggests += $names;
 
 				} else {
-					$suggests[] = $allowedWord;
+					$html = preg_replace('/\b(' . $actualWord .  ')/iu', '<b>\1</b>', $allowedWord);
+					$suggests[$allowedWord] = $html;
 				}
 			}
 		}
 
 		header('Content-type: application/json');
-
-		$suggests = array_values(array_unique($suggests));
 
 		$response = array(
 			'suggests' => $suggests
@@ -338,7 +341,19 @@ class Processor
 		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/miu', $names, $results);
 		$names = $results[1];
 		$names = array_splice($names, 0, 20);
-		return $names;
+
+		$i = 0;
+		while ($i < count($names) && $i < 20) {
+
+			$name = $names[$i];
+
+			$html = preg_replace('/\b(' . $word .  ')/iu', '<b>\1</b>', $name);
+
+			$nameHtml[$name] = $html;
+			$i++;
+		}
+
+		return $nameHtml;
 	}
 
 	private function getResponse($sentence)
