@@ -205,9 +205,11 @@ class Processor
 				'Ask' => 'Vraag',
 				'Question' => 'Vraag',
 				'Answer' => 'Antwoord',
+				'Clear' => 'Nieuw',
 				'Response' => 'Antwoord',
 				'Semantics' => 'Semantiek',
 				'Ask me something...' => 'Vraag maar wat...',
+				'{Name famous person}' => '{Naam beroemd persoon}',
 			)
 		);
 
@@ -249,7 +251,7 @@ class Processor
 		$wordIndex = count($inputWords) > 0 ? count($inputWords) - 1 : 0;
 		$sentenceArrays = $this->getSentenceWords($sentences[$language]);
 		$allowedSentences = $this->getAllowedSentences($sentenceArrays, $inputWords);
-		$actualWord = $inputWords[$wordIndex];
+		$actualWord = empty($inputWords) ? '' : $inputWords[$wordIndex];
 
 		$suggests = array();
 		foreach ($allowedSentences as $allowedSentence) {
@@ -262,7 +264,7 @@ class Processor
 
 					$names = $this->getNamesLike($actualWord);
 					if (empty($names)) {
-						$names = array('' => '<i>{Name famous person}</i>');
+						$names = array('' => '<i>' . $this->translate('{Name famous person}') . '</i>');
 					}
 
 					$suggests += $names;

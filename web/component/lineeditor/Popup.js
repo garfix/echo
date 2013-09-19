@@ -97,7 +97,11 @@ Popup.prototype.onClick = function(event)
 	var anchor = event.findElement('a');
 	var text = anchor.getAttribute('data-text');
 
-	this.selectValue(text);
+	if (text != '') {
+		this.selectValue(text);
+	} else {
+		this.cell.setFocus();
+	}
 }
 
 Popup.prototype.onKeyDown = function(event)

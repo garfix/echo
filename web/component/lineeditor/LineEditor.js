@@ -26,9 +26,6 @@ LineEditor.prototype.init = function()
 	// add an empty cell
 	var cell = this.createCell();
 	cell.setFocus();
-
-	// link popup to cell
-	this.popup.linkToCell(cell);
 }
 
 LineEditor.prototype.getLinePieces = function()
@@ -216,10 +213,11 @@ LineEditor.prototype.reset = function()
 
 	// add an empty cell
 	var cell = this.createCell();
-	cell.setFocus();
 
 	// link popup to cell
 	this.popup.linkToCell(cell);
+
+	cell.setFocus();
 }
 
 // create all line editors
@@ -227,3 +225,13 @@ $$('div.lineEditor').each( function(editorElement){
 	var ed = new LineEditor(editorElement);
 	editorElement.ed = ed;
 } );
+
+// hide popups when clicked outside editor
+document.observe('click', function(event) {
+
+	var input = event.findElement('input');
+	if (!input || !input.hasClassName('cell')) {
+		$$('div.lineEditor').each( function(editorElement){ editorElement.ed.popup.hide(); });
+	}
+
+});
