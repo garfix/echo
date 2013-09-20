@@ -264,7 +264,7 @@ class Processor
 
 					$names = $this->getNamesLike($actualWord);
 					if (empty($names)) {
-						$names = array('' => '<i>' . $this->translate('{Name famous person}') . '</i>');
+						$names = array('' => "<span class='wordTypeSuggest'>" . $this->translate('{Name famous person}') . '</span>');
 					}
 
 					$suggests += $names;
@@ -339,17 +339,20 @@ class Processor
 			return array();
 		}
 
+		$escapedWord = preg_replace('/([().])/', '\\\\$1', $word);
+
 		$names = file_get_contents('/home/patrick/Desktop/names.csv');
-		preg_match_all('/^([^\n]*\b' . $word . '[^\n]*)$/miu', $names, $results);
+		preg_match_all('/^([^\n]*\b' . $escapedWord . '[^\n]*)$/miu', $names, $results);
 		$names = $results[1];
 		$names = array_splice($names, 0, 20);
 
 		$i = 0;
+		$nameHtml = array();
 		while ($i < count($names) && $i < 20) {
 
 			$name = $names[$i];
 
-			$html = preg_replace('/\b(' . $word .  ')/iu', '<b>\1</b>', $name);
+			$html = preg_replace('/\b(' . $escapedWord .  ')/iu', '<b>\1</b>', $name);
 
 			$nameHtml[$name] = $html;
 			$i++;

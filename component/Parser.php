@@ -105,8 +105,6 @@ class Parser
 
 		// all grammars failed; throw the first exception
 		throw $Exception;
-
-		return $sentences;
 	}
 
 	/**
