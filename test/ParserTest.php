@@ -126,15 +126,21 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Parser->parseFirstLine("Ik ben 43 jaar oud.");
 		$this->assertSame('[S [NP [pronoun ik]][VP [copula ben][AP [NP [DP [numeral 43]][NBar [noun jaar]]][adjective oud]]]]', $Sentence->getSyntaxString());
-//		$this->assertSame('#', $Sentence->getObjectString());
 		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.event, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
 
 		$Parser->setGrammars(array(new EnglishGrammar()));
 
 		$Sentence = $Parser->parseFirstLine("I am 43 years old.");
 		$this->assertSame('[S [NP [pronoun i]][VP [copula am][AP [NP [DP [numeral 43]][NBar [noun years]]][adjective old]]]]', $Sentence->getSyntaxString());
-//		$this->assertSame('#', $Sentence->getObjectString());
 		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.event, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
 	}
 
+	public function testParseQuotes()
+	{
+		$Parser = new Parser();
+		$Parser->setGrammars(array(new EnglishGrammar()));
+
+		$Sentence = $Parser->parseFirstLine('I am "Patrick (Garfix) van Bergen"');
+		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [PN [propernoun Patrick (Garfix) van Bergen]]]]]', $Sentence->getSyntaxString());
+	}
 }

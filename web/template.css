@@ -1,6 +1,7 @@
 body {
 	background-color: white;
 	font-family: sans-serif;
+	font-size: 16px;
 }
 
 .container {
@@ -13,8 +14,8 @@ body {
 
 .bird {
 	position: absolute;
-	left: 0px;
-	top: 0px;
+	left: 0;
+	top: 0;
 	width: 502px;
 	height: 371px;
 }
@@ -25,12 +26,21 @@ body {
 	top: 75px;
 }
 
-.interaction {
-	position: absolute;
-	left: 270px;
-	top: 250px;
+.form {
+	padding-bottom: 30px;
 }
 
+.interaction {
+	position: absolute;
+	background-color: #FFCC99;
+	padding: 20px 20px 0 20px;
+	width: 910px;
+	left: 250px;
+	top: 250px;
+}
+.form .editPanel {
+	width: 750px;
+}
 .question {
 	font-weight: bold;
 	color: orangered;
@@ -40,22 +50,25 @@ body {
 .answer {
 	font-weight: bold;
 	color: green;
-	margin-top: 30px;
 	margin-bottom: 5px;
+}
+.answerText {
+	font-size: 24px;
 }
 
 .editPanel {
 	width: 600px;
 	display: inline-block;
 	border: 1px solid #a0a0a0;
+	background-color: white;
 }
 
 .tab {
 	position: absolute;
-	left: 0px;
-	top: 420px;
-	margin-top: 30px;
-	padding: 3px;
+	width: 1200px;
+	left: 0;
+	margin-top: 25px;
+	margin-left: -270px;
 }
 
 .tabLeft a {
@@ -69,8 +82,8 @@ body {
 }
 .tabRight {
 	background-color: #FEF1B5;
-	margin: 0px;
-	padding: 10px;
+	margin: 0;
+	padding: 20px;
 	height: 300px;
 	overflow: auto;
 }
@@ -101,5 +114,26 @@ body {
 }
 .wordTypeSuggest {
 	font-style: italic;
-	color: #c0c0c0;
+	color: #a0a0a0;
+}
+
+button{
+	color: white;
+	padding:4px;
+	background-color: orangered;
+	border:1px solid #ffcc00;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border-bottom:1px solid #9f9f9f;
+	cursor:pointer;
+}
+
+button:hover {
+	background-color:rgba(255,204,0,0.8);
+}
+
+button:active {
+	position:relative;
+	top:2px;
 }

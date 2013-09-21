@@ -92,9 +92,11 @@ class Processor
 			$Answer->addClass('answer');
 			$Answer->addText($this->translate('Answer'));
 
-			$Interaction->addText($response['answer']);
+			$Interaction->add($AnswerText = new Div());
+			$AnswerText->addText($response['answer']);
+			$AnswerText->addClass('answerText');
 
-			$Container->add($this->getSideTabs($response));
+			$Interaction->add($this->getSideTabs($response));
 		}
 
 		$tokens = array(
@@ -111,6 +113,7 @@ class Processor
 	private function getSideTabs(array $response)
 	{
 		$SideTabs = new SideTabs();
+		$SideTabs->setTabWidth(250);
 
 		foreach ($response as $key => $value) {
 			$SideTabs->addTab($key, $this->markUp($key, $value));
@@ -155,6 +158,7 @@ class Processor
 	private function getForm(array $parameters)
 	{
 		$Form = new Form();
+		$Form->addClass('form');
 		$Form->setMethodGet();
 
 			$Form->add($ResetButton = new ResetButton());

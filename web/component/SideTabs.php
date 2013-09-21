@@ -11,6 +11,8 @@ class SideTabs extends HtmlElement
 
 	private $activeTab = 0;
 
+	private $tabWidth = 200;
+
 	public function __construct()
 	{
 		$this->setId('sideTabs');
@@ -25,6 +27,11 @@ class SideTabs extends HtmlElement
 		);
 	}
 
+	public function setTabWidth($tabWidth)
+	{
+		$this->tabWidth = $tabWidth;
+	}
+
 	public function setActiveTab($index)
 	{
 		$this->activeTab = $index;
@@ -37,10 +44,12 @@ class SideTabs extends HtmlElement
 
 		$Left = new Div();
 		$Left->addClass('tabLeft');
+		$Left->addStyle('width', $this->tabWidth . 'px');
 		$Tabs->add($Left);
 
 		$Right = new Div();
 		$Right->addClass('tabRight');
+		$Right->addStyle('margin-left', $this->tabWidth . 'px');
 		$Tabs->add($Right);
 
 		foreach ($this->tabs as $index => $tab) {

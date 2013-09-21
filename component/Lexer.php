@@ -18,9 +18,6 @@ class Lexer
 	const ELLIPSIS = '*** ELLIPSIS';
 	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR';
 
-	/** The maximum number of words that a proper noun may take */
-	const LONGEST_PROPER_NOUN = 7;
-
 	/**
 	 * Analyses a raw $string and places the result in $Sentence.
 	 *

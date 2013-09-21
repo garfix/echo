@@ -4,11 +4,9 @@
 
 .tabLeft {
 	position: absolute;
-	width: 200px;
 }
 
 .tabRight {
-	margin-left: 200px;
 }
 
 .tabButton {
