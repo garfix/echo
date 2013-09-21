@@ -13,11 +13,6 @@ use \agentecho\grammar\Grammar;
  */
 class Lexer
 {
-	const END_OF_LINE = '** EOL';
-	const INDIGNATION = '** INDIGNATION';
-	const ELLIPSIS = '*** ELLIPSIS';
-	const UNKNOWN_TERMINATOR = '*** UNKNOWN TERMINATOR';
-
 	/**
 	 * Analyses a raw $string and places the result in $Sentence.
 	 *
@@ -51,12 +46,18 @@ class Lexer
 
 		$index = 0;
 		$words = array();
-		while (($token = $this->getNextToken($input, $index)) != self::END_OF_LINE) {
+		$isTerminator = false;
+		while (($token = $this->getNextToken($input, $index, $isTerminator)) && !$isTerminator) {
 
 			// sentence terminators
-			if (in_array($token, array('.', '!', '?', self::INDIGNATION, self::UNKNOWN_TERMINATOR))) {
+			if ($isTerminator) {
 				$terminator = $token;
 				break;
+			}
+
+			// quotes
+			if (preg_match('/^"[^"]*"$/', $token, $matches)) {
+				$token = substr($token, 1, strlen($token) - 2);
 			}
 
 			// skip comma's for now
@@ -135,54 +136,39 @@ class Lexer
 		return true;
 	}
 
-	private function getNextToken($string, &$index)
+	private function getNextToken($string, &$index, &$isTerminator)
 	{
-		$token = '';
 		$length = strlen($string);
-
 		if ($index == $length) {
-			return self::END_OF_LINE;
+			$isTerminator = true;
+			return '';
 		}
 
-		// parse the actual characters
-		while ($index < $length) {
-			$c = $string[$index];
-			if (strpos('.,?! ', $c) !== false) {
+		$char = substr($string, $index, 1);
+
+		switch ($char) {
+
+			case '"':
+				preg_match('/("[^"]*")/', $string, $matches, 0, $index);
+				$token = $matches[1];
 				break;
-			}
-			$token .= $c;
-			$index++;
+			case ',':
+				$token = $char;
+				break;
+			case '.':
+			case '!':
+			case '?':
+				preg_match('/([.?!]+)/', $string, $matches, 0, $index);
+				$token = $matches[1];
+				$isTerminator = true;
+				break;
+			default:
+				preg_match('/([^\s",.!?]+)/', $string, $matches, 0, $index);
+				$token = $matches[1];
+				break;
 		}
 
-		// parse comma's, points, etc
-		if ($token === '') {
-			while ($index < $length) {
-				$c = $string[$index];
-				if (strpos('.,?!', $c) === false) {
-					break;
-				}
-				$token .= $c;
-				$index++;
-			}
-
-			// turn combinations into tokens
-			$len = strlen($token);
-			if ($len > 1) {
-		 		if (substr_count($token, '.') == $len) {
-		 			$token = self::ELLIPSIS;
-		 		} elseif (substr_count($token, ',') == $len) {
-		 			$token = ',';
-		 		} else {
-					$apoCount = substr_count($token, '!');
-					$questionCount = substr_count($token, '?');
-					if ($apoCount > 1 || $questionCount > 1 || ($apoCount && $questionCount)) {
-						$token = self::INDIGNATION;
-					} else {
-						$token = self::UNKNOWN_TERMINATOR;
-					}
-		 		}
-			}
-		}
+		$index += strlen($token);
 
 		// strip whitespace
 		while ($index < $length) {
