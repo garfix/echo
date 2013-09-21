@@ -34,6 +34,8 @@ class Processor
 
 	function run(array $parameters)
 	{
+		mb_internal_encoding ('UTF-8');
+
 		// language
 		if (isset($parameters['language'])) {
 			$this->language = $parameters['language'];
@@ -86,7 +88,20 @@ class Processor
 
 		if (isset($parameters['q'])) {
 
-			$response = $this->getResponse(implode(' ', explode(',', $parameters['q'])));
+			$data = explode(LineEditor::SEPARATOR, $parameters['q']);
+			$lexemes = array();
+
+			foreach ($data as $value) {
+				if (preg_match('/[ ,\-()]/', $value, $matches)) {
+					$lexemes[] = '"' . $value . '"';
+				} else {
+					$lexemes[] = $value;
+				}
+			}
+
+			$sentence = implode(' ', $lexemes);
+
+			$response = $this->getResponse($sentence);
 
 			$Interaction->add($Answer = new Div());
 			$Answer->addClass('answer');
@@ -173,7 +188,7 @@ class Processor
 				$LineEditor->setLanguage($this->language);
 
 				if (isset($parameters['q'])) {
-					$LineEditor->setLinePieces(explode(',', $parameters['q']));
+					$LineEditor->setLinePieces(explode(LineEditor::SEPARATOR, $parameters['q']));
 				} else {
 					$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron', 'born'));
 				}
@@ -249,7 +264,7 @@ class Processor
 		if ($params['value'] == '') {
 			$inputWords = array();
 		} else {
-			$inputWords = explode(',', $params['value']);
+			$inputWords = explode(LineEditor::SEPARATOR, $params['value']);
 		}
 
 		$wordIndex = count($inputWords) > 0 ? count($inputWords) - 1 : 0;

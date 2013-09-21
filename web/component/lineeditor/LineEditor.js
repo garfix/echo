@@ -10,6 +10,8 @@ function LineEditor(editorElement)
 	this.init();
 }
 
+LineEditor.SEPARATOR = '~';
+
 LineEditor.prototype.init = function()
 {
 	// hide the element that contains the full value to be submitted
@@ -33,7 +35,7 @@ LineEditor.prototype.getLinePieces = function()
 	if (this.formElement.value == '') {
 		return [];
 	} else {
-		return this.formElement.value.split(',');
+		return this.formElement.value.split(LineEditor.SEPARATOR);
 	}
 }
 
@@ -86,7 +88,7 @@ LineEditor.prototype.updateInputValue = function(event)
 		}
 
 		if (i > 0) {
-			value += ',';
+			value += LineEditor.SEPARATOR;
 		}
 
 		value += text;
@@ -126,7 +128,7 @@ LineEditor.prototype.getWordsUpTo = function(index)
 		var text = cell.getText();
 
 		if (i > 0) {
-			words += ',';
+			words += LineEditor.SEPARATOR;
 		}
 
 		words += text;

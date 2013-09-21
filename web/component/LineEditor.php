@@ -8,6 +8,7 @@ namespace agentecho\web\component;
 class LineEditor extends HtmlElement
 {
 	const MAX_WORD_COUNT = 20;
+	const SEPARATOR = '~';
 
 	private $name = 'lineEditor';
 
@@ -48,7 +49,7 @@ class LineEditor extends HtmlElement
 
 	public function __toString()
 	{
-		$value = implode(',', $this->linePieces);
+		$value = implode(self::SEPARATOR, $this->linePieces);
 
 		$LineEditor = new Div();
 		$LineEditor->setId($this->getId());
