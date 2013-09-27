@@ -2,6 +2,8 @@
 
 namespace agentecho\component;
 
+use agentecho\exception\EchoException;
+use agentecho\exception\NoSemanticsAtTopLevelException;
 use \agentecho\grammar\Grammar;
 use \agentecho\component\Lexer;
 use \agentecho\datastructure\SentenceContext;
@@ -142,13 +144,11 @@ class Parser
 
 		if (!$result['success']) {
 
-			$E = new ParseException(ParseException::COULD_NOT_PARSE, $Sentence->lexicalItems, $result['lastParsedIndex'] - 1);
-
-			throw $E;
+			throw new ParseException(implode(' ', array_slice($Sentence->lexicalItems, $result['lastParsedIndex'] - 1, 4)));
 		}
 
 		if ($result['tree']['semantics'] === null) {
-			throw new ParseException(ParseException::NO_SEMANTICS_AT_TOP_LEVEL);
+			throw new NoSemanticsAtTopLevelException();
 		}
 
 		$phraseSpecification = $Sentence->getPhraseSpecification();
@@ -186,7 +186,7 @@ class Parser
 				$func = 'set' . $name;
 
 				if (!$value) {
-					throw new \Exception($name . ' has no value');
+					throw new EchoException($name . ' has no value');
 				}
 
 				$Entity = $this->buildObjectStructure($value);

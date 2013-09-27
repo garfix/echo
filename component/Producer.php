@@ -228,9 +228,7 @@ $words = $lexicalItems;
 		$generationRules = $Grammar->getGenerationRulesForAntecedent($antecedent);
 
 		if (empty($generationRules)) {
-			$E = new ProductionException(ProductionException::TYPE_UNKNOWN_CONSTITUENT);
-			$E->setValue($antecedent);
-			throw $E;
+			throw new ProductionException($antecedent);
 		}
 
 		foreach ($generationRules as $GenerationRule) {

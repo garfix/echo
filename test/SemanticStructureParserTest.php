@@ -333,30 +333,30 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	public function testTokenizerFail()
 	{
 		$Parser = new SemanticStructureParser();
-		$pos = false;
+		$caught = false;
 
 		try {
 			$string = 'name#';
 			$Parser->parse($string);
 		} catch (SemanticStructureParseException $E) {
-			$pos = $E->pos;
+			$caught = true;
 		}
 
-		$this->assertEquals(4, $pos);
+		$this->assertTrue($caught);
 	}
 
 	public function testParseFail()
 	{
 		$Parser = new SemanticStructureParser();
-		$pos = false;
+		$caught = false;
 
 		try {
 			$string = 'name(?a) and ()';
 			$Parser->parse($string);
 		} catch (SemanticStructureParseException $E) {
-			$pos = $E->pos;
+			$caught = true;
 		}
 
-		$this->assertEquals(13, $pos);
+		$this->assertTrue($caught);
 	}
 }

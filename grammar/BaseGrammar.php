@@ -15,6 +15,7 @@ use agentecho\datastructure\Property;
 use agentecho\datastructure\Atom;
 use agentecho\exception\ProductionException;
 use agentecho\datastructure\Lexicon;
+use agentecho\exception\WordNotFoundException;
 
 /**
  * This class contains some basic grammar functions.
@@ -238,9 +239,7 @@ abstract class BaseGrammar implements Grammar
 		} else {
 			$word = $this->Lexicon->getWordForFeatures($partOfSpeech, $features);
 			if (!$word) {
-				$E = new ProductionException(ProductionException::TYPE_WORD_NOT_FOUND_FOR_PARTOFSPEECH);
-				$E->setValue($partOfSpeech);
-				throw $E;
+				throw new WordNotFoundException($partOfSpeech);
 			}
 		}
 

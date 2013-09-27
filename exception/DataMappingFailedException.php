@@ -7,18 +7,5 @@ namespace agentecho\exception;
  */
 class DataMappingFailedException extends EchoException
 {
-	const ERROR = 'These predications could not be mapped to relations: %s';
-
-	private $missingPredications;
-
-	public function __construct($missingPredications)
-	{
-		$this->missingPredications = $missingPredications;
-		$this->message = self::ERROR;
-	}
-
-	public function __toString()
-	{
-		return sprintf($this->getMessage(), $this->missingPredications);
-	}
+	protected $messageText = 'These predications could not be mapped to relations: %s';
 }

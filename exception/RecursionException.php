@@ -7,5 +7,5 @@ namespace agentecho\exception;
  */
 class RecursionException extends EchoException
 {
-
+	protected $messageText = 'Too much recursion when binding predications.';
 }

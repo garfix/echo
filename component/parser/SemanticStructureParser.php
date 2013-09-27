@@ -77,7 +77,7 @@ class SemanticStructureParser
 		// name(a, "John") and name(b, "Mary") and love(a, b)
 		$tokens = $this->tokenize($string);
 		if (!$tokens) {
-			throw new SemanticStructureParseException($this->lastPosParsed, $string);
+			throw new SemanticStructureParseException(substr($string, $this->lastPosParsed, 40));
 		}
 
 		$pos = 0;
@@ -105,7 +105,7 @@ class SemanticStructureParser
 
 			$stringPos = strlen($subString);
 
-			throw new SemanticStructureParseException($stringPos, $string);
+			throw new SemanticStructureParseException(substr($string, $stringPos, 40));
 		}
 	}
 

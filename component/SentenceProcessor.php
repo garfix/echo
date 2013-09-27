@@ -4,6 +4,7 @@ namespace agentecho\component;
 
 use agentecho\component\KnowledgeManager;
 use agentecho\datastructure\ConversationContext;
+use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Entity;
 use agentecho\phrasestructure\Adverb;
@@ -302,7 +303,7 @@ $ruleSource = reset($ruleSources);
 		$this->send(new LogEvent(array('bindings' => $bindings)));
 
 		if (count($bindings) > 1) {
-			throw new ParseException(ParseException::DB_MORE_THAN_ONE_RESULT);
+			throw new DataBaseMultipleResultsException();
 		}
 
 		return !empty($bindings);

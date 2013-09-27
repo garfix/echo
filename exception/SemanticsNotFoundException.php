@@ -7,18 +7,5 @@ namespace agentecho\exception;
  */
 class SemanticsNotFoundException extends EchoException
 {
-	const SEMANTIC = 'No semantic attachment was defined for "%s" in the lexicon';
-
-	private $lexicalItem = null;
-
-	public function __construct($lexicalItem)
-	{
-		$this->lexicalItem = $lexicalItem;
-		$this->message = self::SEMANTIC;
-	}
-
-	public function __toString()
-	{
-		return sprintf($this->getMessage(), $this->lexicalItem);
-	}
+	protected $messageText = 'No semantic attachment was defined for "%s" in the lexicon';
 }
