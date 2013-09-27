@@ -116,7 +116,7 @@ class SentenceProcessor
 			$result = $this->answerYesNoQuestionWithSemantics($Semantics);
 
 			if ($result) {
-				$Answer = $Sentence;
+				$Answer = $Sentence->createClone();
 
 				$Adverb = new Adverb();
 				$Adverb->setCategory('yes');
@@ -133,7 +133,7 @@ class SentenceProcessor
 
 				$answer = reset($answer);
 
-				$Answer = $Sentence;
+				$Answer = $Sentence->createClone();
 
 				#todo: this should be made more generic
 

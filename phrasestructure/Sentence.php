@@ -2,9 +2,9 @@
 
 namespace agentecho\phrasestructure;
 
-use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Clause;
-use \agentecho\exception\SentenceException;
+use agentecho\phrasestructure\PhraseStructure;
+use agentecho\phrasestructure\Clause;
+use agentecho\exception\SentenceException;
 
 /**
  * A syntactic-semantic construction that results from a parse process and

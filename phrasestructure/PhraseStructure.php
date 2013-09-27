@@ -72,6 +72,29 @@ abstract class PhraseStructure
 		return $this->data;
 	}
 
+	public function setAttributes(array $attributes)
+	{
+		$this->data = array_merge($this->data, $attributes);
+	}
+
+	public function createClone()
+	{
+		$newData = array();
+
+		foreach ($this->data as $key => $value) {
+			if (is_object($value)) {
+				$newData[$key] = $value->createClone();
+			} else {
+				$newData[$key] = $value;
+			}
+		}
+
+		$Clone = clone $this;
+		$Clone->setAttributes($newData);
+
+		return $Clone;
+	}
+
 	/**
 	 * Perform $function on this node and all its children.
 	 * @param $function A function like f(PhraseStructure)
