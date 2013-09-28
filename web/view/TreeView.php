@@ -37,6 +37,21 @@ class TreeView
 		return "<span class='condition'>" . $value . "</span>";
 	}
 
+	protected function markAsFunction($value)
+	{
+		return "<span class='function'>" . $value . "</span>";
+	}
+
+	protected function markAsFile($value)
+	{
+		return "<span class='file'>" . $value . "</span>";
+	}
+
+	protected function markAsException($value)
+	{
+		return "<span class='exception'>" . $value . "</span>";
+	}
+
 	protected function markAsValue($value)
 	{
 		if ($value === '') {

@@ -17,6 +17,7 @@ use agentecho\web\component\ResetButton;
 use agentecho\web\component\SideTabs;
 use agentecho\web\component\SubmitButton;
 use agentecho\web\component\LineEditor;
+use agentecho\web\view\BackTraceView;
 use agentecho\web\view\BindingsView;
 use agentecho\web\view\PhraseStructureView;
 use agentecho\web\view\PredicationListView;
@@ -162,6 +163,9 @@ class Processor
 			$html = $View->getHtml($value);
 		} elseif ($key == 'bindings') {
 			$View = new BindingsView();
+			$html = $View->getHtml($value);
+		} elseif ($key == 'backtrace') {
+			$View = new BackTraceView();
 			$html = $View->getHtml($value);
 		} else {
 			$html = htmlspecialchars($value);

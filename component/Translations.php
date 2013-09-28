@@ -11,6 +11,9 @@ class Translations
 		'Generation exception: unknown constituent: %s' => array(
 		),
 		'Generation exception: could not find a word for the part-of-speech: %s' => array(
+		),
+		'Could not parse the part that starts with "%s"' => array(
+			'nl'=> 'Ik kon het deel niet parsen dat start met "%s"'
 		)
 	);
 

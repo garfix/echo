@@ -109,6 +109,15 @@ body {
 .condition {
 	color: #DC143C;
 }
+.function {
+	color: #0099CC;
+}
+.file {
+	color: #668B8B;
+}
+.exception {
+	color: #DC143C;
+}
 .type {
 	color: #3B3178;
 }

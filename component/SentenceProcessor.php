@@ -88,18 +88,32 @@ class SentenceProcessor
 			// substitute proper nouns by pronouns
 #todo
 
-		} catch (EchoException $E) {
+		}
+		catch (EchoException $E) {
 
 			if ($E instanceof EchoException) {
 				$translatedMessage = Translations::translate($E->getMessageText(), $Parser->getCurrentGrammar()->getLanguageCode());
 				$E->setMessageText($translatedMessage);
-				$E->buildMessage();
 			}
+
+			$this->send(new LogEvent(array('backtrace' => $this->getFullTrace($E))));
 
 			$answer = $E->getMessage();
 		}
 
 		return $answer;
+	}
+
+	private function getFullTrace(\Exception $E)
+	{
+		$topLevel = array(
+			'file' => $E->getFile(),
+			'line' => $E->getLine(),
+			'class' => get_class($E),
+			'function' => ''
+		);
+
+		return array_merge(array($topLevel), $E->getTrace());
 	}
 
 	/**
