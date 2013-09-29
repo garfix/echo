@@ -43,7 +43,7 @@ use agentecho\component\DataMapper;
  */
 class AgentEcho
 {
-	/** @var A manager for knowledge sources */
+	/** @var KnowledgeManager A manager for knowledge sources */
 	private $KnowledgeManager;
 
 	/** @var Parser */
@@ -66,11 +66,6 @@ class AgentEcho
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
 		$this->KnowledgeManager->addKnowledgeSource($KnowledgeSource);
-	}
-
-	public function addRuleSource(RuleSource $RuleSource)
-	{
-		$this->KnowledgeManager->addRuleSource($RuleSource);
 	}
 
 	public function addElaborator(DataMapper $Elaborator)

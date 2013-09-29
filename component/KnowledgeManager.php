@@ -5,18 +5,16 @@ namespace agentecho\component;
 use agentecho\knowledge\KnowledgeSource;
 use agentecho\phrasestructure\Sentence;
 use agentecho\component\DataMapper;
-use agentecho\knowledge\RuleSource;
 
 /**
  * This object provides a single interface for multiple KnowledgeSources.
  */
 class KnowledgeManager
 {
-	/** @var Sources of information that are needed to answer questions */
+	/** @var KnowledgeSource[] Sources of information that are needed to answer questions */
 	private $knowledgeSources = array();
 
-	private $ruleSources = array();
-
+	/** @var DataMapper[] Rulesets that map semantics to semantics */
 	private $elaborators = array();
 
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
@@ -30,16 +28,6 @@ class KnowledgeManager
 	public function getKnowledgeSources()
 	{
 		return $this->knowledgeSources;
-	}
-
-	public function addRuleSource(RuleSource $RuleSource)
-	{
-		$this->ruleSources[] = $RuleSource;
-	}
-
-	public function getRuleSources()
-	{
-		return $this->ruleSources;
 	}
 
 	public function addElaborator(DataMapper $Elaborator)
