@@ -7,7 +7,7 @@ use agentecho\phrasestructure\Sentence;
 use agentecho\component\DataMapper;
 
 /**
- * This object provides a single interface for multiple KnowledgeSources.
+ * This object provides a single interface for multiple knowledge sources and data mappers.
  */
 class KnowledgeManager
 {
@@ -17,6 +17,9 @@ class KnowledgeManager
 	/** @var DataMapper[] Rulesets that map semantics to semantics */
 	private $elaborators = array();
 
+	/**
+	 * @param KnowledgeSource $KnowledgeSource
+	 */
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
 		$this->knowledgeSources[] = $KnowledgeSource;
@@ -30,37 +33,19 @@ class KnowledgeManager
 		return $this->knowledgeSources;
 	}
 
+	/**
+	 * @param DataMapper $Elaborator
+	 */
 	public function addElaborator(DataMapper $Elaborator)
 	{
 		$this->elaborators[] = $Elaborator;
 	}
 
+	/**
+	 * @return DataMapper[]
+	 */
 	public function getElaborators()
 	{
 		return $this->elaborators;
-	}
-
-    public function checkQuestion(Sentence $Sentence)
-   	{
-   		foreach ($this->knowledgeSources as $KnowledgeSource) {
-   			$result = $KnowledgeSource->checkQuestion($Sentence);
-   			if ($result !== false) {
-   				return $result;
-   			}
-   		}
-
-   		return false;
-   	}
-
-	public function answerQuestion(Sentence $Sentence)
-	{
-		foreach ($this->knowledgeSources as $KnowledgeSource) {
-			$result = $KnowledgeSource->answerQuestion($Sentence);
-			if ($result !== false) {
-				return $result;
-			}
-		}
-
-		return false;
 	}
 }

@@ -6,6 +6,8 @@ use agentecho\grammar\DutchGrammar;
 use agentecho\grammar\EnglishGrammar;
 
 /**
+ * Constructs grammars and stores them. They are heavy to create.
+ *
  * @author Patrick van Bergen
  */
 class GrammarFactory

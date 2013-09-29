@@ -285,7 +285,7 @@ $sparql = (string)$Query;
 		}
 	}
 
-	public function processQuery(SparqlQuery $Query)
+	private function processQuery(SparqlQuery $Query)
 	{
 		$result = $this->queryDBPedia((string)$Query);
 		return $result;
