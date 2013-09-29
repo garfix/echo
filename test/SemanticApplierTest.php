@@ -4,6 +4,7 @@ namespace agentecho\test;
 
 use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\SemanticApplier;
+use agentecho\datastructure\AssignmentList;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
@@ -58,7 +59,27 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('name(S.subject, "John") and isa(S.object, Car) and isa(S.event, Drive) and subject(S.event, S.subject) and object(S.event, S.object)', (string)$Result);
 	}
 
-	public function testChildAssignments()
+	public function testChildAssignmentsSingleOperand()
+	{
+		$Parser = new SemanticStructureParser();
+		$Applier = new SemanticApplier();
+
+		/** @var AssignmentList $Rule  */
+		$Rule = $Parser->parse("{
+			PN.sem = name(PN.object, propernoun1.text);
+			PN.object = propernoun1.object
+		}");
+
+		$childNodeTexts = array(
+			'propernoun1' => 'John'
+		);
+
+		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
+
+		$this->assertSame('name(PN.object, "John")', (string)$Result);
+	}
+
+	public function testChildAssignmentsTwoOperands()
 	{
 		$Parser = new SemanticStructureParser();
 		$Applier = new SemanticApplier();
@@ -78,5 +99,29 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
 
 		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
+	}
+
+	public function testChildAssignmentsThreeOperands()
+	{
+		$Parser = new SemanticStructureParser();
+		$Applier = new SemanticApplier();
+
+		/** @var AssignmentList $Rule  */
+		$Rule = $Parser->parse("{
+			PN.sem = name(PN.object, propernoun1.text + ' ' + propernoun2.text + ' ' + propernoun3.text);
+			PN.object = propernoun1.object;
+			PN.object = propernoun2.object;
+			PN.object = propernoun3.object
+		}");
+
+		$childNodeTexts = array(
+			'propernoun1' => 'Patrick',
+			'propernoun2' => 'van',
+			'propernoun3' => 'Bergen',
+		);
+
+		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
+
+		$this->assertSame('name(PN.object, "Patrick van Bergen")', (string)$Result);
 	}
 }

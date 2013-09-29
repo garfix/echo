@@ -5,6 +5,7 @@ namespace agentecho\component;
 use agentecho\component\KnowledgeManager;
 use agentecho\datastructure\ConversationContext;
 use agentecho\exception\DataBaseMultipleResultsException;
+use agentecho\exception\NoBindingsException;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Entity;
 use agentecho\phrasestructure\Adverb;
@@ -269,7 +270,7 @@ class SentenceProcessor
 
 		} else {
 
-			$response = null;
+			throw new NoBindingsException();
 
 		}
 

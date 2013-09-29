@@ -34,7 +34,7 @@ class PredicationListView extends TreeView
 				$attributeHtml[] = ' ' . $valueHtml . ' ';
 			}
 
-			$html .= $this->markAsType($Predication->getPredicate()) . '(' . implode(',', $attributeHtml) . ')' . $this->eol();
+			$html .= $this->markAsType($Predication->getPredicate()) . ' (' . implode(',', $attributeHtml) . ')' . $this->eol();
 		}
 
 		return $html;

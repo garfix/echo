@@ -474,16 +474,16 @@ VPQ => verb AP,
 // Proper Name
 
 [
-	// John
+	// John, "Lord Byron (the first)"
 
 	rule:
         PN => propernoun,
     features: {
-        PN: { head: ?h1 { syntax: { type: 'entity' } } },
-        propernoun: { head: ?h1 }
+        PN: { head: { syntax: { type: 'entity', name: ?name } } },
+        propernoun: { head: { syntax: { name: ?name } } }
     },
     semantics: {
-		PN.sem = propernoun.sem;
+		PN.sem = name(PN.object, propernoun.text);
         PN.object = propernoun.object
     }
 ]
@@ -506,7 +506,7 @@ VPQ => verb AP,
 ]
 
 [
-	// Lord Byron, Ada Lovelace
+	// Jan de Wit
 
 	rule:
         PN => propernoun1 propernoun2 propernoun3,

@@ -11,6 +11,8 @@ use agentecho\datastructure\SemanticStructure;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\Constant;
 use agentecho\exception\ConfigurationException;
+use agentecho\exception\OperandNotAcceptedException;
+use agentecho\exception\OperandNotTextException;
 
 /**
  * @author Patrick van Bergen
@@ -274,6 +276,19 @@ class SemanticApplier
 		return $NewPredication;
 	}
 
+	/*
+	 * For an argument like
+	 *
+	 *     propernoun1.text + ' ' + propernoun2.text
+	 *
+	 * return the constant
+	 *
+	 *     "Lord Byron"
+	 *
+	 * otherwise, return the original argument.
+	 *
+	 * @return Argument
+	 */
 	private function calculateArgument($Argument, array $childNodeTexts)
 	{
 		if ($Argument instanceof BinaryOperation) {
@@ -294,25 +309,8 @@ class SemanticApplier
 
 					if ($Operand instanceof Constant) {
 						$scalarOperands[] = $Operand->getName();
-					} elseif ($Operand instanceof Property) {
-
-						$category = $Operand->getObject()->getName();
-						$propertyName = $Operand->getName();
-
-						if ($propertyName == 'text') {
-
-							if (isset($childNodeTexts[$category])) {
-								$scalarOperands[] = $childNodeTexts[$category];
-							} else {
-								die('error1');
-							}
-
-						} else {
-							die('error2');
-						}
-
 					} else {
-						die('error3');
+						throw new OperandNotAcceptedException((string)$Operand);
 					}
 
 				}
@@ -323,11 +321,25 @@ class SemanticApplier
 				die('error4');
 			}
 
+		} elseif ($Argument instanceof Property) {
+
+			$category = $Argument->getObject()->getName();
+			$propertyName = $Argument->getName();
+
+			if ($propertyName == 'text') {
+				if (isset($childNodeTexts[$category])) {
+					$NewArgument = new Constant($childNodeTexts[$category]);
+				} else {
+					throw new OperandNotTextException((string)$Argument);
+				}
+			} else {
+				$NewArgument = $Argument;
+			}
+
 		} else {
 			$NewArgument = $Argument;
 		}
 
 		return $NewArgument;
 	}
-
 }
