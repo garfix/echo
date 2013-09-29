@@ -1,6 +1,7 @@
 <?php
 
 namespace agentecho\component;
+
 use agentecho\grammar\DutchGrammar;
 use agentecho\grammar\EnglishGrammar;
 

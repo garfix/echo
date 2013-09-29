@@ -8,7 +8,6 @@ use agentecho\grammar\Grammar;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\Settings;
 use agentecho\exception\SemanticsNotFoundException;
-use agentecho\exception\RuleWithoutSemanticsException;
 use agentecho\component\parser\SemanticStructureParser;
 
 /**

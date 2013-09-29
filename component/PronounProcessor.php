@@ -2,14 +2,13 @@
 
 namespace agentecho\component;
 
-use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\ConversationContext;
-use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Entity;
-use \agentecho\datastructure\PredicationList;
-use \agentecho\datastructure\Predication;
-use \agentecho\datastructure\Property;
-use \agentecho\datastructure\Constant;
+use agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\ConversationContext;
+use agentecho\phrasestructure\PhraseStructure;
+use agentecho\phrasestructure\Entity;
+use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Predication;
+use agentecho\datastructure\Property;
 
 /**
  * @author Patrick van Bergen

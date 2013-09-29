@@ -2,9 +2,9 @@
 
 namespace agentecho\component;
 
-use \agentecho\datastructure\SentenceContext;
-use \agentecho\exception\LexicalItemException;
-use \agentecho\grammar\Grammar;
+use agentecho\datastructure\SentenceContext;
+use agentecho\exception\LexicalItemException;
+use agentecho\grammar\Grammar;
 
 /**
  * "Lexical analysis is the process of converting a sequence of characters into a sequence of tokens."

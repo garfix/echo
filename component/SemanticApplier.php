@@ -10,7 +10,6 @@ use agentecho\datastructure\Property;
 use agentecho\datastructure\SemanticStructure;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\Constant;
-use agentecho\exception\ConfigurationException;
 use agentecho\exception\OperandNotAcceptedException;
 use agentecho\exception\OperandNotTextException;
 

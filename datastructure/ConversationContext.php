@@ -2,7 +2,7 @@
 
 namespace agentecho\datastructure;
 
-use \agentecho\phrasestructure\Entity;
+use agentecho\phrasestructure\Entity;
 
 /**
  * This class keeps a list of all roles in the current conversation.

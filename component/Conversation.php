@@ -2,11 +2,11 @@
 
 namespace agentecho\component;
 
-use \agentecho\component\KnowledgeManager;
-use \agentecho\grammar\Grammar;
-use \agentecho\exception\ConfigurationException;
-use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\ConversationContext;
+use agentecho\component\KnowledgeManager;
+use agentecho\grammar\Grammar;
+use agentecho\exception\ConfigurationException;
+use agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\ConversationContext;
 
 /**
  * This class implements a discourse between a user and Echo.

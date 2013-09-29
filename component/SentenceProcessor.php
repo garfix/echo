@@ -12,15 +12,13 @@ use agentecho\phrasestructure\Adverb;
 use agentecho\phrasestructure\Date;
 use agentecho\phrasestructure\SentenceBuilder;
 use agentecho\datastructure\PredicationList;
-use agentecho\component\InferenceEngine;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
-use agentecho\exception\ParseException;
 use agentecho\component\Aggregator;
 use agentecho\component\Assigner;
 use agentecho\exception\MissingRequestFieldException;
-use \agentecho\exception\EchoException;
+use agentecho\exception\EchoException;
 
 /**
  * This class answers question and processes imperatives.

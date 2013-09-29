@@ -2,11 +2,11 @@
 
 namespace agentecho\component;
 
-use \agentecho\phrasestructure\PhraseStructure;
-use \agentecho\phrasestructure\Sentence;
-use \agentecho\datastructure\SentenceContext;
-use \agentecho\datastructure\LabeledDAG;
-use \agentecho\grammar\Grammar;
+use agentecho\phrasestructure\PhraseStructure;
+use agentecho\phrasestructure\Sentence;
+use agentecho\datastructure\SentenceContext;
+use agentecho\datastructure\LabeledDAG;
+use agentecho\grammar\Grammar;
 use agentecho\exception\ProductionException;
 
 /**

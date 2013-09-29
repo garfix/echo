@@ -2,7 +2,7 @@
 
 namespace agentecho\datastructure;
 
-use \agentecho\datastructure\PredicationList;
+use agentecho\datastructure\PredicationList;
 
 /**
  * This structure maps one set of relations to another.

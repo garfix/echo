@@ -4,11 +4,11 @@ namespace agentecho\component;
 
 use agentecho\exception\EchoException;
 use agentecho\exception\NoSemanticsAtTopLevelException;
-use \agentecho\grammar\Grammar;
-use \agentecho\component\Lexer;
-use \agentecho\datastructure\SentenceContext;
-use \agentecho\exception\ParseException;
-use \agentecho\phrasestructure\Sentence;
+use agentecho\grammar\Grammar;
+use agentecho\component\Lexer;
+use agentecho\datastructure\SentenceContext;
+use agentecho\exception\ParseException;
+use agentecho\phrasestructure\Sentence;
 
 /**
  * This class parses a surface text into a phrase specification.

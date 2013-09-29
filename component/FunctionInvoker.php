@@ -2,7 +2,6 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Predication;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\Variable;
 

@@ -1,4 +1,0 @@
-father(?a, ?b) :- parent(?a, ?b) and male(?a)
-home_2_school(?p) :- home_2_town(?p, ?q) and town_2_school(?q, ?p)
-home_2_town(?p, ?q) :- home_2_main_street(?p, ?r) and main_street_2_town(?r, ?q)
-town_2_school(?p, ?q) :- town_2_forest(?p, ?r) and forest_2_school(?r, ?q)

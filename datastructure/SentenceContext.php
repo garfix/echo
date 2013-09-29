@@ -2,7 +2,7 @@
 
 namespace agentecho\datastructure;
 
-use \agentecho\phrasestructure\Sentence;
+use agentecho\phrasestructure\Sentence;
 use agentecho\datastructure\PredicationList;
 
 /**
