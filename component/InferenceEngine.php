@@ -36,7 +36,7 @@ class InferenceEngine
 	public function bind(PredicationList $PredicationList, array $knowledgeSources, array $ruleSources)
 	{
 		// PHP allows a recursion depth of only 100; we take this into account here
-		$recursionLevel = Utils::calculcateRecursionLevel();
+		$recursionLevel = Utils::calculateRecursionLevel();
 
 		// bind the variables in the predication list to actual values
 		$variableSets = $this->bindPredicationTail($PredicationList->getPredications(), array(), $recursionLevel, $knowledgeSources, $ruleSources);

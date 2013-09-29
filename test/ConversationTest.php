@@ -5,6 +5,7 @@ namespace agentecho\test;
 require_once __DIR__ . '/../component/Autoload.php';
 
 use \agentecho\AgentEcho;
+use agentecho\component\GrammarFactory;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 
@@ -13,8 +14,8 @@ class ConversationTest extends \PHPUnit_Framework_TestCase
 	public function test()
 	{
 		$Echo = new AgentEcho();
-		$Echo->addGrammar(new EnglishGrammar());
-		$Echo->addGrammar(new DutchGrammar());
+		$Echo->addGrammar(GrammarFactory::getGrammar('en'));
+		$Echo->addGrammar(GrammarFactory::getGrammar('nl'));
 
 		$Conversation = $Echo->startConversation();
 		// proper error feedback

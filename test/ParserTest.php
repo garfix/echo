@@ -4,6 +4,7 @@ namespace agentecho\test;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
+use agentecho\component\GrammarFactory;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
 use \agentecho\exception\ParseException;
@@ -17,8 +18,8 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 {
 	function test()
 	{
-		$Dutch = new DutchGrammar();
-		$English = new EnglishGrammar();
+		$Dutch = GrammarFactory::getGrammar('nl');
+		$English = GrammarFactory::getGrammar('en');
 
 		$Parser = new Parser();
 		$Parser->setGrammars(array($Dutch, $English));
@@ -82,7 +83,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	public function testParseDegreeAdverb()
 	{
 		$Parser = new Parser();
-		$Parser->setCurrentGrammar(new EnglishGrammar());
+		$Parser->setCurrentGrammar(GrammarFactory::getGrammar('en'));
 
 		// AP -> degreeAdverb adjective
 		$Sentence = $Parser->parseFirstLine('John reads the bright red book');
@@ -92,7 +93,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	public function testParseAdverbialPhrase()
 	{
 		$Parser = new Parser();
-		$Parser->setCurrentGrammar(new EnglishGrammar());
+		$Parser->setCurrentGrammar(GrammarFactory::getGrammar('en'));
 
 		// examples from "The structure of modern english" (p. 173)
 
@@ -108,7 +109,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	public function testCalculatedAnswerSemantics()
 	{
 		$Parser = new Parser();
-		$Parser->setGrammars(array(new EnglishGrammar()));
+		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
 
 		// secondary sentence
 		//$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when Lady Lovelace was born?");
@@ -122,13 +123,13 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	public function testParseNumeral()
 	{
 		$Parser = new Parser();
-		$Parser->setGrammars(array(new DutchGrammar()));
+		$Parser->setGrammars(array(GrammarFactory::getGrammar('nl')));
 
 		$Sentence = $Parser->parseFirstLine("Ik ben 43 jaar oud.");
 		$this->assertSame('[S [NP [pronoun ik]][VP [copula ben][AP [NP [DP [numeral 43]][NBar [noun jaar]]][adjective oud]]]]', $Sentence->getSyntaxString());
 		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.event, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
 
-		$Parser->setGrammars(array(new EnglishGrammar()));
+		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
 
 		$Sentence = $Parser->parseFirstLine("I am 43 years old.");
 		$this->assertSame('[S [NP [pronoun i]][VP [copula am][AP [NP [DP [numeral 43]][NBar [noun years]]][adjective old]]]]', $Sentence->getSyntaxString());
@@ -138,7 +139,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	public function testParseQuotes()
 	{
 		$Parser = new Parser();
-		$Parser->setGrammars(array(new EnglishGrammar()));
+		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
 
 		$Sentence = $Parser->parseFirstLine('I am "Patrick (Garfix) van Bergen"');
 		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [PN [propernoun Patrick (Garfix) van Bergen]]]]]', $Sentence->getSyntaxString());

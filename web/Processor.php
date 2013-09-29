@@ -4,6 +4,7 @@ namespace agentecho\web;
 
 use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
+use agentecho\component\GrammarFactory;
 use agentecho\component\LogEvent;
 use agentecho\grammar\DutchGrammar;
 use agentecho\grammar\EnglishGrammar;
@@ -398,10 +399,10 @@ class Processor
 
 		switch ($this->language) {
 			case 'en':
-				$Agent->addGrammar(new EnglishGrammar());
+				$Agent->addGrammar(GrammarFactory::getGrammar('en'));
 				break;
 			case 'nl':
-				$Agent->addGrammar(new DutchGrammar());
+				$Agent->addGrammar(GrammarFactory::getGrammar('nl'));
 				break;
 		}
 

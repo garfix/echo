@@ -7,7 +7,7 @@ namespace agentecho\component;
  */
 class Utils
 {
-	public static function calculcateRecursionLevel()
+	public static function calculateRecursionLevel()
 	{
 		return count(debug_backtrace());
 	}

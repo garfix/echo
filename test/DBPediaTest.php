@@ -6,6 +6,7 @@ require_once __DIR__ . '/../component/Autoload.php';
 
 use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
+use agentecho\component\GrammarFactory;
 use agentecho\knowledge\DBPedia;
 use agentecho\grammar\EnglishGrammar;
 use agentecho\grammar\DutchGrammar;
@@ -23,8 +24,8 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
-		$Echo->addGrammar($English = new EnglishGrammar());
-		$Echo->addGrammar($Dutch = new DutchGrammar());
+		$Echo->addGrammar(GrammarFactory::getGrammar('en'));
+		$Echo->addGrammar(GrammarFactory::getGrammar('nl'));
 
 		$Conversation = $Echo->startConversation();
 
@@ -54,6 +55,9 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
 
 		$answer = $Conversation->answer("Where did Lord Byron die?");
+		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
+
+		$answer = $Conversation->answer("Where did \"Lord Byron\" die?");
 		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
 
 		// S => aux NP NP
@@ -86,7 +90,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	public function testCalculatedAnswer()
 	{
 		$Echo = new AgentEcho();
-		$Echo->addGrammar($English = new EnglishGrammar());
+		$Echo->addGrammar($English = GrammarFactory::getGrammar('en'));
 
 		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));

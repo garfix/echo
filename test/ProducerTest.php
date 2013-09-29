@@ -4,6 +4,7 @@ namespace agentecho\test;
 
 require_once __DIR__ . '/../component/Autoload.php';
 
+use agentecho\component\GrammarFactory;
 use \agentecho\component\Producer;
 use \agentecho\grammar\EnglishGrammar;
 use \agentecho\grammar\DutchGrammar;
@@ -18,8 +19,8 @@ class ProducerTest extends \PHPUnit_Framework_TestCase
 	{
 		$Producer = new Producer();
 
-		$English = new EnglishGrammar();
-		$Dutch = new DutchGrammar();
+		$English = GrammarFactory::getGrammar('en');
+		$Dutch = GrammarFactory::getGrammar('nl');
 
 		$John = new Entity();
 			$John->setName('John');

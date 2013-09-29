@@ -312,13 +312,12 @@ class SemanticApplier
 					} else {
 						throw new OperandNotAcceptedException((string)$Operand);
 					}
-
 				}
 
 				$NewArgument = new Constant(implode('', $scalarOperands));
 
 			} else {
-				die('error4');
+				die('Unknown operator:' . $operator);
 			}
 
 		} elseif ($Argument instanceof Property) {
