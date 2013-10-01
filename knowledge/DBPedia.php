@@ -31,9 +31,9 @@ class DBPedia extends KnowledgeSource
 	private $dataMapFile = null;
 	private $Mapper = null;
 
-	public function __construct($dataMapFile)
+	public function __construct()
 	{
-		$this->dataMapFile = $dataMapFile;
+		$this->dataMapFile = __DIR__ . '/../resources/dbpedia.map';
 	}
 
 	/**

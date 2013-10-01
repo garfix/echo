@@ -48,6 +48,8 @@ class SentenceProcessor
 	 */
 	public function reply($question, ConversationContext $ConversationContext, Parser $Parser)
 	{
+		$this->send(new LogEvent(array('question' => $question)));
+
 		try {
 
 			// parse the sentence
@@ -292,13 +294,21 @@ class SentenceProcessor
 		// this is an array of predicationlists (or predication-arrays)
 		$elaborators = $this->KnowledgeManager->getElaborators();
 
+		if (!empty($elaborators)) {
+
 #todo: multiple
-		$DataMapper = reset($elaborators);
+			$DataMapper = reset($elaborators);
 
-		$DataMapper->setAllowUnprocessedPredications();
-		$DataMapper->setIterate();
+			$DataMapper->setAllowUnprocessedPredications();
+			$DataMapper->setIterate();
 
-		$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
+			$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
+
+		} else {
+
+			$ExpandedQuestion = $RawSemantics;
+
+		}
 
 		$this->send(new LogEvent(array('interpretation' => $ExpandedQuestion)));
 

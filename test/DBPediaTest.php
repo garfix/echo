@@ -22,7 +22,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	public function test()
 	{
 		$Echo = new AgentEcho();
-		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+		$Echo->addKnowledgeSource(new DBPedia());
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 		$Echo->addGrammar(GrammarFactory::getGrammar('en'));
 		$Echo->addGrammar(GrammarFactory::getGrammar('nl'));
@@ -92,7 +92,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = GrammarFactory::getGrammar('en'));
 
-		$Echo->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+		$Echo->addKnowledgeSource(new DBPedia());
 		$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		$Conversation = $Echo->startConversation();

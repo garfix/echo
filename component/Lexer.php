@@ -33,6 +33,8 @@ class Lexer
 		// glue together words that should form a single lexical item
 #todo: split lowercasing and gluing
 		$this->glue($Sentence, $Grammar);
+
+		$this->recognize($Grammar, $Sentence->lexicalItems);
 	}
 
 	/**
@@ -134,6 +136,17 @@ class Lexer
 
 		$Sentence->lexicalItems = $lexicalItems;
 		return true;
+	}
+
+	private function recognize(Grammar $Grammar, array $lexicalItems)
+	{
+		foreach ($lexicalItems as $lexicalItem) {
+			if (!$Grammar->wordExists($lexicalItem)) {
+				if (!preg_match('/^[A-Z]/', $lexicalItem)) {
+					throw new LexicalItemException($lexicalItem);
+				}
+			}
+		}
 	}
 
 	private function getNextToken($string, &$index, &$isTerminator)

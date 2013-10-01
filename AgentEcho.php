@@ -79,6 +79,17 @@ class AgentEcho
 	}
 
 	/**
+	 * Sets the active grammar,
+	 * removes any previously available grammars.
+	 *
+	 * @param Grammar $Grammar
+	 */
+	public function setGrammar(Grammar $Grammar)
+	{
+		$this->Parser->setGrammars(array($Grammar));
+	}
+
+	/**
 	 * Starts a new conversation.
 	 * All interactions within this conversation use the same conversation context.
 	 *

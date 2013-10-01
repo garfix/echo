@@ -257,6 +257,8 @@ class Processor
 			'nl' => array(
 				'waar werd X geboren',
 				'wanneer werd X geboren',
+				'waar is X gestorven',
+				'wanneer is X gestorven',
 			),
 			'en' => array(
 				'where was X born',
@@ -406,7 +408,7 @@ class Processor
 				break;
 		}
 
-		$Agent->addKnowledgeSource(new DBPedia(__DIR__ . '/../resources/dbpedia.map'));
+		$Agent->addKnowledgeSource(new DBPedia());
 		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		$answer = $Agent->answer($sentence);
