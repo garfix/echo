@@ -36,22 +36,10 @@ class DBPedia extends KnowledgeSource
 		$this->dataMapFile = __DIR__ . '/../resources/dbpedia.map';
 	}
 
-	/**
-	 * @param mixed $query Either a query string or an array of clauses.
-	 */
-	private function query(array $where, $select = '*')
-	{
-		$query = "SELECT " . $select . " WHERE {\n\t" . implode(" .\n\t", $where) . "\n}";
-
-		$value = $this->queryDBPedia($query);
-
-		return $value;
-	}
-
 	private function  queryDBPedia($query)
 	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
-# $result = false;
+#$result = false;
 
 		if ($result === false) {
 
@@ -94,35 +82,6 @@ class DBPedia extends KnowledgeSource
 		}
 
 		return $value;
-	}
-
-	private function querySingleRow($query, $select = '*')
-	{
-		$result = $this->query($query, $select);
-		return $result ? $result[0] : null;
-	}
-
-	private function querySingleCell($query, $select = '*')
-	{
-		$result = $this->querySingleRow($query, $select);
-		if ($result) {
-			$var = reset($result);
-			return is_array($var) ? $var['value'] : $var;
-		} else {
-			return null;
-		}
-	}
-
-	private function querySingleColumn($query, $select = '*')
-	{
-		$return = array();
-		$result = $this->query($query, $select);
-		if ($result) {
-			foreach ($result as $row) {
-				$return[] = reset($row);
-			}
-		}
-		return $return;
 	}
 
 	private function getResultFromCache($query)
@@ -194,13 +153,6 @@ $sparql = (string)$Query;
 		switch ($predicate) {
 			case 'true';
 				break;
-			case 'born_at':
-				$subject = (string)$Relation->getArgument(0)->getName();
-				$object = (string)$Relation->getArgument(1)->getName();
-				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object}");
-				$Query->select("?{$subject}");
-				$Query->select("?{$object}");
-				break;
 			case 'born_in':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
@@ -211,7 +163,14 @@ $sparql = (string)$Query;
 				// place name should be in english
 				$Query->where("FILTER(lang(?{$object}) = 'en')");
 				// place should be city
-				$Query->where("_:place dbpedia-owl:city _:placeId");
+				$Query->where("_:placeId rdf:type <http://dbpedia.org/class/yago/City108524735>");
+				$Query->select("?{$subject}");
+				$Query->select("?{$object}");
+				break;
+			case 'born_at':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				$object = (string)$Relation->getArgument(1)->getName();
+				$Query->where("?{$subject} <http://dbpedia.org/ontology/birthDate> ?{$object}");
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
@@ -225,7 +184,7 @@ $sparql = (string)$Query;
 				// place name should be in english
 				$Query->where("FILTER(lang(?{$object}) = 'en')");
 				// place should be city
-				$Query->where("_:place dbpedia-owl:city _:placeId");
+				$Query->where("_:placeId rdf:type <http://dbpedia.org/class/yago/City108524735>");
 				$Query->select("?{$subject}");
 				$Query->select("?{$object}");
 				break;
@@ -263,7 +222,8 @@ $sparql = (string)$Query;
 			case 'influence':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();
-				$Query->where("?{$object} <http://dbpedia.org/ontology/influencedBy> ?{$subject}");
+				// the relation seems backward in DBPedia
+				$Query->where("?{$object} <http://dbpedia.org/property/influences> ?{$subject}");
 				break;
 			case 'child':
 				$subject = (string)$Relation->getArgument(0)->getName();

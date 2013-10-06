@@ -36,8 +36,8 @@ class WebTest extends \PHPUnit_Framework_TestCase
 
 	public function testWhenDidLordByronDie()
 	{
-		$this->assertSame('Lord Byron died in on X.', $this->answer('en', 'When did "Lord Byron" die?'), 'en');
-//		$this->assertSame('Lord Byron is gestorven op X.', $this->answer('nl', 'Wanneer is "Lord Byron" gestorven?'), 'nl');
+		$this->assertSame('Lord Byron died on April 19, 1824.', $this->answer('en', 'When did "Lord Byron" die?'), 'en');
+		$this->assertSame('Lord Byron is gestorven op 19 april 1824.', $this->answer('nl', 'Wanneer is "Lord Byron" gestorven?'), 'nl');
 	}
 
 	private function answer($language, $question)

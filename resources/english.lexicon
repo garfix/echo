@@ -28,6 +28,10 @@
 	partOfSpeech: 'copula',
 	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
 ] [
+	form: 'april',
+	partOfSpeech: 'noun',
+	features: { head: { syntax: { category: "january", monthIndex: 4 } }, capitalize: true}
+] [
 	form: 'are',
 	partOfSpeech: 'verb',
 	features: { head: { agreement: { person: 1, number: "plural" } }, arguments: 1}
@@ -159,6 +163,11 @@
 	partOfSpeech: 'verb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
+] [
+	form: 'is',
+	partOfSpeech: 'auxBe',
+	features: { head: { syntax: { predicate: "be", tense: "present" } } },
+	semantics: tense(this.event, Present)
 ] [
 	form: 'january',
 	partOfSpeech: 'noun',

@@ -17,22 +17,22 @@ isa(?e, Influence) and subject(?e, ?s) and object(?e, ?o) => influence(?s, ?o);
 isa(?e, Have) and subject(?e, ?s) and object(?e, ?o) and isa(?o, Child) => child(?s, ?o);
 
 // born in
-location(?e, ?q) and isa(?e, Bear) and object(?e, ?o) => born_in(?o, ?q);
+location(?e, ?q) and isa(?e, Bear) and subject(?e, ?s) => born_in(?s, ?q);
 
 // born at (1)
 born(?a, ?b) => born_at(?a, ?b);
 
 // born at (2)
-at_time(?e, ?q) and isa(?e, Bear) and object(?e, ?o) => born_at(?o, ?q);
+at_time(?e, ?q) and isa(?e, Bear) and subject(?e, ?s) => born_at(?s, ?q);
 
 // die in
 location(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_in(?s, ?q);
 
-// die in
-location(?e, ?q) and isa(?e, Die) and object(?e, ?o) => die_in(?o, ?q);
-
-// die at
+// die at (1)
 die(?a, ?b) => die_at(?a, ?b);
+
+// die at (2)
+at_time(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_at(?s, ?q);
 
 // daughter
 isa(?child, Daughter) and belong_to(?child, ?parent) => child(?parent, ?child);

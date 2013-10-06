@@ -66,7 +66,7 @@
 		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepDirectObject: ?s2, adverb: ?adverb, preposition: { category: ?prepcat, object: ?s3 } } } },
 		premodifier: { head: { syntax: ?adverb } },
 		NP1: { head: { agreement: ?agr, syntax: ?s2 } },
-		auxBe: { },
+		auxBe: {  head: { syntax: { tense: ?tense } } },
 		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred } } },
 		preposition: { head: { syntax: { category: ?prepcat } } },
 		NP2: { head: {syntax: ?s3 } }
@@ -102,7 +102,7 @@
 		S: { head: { clause: { predicate: ?pred, tense: ?tense, deepSubject: ?s1, deepDirectObject: ?s2, adverb: ?adverb } } },
 		premodifier: { head: { syntax: ?adverb } },
 		NP1: { head: { agreement: ?agr, syntax: ?s1 } },
-		auxBe: { },
+		auxBe: { head: { syntax: { tense: ?tense } } },
 		NP2: { head: { syntax: ?s2 } }
 	}
 ]

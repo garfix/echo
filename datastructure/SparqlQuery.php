@@ -32,6 +32,6 @@ class SparqlQuery
 
 	public function __toString()
 	{
-		return 'SELECT ' . implode(', ', $this->select) . "\nWHERE {\n    " . implode(" .\n    ", $this->where) . "\n}";
+		return 'SELECT DISTINCT ' . implode(', ', $this->select) . "\nWHERE {\n    " . implode(" .\n    ", $this->where) . "\n}";
 	}
 }

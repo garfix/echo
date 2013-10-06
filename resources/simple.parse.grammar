@@ -71,22 +71,21 @@
 	// Where was John born?
 
 	rule:
-        S => WhADVP auxPsv NP VP,
+        S => WhADVP auxBe NP VP,
     features: {
-        S: { head: ?h1 { sentenceType: 'wh-question', voice: 'passive', clause: ?s1 } },
+        S: { head: ?h1 { sentenceType: 'wh-question', voice: 'active', clause: ?s1 { tense: ?tense } } },
         WhADVP: { head: { syntax: ?s1 } },
-        auxPsv: {},
+        auxBe: { head: { syntax: { tense: ?tense } } },
         NP: { head: { syntax: ?s2, agreement: ?agr } },
         VP: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?s2}, agreement: ?agr } }
     },
     semantics: {
-		S.sem = WhADVP.sem and auxPsv.sem and NP.sem and VP.sem and object(S.event, S.object) and request(S.request);
+		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request);
 		S.event = WhADVP.event;
 		S.event = VP.event;
-		S.object = NP.object;
+		S.subject = NP.object;
 		S.request = WhADVP.request
     }
-
 ]
 
 [
@@ -133,15 +132,15 @@
 	// Was Ada Lovelace the daughter of Lord Byron?
 
 	rule:
-        S => aux NP1 NP2,
+        S => auxBe NP1 NP2,
     features: {
         S: { head: ?h1 { sentenceType: 'yes-no-question', voice: 'active', clause: ?s3 } },
-        aux: { head: ?h1 { syntax: ?s3 { type: 'clause', deepSubject: ?s1, deepDirectObject: ?s2 }} },
+        auxBe: { head: ?h1 { syntax: ?s3 { tense: ?tense, type: 'clause', deepSubject: ?s1, deepDirectObject: ?s2 }} },
         NP1: { head: { syntax: ?s1 } },
         NP2: { head: { syntax: ?s2 } }
     },
     semantics: {
-       S.sem = aux.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
+       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
        S.subject = NP2.object;
        S.subject = NP1.object
     }

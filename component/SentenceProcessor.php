@@ -326,6 +326,8 @@ class SentenceProcessor
 
 		if (count($bindings) > 1) {
 			throw new DataBaseMultipleResultsException();
+		} elseif (count($bindings) == 0) {
+			throw new NoBindingsException();
 		}
 
 		return !empty($bindings);

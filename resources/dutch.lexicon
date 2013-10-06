@@ -8,6 +8,10 @@
 	features: { head: { syntax: { category: "possessive" } } },
 	semantics: belong_to(this.superObject, this.subObject)
 ] [
+	form: 'april',
+	partOfSpeech: 'noun',
+	features: { head: { syntax: { category: "january", monthIndex: 4 } }}
+] [
 	form: 'auteur',
 	partOfSpeech: 'noun',
 	features: { head: { syntax: { category: "author" } } },
@@ -75,7 +79,7 @@
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "die", tense: "past" } } },
+	features: { head: { syntax: { predicate: "die" } } },
 	semantics: isa(this.event, Die)
 ] [
 	form: 'had',
@@ -103,6 +107,11 @@
 ] [
 	form: 'is',
 	partOfSpeech: 'auxPsv',
+	features: { head: { syntax: { predicate: "be", tense: "present" } } },
+	semantics: tense(this.event, Present)
+] [
+	form: 'is',
+	partOfSpeech: 'auxBe',
 	features: { head: { syntax: { predicate: "be", tense: "present" } } },
 	semantics: tense(this.event, Present)
 ] [

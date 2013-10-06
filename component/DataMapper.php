@@ -131,23 +131,24 @@ class DataMapper
 						$mergeSuccess = false;
 						break;
 					}
-
-#todo this is too premature; the merge may still fail; place this behind the loop, for each of the results
-					$usedPredications[$singleArgumentMap['predicationIndex']] = true;
 				}
 
-				if (!$mergeSuccess) {
-					continue;
-				}
+				if ($mergeSuccess) {
 
-				// create new predications filled in with the values in argument map
-				foreach ($Mapping->getPostList()->getPredications() as $PostPredication) {
-					$NewPredication = $PostPredication->createClone();
+					// all pre-predications are marked as used
+					foreach ($row as $singleArgumentMap) {
+						$usedPredications[$singleArgumentMap['predicationIndex']] = true;
+					}
 
-					// replace the variables in the new predication
-					$this->replaceVariables($NewPredication, $argumentMap, $usedVariables);
+					// create new predications filled in with the values in argument map
+					foreach ($Mapping->getPostList()->getPredications() as $PostPredication) {
+						$NewPredication = $PostPredication->createClone();
 
-					$newPredications[] = $NewPredication;
+						// replace the variables in the new predication
+						$this->replaceVariables($NewPredication, $argumentMap, $usedVariables);
+
+						$newPredications[] = $NewPredication;
+					}
 				}
 			}
 		}
