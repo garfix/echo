@@ -6,7 +6,6 @@ use agentecho\datastructure\ParseRule;
 use agentecho\datastructure\ProductionRule;
 use agentecho\grammar\Grammar;
 use agentecho\datastructure\LabeledDAG;
-use agentecho\Settings;
 use agentecho\exception\SemanticsNotFoundException;
 use agentecho\component\parser\SemanticStructureParser;
 
@@ -17,6 +16,8 @@ use agentecho\component\parser\SemanticStructureParser;
  */
 class EarleyParser
 {
+	static $debugParser = false;
+
 	/** @var Grammar Contains call-backs for all language-specific information */
 	private $Grammar = null;
 
@@ -560,7 +561,7 @@ class EarleyParser
 
 	private function showDebug($function, array $state)
 	{
-		if (Settings::$debugParser) {
+		if (self::$debugParser) {
 			$rule = $state['rule'];
 			$dotPosition = $state['dotPosition'];
 			$start = $state['startWordIndex'];
