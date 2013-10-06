@@ -2,6 +2,7 @@
 
 namespace agentecho\component;
 
+use agentecho\component\parser\MapParser;
 use agentecho\component\parser\SemanticStructureParser;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\DataMapping;
@@ -20,21 +21,20 @@ use agentecho\exception\DataMappingFailedException;
  */
 class DataMapper
 {
-	private $map = array();
+	/** @var Map */
+	private $Map = array();
 
+	/** @var bool  */
 	private $allowUnprocessedPredications = false;
 
+	/** @var bool Map again when not all predications have been mapped? */
 	private $iterate = false;
 
 	public function __construct($mapFile)
 	{
 		$string = file_get_contents($mapFile);
-		$Parser = new SemanticStructureParser();
-
-		$Term = $Parser->parse($string);
-		if ($Term instanceof Map) {
-			$this->map = $Term->getMappings();
-		}
+		$Parser = new MapParser();
+		$this->Map = $Parser->parse($string);
 	}
 
 	public function setAllowUnprocessedPredications($allow = true)
@@ -93,20 +93,17 @@ class DataMapper
 		$usedVariables = $Predications->getVariableNames();
 
 		// go through each mapping
-		/** @var DataMapping $Mapping */
-		foreach ($this->map as $Mapping) {
+		foreach ($this->Map->getMappings() as $Mapping) {
 
 			$prePredications = $Mapping->getPreList()->getPredications();
 
-			/** @var A zero-based indexed array that keeps track of all predications that match each precondition */
+			/** @var array A zero-based indexed array that keeps track of all predications that match each precondition */
 			$matchingPredicationsPerPrecondition = array_fill(0, count($prePredications), array());
 
 			// go through all preconditions of the mapping
 			foreach ($prePredications as $conditionIndex => $PrePredication) {
 
-
 				// check this precondition with all predications
-				/** @var Predication $PrePredication */
 				foreach ($Predications->getPredications() as $predicationIndex => $Predication) {
 
 					if (($result = $PrePredication->match($Predication)) !== false) {
@@ -128,7 +125,6 @@ class DataMapper
 				$argumentMap = array();
 				$mergeSuccess = true;
 				foreach ($row as $singleArgumentMap) {
-					//$argumentMap += $singleArgumentMap['result'];
 
 					$argumentMap = $this->merge($argumentMap, $singleArgumentMap['result']);
 					if ($argumentMap === false) {

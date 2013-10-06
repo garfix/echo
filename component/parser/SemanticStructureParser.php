@@ -522,7 +522,7 @@ class SemanticStructureParser
 		return false;
 	}
 
-	private function parseMap(array $tokens, $pos, &$Map)
+	protected function parseMap(array $tokens, $pos, &$Map)
 	{
 		$mappings = array();
 
