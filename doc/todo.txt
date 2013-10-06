@@ -25,5 +25,6 @@ Volgende zinnen:
 
 Nu:
 
+* De niet-web code is nog niet UNICODE-proof
 * Maak van de output "53 years"
 * Noem de object in NP.object: entity, om verwarring met het syntactische object te voorkomen

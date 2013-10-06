@@ -28,6 +28,9 @@ at_time(?e, ?q) and isa(?e, Bear) and object(?e, ?o) => born_at(?o, ?q);
 // die in
 location(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_in(?s, ?q);
 
+// die in
+location(?e, ?q) and isa(?e, Die) and object(?e, ?o) => die_in(?o, ?q);
+
 // die at
 die(?a, ?b) => die_at(?a, ?b);
 

@@ -142,8 +142,10 @@ class Lexer
 	{
 		foreach ($lexicalItems as $lexicalItem) {
 			if (!$Grammar->wordExists($lexicalItem)) {
-				if (!preg_match('/^[A-Z]/', $lexicalItem)) {
-					throw new LexicalItemException($lexicalItem);
+				if (!is_numeric($lexicalItem)) {
+					if (!preg_match('/^[A-Z]/', $lexicalItem)) {
+						throw new LexicalItemException($lexicalItem);
+					}
 				}
 			}
 		}

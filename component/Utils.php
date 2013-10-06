@@ -78,4 +78,21 @@ class Utils
 
 		return $permutations;
 	}
+
+	public static function stringify($someValue)
+	{
+		if (is_array($someValue)) {
+
+			$vals = array();
+			foreach ($someValue as $key => $value) {
+				if (is_array($value)) {
+					$vals[] = $key . ': (' . self::stringify($value) . ')';
+				} else {
+					$vals[] = $key . ': ' . $value;
+				}
+			}
+
+			return implode(', ', $vals);
+		}
+	}
 }

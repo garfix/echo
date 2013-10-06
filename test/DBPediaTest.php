@@ -42,23 +42,23 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
 		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
 
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("Where was Lord Byron born?");
-		$this->assertSame('Lord Byron was born in London.', $answer);
-		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
-		$this->assertSame('Lord Byron werd geboren in London.', $answer);
-
-		// S => WhNP aux NP VP
-		$answer = $Conversation->answer("When was Lord Byron born?");
-		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
-		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
-		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
-
-		$answer = $Conversation->answer("Where did Lord Byron die?");
-		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
-
-		$answer = $Conversation->answer("Where did \"Lord Byron\" die?");
-		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("Where was Lord Byron born?");
+//		$this->assertSame('Lord Byron was born in London.', $answer);
+//		$answer = $Conversation->answer("Waar werd Lord Byron geboren?");
+//		$this->assertSame('Lord Byron werd geboren in London.', $answer);
+//
+//		// S => WhNP aux NP VP
+//		$answer = $Conversation->answer("When was Lord Byron born?");
+//		$this->assertSame('Lord Byron was born on January 22, 1788.', $answer);
+//		$answer = $Conversation->answer("Wanneer werd Lord Byron geboren?");
+//		$this->assertSame('Lord Byron werd geboren op 22 januari 1788.', $answer);
+//
+//		$answer = $Conversation->answer("Where did Lord Byron die?");
+//		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
+//
+//		$answer = $Conversation->answer("Where did \"Lord Byron\" die?");
+//		$this->assertSame('Lord Byron died in Missolonghi.', $answer);
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");

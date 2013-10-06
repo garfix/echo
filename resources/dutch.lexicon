@@ -73,6 +73,11 @@
 	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry)
 ] [
+	form: 'gestorven',
+	partOfSpeech: 'verb',
+	features: { head: { syntax: { predicate: "die", tense: "past" } } },
+	semantics: isa(this.event, Die)
+] [
 	form: 'had',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "have", tense: "past" } } },
@@ -95,6 +100,11 @@
 	form: 'in',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "in" } } }
+] [
+	form: 'is',
+	partOfSpeech: 'auxPsv',
+	features: { head: { syntax: { predicate: "be", tense: "present" } } },
+	semantics: tense(this.event, Present)
 ] [
 	form: 'ja',
 	partOfSpeech: 'adverb',
@@ -158,12 +168,12 @@
 ] [
 	form: 'werd',
 	partOfSpeech: 'aux',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
+	features: { head: { syntax: { predicate: "become", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'werd',
 	partOfSpeech: 'auxPsv',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
+	features: { head: { syntax: { predicate: "become", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'waar',

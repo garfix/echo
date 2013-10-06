@@ -49,4 +49,10 @@ class UtilsTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals($expected, $output);
 	}
+
+	public function testStringifyArray()
+	{
+		$this->assertEquals('a: 1, b: 2', Utils::stringify(array('a' => 1, 'b' => 2)));
+		$this->assertEquals('a: 1, b: (c: 2, d: 3)', Utils::stringify(array('a' => 1, 'b' => array('c' => 2, 'd' => 3))));
+	}
 }

@@ -5,6 +5,7 @@ namespace agentecho\grammar;
 use agentecho\component\parser\GenerationRulesParser;
 use agentecho\component\parser\LexiconParser;
 use agentecho\component\parser\ParseRulesParser;
+use agentecho\component\Utils;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\ParseRules;
@@ -214,7 +215,7 @@ abstract class BaseGrammar implements Grammar
 	 * @param $partOfSpeech
 	 * @param array $features
 	 * @return bool|int|string
-	 * @throws \agentecho\exception\ProductionException
+	 * @throws WordNotFoundException
 	 */
 	public function getWordForFeatures($partOfSpeech, array $features)
 	{
@@ -239,7 +240,8 @@ abstract class BaseGrammar implements Grammar
 		} else {
 			$word = $this->Lexicon->getWordForFeatures($partOfSpeech, $features);
 			if (!$word) {
-				throw new WordNotFoundException($partOfSpeech);
+
+				throw new WordNotFoundException($partOfSpeech, Utils::stringify($features));
 			}
 		}
 

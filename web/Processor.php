@@ -255,8 +255,8 @@ class Processor
 
 		$sentences = array(
 			'nl' => array(
-				'waar werd X geboren',
-				'wanneer werd X geboren',
+				'waar is X geboren',
+				'wanneer is X geboren',
 				'waar is X gestorven',
 				'wanneer is X gestorven',
 			),

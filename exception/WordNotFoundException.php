@@ -7,5 +7,5 @@ namespace agentecho\exception;
  */
 class WordNotFoundException extends EchoException
 {
-	protected $messageText = 'Production exception: could not find a word for the part-of-speech: %s';
+	protected $messageText = 'Could not find a word for the part-of-speech: %s with `%s`';
 }

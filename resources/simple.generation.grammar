@@ -29,7 +29,7 @@
 		S: { head: { clause: { predicate: ?pred, tense: ?t1, deepSubject: ?s1, deepDirectObject: ?s2, adverb: ?adverb } } },
 		premodifier: { head: { syntax: ?adverb } },
 		NP1: { head: { agreement: ?agr, syntax: ?s2 } },
-		auxPsv: { head: { syntax: { predicate: 'be', tense: ?t1 } } },
+		auxPsv: { head: { syntax: { tense: ?t1 } } },
 		VP: { head: { agreement: ?agr, syntax: { predicate: ?pred } } },
 		passivisationPreposition: { },
 		NP2: { head: {syntax: ?s1 } }
