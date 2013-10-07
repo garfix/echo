@@ -2,10 +2,7 @@
 manner(?e, ?q) and isa(?e, Old) => subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b)));
 
 // same time
-time(?e, ?t) => at_time(?e, ?f) and time1(?f, ?t);
-
-// ??
-time1(?e, ?t) => isa(?e, Die) and subject(?e, ?s) and die(?s, ?t);
+time(?e, ?t) and at_time(?e, ?f) => at_time(?e, ?f);
 
 // how many
 manner(?o, ?q) and many(?o) => aggregate(?q, count(?o));
