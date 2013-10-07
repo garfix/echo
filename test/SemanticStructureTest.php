@@ -7,7 +7,7 @@ use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * @author Patrick van Bergen

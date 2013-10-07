@@ -7,7 +7,7 @@ use agentecho\component\DataMapper;
 use agentecho\component\GrammarFactory;
 use agentecho\knowledge\DBPedia;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * Tests all sentences that can be made with the web interface.

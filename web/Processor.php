@@ -25,7 +25,7 @@ use agentecho\web\view\PredicationListView;
 use agentecho\web\view\SparqlQueryView;
 use agentecho\web\view\SyntaxView;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * @author Patrick van Bergen

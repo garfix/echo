@@ -6,7 +6,7 @@ use agentecho\component\parser\SemanticStructureParser;
 use agentecho\component\SemanticApplier;
 use agentecho\datastructure\AssignmentList;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * @author Patrick van Bergen

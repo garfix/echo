@@ -4,7 +4,7 @@ namespace agentecho\test;
 
 use agentecho\component\Utils;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * @author Patrick van Bergen

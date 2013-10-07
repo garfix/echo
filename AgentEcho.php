@@ -3,7 +3,7 @@
 namespace agentecho;
 
 // start autoloading based on namespaces
-require_once __DIR__ . '/component/Autoload.php';
+require_once __DIR__ . '/Autoload.php';
 
 use agentecho\component\EventManager;
 use agentecho\component\KnowledgeManager;
@@ -12,7 +12,6 @@ use agentecho\component\Parser;
 use agentecho\component\SentenceProcessor;
 use agentecho\datastructure\ConversationContext;
 use agentecho\knowledge\KnowledgeSource;
-use agentecho\knowledge\RuleSource;
 use agentecho\grammar\Grammar;
 use agentecho\component\DataMapper;
 
@@ -63,16 +62,32 @@ class AgentEcho
 		$this->Parser->setEventManager($this->EventManager);
 	}
 
+	/**
+	 * Show the agent where to find the data.
+	 * A knowledge source is a wrapper around a database.
+	 *
+	 * @param KnowledgeSource $KnowledgeSource
+	 */
 	public function addKnowledgeSource(KnowledgeSource $KnowledgeSource)
 	{
 		$this->KnowledgeManager->addKnowledgeSource($KnowledgeSource);
 	}
 
+	/**
+	 * Show the agent how to interpret raw semantic data by using the expressions people use.
+	 *
+	 * @param DataMapper $Elaborator
+	 */
 	public function addElaborator(DataMapper $Elaborator)
 	{
 		$this->KnowledgeManager->addElaborator($Elaborator);
 	}
 
+	/**
+	 * Tell the agent which grammar to use to interpret input sentences.
+	 *
+	 * @param Grammar $Grammar
+	 */
 	public function addGrammar(Grammar $Grammar)
 	{
 		$this->Parser->addGrammar($Grammar);
@@ -127,9 +142,3 @@ class AgentEcho
 	}
 }
 
-function r($string, $return = false)
-{
-	$trace = debug_backtrace();
-	echo $trace[0]['file'] . ' (' . $trace[0]['line'] . '):' . "\n";
-	return print_r($string, $return);
-}

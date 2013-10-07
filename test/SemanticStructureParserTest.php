@@ -8,7 +8,7 @@ use agentecho\exception\SemanticStructureParseException;
 use agentecho\component\parser\GenerationRulesParser;
 use agentecho\component\parser\LexiconParser;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 /**
  * @author Patrick van Bergen

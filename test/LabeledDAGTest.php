@@ -2,7 +2,7 @@
 
 namespace agentecho\test;
 
-require_once __DIR__ . '/../component/Autoload.php';
+require_once __DIR__ . '/../Autoload.php';
 
 use \agentecho\datastructure\LabeledDAG;
 
