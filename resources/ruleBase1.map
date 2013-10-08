@@ -1,9 +1,6 @@
 // how old
 manner(?e, ?q) and isa(?e, Old) => subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b)));
 
-// same time
-time(?e, ?t) and at_time(?e, ?f) => at_time(?e, ?f);
-
 // how many
 manner(?o, ?q) and many(?o) => aggregate(?q, count(?o));
 
