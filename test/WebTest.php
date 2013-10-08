@@ -48,7 +48,7 @@ class WebTest extends \PHPUnit_Framework_TestCase
 
 			$Echo = new AgentEcho();
 			$Echo->addKnowledgeSource(new DBPedia());
-			$Echo->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+			$Echo->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		}
 

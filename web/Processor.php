@@ -409,7 +409,7 @@ class Processor
 		}
 
 		$Agent->addKnowledgeSource(new DBPedia());
-		$Agent->addElaborator(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Agent->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
 		$answer = $Agent->answer($sentence);
 

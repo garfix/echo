@@ -76,11 +76,11 @@ class AgentEcho
 	/**
 	 * Show the agent how to interpret raw semantic data by using the expressions people use.
 	 *
-	 * @param DataMapper $Elaborator
+	 * @param DataMapper $Interpreter
 	 */
-	public function addElaborator(DataMapper $Elaborator)
+	public function addInterpreter(DataMapper $Interpreter)
 	{
-		$this->KnowledgeManager->addElaborator($Elaborator);
+		$this->KnowledgeManager->addInterpreter($Interpreter);
 	}
 
 	/**

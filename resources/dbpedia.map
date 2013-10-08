@@ -4,7 +4,7 @@ isa(?s, Author) and belong_to(?s, ?o) => author(?s, ?o);
 // name
 name(?a, ?b) => name(?a, ?b);
 
-// when ?e happens at ?t and this is the smae time as ?f, and ?f is a death, than the subject of ?f dies at ?t
+// when ?e happens at ?t and this is the same time as ?f, and ?f is a death, then the subject of ?f dies at ?t
 time(?e, ?t) and at_time(?e, ?f) and subject(?e, ?sub1) and subject(?f, ?sub2) and isa(?f, Die) => time_property(?sub1, ?t) and die_at(?sub2, ?t);
 
 // same name

@@ -292,12 +292,12 @@ class SentenceProcessor
 
 		// first explode the predications into all possible solution paths
 		// this is an array of predicationlists (or predication-arrays)
-		$elaborators = $this->KnowledgeManager->getElaborators();
+		$interpreters = $this->KnowledgeManager->getInterpreters();
 
-		if (!empty($elaborators)) {
+		if (!empty($interpreters)) {
 
 #todo: multiple
-			$DataMapper = reset($elaborators);
+			$DataMapper = reset($interpreters);
 
 			$DataMapper->setAllowUnprocessedPredications();
 			$DataMapper->setIterate();

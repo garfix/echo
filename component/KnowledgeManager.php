@@ -15,7 +15,7 @@ class KnowledgeManager
 	private $knowledgeSources = array();
 
 	/** @var DataMapper[] Rulesets that map semantics to semantics */
-	private $elaborators = array();
+	private $interpreters = array();
 
 	/**
 	 * @param KnowledgeSource $KnowledgeSource
@@ -34,18 +34,18 @@ class KnowledgeManager
 	}
 
 	/**
-	 * @param DataMapper $Elaborator
+	 * @param DataMapper $Interpreter
 	 */
-	public function addElaborator(DataMapper $Elaborator)
+	public function addInterpreter(DataMapper $Interpreter)
 	{
-		$this->elaborators[] = $Elaborator;
+		$this->interpreters[] = $Interpreter;
 	}
 
 	/**
 	 * @return DataMapper[]
 	 */
-	public function getElaborators()
+	public function getInterpreters()
 	{
-		return $this->elaborators;
+		return $this->interpreters;
 	}
 }
