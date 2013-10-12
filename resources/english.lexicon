@@ -211,6 +211,11 @@
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "read", tense: "present" } } }
 ] [
+	form: 'parents',
+	partOfSpeech: 'noun',
+	features: { head: { agreement: { number: "plural"} } },
+	semantics: isa(this.object, Parent)
+] [
 	form: 'red',
 	partOfSpeech: 'adjective',
 	features: { head: { syntax: {} } }
@@ -260,6 +265,11 @@
 	features: { head: { syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
+	form: 'were',
+	partOfSpeech: 'verb',
+	features: { head: {agreement: { number: "plural"}, syntax: { predicate: "be", tense: "past" } } },
+	semantics: tense(this.event, Past)
+] [
 	form: 'when',
 	partOfSpeech: 'whAdverb',
 	features: { head: { syntax: { category: "when" } } },
@@ -272,7 +282,9 @@
 ] [
 	form: 'who',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "identity" } } }
+	features: { head: { syntax: { category: "identity" } } },
+	// name() is a good solution, but really it is an interpretation of the question that the questioner wants to hear the name
+	semantics: birthname(this.subject, this.name)
 ] [
 	form: 'yes',
 	partOfSpeech: 'adverb',

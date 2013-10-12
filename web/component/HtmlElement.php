@@ -134,7 +134,7 @@ class HtmlElement
 	{
 		$attrs = array();
 		foreach($this->attributes as $key => $value) {
-			$attrs[] = $key . '=' . "'" . htmlspecialchars($value) . "'";
+			$attrs[] = $key . '=' . "'" . str_replace("'", '&apos;', htmlspecialchars($value)) . "'";
 		}
 		$attributes = $attrs ? (' ' . implode(' ', $attrs)) : '';
 

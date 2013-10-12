@@ -20,7 +20,6 @@ LineEditor.prototype.init = function()
 	// create inputs for each of the line pieces
 	var pieces = this.getLinePieces();
 	for (var i = 0; i < pieces.length; i++) {
-
 		var cell = this.createCell();
 		cell.setText(pieces[i]);
 	}

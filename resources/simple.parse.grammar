@@ -48,7 +48,7 @@
 ]
 
 [
-	// Who Is John? / How many children had Lord Byron?
+	// Who Is John? / How many children had Lord Byron? / Who were Lord Byron's parents?
 
 	rule:
 		S => WhADVP VP NP,
@@ -62,8 +62,10 @@
 		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
         S.event = VP.event;
         S.subject = NP.object;
+        S.subject = WhADVP.subject;
         S.object = WhADVP.object;
-        S.request = WhADVP.request
+        S.request = WhADVP.request;
+        S.event = WhADVP.event
 	}
 ]
 
@@ -317,10 +319,28 @@ VPQ => verb AP,
 	}
 ]
 
-[
-	// where, when, who
+// Wh-adverb phrase
 
-	// TODO: this interpretation is counterintuitive, especially for 'who'
+
+[
+	// who
+
+	rule:
+        WhADVP => whAdverb,
+    features: {
+        WhADVP: {  },
+        whAdverb: { head: { syntax: { category: "identity"} } }
+    },
+    semantics: {
+        WhADVP.sem = whAdverb.sem;
+        WhADVP.request = whAdverb.name;
+        WhADVP.event = whAdverb.event;
+        WhADVP.subject = whAdverb.subject
+    }
+]
+
+[
+	// where, when
 
 	rule:
         WhADVP => whAdverb,
@@ -330,7 +350,7 @@ VPQ => verb AP,
     },
     semantics: {
         WhADVP.sem = whAdverb.sem;
-        VWhADVP.request = whAdverb.adjunct;
+        WhADVP.request = whAdverb.adjunct;
         WhADVP.event = whAdverb.event
     }
 ]

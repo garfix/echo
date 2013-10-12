@@ -2,9 +2,6 @@
 
 namespace agentecho;
 
-// start autoloading based on namespaces
-require_once __DIR__ . '/Autoload.php';
-
 use agentecho\component\EventManager;
 use agentecho\component\KnowledgeManager;
 use agentecho\component\Conversation;

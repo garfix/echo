@@ -209,6 +209,20 @@ $sparql = (string)$Query;
 				}
 				$Query->select("?{$subject}");
 				break;
+			case 'birthname':
+				$subject = (string)$Relation->getArgument(0)->getName();
+				if ($Relation->getArgument(1) instanceof Constant) {
+					$object = (string)$Relation->getArgument(1)->getName();
+					$ucName = ucwords($object);
+					$Query->where("{ ?{$subject} dbpprop:birthName '$ucName'@en }");
+				} else {
+					$object = (string)$Relation->getArgument(1)->getName();
+					$Query->where("{ ?{$subject} dbpprop:birthName ?{$object} }");
+					$Query->where("FILTER(lang(?{$object}) = 'en')");
+					$Query->select("?{$object}");
+				}
+				$Query->select("?{$subject}");
+				break;
 			case 'time_property':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				$object = (string)$Relation->getArgument(1)->getName();

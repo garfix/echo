@@ -34,3 +34,7 @@ DP:
 
 All objects:
 - text
+
+WhADVP
+- request
+- event

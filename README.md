@@ -1,7 +1,7 @@
 Echo
 ====
 
-Agent Echo is an study into what one day might become a conversational agent.
+Agent Echo is a study into what one day might become a conversational agent.
 
 This agent should be able to talk with a user about the information that is stored in a database.
 

@@ -265,6 +265,7 @@ class Processor
 				'when was X born',
 				'where did X die',
 				'when did X die',
+				'who were X \'s parents',
 			)
 		);
 

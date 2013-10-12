@@ -147,55 +147,64 @@ class SentenceProcessor
 			// incorporate the answer in the original question
 			if ($answer !== null) {
 
-				$answer = reset($answer);
+				$answer = array_unique($answer);
 
-				$Answer = $Sentence->createClone();
+				if (count($answer) > 1) {
 
-				#todo: this should be made more generic
+					$Answer = $this->createConjunction($answer);
 
-				if ($Clause = $Answer->getClause()) {
+				} else {
 
-					$found = false;
+					$answer = reset($answer);
 
-					// how many?
-					if ($DeepDirectObject = $Clause->getDeepDirectObject()) {
-						if ($Determiner = $DeepDirectObject->getDeterminer()) {
-							if ($Determiner->isQuestion()) {
-								$Answer->setSentenceType(Sentence::DECLARATIVE);
-								$Determiner->setQuestion(false);
+					$Answer = $Sentence->createClone();
 
-#todo
-//$Determiner->setUnit($unit);
+					#todo: this should be made more generic
 
-								$Determiner->setCategory($answer);
+					if ($Clause = $Answer->getClause()) {
 
-								$found = true;
+						$found = false;
+
+						// how many?
+						if ($DeepDirectObject = $Clause->getDeepDirectObject()) {
+							if ($Determiner = $DeepDirectObject->getDeterminer()) {
+								if ($Determiner->isQuestion()) {
+									$Answer->setSentenceType(Sentence::DECLARATIVE);
+									$Determiner->setQuestion(false);
+
+	#todo
+	//$Determiner->setUnit($unit);
+
+									$Determiner->setCategory($answer);
+
+									$found = true;
+								}
 							}
 						}
-					}
 
-					// when / where?
-					if (!$found) {
-						if ($Preposition = $Clause->getPreposition()) {
-							if ($Object = $Preposition->getObject()) {
-								if ($Object->isQuestion()) {
-									if ($Preposition->getCategory() == 'where') {
-										$Answer->setSentenceType(Sentence::DECLARATIVE);
-										$Preposition->setCategory('in');
-										$Object->setName($answer);
-										$Object->setQuestion(false);
-									}
-									if ($Preposition->getCategory() == 'when') {
-										$Answer->setSentenceType(Sentence::DECLARATIVE);
-										$Preposition->setCategory('on');
+						// when / where?
+						if (!$found) {
+							if ($Preposition = $Clause->getPreposition()) {
+								if ($Object = $Preposition->getObject()) {
+									if ($Object->isQuestion()) {
+										if ($Preposition->getCategory() == 'where') {
+											$Answer->setSentenceType(Sentence::DECLARATIVE);
+											$Preposition->setCategory('in');
+											$Object->setName($answer);
+											$Object->setQuestion(false);
+										}
+										if ($Preposition->getCategory() == 'when') {
+											$Answer->setSentenceType(Sentence::DECLARATIVE);
+											$Preposition->setCategory('on');
 
-										// in stead of "name" create a new Date object
-										list($year, $month, $day) = explode('-', $answer);
-										$Date = new Date();
-										$Date->setYear((int)$year);
-										$Date->setMonth((int)$month);
-										$Date->setDay((int)$day);
-										$Preposition->setObject($Date);
+											// in stead of "name" create a new Date object
+											list($year, $month, $day) = explode('-', $answer);
+											$Date = new Date();
+											$Date->setYear((int)$year);
+											$Date->setMonth((int)$month);
+											$Date->setDay((int)$day);
+											$Preposition->setObject($Date);
+										}
 									}
 								}
 							}
@@ -215,17 +224,7 @@ class SentenceProcessor
 
 				if ($answer !== null) {
 
-					$entities = array();
-
-					foreach ($answer as $name) {
-
-	                       $Entity = new Entity();
-	                       $Entity->setName($name);
-
-	                       $entities[] = $Entity;
-					}
-
-					$Answer = SentenceBuilder::buildConjunction($entities);
+					$Answer = $this->createConjunction($answer);
 
 				}
 
@@ -234,6 +233,20 @@ class SentenceProcessor
 		}
 
 		return $Answer;
+	}
+
+	private function createConjunction($operands)
+	{
+		$entities = array();
+
+		foreach ($operands as $name) {
+
+                     $Entity = new Entity();
+                     $Entity->setName($name);
+
+                     $entities[] = $Entity;
+		}
+		return SentenceBuilder::buildConjunction($entities);
 	}
 
 	private function answerQuestionWithSemantics(PredicationList $PredicationList)

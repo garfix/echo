@@ -40,6 +40,9 @@ isa(?child, Daughter) and belong_to(?child, ?parent) => child(?parent, ?child);
 // child
 isa(?child, Child) and belong_to(?child, ?parent) => child(?parent, ?child);
 
+// parent
+isa(?parent, Parent) and belong_to(?parent, ?child) => child(?parent, ?child);
+
 // married to
 isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
 
@@ -52,4 +55,5 @@ reference(?a) => true();
 let(?a, ?b) => true();
 aggregate(?a, ?b) => true();
 manner(?o, ?q) and isa(?o, Child) => true();
-request(?a) => true()
+request(?a) => true();
+birthname(?a, ?b) => birthname(?a, ?b)
