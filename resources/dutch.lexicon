@@ -157,6 +157,11 @@
 	features: { head: { syntax: { predicate: "old" } } },
 	semantics: isa(this.event, Old)
 ] [
+	form: 'ouders',
+	partOfSpeech: 'noun',
+	features: { head: { agreement: { number: "plural"} } },
+	semantics: isa(this.object, Parent)
+] [
 	form: 'van',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "of" } } },
@@ -194,4 +199,14 @@
 	partOfSpeech: 'whAdverb',
 	features: { head: { syntax: { category: "when" } } },
 	semantics: at_time(this.event, this.adjunct)
+] [
+	form: 'waren',
+	partOfSpeech: 'verb',
+	features: { head: {agreement: { number: "plural"}, syntax: { predicate: "be", tense: "past" } } },
+	semantics: tense(this.event, Past)
+] [
+	form: 'wie',
+	partOfSpeech: 'whAdverb',
+	features: { head: { syntax: { category: "identity" } } },
+	semantics: identity(this.subject, this.adjunct)
 ]

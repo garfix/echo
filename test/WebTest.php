@@ -43,6 +43,7 @@ class WebTest extends \PHPUnit_Framework_TestCase
 	public function testWhoWereLordByronsParents()
 	{
 		$this->assertSame('George Gordon Byron and Anne Isabella Milbanke', $this->answer('en', 'Who were "Ada Lovelace" \'s parents?'), 'en');
+		$this->assertSame('George Gordon Byron en Anne Isabella Milbanke', $this->answer('nl', 'Wie waren "Ada Lovelace" \'s ouders?'), 'nl');
 	}
 
 	private function answer($language, $question)

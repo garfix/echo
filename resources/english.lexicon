@@ -283,8 +283,7 @@
 	form: 'who',
 	partOfSpeech: 'whAdverb',
 	features: { head: { syntax: { category: "identity" } } },
-	// name() is a good solution, but really it is an interpretation of the question that the questioner wants to hear the name
-	semantics: birthname(this.subject, this.name)
+	semantics: identity(this.subject, this.adjunct)
 ] [
 	form: 'yes',
 	partOfSpeech: 'adverb',

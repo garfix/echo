@@ -259,6 +259,7 @@ class Processor
 				'wanneer is X geboren',
 				'waar is X gestorven',
 				'wanneer is X gestorven',
+				'wie waren X \'s ouders',
 			),
 			'en' => array(
 				'where was X born',
