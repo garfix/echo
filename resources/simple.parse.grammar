@@ -334,7 +334,6 @@ VPQ => verb AP,
     semantics: {
         WhADVP.sem = whAdverb.sem;
         WhADVP.request = whAdverb.adjunct;
-//        WhADVP.event = whAdverb.event;
         WhADVP.subject = whAdverb.subject
     }
 ]

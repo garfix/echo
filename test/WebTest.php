@@ -40,10 +40,16 @@ class WebTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Lord Byron is gestorven op 19 april 1824.', $this->answer('nl', 'Wanneer is "Lord Byron" gestorven?'), 'nl');
 	}
 
-	public function testWhoWereLordByronsParents()
+	public function testWhoWereAdaLovelacesParents()
 	{
-		$this->assertSame('George Gordon Byron and Anne Isabella Milbanke', $this->answer('en', 'Who were "Ada Lovelace" \'s parents?'), 'en');
-		$this->assertSame('George Gordon Byron en Anne Isabella Milbanke', $this->answer('nl', 'Wie waren "Ada Lovelace" \'s ouders?'), 'nl');
+		$this->assertSame('Lord Byron and Anne Isabella Byron, Baroness Byron', $this->answer('en', 'Who were "Ada Lovelace" \'s parents?'), 'en');
+		$this->assertSame('Lord Byron en Anne Isabella Byron, Baroness Byron', $this->answer('nl', 'Wie waren "Ada Lovelace" \'s ouders?'), 'nl');
+	}
+
+	public function testWhoWereLordByronsChildren()
+	{
+		$this->assertSame('Ada Lovelace and Allegra Byron', $this->answer('en', 'Who were "Lord Byron" \'s children?'), 'en');
+		$this->assertSame('Ada Lovelace en Allegra Byron', $this->answer('nl', 'Wie waren "Lord Byron" \'s kinderen?'), 'nl');
 	}
 
 	private function answer($language, $question)

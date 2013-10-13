@@ -5,10 +5,10 @@ manner(?e, ?q) and isa(?e, Old) => subject(?e, ?s) and born(?s, ?b) and time(?e,
 manner(?o, ?q) and many(?o) => aggregate(?q, count(?o));
 
 // name (imperative)
-isa(?e, Name) and object(?e, ?o) => name(?o, ?n) and request(?n);
+isa(?e, Name) and object(?e, ?o) => label(?o, ?n) and request(?n);
 
 // who is ...?
 // a request for the identity of an individual is usually answered with his or her name
 // the birthname is chosen because it's more official than a label
-// note: the original request is deliberately ignored
-identity(?s, ?i) and request(?x) => birthname(?s, ?n) and request(?n)
+// I've used 'birthname' in stead of 'label' before, but it wasn't defined for many people
+identity(?s, ?i) and request(?i) => label(?s, ?n) and request(?n)

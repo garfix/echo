@@ -209,15 +209,15 @@ $sparql = (string)$Query;
 				}
 				$Query->select("?{$subject}");
 				break;
-			case 'birthname':
+			case 'label':
 				$subject = (string)$Relation->getArgument(0)->getName();
 				if ($Relation->getArgument(1) instanceof Constant) {
 					$object = (string)$Relation->getArgument(1)->getName();
 					$ucName = ucwords($object);
-					$Query->where("{ ?{$subject} dbpprop:birthName '$ucName'@en }");
+					$Query->where("{ ?{$subject} rdfs:label '$ucName'@en }");
 				} else {
 					$object = (string)$Relation->getArgument(1)->getName();
-					$Query->where("{ ?{$subject} dbpprop:birthName ?{$object} }");
+					$Query->where("{ ?{$subject} rdfs:label ?{$object} }");
 					$Query->where("FILTER(lang(?{$object}) = 'en')");
 					$Query->select("?{$object}");
 				}

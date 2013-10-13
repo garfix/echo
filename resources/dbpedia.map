@@ -46,8 +46,11 @@ isa(?parent, Parent) and belong_to(?parent, ?child) => child(?parent, ?child);
 // married to
 isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
 
+// label
+label(?a, ?b) => label(?a, ?b);
+
 // unimportant predicates
-isa(?a, ?b) => true();
+isa(?a, Female) => true();
 subject(?a, ?b) => true();
 object(?a, ?b) => true();
 tense(?a, ?b) => true();
@@ -56,4 +59,3 @@ let(?a, ?b) => true();
 aggregate(?a, ?b) => true();
 manner(?o, ?q) and isa(?o, Child) => true();
 request(?a) => true();
-birthname(?a, ?b) => birthname(?a, ?b)
