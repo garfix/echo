@@ -19,10 +19,8 @@ LingPipe
 http://alias-i.com/lingpipe/
 - Java
 
-Thought Treasure
+ThoughtTreasure
 http://en.wikipedia.org/wiki/ThoughtTreasure
-- Cancelled in 2000
-- Lijkt alleen vrij eenvoudige zinnen aan te kunnen
 
 TEAM
 TEAM: An experiment in the design of transportable natural language interfaces (1987)
@@ -36,4 +34,7 @@ Interessante artikelen:
 Evaluating the Usability of Natural Language Query Languages and Interfaces to Semantic Web Knowledge Bases (lokaal)
 C-Phrase: A system for building robust natural language interfaces to databases (alleen betaald op het internet)
 
-
+Stanford Parser:
+http://nlp.stanford.edu:8080/parser/index.jsp
+Parts-of-speech
+http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html

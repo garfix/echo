@@ -195,7 +195,8 @@ class Processor
 				if (isset($parameters['q'])) {
 					$LineEditor->setLinePieces(explode(LineEditor::SEPARATOR, $parameters['q']));
 				} else {
-					$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron', 'born'));
+					//$LineEditor->setLinePieces(array('where', 'was', 'Lord Byron', 'born'));
+					$LineEditor->setLinePieces(array('how', 'old', 'was', 'Mary Shelley', 'when', 'she', 'died'));
 				}
 
 			$Form->add($SubmitButton = new SubmitButton());

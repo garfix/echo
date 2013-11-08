@@ -372,6 +372,24 @@ VPQ => verb AP,
     }
 ]
 
+[
+	// how old
+
+	rule:
+        WhADVP => whwordNP AP,
+    features: {
+        WhADVP: { head: ?h1 },
+        whwordNP: { head: ?h1 { variables: { role: ?role } } },
+        AP: { head: { syntax: ?role { type: 'entity' }} }
+    },
+    semantics: {
+		WhADVP.sem = whwordNP.sem and AP.sem;
+		WhADVP.object = whwordNP.object;
+		WhADVP.object = AP.object;
+		WhADVP.request = whwordNP.adjunct
+    }
+]
+
 // Noun Phrase
 
 [

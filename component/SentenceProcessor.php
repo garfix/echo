@@ -137,12 +137,13 @@ class SentenceProcessor
 				$Adverb = new Adverb();
 				$Adverb->setCategory('yes');
 				$Answer->getClause()->setAdverb($Adverb);
+
 				$Answer->setSentenceType(Sentence::DECLARATIVE);
 			}
 
 		} elseif ($sentenceType == 'wh-question') {
 
-			$answer = $this->answerQuestionWithSemantics($Semantics);
+			list($answer, $unit) = $this->answerQuestionWithSemantics($Semantics);
 
 			// incorporate the answer in the original question
 			if ($answer !== null) {
@@ -172,8 +173,9 @@ class SentenceProcessor
 									$Answer->setSentenceType(Sentence::DECLARATIVE);
 									$Determiner->setQuestion(false);
 
-	#todo
-	//$Determiner->setUnit($unit);
+									if ($unit) {
+										$Determiner->setUnit($unit);
+									}
 
 									$Determiner->setCategory($answer);
 
@@ -220,16 +222,12 @@ class SentenceProcessor
 
 			if ($isQuestion) {
 
-				$answer = $this->answerQuestionWithSemantics($Semantics);
-
+				list($answer, $unit) = $this->answerQuestionWithSemantics($Semantics);
 				if ($answer !== null) {
-
 					$Answer = $this->createConjunction($answer);
 
 				}
-
 			}
-
 		}
 
 		return $Answer;
@@ -241,10 +239,10 @@ class SentenceProcessor
 
 		foreach ($operands as $name) {
 
-                     $Entity = new Entity();
-                     $Entity->setName($name);
+             $Entity = new Entity();
+             $Entity->setName($name);
 
-                     $entities[] = $Entity;
+             $entities[] = $Entity;
 		}
 		return SentenceBuilder::buildConjunction($entities);
 	}
@@ -255,16 +253,21 @@ class SentenceProcessor
 
 		$bindings = $this->createBindings($Interpretation);
 
+		$unit = null;
+
 #todo: there should be only 1 result, or all results are identical
 
 		// the variable 'request' in $bindings should hold the answer
 		if ($bindings) {
 
+			// check if there is a unit for the answer
+			$Unit = $Interpretation->getPredicationByPredicate('request_unit');
+			if ($Unit) {
+				$unit = $Unit->getArgument(0);
+			}
+
 			// find the first argument of the request-predication
 			$Request = $Interpretation->getPredicationByPredicate('request');
-
-			// check if there is a unit for the answer
-			$Unit = $Interpretation->getPredicationByPredicate('unit');
 
 			if ($Request) {
 				$argument = $Request->getFirstArgument()->getName();
@@ -287,7 +290,7 @@ class SentenceProcessor
 
 		}
 
-		return $response;
+		return array($response, $unit);
 	}
 
 	private function interpret(PredicationList $RawSemantics)

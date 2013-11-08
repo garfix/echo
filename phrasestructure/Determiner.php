@@ -2,6 +2,7 @@
 
 namespace agentecho\phrasestructure;
 
+use agentecho\datastructure\Atom;
 use \agentecho\phrasestructure\PhraseStructure;
 
 /**
@@ -16,7 +17,8 @@ class Determiner extends PhraseStructure
 		'category' => null,
         'question' => false,
         // object is an Entity (as in the determiner "Byron's children")
-        'Object' => null
+        'Object' => null,
+		'Unit' => null,
 	);
 
 	/**
@@ -55,4 +57,13 @@ class Determiner extends PhraseStructure
        return $this->data['Object'];
    }
 
+	public function setUnit(Atom $Unit)
+	{
+		$this->data['Unit'] = $Unit;
+	}
+
+	public function getUnit()
+	{
+	    return $this->data['Unit'];
+	}
 }

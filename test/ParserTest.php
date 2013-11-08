@@ -115,7 +115,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		//$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when Lady Lovelace was born?");
 
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
-		$this->assertSame('[S [S [WhADVP [whwordNP how][NP [NBar [noun old]]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][S [NP [pronoun she]][VP [verb died]]]]]', $Sentence->getSyntaxString());
+		$this->assertSame('[S [S [WhADVP [whwordNP how][AP [adjective old]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][S [NP [pronoun she]][VP [verb died]]]]]', $Sentence->getSyntaxString());
 		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary, lastname: Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
 		$this->assertSame('manner(S1.event, S1.request) and isa(S1.event, Old) and tense(S1.event, Past) and name(S1.subject, "Mary Shelley") and subject(S1.event, S1.subject) and request(S1.request) and at_time(S1.event, S1_SBar.subEvent) and isa(S1_SBar_S.subject, Female) and reference(S1_SBar_S.subject) and isa(S1_SBar.subEvent, Die) and subject(S1_SBar.subEvent, S1_SBar_S.subject) and object(S1_SBar.subEvent, S1_SBar_S.object)', $Sentence->getSemanticsString());
 	}

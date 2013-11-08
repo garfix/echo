@@ -46,7 +46,7 @@ isa(?parent, Parent) and belong_to(?parent, ?child) => child(?parent, ?child);
 // married to
 isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
 
-// label
+// identity mappings
 label(?a, ?b) => label(?a, ?b);
 
 // unimportant predicates
@@ -59,3 +59,4 @@ let(?a, ?b) => true();
 aggregate(?a, ?b) => true();
 manner(?o, ?q) and isa(?o, Child) => true();
 request(?a) => true();
+request_unit(?a) => true();
