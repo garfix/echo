@@ -16,8 +16,14 @@ class GenerationRule
 	/** @var LabeledDAG */
 	private $Condition = null;
 
+	/** @var PredicationList */
+	private $Condition1 = null;
+
 	/** @var LabeledDAG */
 	private $Features = null;
+
+	/** @var AssignmentList */
+	private $Assignments = null;
 
 	/**
 	 * @param ProductionRule $Production
@@ -49,6 +55,38 @@ class GenerationRule
 	public function getCondition()
 	{
 		return $this->Condition;
+	}
+
+	/**
+	 * @param PredicationList $Condition1
+	 */
+	public function setCondition1(PredicationList $Condition1)
+	{
+		$this->Condition1 = $Condition1;
+	}
+
+	/**
+	 * @return PredicationList
+	 */
+	public function getCondition1()
+	{
+		return $this->Condition1;
+	}
+
+	/**
+	 * @param AssignmentList $Assignments
+	 */
+	public function setAssignments(AssignmentList $Assignments)
+	{
+		$this->Assignments = $Assignments;
+	}
+
+	/**
+	 * @return AssignmentList
+	 */
+	public function getAssignments()
+	{
+		return $this->Assignments;
 	}
 
 	/**

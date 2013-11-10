@@ -7,6 +7,7 @@ namespace agentecho\datastructure;
  */
 class AssignmentList extends SemanticStructure
 {
+	/** @var  Assignment[] */
 	private $assignments;
 
 	public function setAssignments($assignments)

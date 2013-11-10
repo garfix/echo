@@ -3,6 +3,8 @@
 namespace agentecho\grammar;
 
 use agentecho\datastructure\LabeledDAG;
+use agentecho\datastructure\GenerationRule;
+use agentecho\datastructure\PredicationList;
 
 /**
  * A grammar should describe the rules of a language.
@@ -41,7 +43,7 @@ interface Grammar
 	/**
 	 * Returns all generation rules with a given  $antecedent
 	 * @param $antecedent
-	 * @return array[GenerationRule]
+	 * @return GenerationRule[]
 	 */
 	public function getGenerationRulesForAntecedent($antecedent);
 
@@ -64,6 +66,14 @@ interface Grammar
 	 * @return string|false
 	 */
 	public function getWordForFeatures($partOfSpeech, array $features);
+
+	/**
+	 * Returns a word, given its semantics.
+	 *
+	 * @param PredicationList $Semantics
+	 * @return mixed An array of [word, partOfSpeech], or false;
+	 */
+	public function getWordForSemantics(PredicationList $Semantics);
 
 	/**
 	 * Returns the features for a word, starting with $partOfSpeech as a new root.

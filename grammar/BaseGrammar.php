@@ -247,4 +247,26 @@ abstract class BaseGrammar implements Grammar
 
 		return $word;
 	}
+
+	/**
+	 * Returns a word, given its semantics.
+	 *
+	 * @param PredicationList $Semantics
+	 * @return mixed An array of [word, partOfSpeech], or false;
+	 */
+	public function getWordForSemantics(PredicationList $Semantics)
+	{
+		$predications = $Semantics->getPredications();
+
+		// check for name(propernoun.entity, "Some Name")
+		if (count($predications) == 1) {
+			$Predication = reset($predications);
+			if ($Predication->getPredicate() == 'name') {
+				$name = $Predication->getArgument(1)->getName();
+				return $name;
+			}
+		}
+
+		return 'WORD';
+	}
 }

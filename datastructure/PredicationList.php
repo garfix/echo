@@ -19,6 +19,14 @@ class PredicationList extends  Term
 	}
 
 	/**
+	 * @param Predication $Predication
+	 */
+	public function addPredication(Predication $Predication)
+	{
+		$this->predications[] = $Predication;
+	}
+
+	/**
 	 * @return Predication[]
 	 */
 	public function getPredications()
@@ -54,6 +62,7 @@ class PredicationList extends  Term
 	 * Returns the first found predication with a given predicate.
 	 *
 	 * @param Predication|false $predicate
+	 * @return Predication|false
 	 */
 	public function getPredicationByPredicate($predicate)
 	{

@@ -242,6 +242,10 @@ $words = $lexicalItems;
 			$FeatureDAG2 = clone $FeatureDAG;
 			$FeatureDAG2->renameLabel($antecedentCategory, $antecedent2);
 
+			if (!$GenerationRule->getCondition()) {
+				continue;
+			}
+
 			$pattern = $GenerationRule->getCondition()->getRoot();
 
 			if ($FeatureDAG2->match($pattern)) {

@@ -262,6 +262,18 @@ class SemanticStructureParser
 						$ParseRule->setCondition($Tree);
 					}
 
+				} elseif ($label == 'condition1') {
+
+					if ($pos = $this->parsePredicationList($tokens, $pos, $List)) {
+						$ParseRule->setCondition1($List);
+					}
+
+				} elseif ($label == 'bind') {
+
+					if ($pos = $this->parseAssignmentList($tokens, $pos, $List)) {
+						$ParseRule->setAssignments($List);
+					}
+
 				} elseif ($label == 'features') {
 
 					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
@@ -861,7 +873,7 @@ class SemanticStructureParser
 
 				while ($newPos) {
 
-					// and
+					// ;
 					if ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
 						$pos = $newPos;
 
