@@ -39,7 +39,53 @@ class Generator
 		// generate all lexical items
 		$lexicalItems = $this->generateNode($Grammar, 'S', $Relations, $propertyBindings);
 
-		return implode(' ', $lexicalItems);
+		// combine the lexical items into surface text
+		$text = $this->createSurfaceText($Grammar, $lexicalItems);
+
+		return $text;
+	}
+
+	/**
+	 * Creates a surface text string from a set of lexical entries.
+	 *
+	 * @param Grammar $Grammar
+	 * @param array $lexicalItems An array of [word, partOfSpeech]
+	 * @return string
+	 */
+	private function createSurfaceText(Grammar $Grammar, $lexicalItems)
+	{
+		if (empty($lexicalItems)) {
+			return '';
+		}
+
+		// the first word should be capitalized
+		$text = ucfirst($lexicalItems[0][0]);
+
+		// add all words and precede each one with a space,
+		// except the first word, and comma's
+		for ($i = 1; $i < count($lexicalItems); $i++) {
+
+			list($word, $partOfSpeech) = $lexicalItems[$i];
+
+			$Features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
+
+			$space = $Features->getPathValue(array($partOfSpeech, 'space'));
+			$capitalize = $Features->getPathValue(array($partOfSpeech, 'capitalize'));
+
+			if ($space != 'after_only') {
+				$text .= ' ';
+			}
+
+			if ($capitalize) {
+				$word = ucfirst($word);
+			}
+
+			$text .= $word;
+		}
+
+		$text .= '.';
+
+        return $text;
 	}
 
 	/**
@@ -58,31 +104,37 @@ class Generator
 		$variableBindings = array();
 		$Rule = $this->findMatchingRule($Grammar, $antecedent, $Relations, $propertyBindings, $variableBindings);
 
-		$text = [];
+		$lexicalItems = [];
 
 		if ($this->isWordNode($Rule)) {
 
-			$text[] = $this->findWord($Grammar, $Rule->getCondition1(), $variableBindings);
+			$lexicalItems[] = $this->findWord($Grammar, $Rule->getCondition1(), $variableBindings);
 
 		} else {
-
-			// assign new node properties
-			// NP.entity = S.subject
 
 			// go through each of the consequents
 			foreach ($Rule->getProduction()->getConsequents() as $consequent) {
 
+				// assign new node properties (for example: NP.entity = S.subject)
 				$childPropertyBindings = $this->createChildProperyBindings($consequent, $propertyBindings, $Rule->getAssignments());
 
-				$text = array_merge($text, $this->generateNode($Grammar, $consequent, $Relations, $childPropertyBindings));
-
+				$lexicalItems = array_merge($lexicalItems, $this->generateNode($Grammar, $consequent, $Relations, $childPropertyBindings));
 			}
 
 		}
 
-		return $text;
+		return $lexicalItems;
 	}
 
+	/**
+	 * Create a new set of bindings for a child node,
+	 * by assigning parent bindings via a list of assignments.
+	 *
+	 * @param $node
+	 * @param array $propertyBindings
+	 * @param AssignmentList $AssignmentList
+	 * @return array
+	 */
 	private function createChildProperyBindings($node, array $propertyBindings, AssignmentList $AssignmentList)
 	{
 		$bindings = array();
@@ -116,6 +168,13 @@ class Generator
 		return $result;
 	}
 
+	/**
+	 * Is this a rule for a word?
+	 * I.e. verb => word
+	 *
+	 * @param GenerationRule $Rule
+	 * @return bool
+	 */
 	private function isWordNode(GenerationRule $Rule)
 	{
 		$Production = $Rule->getProduction();
@@ -130,6 +189,7 @@ class Generator
 	 * @param $antecedent
 	 * @param PredicationList $Relations
 	 * @param array $propertyBindings
+	 * @param array $variableBindings
 	 * @throws NoRuleFoundForAntecedent
 	 * @return GenerationRule
 	 */
@@ -163,7 +223,6 @@ class Generator
 				}
 
 				if ($match) {
-
 					return $GenerationRule;
 				}
 			}

@@ -263,10 +263,10 @@ abstract class BaseGrammar implements Grammar
 			$Predication = reset($predications);
 			if ($Predication->getPredicate() == 'name') {
 				$name = $Predication->getArgument(1)->getName();
-				return $name;
+				return [$name, 'propernoun'];
 			}
 		}
 
-		return 'WORD';
+		return $this->Lexicon->getWordForSemantics($Semantics);
 	}
 }

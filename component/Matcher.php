@@ -19,6 +19,8 @@ class Matcher
 	 *
 	 * @param Predication $Predication
 	 * @param PredicationList $Relations
+	 * @param $propertyBindings
+	 * @param $variableBindings
 	 * @return array|bool
 	 */
 	public static function matchPredicationAgainstList(Predication $Predication, PredicationList $Relations, &$propertyBindings, &$variableBindings)
@@ -38,6 +40,8 @@ class Matcher
 	 *
 	 * @param Predication $Predication
 	 * @param Predication $Relation
+	 * @param $propertyBindings
+	 * @param $variableBindings
 	 * @return bool
 	 */
 	public static function matchPredicationAgainstPredication(Predication $Predication, Predication $Relation, &$propertyBindings, &$variableBindings)
@@ -75,8 +79,19 @@ class Matcher
 				}
 			} elseif ($PredicationArgument instanceof Property) {
 				if ($RelationArgument instanceof Variable) {
+					// S.subject = ?s
 					$newPropertyBindings[(string)$PredicationArgument] = $RelationArgument;
 					$match = true;
+				} elseif ($RelationArgument instanceof Property) {
+					if ($RelationArgument->getName() == $PredicationArgument->getName()) {
+						$relationObjectName = $RelationArgument->getObject()->getName();
+						$predicationObjectName = $PredicationArgument->getObject()->getName();
+						if ($relationObjectName == 'this' || $relationObjectName == $predicationObjectName) {
+							// verb.event = verb.event
+							// verb.event = this.event
+							$match = true;
+						}
+					}
 				}
 			}
 

@@ -2,6 +2,8 @@
 
 namespace agentecho\datastructure;
 
+use agentecho\component\Matcher;
+
 /**
  * @author Patrick van Bergen
  */
@@ -32,6 +34,9 @@ class Lexicon
 	 *
 	 */
 	private $matchIndex = array();
+
+	/** @var array Index semantics by predicates */
+	private $predicateIndex = array();
 
 	public function addEntry(LexicalEntry $Entry)
 	{
@@ -163,6 +168,12 @@ class Lexicon
 
 		// index features
 		$this->indexFeatures($Entry->getWordForm(), $this->matchIndex, $Entry->getPartOfSpeech(), $Entry->getFeatures()->getTree(), '');
+
+		// index semantics
+		foreach ($Entry->getSemantics()->getPredications() as $Predication) {
+			$predicate = $Predication->getPredicate();
+			$this->predicateIndex[$predicate][(string)$Entry] = $Entry;
+		}
 	}
 
 	private function indexFeatures($word, array &$matchIndex, $partOfSpeech, $features, $path)
@@ -181,5 +192,51 @@ class Lexicon
 
 			}
 		}
+	}
+
+	/**
+	 * Returns the first lexical entry [word, partOfSpeech] found that matches a series of $Semantics relations.
+	 *
+	 * @param PredicationList $Semantics
+	 * @return array|bool
+	 */
+	public function getWordForSemantics(PredicationList $Semantics)
+	{
+		// for each of the $Semantics predications, find the lexical entries that have it
+		/** @var LexicalEntry[] $entries */
+		$entries = array();
+		foreach ($Semantics->getPredications() as $Predication) {
+
+			$predicate = $Predication->getPredicate();
+
+			if (isset($this->predicateIndex[$predicate])) {
+				if (empty($entries)) {
+					$entries = $this->predicateIndex[$predicate];
+				} else {
+					$entries = array_intersect_key($entries, $this->predicateIndex[$predicate]);
+				}
+			} else {
+				// no entries have this predication
+				return false;
+			}
+		}
+
+		// check each of $Semantics predications against the predications of the lexical entries
+		foreach ($entries as $Entry) {
+			$success = true;
+			foreach ($Semantics->getPredications() as $Predication) {
+				$propertyBindings = array();
+				$variableBindings = array();
+				if (!Matcher::matchPredicationAgainstList($Predication, $Entry->getSemantics(), $propertyBindings, $variableBindings)) {
+					$success = false;
+					break;
+				}
+			}
+			if ($success) {
+				return [$Entry->getWordForm(), $Entry->getPartOfSpeech()];
+			}
+		}
+
+		return false;
 	}
 }
