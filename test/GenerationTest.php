@@ -26,7 +26,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'John')
 		";
 
-		$this->doTest($relations, "John walks.");
+		$this->doTest($relations, "John walks.", "John loopt.");
 	}
 
 	public function testVerbWithExplicitPastTense()
@@ -42,22 +42,26 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'John')
 		";
 
-		$this->doTest($relations, "John walked.");
+		$this->doTest($relations, "John walked.", "John liep.");
 	}
 
 	/**
 	 * @param $relations
+	 * @param $expectedEn
+	 * @param $expectedNl
 	 */
-	public function doTest($relations, $expected)
+	public function doTest($relations, $expectedEn, $expectedNl)
 	{
 		$Parser = new SemanticStructureParser();
+		$Generator = new Generator();
+
 		/** @var PredicationList $Sentence */
 		$Sentence = $Parser->parse($relations);
 
-		$Generator = new Generator();
-		$Grammar = GrammarFactory::getGrammar('en');
-		$surfaceRepresentation = $Generator->generate($Grammar, $Sentence);
+		$surfaceRepresentation = $Generator->generate(GrammarFactory::getGrammar('en'), $Sentence);
+		$this->assertSame($expectedEn, $surfaceRepresentation);
 
-		$this->assertSame($expected, $surfaceRepresentation);
+		$surfaceRepresentation = $Generator->generate($Grammar = GrammarFactory::getGrammar('nl'), $Sentence);
+		$this->assertSame($expectedNl, $surfaceRepresentation);
 	}
 }

@@ -133,6 +133,16 @@
 	features: { head: { agreement: { person: 3, number: "plural"}, syntax: { category: "child" } } },
 	semantics: isa(this.object, Child)
 ] [
+	form: 'liep',
+	partOfSpeech: 'verb',
+	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
+	semantics: isa(this.event, Walk) and tense(this.event, Past)
+] [
+	form: 'loopt',
+	partOfSpeech: 'verb',
+	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
+	semantics: isa(this.event, Walk) and tense(this.event, Present)
+] [
 	form: 'met',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "to" } } },
