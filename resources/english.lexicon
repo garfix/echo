@@ -250,6 +250,11 @@
 	partOfSpeech: 'degreeAdverb',
 	features: { head: {}}
 ] [
+	form: 'walked',
+	partOfSpeech: 'verb',
+	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
+	semantics: isa(this.event, Walk) and tense(this.event, Past)
+] [
 	form: 'walks',
 	partOfSpeech: 'verb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },

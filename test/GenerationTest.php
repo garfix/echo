@@ -16,7 +16,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 {
 	public function testSimpleDeclarativeActiveSentence()
 	{
-		/** @var PredicationList $Sentence */
+		// note: tense is implicitly the present
 
 		$relations = "
 			sentence(?e) and
@@ -26,13 +26,38 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'John')
 		";
 
+		$this->doTest($relations, "John walks.");
+	}
+
+	public function testVerbWithExplicitPastTense()
+	{
+		// note: tense is explicitly the past
+
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			isa(?e, Walk) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			name(?s, 'John')
+		";
+
+		$this->doTest($relations, "John walked.");
+	}
+
+	/**
+	 * @param $relations
+	 */
+	public function doTest($relations, $expected)
+	{
 		$Parser = new SemanticStructureParser();
+		/** @var PredicationList $Sentence */
 		$Sentence = $Parser->parse($relations);
 
 		$Generator = new Generator();
 		$Grammar = GrammarFactory::getGrammar('en');
 		$surfaceRepresentation = $Generator->generate($Grammar, $Sentence);
 
-		$this->assertSame("John walks.", $surfaceRepresentation);
+		$this->assertSame($expected, $surfaceRepresentation);
 	}
 }

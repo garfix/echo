@@ -327,6 +327,8 @@
 	rule:
 		propernoun => word,
 	condition1:
+		name(propernoun.entity, ?name),
+	word:
 		name(propernoun.entity, ?name)
 ]
 
@@ -336,13 +338,26 @@
 	condition1:
 		isa(VP.event, ?type),
 	bind: {
-		verb.event= VP.event
+		verb.event = VP.event
 	}
 ]
 
+// explicit tense
 [
 	rule:
 		verb => word,
 	condition1:
-		isa(verb.event, ?type)
+		isa(verb.event, ?type) and tense(verb.event, ?tense),
+	word:
+		isa(verb.event, ?type) and tense(verb.event, ?tense)
+]
+
+// implicit tense: present
+[
+	rule:
+		verb => word,
+	condition1:
+		isa(verb.event, ?type),
+	word:
+		isa(verb.event, ?type) and tense(verb.event, Present)
 ]

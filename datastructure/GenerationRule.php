@@ -25,6 +25,9 @@ class GenerationRule
 	/** @var AssignmentList */
 	private $Assignments = null;
 
+	/** @var PredicationList */
+	private $WordSemantics = null;
+
 	/**
 	 * @param ProductionRule $Production
 	 */
@@ -71,6 +74,22 @@ class GenerationRule
 	public function getCondition1()
 	{
 		return $this->Condition1;
+	}
+
+	/**
+	 * @param PredicationList $WordSemantics
+	 */
+	public function setWordSemantics(PredicationList $WordSemantics)
+	{
+		$this->WordSemantics = $WordSemantics;
+	}
+
+	/**
+	 * @return PredicationList
+	 */
+	public function getWordSemantics()
+	{
+		return $this->WordSemantics;
 	}
 
 	/**

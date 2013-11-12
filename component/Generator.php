@@ -46,49 +46,6 @@ class Generator
 	}
 
 	/**
-	 * Creates a surface text string from a set of lexical entries.
-	 *
-	 * @param Grammar $Grammar
-	 * @param array $lexicalItems An array of [word, partOfSpeech]
-	 * @return string
-	 */
-	private function createSurfaceText(Grammar $Grammar, $lexicalItems)
-	{
-		if (empty($lexicalItems)) {
-			return '';
-		}
-
-		// the first word should be capitalized
-		$text = ucfirst($lexicalItems[0][0]);
-
-		// add all words and precede each one with a space,
-		// except the first word, and comma's
-		for ($i = 1; $i < count($lexicalItems); $i++) {
-
-			list($word, $partOfSpeech) = $lexicalItems[$i];
-
-			$Features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
-
-			$space = $Features->getPathValue(array($partOfSpeech, 'space'));
-			$capitalize = $Features->getPathValue(array($partOfSpeech, 'capitalize'));
-
-			if ($space != 'after_only') {
-				$text .= ' ';
-			}
-
-			if ($capitalize) {
-				$word = ucfirst($word);
-			}
-
-			$text .= $word;
-		}
-
-		$text .= '.';
-
-        return $text;
-	}
-
-	/**
 	 * Generates a partial surface representation for a single node.
 	 *
 	 * @param Grammar $Grammar
@@ -108,7 +65,7 @@ class Generator
 
 		if ($this->isWordNode($Rule)) {
 
-			$lexicalItems[] = $this->findWord($Grammar, $Rule->getCondition1(), $variableBindings);
+			$lexicalItems[] = $this->findWord($Grammar, $Rule->getWordSemantics(), $variableBindings);
 
 		} else {
 
@@ -229,5 +186,48 @@ class Generator
 		}
 
 		throw new NoRuleFoundForAntecedent($antecedent);
+	}
+
+	/**
+	 * Creates a surface text string from a set of lexical entries.
+	 *
+	 * @param Grammar $Grammar
+	 * @param array $lexicalItems An array of [word, partOfSpeech]
+	 * @return string
+	 */
+	private function createSurfaceText(Grammar $Grammar, $lexicalItems)
+	{
+		if (empty($lexicalItems)) {
+			return '';
+		}
+
+		// the first word should be capitalized
+		$text = ucfirst($lexicalItems[0][0]);
+
+		// add all words and precede each one with a space,
+		// except the first word, and comma's
+		for ($i = 1; $i < count($lexicalItems); $i++) {
+
+			list($word, $partOfSpeech) = $lexicalItems[$i];
+
+			$Features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
+
+			$space = $Features->getPathValue(array($partOfSpeech, 'space'));
+			$capitalize = $Features->getPathValue(array($partOfSpeech, 'capitalize'));
+
+			if ($space != 'after_only') {
+				$text .= ' ';
+			}
+
+			if ($capitalize) {
+				$word = ucfirst($word);
+			}
+
+			$text .= $word;
+		}
+
+		$text .= '.';
+
+        return $text;
 	}
 }

@@ -268,6 +268,12 @@ class SemanticStructureParser
 						$ParseRule->setCondition1($List);
 					}
 
+				} elseif ($label == 'word') {
+
+					if ($pos = $this->parsePredicationList($tokens, $pos, $List)) {
+						$ParseRule->setWordSemantics($List);
+					}
+
 				} elseif ($label == 'bind') {
 
 					if ($pos = $this->parseAssignmentList($tokens, $pos, $List)) {
