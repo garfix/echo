@@ -162,7 +162,7 @@
 	form: 'influenced',
 	partOfSpeech: 'verb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Simple)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxBe',
@@ -253,12 +253,12 @@
 	form: 'walked',
 	partOfSpeech: 'verb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Past)
+	semantics: isa(this.event, Walk) and tense(this.event, Past) and aspect(this.event, Simple)
 ] [
 	form: 'walks',
 	partOfSpeech: 'verb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Present)
+	semantics: isa(this.event, Walk) and tense(this.event, Present) and aspect(this.event, Simple)
 ] [
 	form: 'was',
 	partOfSpeech: 'aux',

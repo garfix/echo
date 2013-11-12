@@ -45,6 +45,22 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "John walked.", "John liep.");
 	}
 
+	public function testVerbWithObject()
+	{
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			isa(?e, Influence) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			object(?e, ?o) and
+			name(?s, 'John Milton') and
+			name(?o, 'Lord Byron')
+		";
+
+		$this->doTest($relations, "John Milton influenced Lord Byron.", "John Milton beïnvloedde Lord Byron.");
+	}
+
 	/**
 	 * @param $relations
 	 * @param $expectedEn

@@ -60,3 +60,4 @@ aggregate(?a, ?b) => true();
 manner(?o, ?q) and isa(?o, Child) => true();
 request(?a) => true();
 request_unit(?a) => true();
+aspect(?event, ?aspect) => true();

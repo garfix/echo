@@ -6,6 +6,7 @@ use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\PredicationList;
 use agentecho\exception\MissingSentenceRelationException;
+use agentecho\exception\NoLexicalEntryFoundForSemantics;
 use agentecho\exception\NoRuleFoundForAntecedent;
 use agentecho\grammar\Grammar;
 
@@ -52,8 +53,8 @@ class Generator
 	 * @param string $antecedent
 	 * @param PredicationList $Relations
 	 * @param array $propertyBindings An array of bindings like S.event = ?e
+	 * @throws NoLexicalEntryFoundForSemantics
 	 * @return array A partial surface representation of a sentence, as an array
-	 * @throws NoRuleFoundForAntecedent
 	 */
 	private function generateNode(Grammar $Grammar, $antecedent, PredicationList $Relations, array &$propertyBindings)
 	{
@@ -65,7 +66,12 @@ class Generator
 
 		if ($this->isWordNode($Rule)) {
 
-			$lexicalItems[] = $this->findWord($Grammar, $Rule->getWordSemantics(), $variableBindings);
+			$lexicalItem = $this->findWord($Grammar, $Rule->getWordSemantics(), $variableBindings);
+			if ($lexicalItem === false) {
+				$Relations = Binder::bindRelationsVariables($Rule->getWordSemantics(), $variableBindings);
+				throw new NoLexicalEntryFoundForSemantics((string)$Relations);
+			}
+			$lexicalItems[] = $lexicalItem;
 
 		} else {
 

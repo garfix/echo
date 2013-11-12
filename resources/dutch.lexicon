@@ -28,7 +28,12 @@
 	form: 'beïnvloed',
 	partOfSpeech: 'verb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Participle)
+] [
+	form: 'beïnvloedde',
+	partOfSpeech: 'verb',
+	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past" } } },
+	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Simple)
 ] [
 	form: 'boek',
 	partOfSpeech: 'verb',
@@ -136,12 +141,12 @@
 	form: 'liep',
 	partOfSpeech: 'verb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Past)
+	semantics: isa(this.event, Walk) and tense(this.event, Past) and aspect(this.event, Simple)
 ] [
 	form: 'loopt',
 	partOfSpeech: 'verb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Present)
+	semantics: isa(this.event, Walk) and tense(this.event, Present) and aspect(this.event, Simple)
 ] [
 	form: 'met',
 	partOfSpeech: 'preposition',

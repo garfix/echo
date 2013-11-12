@@ -334,12 +334,33 @@
 
 [
 	rule:
+		VP => verb NP,
+	condition1:
+		isa(VP.event, ?type) and object(VP.event, VP.object),
+	bind: {
+		verb.event = VP.event;
+		NP.entity = VP.object
+	}
+]
+
+[
+	rule:
 		VP => verb,
 	condition1:
 		isa(VP.event, ?type),
 	bind: {
 		verb.event = VP.event
 	}
+]
+
+// explicit aspect
+[
+	rule:
+		verb => word,
+	condition1:
+		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, ?aspect),
+	word:
+		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, ?aspect)
 ]
 
 // explicit tense
@@ -349,7 +370,7 @@
 	condition1:
 		isa(verb.event, ?type) and tense(verb.event, ?tense),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, ?tense)
+		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, Simple)
 ]
 
 // implicit tense: present
@@ -359,5 +380,5 @@
 	condition1:
 		isa(verb.event, ?type),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, Present)
+		isa(verb.event, ?type) and tense(verb.event, Present) and aspect(verb.event, Simple)
 ]
