@@ -73,7 +73,8 @@
 ] [
 	form: 'by',
 	partOfSpeech: 'passivisationPreposition',
-	features: { head: {}}
+	features: { head: {}},
+	semantics: subject(this.event, this.subject)
 ] [
 	form: 'calms',
 	partOfSpeech: 'verb',
@@ -160,9 +161,20 @@
 	features: { head: { syntax: { category: "in" } } }
 ] [
 	form: 'influenced',
+	partOfSpeech: 'simpleVerb',
+	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
+] [
+// deze mag weg als de oude generatie regels er uit zijn
+	form: 'influenced',
 	partOfSpeech: 'verb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
-	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Simple)
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
+] [
+	form: 'influenced',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxBe',
@@ -251,14 +263,14 @@
 	features: { head: {}}
 ] [
 	form: 'walked',
-	partOfSpeech: 'verb',
+	partOfSpeech: 'simpleVerb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Past) and aspect(this.event, Simple)
+	semantics: isa(this.event, Walk) and tense(this.event, Past)
 ] [
 	form: 'walks',
-	partOfSpeech: 'verb',
+	partOfSpeech: 'simpleVerb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Present) and aspect(this.event, Simple)
+	semantics: isa(this.event, Walk) and tense(this.event, Present)
 ] [
 	form: 'was',
 	partOfSpeech: 'aux',

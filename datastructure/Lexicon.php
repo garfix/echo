@@ -172,7 +172,7 @@ class Lexicon
 		// index semantics
 		foreach ($Entry->getSemantics()->getPredications() as $Predication) {
 			$predicate = $Predication->getPredicate();
-			$this->predicateIndex[$predicate][(string)$Entry] = $Entry;
+			$this->predicateIndex[$Entry->getPartOfSpeech()][$predicate][(string)$Entry] = $Entry;
 		}
 	}
 
@@ -197,10 +197,11 @@ class Lexicon
 	/**
 	 * Returns the first lexical entry [word, partOfSpeech] found that matches a series of $Semantics relations.
 	 *
+	 * @param string $partOfSpeech
 	 * @param PredicationList $Semantics
 	 * @return array|bool
 	 */
-	public function getWordForSemantics(PredicationList $Semantics)
+	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics)
 	{
 		// for each of the $Semantics predications, find the lexical entries that have it
 		/** @var LexicalEntry[] $entries */
@@ -209,11 +210,11 @@ class Lexicon
 
 			$predicate = $Predication->getPredicate();
 
-			if (isset($this->predicateIndex[$predicate])) {
+			if (isset($this->predicateIndex[$partOfSpeech][$predicate])) {
 				if (empty($entries)) {
-					$entries = $this->predicateIndex[$predicate];
+					$entries = $this->predicateIndex[$partOfSpeech][$predicate];
 				} else {
-					$entries = array_intersect_key($entries, $this->predicateIndex[$predicate]);
+					$entries = array_intersect_key($entries, $this->predicateIndex[$partOfSpeech][$predicate]);
 				}
 			} else {
 				// no entries have this predication

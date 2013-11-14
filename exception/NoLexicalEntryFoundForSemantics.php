@@ -7,5 +7,5 @@ namespace agentecho\exception;
  */
 class NoLexicalEntryFoundForSemantics extends EchoException
 {
-	protected $messageText = "No lexicon entry matches these semantics: %s";
+	protected $messageText = "No lexicon entry (part of speech: %s) matches these semantics: %s";
 }

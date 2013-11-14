@@ -66,10 +66,10 @@ class Generator
 
 		if ($this->isWordNode($Rule)) {
 
-			$lexicalItem = $this->findWord($Grammar, $Rule->getWordSemantics(), $variableBindings);
+			$lexicalItem = $this->findWord($Grammar, $antecedent, $Rule->getWordSemantics(), $variableBindings);
 			if ($lexicalItem === false) {
 				$Relations = Binder::bindRelationsVariables($Rule->getWordSemantics(), $variableBindings);
-				throw new NoLexicalEntryFoundForSemantics((string)$Relations);
+				throw new NoLexicalEntryFoundForSemantics($antecedent, (string)$Relations);
 			}
 			$lexicalItems[] = $lexicalItem;
 
@@ -124,10 +124,10 @@ class Generator
 	 * @param array $variableBindings
 	 * @return array An array of [word, partOfSpeech], or false
 	 */
-	private function findWord(Grammar $Grammar, PredicationList $Condition, array $variableBindings)
+	private function findWord(Grammar $Grammar, $partOfSpeech, PredicationList $Condition, array $variableBindings)
 	{
 		$Relations = Binder::bindRelationsVariables($Condition, $variableBindings);
-		$result = $Grammar->getWordForSemantics($Relations);
+		$result = $Grammar->getWordForSemantics($partOfSpeech, $Relations);
 		return $result;
 	}
 
@@ -188,6 +188,8 @@ class Generator
 				if ($match) {
 					return $GenerationRule;
 				}
+			} elseif ($GenerationRule->getCondition() === null) {
+				return $GenerationRule;
 			}
 		}
 

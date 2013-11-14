@@ -26,7 +26,8 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'John')
 		";
 
-		$this->doTest($relations, "John walks.", "John loopt.");
+		$this->doTest($relations, "en", "John walks.");
+		$this->doTest($relations, "nl", "John loopt.");
 	}
 
 	public function testVerbWithExplicitPastTense()
@@ -42,10 +43,11 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'John')
 		";
 
-		$this->doTest($relations, "John walked.", "John liep.");
+		$this->doTest($relations, "en", "John walked.");
+		$this->doTest($relations, "nl", "John liep.");
 	}
 
-	public function testVerbWithObject()
+	public function testVerbWithDirectObject()
 	{
 		$relations = "
 			sentence(?e) and
@@ -58,15 +60,34 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?o, 'Lord Byron')
 		";
 
-		$this->doTest($relations, "John Milton influenced Lord Byron.", "John Milton beïnvloedde Lord Byron.");
+		$this->doTest($relations, "en", "John Milton influenced Lord Byron.");
+		$this->doTest($relations, "nl", "John Milton beïnvloedde Lord Byron.");
+	}
+
+	public function testSimplePassiveSentence()
+	{
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			voice(?e, Passive) and
+			isa(?e, Influence) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			object(?e, ?o) and
+			name(?s, 'John Milton') and
+			name(?o, 'Lord Byron')
+		";
+
+		$this->doTest($relations, "en", "Lord Byron was influenced by John Milton.");
+		$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door John Milton.");
 	}
 
 	/**
 	 * @param $relations
-	 * @param $expectedEn
-	 * @param $expectedNl
+	 * @param $language
+	 * @param $expected
 	 */
-	public function doTest($relations, $expectedEn, $expectedNl)
+	public function doTest($relations, $language, $expected)
 	{
 		$Parser = new SemanticStructureParser();
 		$Generator = new Generator();
@@ -74,10 +95,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		/** @var PredicationList $Sentence */
 		$Sentence = $Parser->parse($relations);
 
-		$surfaceRepresentation = $Generator->generate(GrammarFactory::getGrammar('en'), $Sentence);
-		$this->assertSame($expectedEn, $surfaceRepresentation);
-
-		$surfaceRepresentation = $Generator->generate($Grammar = GrammarFactory::getGrammar('nl'), $Sentence);
-		$this->assertSame($expectedNl, $surfaceRepresentation);
+		$surfaceRepresentation = $Generator->generate($Grammar = GrammarFactory::getGrammar($language), $Sentence);
+		$this->assertSame($expected, $surfaceRepresentation);
 	}
 }

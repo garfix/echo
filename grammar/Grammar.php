@@ -70,10 +70,11 @@ interface Grammar
 	/**
 	 * Returns a word, given its semantics.
 	 *
+	 * @param string $partOfSpeech
 	 * @param PredicationList $Semantics
 	 * @return mixed An array of [word, partOfSpeech], or false;
 	 */
-	public function getWordForSemantics(PredicationList $Semantics);
+	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics);
 
 	/**
 	 * Returns the features for a word, starting with $partOfSpeech as a new root.

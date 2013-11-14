@@ -104,7 +104,9 @@ abstract class BaseGrammar implements Grammar
 			'passivisationPreposition',
 			'possessiveMarker', // 's (see http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html)
 			'punctuationMark',
-			'insertion'
+			'insertion'.
+			'pastParticipleVerb', // bitten
+			'simpleVerb', // bites (present), bit (past)
 		));
 	}
 
@@ -251,22 +253,25 @@ abstract class BaseGrammar implements Grammar
 	/**
 	 * Returns a word, given its semantics.
 	 *
+	 * @param string $partOfSpeech
 	 * @param PredicationList $Semantics
 	 * @return mixed An array of [word, partOfSpeech], or false;
 	 */
-	public function getWordForSemantics(PredicationList $Semantics)
+	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics)
 	{
 		$predications = $Semantics->getPredications();
 
 		// check for name(propernoun.entity, "Some Name")
-		if (count($predications) == 1) {
-			$Predication = reset($predications);
-			if ($Predication->getPredicate() == 'name') {
-				$name = $Predication->getArgument(1)->getName();
-				return [$name, 'propernoun'];
+		if ($partOfSpeech == 'propernoun') {
+			if (count($predications) == 1) {
+				$Predication = reset($predications);
+				if ($Predication->getPredicate() == 'name') {
+					$name = $Predication->getArgument(1)->getName();
+					return [$name, 'propernoun'];
+				}
 			}
 		}
 
-		return $this->Lexicon->getWordForSemantics($Semantics);
+		return $this->Lexicon->getWordForSemantics($partOfSpeech, $Semantics);
 	}
 }

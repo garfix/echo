@@ -538,7 +538,7 @@ class LabeledDAG
 					return $node['value'];
 				}
 			} else {
-				die('error in labeled dag');
+				//die('error in labeled dag');
 			}
 
 			$string .= '}';

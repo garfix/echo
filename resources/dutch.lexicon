@@ -26,14 +26,20 @@
 	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
 ] [
 	form: 'beïnvloed',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
+] [
+// deze mag weg als de oude generatie regels er uit zijn
+	form: 'beïnvloed',
 	partOfSpeech: 'verb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
-	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Participle)
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'beïnvloedde',
-	partOfSpeech: 'verb',
+	partOfSpeech: 'simpleVerb',
 	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past" } } },
-	semantics: isa(this.event, Influence) and tense(this.event, Past) and aspect(this.event, Simple)
+	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'boek',
 	partOfSpeech: 'verb',
@@ -57,7 +63,8 @@
 ] [
 	form: 'door',
 	partOfSpeech: 'passivisationPreposition',
-	features: { head: {}}
+	features: { head: {}},
+	semantics: subject(this.event, this.subject)
 ] [
 	form: 'dochter',
 	partOfSpeech: 'noun',
@@ -139,14 +146,14 @@
 	semantics: isa(this.object, Child)
 ] [
 	form: 'liep',
-	partOfSpeech: 'verb',
+	partOfSpeech: 'simpleVerb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Past) and aspect(this.event, Simple)
+	semantics: isa(this.event, Walk) and tense(this.event, Past)
 ] [
 	form: 'loopt',
-	partOfSpeech: 'verb',
+	partOfSpeech: 'simpleVerb',
 	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
-	semantics: isa(this.event, Walk) and tense(this.event, Present) and aspect(this.event, Simple)
+	semantics: isa(this.event, Walk) and tense(this.event, Present)
 ] [
 	form: 'met',
 	partOfSpeech: 'preposition',

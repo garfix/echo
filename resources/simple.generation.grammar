@@ -299,8 +299,30 @@
 ]
 
 
+
+
 // new rules!
 
+
+
+
+// Lord Byron was influenced by John Milton
+// See: The structure of modern english (2000), p 202
+[
+	rule:
+		S => NP auxPsv VP,
+	condition1:
+		mood(S.event, Declarative) and subject(S.event, S.subject) and object(S.event, S.object) and voice(S.event, Passive),
+	bind: {
+		NP.entity = S.object;
+		auxPsv.event = S.event;
+		VP.event = S.event;
+		VP.subject = S.subject;
+		VP.object = S.object
+	}
+]
+
+// John Walks
 [
 	rule:
 		S => NP VP,
@@ -308,11 +330,11 @@
 		mood(S.event, Declarative) and subject(S.event, S.subject),
 	bind: {
 		NP.entity = S.subject;
-		VP.event = S.event;
-		VP.object = S.object
+		VP.event = S.event
 	}
 ]
 
+// Lord Byron
 [
 	rule:
 		NP => propernoun,
@@ -323,6 +345,7 @@
 	}
 ]
 
+// Lord Byron
 [
 	rule:
 		propernoun => word,
@@ -332,53 +355,88 @@
 		name(propernoun.entity, ?name)
 ]
 
+// influenced by John Milton
 [
 	rule:
-		VP => verb NP,
+		VP => pastParticipleVerb passivisationPreposition NP,
+	condition1:
+		isa(VP.event, ?type) and subject(VP.event, VP.subject) and voice(VP.event, Passive),
+	bind: {
+		pastParticipleVerb.event = VP.event;
+		passivisationPreposition.event = VP.event;
+		passivisationPreposition.subject = VP.subject;
+		NP.entity = VP.subject
+	}
+]
+
+// influenced Lord Byron
+[
+	rule:
+		VP => simpleVerb NP,
 	condition1:
 		isa(VP.event, ?type) and object(VP.event, VP.object),
 	bind: {
-		verb.event = VP.event;
+		simpleVerb.event = VP.event;
 		NP.entity = VP.object
 	}
 ]
 
+// walks
 [
 	rule:
-		VP => verb,
+		VP => simpleVerb,
 	condition1:
 		isa(VP.event, ?type),
 	bind: {
-		verb.event = VP.event
+		simpleVerb.event = VP.event
 	}
 ]
 
-// explicit aspect
+// by (passivisation)
 [
 	rule:
-		verb => word,
+		passivisationPreposition => word,
 	condition1:
-		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, ?aspect),
+		subject(passivisationPreposition.event, passivisationPreposition.subject),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, ?aspect)
+		subject(passivisationPreposition.event, passivisationPreposition.subject)
 ]
 
-// explicit tense
+// was (passive)
 [
 	rule:
-		verb => word,
+		auxPsv => word,
+	condition1:
+		tense(auxPsv.event, ?tense),
+	word:
+		tense(auxPsv.event, ?tense)
+]
+
+[
+	rule:
+		pastParticipleVerb => word,
+	condition1:
+		isa(verb.event, ?type) and isa(pastParticipleVerb.event, ?type),
+	word:
+		isa(verb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
+]
+
+// verb, explicit tense
+[
+	rule:
+		simpleVerb => word,
 	condition1:
 		isa(verb.event, ?type) and tense(verb.event, ?tense),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, ?tense) and aspect(verb.event, Simple)
+		isa(verb.event, ?type) and tense(verb.event, ?tense)
 ]
 
-// implicit tense: present
+// verb, implicit
 [
 	rule:
-		verb => word,
+		simpleVerb => word,
 	condition1:
 		isa(verb.event, ?type),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, Present) and aspect(verb.event, Simple)
+		isa(verb.event, ?type) and tense(verb.event, Present)
 ]
