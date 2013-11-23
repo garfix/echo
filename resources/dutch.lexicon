@@ -129,7 +129,8 @@
 ] [
 	form: 'ja',
 	partOfSpeech: 'adverb',
-	features: { head: { syntax: { category: "yes" } } }
+	features: { head: { syntax: { category: "yes" } } },
+	semantics: isa(this.event, Yes)
 ] [
 	form: 'jaar',
 	partOfSpeech: 'noun',
@@ -168,6 +169,11 @@
 	form: 'op',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "on" } } }
+] [
+	form: 'ontmoette',
+	partOfSpeech: 'simpleVerb',
+	features: { },
+	semantics: isa(this.event, Meet) and tense(this.event, Past)
 ] [
 	form: 'oud',
 	partOfSpeech: 'noun',

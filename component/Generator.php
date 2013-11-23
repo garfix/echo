@@ -170,22 +170,27 @@ class Generator
 			$Conditions = $GenerationRule->getCondition1();
 			if ($Conditions !== null) {
 
+				$newPropertyBindings = $propertyBindings;
+				$newVariableBindings = $variableBindings;
 				$match = true;
 
 				// go through all conditions
 				foreach ($Conditions->getPredications() as $Condition) {
 
 					// bind the condition to the active property bindings
-					$BoundCondition = Binder::bindRelationProperties($Condition, $propertyBindings);
+					$BoundCondition = Binder::bindRelationProperties($Condition, $newPropertyBindings);
 
 					// try to match the condition against any one of the $Relations
-					if (!Matcher::matchPredicationAgainstList($BoundCondition, $Relations, $propertyBindings, $variableBindings)) {
+					if (!Matcher::matchPredicationAgainstList($BoundCondition, $Relations, $newPropertyBindings, $newVariableBindings)) {
 						$match = false;
 						break;
 					}
 				}
 
 				if ($match) {
+					$propertyBindings = $newPropertyBindings;
+					$variableBindings = $newVariableBindings;
+
 					return $GenerationRule;
 				}
 			} elseif ($GenerationRule->getCondition() === null) {

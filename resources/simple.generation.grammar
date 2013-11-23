@@ -304,15 +304,37 @@
 // new rules!
 
 
+// Yes, Harry met Sally
+[
+	rule:
+		S => adverb punctuationMark SDecl,
+	condition1:
+		qualification(S.event, S.qualification),
+	bind: {
+		SDecl.event = S.event;
+		adverb.event = S.qualification
+	}
+]
 
+// Declarative sentences
+[
+	rule:
+		S => SDecl,
+	condition1:
+		mood(S.event, Declarative),
+	bind: {
+		SDecl.event = S.event
+	}
+]
 
+// Passive declarative
 // Lord Byron was influenced by John Milton
 // See: The structure of modern english (2000), p 202
 [
 	rule:
-		S => NP auxPsv VP,
+		SDecl => NP auxPsv VP,
 	condition1:
-		mood(S.event, Declarative) and subject(S.event, S.subject) and object(S.event, S.object) and voice(S.event, Passive),
+		subject(S.event, S.subject) and object(S.event, S.object) and voice(S.event, Passive),
 	bind: {
 		NP.entity = S.object;
 		auxPsv.event = S.event;
@@ -325,9 +347,9 @@
 // John Walks
 [
 	rule:
-		S => NP VP,
+		SDecl => NP VP,
 	condition1:
-		mood(S.event, Declarative) and subject(S.event, S.subject),
+		subject(S.event, S.subject),
 	bind: {
 		NP.entity = S.subject;
 		VP.event = S.event
@@ -395,11 +417,13 @@
 // by (passivisation)
 [
 	rule:
-		passivisationPreposition => word,
-	condition1:
-		subject(passivisationPreposition.event, passivisationPreposition.subject),
-	word:
-		subject(passivisationPreposition.event, passivisationPreposition.subject)
+		passivisationPreposition => word
+]
+
+// ,
+[
+	rule:
+		punctuationMark => word
 ]
 
 // was (passive)
@@ -410,6 +434,17 @@
 		tense(auxPsv.event, ?tense),
 	word:
 		tense(auxPsv.event, ?tense)
+]
+
+
+// yes
+[
+	rule:
+		adverb => word,
+	condition1:
+		isa(adverb.event, ?type),
+	word:
+		isa(adverb.event, ?type)
 ]
 
 [

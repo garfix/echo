@@ -203,39 +203,54 @@ class Lexicon
 	 */
 	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics)
 	{
-		// for each of the $Semantics predications, find the lexical entries that have it
-		/** @var LexicalEntry[] $entries */
-		$entries = array();
-		foreach ($Semantics->getPredications() as $Predication) {
+		$predications = $Semantics->getPredications();
 
-			$predicate = $Predication->getPredicate();
+		if (empty($predications)) {
 
-			if (isset($this->predicateIndex[$partOfSpeech][$predicate])) {
-				if (empty($entries)) {
-					$entries = $this->predicateIndex[$partOfSpeech][$predicate];
+			// no semantic constraints: find the first entry with the part-of-speech
+			foreach ($this->entries as $Entry) {
+				if ($Entry->getPartOfSpeech() == $partOfSpeech) {
+					return [$Entry->getWordForm(), $Entry->getPartOfSpeech()];
+				}
+			}
+
+		} else {
+
+			// for each of the $Semantics predications, find the lexical entries that have it
+			/** @var LexicalEntry[] $entries */
+			$entries = array();
+			foreach ($predications as $Predication) {
+
+				$predicate = $Predication->getPredicate();
+
+				if (isset($this->predicateIndex[$partOfSpeech][$predicate])) {
+					if (empty($entries)) {
+						$entries = $this->predicateIndex[$partOfSpeech][$predicate];
+					} else {
+						$entries = array_intersect_key($entries, $this->predicateIndex[$partOfSpeech][$predicate]);
+					}
 				} else {
-					$entries = array_intersect_key($entries, $this->predicateIndex[$partOfSpeech][$predicate]);
+					// no entries have this predication
+					return false;
 				}
-			} else {
-				// no entries have this predication
-				return false;
 			}
-		}
 
-		// check each of $Semantics predications against the predications of the lexical entries
-		foreach ($entries as $Entry) {
-			$success = true;
-			foreach ($Semantics->getPredications() as $Predication) {
-				$propertyBindings = array();
-				$variableBindings = array();
-				if (!Matcher::matchPredicationAgainstList($Predication, $Entry->getSemantics(), $propertyBindings, $variableBindings)) {
-					$success = false;
-					break;
+			// check each of $Semantics predications against the predications of the lexical entries
+			foreach ($entries as $Entry) {
+				$success = true;
+				foreach ($Semantics->getPredications() as $Predication) {
+					$propertyBindings = array();
+					$variableBindings = array();
+					if (!Matcher::matchPredicationAgainstList($Predication, $Entry->getSemantics(), $propertyBindings, $variableBindings)) {
+						$success = false;
+						break;
+					}
+				}
+				if ($success) {
+					return [$Entry->getWordForm(), $Entry->getPartOfSpeech()];
 				}
 			}
-			if ($success) {
-				return [$Entry->getWordForm(), $Entry->getPartOfSpeech()];
-			}
+
 		}
 
 		return false;

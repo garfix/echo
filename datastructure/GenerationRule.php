@@ -89,7 +89,7 @@ class GenerationRule
 	 */
 	public function getWordSemantics()
 	{
-		return $this->WordSemantics;
+		return $this->WordSemantics !== null ? $this->WordSemantics : new PredicationList();
 	}
 
 	/**

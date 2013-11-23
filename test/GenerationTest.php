@@ -82,6 +82,26 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door John Milton.");
 	}
 
+	public function testAffirmativeSentence()
+	{
+		$relations = "
+			sentence(?e) and
+			isa(?e, Meet) and
+			mood(?e, Declarative) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			object(?e, ?o) and
+			name(?s, 'Harry') and
+			name(?o, 'Sally') and
+
+			qualification(?e, ?a) and
+			isa(?a, Yes)
+		";
+
+		$this->doTest($relations, "en", "Yes, Harry met Sally.");
+		$this->doTest($relations, "nl", "Ja, Harry ontmoette Sally.");
+	}
+
 	/**
 	 * @param $relations
 	 * @param $language

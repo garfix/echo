@@ -5,7 +5,7 @@ S:
 - request (bij wh-questions)
 
 NP:
-- object
+- object / entity
 
 VP
 - event
@@ -37,4 +37,7 @@ All objects:
 
 WhADVP
 - request
+- event
+
+adverb
 - event

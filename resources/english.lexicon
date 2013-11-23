@@ -195,6 +195,11 @@
 	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry)
 ] [
+	form: 'met',
+	partOfSpeech: 'simpleVerb',
+	features: { },
+	semantics: isa(this.event, Meet) and tense(this.event, Past)
+] [
 	form: 'name',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "name" } } },
@@ -309,7 +314,8 @@
 ] [
 	form: 'yes',
 	partOfSpeech: 'adverb',
-	features: { head: { syntax: { category: "yes" } } }
+	features: { head: { syntax: { category: "yes" } } },
+	semantics: isa(this.event, Yes)
 ] [
 	form: 'years',
 	partOfSpeech: 'noun',
