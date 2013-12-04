@@ -208,7 +208,7 @@
 	form: 'of',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "of" } } },
-	semantics: belong_to(this.superObject, this.subObject)
+	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'old',
 	partOfSpeech: 'noun',

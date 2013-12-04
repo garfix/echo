@@ -102,6 +102,26 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "nl", "Ja, Harry ontmoette Sally.");
 	}
 
+	public function testPrepositionalPhrase()
+	{
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			voice(?e, Passive) and
+			isa(?e, Influence) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			object(?e, ?o) and
+			isa(?s, Author) and
+			link (Of, ?s, ?p) and
+			name(?o, 'Lord Byron') and
+			name(?p, 'Paradise Lost')
+		";
+
+		$this->doTest($relations, "en", "Lord Byron was influenced by the author of Paradise Lost.");
+		//$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door de auteur van Paradise Lost.");
+	}
+
 	/**
 	 * @param $relations
 	 * @param $language

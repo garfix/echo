@@ -303,6 +303,7 @@
 
 // new rules!
 
+# Clause
 
 // Yes, Harry met Sally
 [
@@ -326,6 +327,8 @@
 		SDecl.event = S.event
 	}
 ]
+
+# Declarative sentence
 
 // Passive declarative
 // Lord Byron was influenced by John Milton
@@ -356,6 +359,9 @@
 	}
 ]
 
+# Noun Phrase
+
+
 // Lord Byron
 [
 	rule:
@@ -367,6 +373,98 @@
 	}
 ]
 
+// the author of Paradise Lost
+[
+	rule:
+		NP => DP NBar,
+	bind: {
+		DP.entity = NP.entity;
+		NBar.entity = NP.entity
+	}
+]
+
+// Lord Byron
+[
+	rule:
+		NP => noun,
+	condition1:
+		name(NP.entity, ?name),
+	bind: {
+		noun.entity = NP.entity
+	}
+]
+
+# Determiner Phrase
+
+// the
+[
+	rule:
+		DP => determiner,
+	bind: {
+		determiner.entity = DP.entity
+	}
+]
+
+# determiner
+
+// the
+[
+	rule:
+		determiner => word,
+]
+
+# NBar
+
+// author of Paradise Lost
+[
+	rule:
+		NBar => NBar PP,
+	condition1:
+		link(?link, NBar.entity, ?entity),
+	bind: {
+		NBar.entity = NBar.entity;
+		PP.superObject = NBar.entity
+	}
+]
+
+// author
+[
+	rule:
+		NBar => noun,
+	bind: {
+		noun.object = NBar.entity
+	}
+]
+
+# Propositional Phrase
+
+// of Paradise Lost
+[
+	rule:
+		PP => preposition NP,
+	condition1:
+    	link(?link, PP.superObject, PP.subObject),
+    bind: {
+        preposition.superObject = PP.superObject;
+        preposition.subObject = PP.subObject;
+        NP.entity = PP.subObject
+    }
+]
+
+# noun
+
+// author
+[
+	rule:
+		noun => word,
+	condition1:
+		isa(noun.object, ?type),
+	word:
+		isa(noun.object, ?type)
+]
+
+# propernoun
+
 // Lord Byron
 [
 	rule:
@@ -376,6 +474,8 @@
 	word:
 		name(propernoun.entity, ?name)
 ]
+
+# Verb Phrase
 
 // influenced by John Milton
 [
@@ -414,17 +514,23 @@
 	}
 ]
 
+# passivisationPreposition
+
 // by (passivisation)
 [
 	rule:
 		passivisationPreposition => word
 ]
 
+# punctuationMark
+
 // ,
 [
 	rule:
 		punctuationMark => word
 ]
+
+# auxPsv
 
 // was (passive)
 [
@@ -436,6 +542,7 @@
 		tense(auxPsv.event, ?tense)
 ]
 
+# adverb
 
 // yes
 [
@@ -447,6 +554,20 @@
 		isa(adverb.event, ?type)
 ]
 
+# preposition
+
+// of
+[
+	rule:
+		preposition => word,
+	condition1:
+		link(?prep, ?super, ?sub),
+	word:
+		link(?prep, ?super, ?sub)
+]
+
+# pastParticipleVerb
+
 [
 	rule:
 		pastParticipleVerb => word,
@@ -455,6 +576,8 @@
 	word:
 		isa(verb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
 ]
+
+# simpleVerb
 
 // verb, explicit tense
 [

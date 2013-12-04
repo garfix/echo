@@ -37,8 +37,11 @@ class Generator
 		// in the next rule that fires, replace S.event with $SentenceEvent, in the condition
 		$propertyBindings = array('S.event' => $SentenceEvent);
 
+		// keep track of all the rules that have been applied
+		$RulesApplied = new RulesApplied();
+
 		// generate all lexical items
-		$lexicalItems = $this->generateNode($Grammar, 'S', $Relations, $propertyBindings);
+		$lexicalItems = $this->generateNode($Grammar, 'S', $Relations, $propertyBindings, $RulesApplied);
 
 		// combine the lexical items into surface text
 		$text = $this->createSurfaceText($Grammar, $lexicalItems);
@@ -56,19 +59,19 @@ class Generator
 	 * @throws NoLexicalEntryFoundForSemantics
 	 * @return array A partial surface representation of a sentence, as an array
 	 */
-	private function generateNode(Grammar $Grammar, $antecedent, PredicationList $Relations, array &$propertyBindings)
+	private function generateNode(Grammar $Grammar, $antecedent, PredicationList $Relations, array $parentPropertyBindings, RulesApplied $RulesApplied)
 	{
-		// find the first rule that matches
-		$variableBindings = array();
-		$Rule = $this->findMatchingRule($Grammar, $antecedent, $Relations, $propertyBindings, $variableBindings);
+		// find the first rule that matches,
+		// and bind its properties and variables
+		list($Rule, $thisPropertyBindings, $thisVariableBindings) = $this->findMatchingRule($Grammar, $antecedent, $Relations, $parentPropertyBindings, $RulesApplied);
 
 		$lexicalItems = [];
 
 		if ($this->isWordNode($Rule)) {
 
-			$lexicalItem = $this->findWord($Grammar, $antecedent, $Rule->getWordSemantics(), $variableBindings);
+			$lexicalItem = $this->findWord($Grammar, $antecedent, $Rule->getWordSemantics(), $thisVariableBindings);
 			if ($lexicalItem === false) {
-				$Relations = Binder::bindRelationsVariables($Rule->getWordSemantics(), $variableBindings);
+				$Relations = Binder::bindRelationsVariables($Rule->getWordSemantics(), $thisVariableBindings);
 				throw new NoLexicalEntryFoundForSemantics($antecedent, (string)$Relations);
 			}
 			$lexicalItems[] = $lexicalItem;
@@ -79,9 +82,9 @@ class Generator
 			foreach ($Rule->getProduction()->getConsequents() as $consequent) {
 
 				// assign new node properties (for example: NP.entity = S.subject)
-				$childPropertyBindings = $this->createChildProperyBindings($consequent, $propertyBindings, $Rule->getAssignments());
+				$childPropertyBindings = $this->createChildProperyBindings($consequent, $thisPropertyBindings, $Rule->getAssignments());
 
-				$lexicalItems = array_merge($lexicalItems, $this->generateNode($Grammar, $consequent, $Relations, $childPropertyBindings));
+				$lexicalItems = array_merge($lexicalItems, $this->generateNode($Grammar, $consequent, $Relations, $childPropertyBindings, $RulesApplied));
 			}
 
 		}
@@ -156,7 +159,7 @@ class Generator
 	 * @throws NoRuleFoundForAntecedent
 	 * @return GenerationRule
 	 */
-	private function findMatchingRule(Grammar $Grammar, $antecedent, PredicationList $Relations, array &$propertyBindings, array &$variableBindings)
+	private function findMatchingRule(Grammar $Grammar, $antecedent, PredicationList $Relations, array $parentPropertyBindings, RulesApplied $RulesApplied)
 	{
 		// find all rules that match the $antecedent
 		$rules = $Grammar->getGenerationRulesForAntecedent($antecedent);
@@ -170,31 +173,43 @@ class Generator
 			$Conditions = $GenerationRule->getCondition1();
 			if ($Conditions !== null) {
 
-				$newPropertyBindings = $propertyBindings;
-				$newVariableBindings = $variableBindings;
+				$propertyBindings = $parentPropertyBindings;
+				$variableBindings = array();
 				$match = true;
+				$conditionCount = count($Conditions->getPredications());
+
+				$RulesApplied->setGenerationRule($GenerationRule);
 
 				// go through all conditions
-				foreach ($Conditions->getPredications() as $Condition) {
+				foreach ($Conditions->getPredications() as $index => $Condition) {
 
 					// bind the condition to the active property bindings
-					$BoundCondition = Binder::bindRelationProperties($Condition, $newPropertyBindings);
+				//	$BoundCondition = Binder::bindRelationProperties($Condition, $propertyBindings);
+					$BoundCondition = $Condition;
 
 					// try to match the condition against any one of the $Relations
-					if (!Matcher::matchPredicationAgainstList($BoundCondition, $Relations, $newPropertyBindings, $newVariableBindings)) {
+					$Checker = ($index == $conditionCount - 1) ? $RulesApplied : null;
+					if (!Matcher::matchPredicationAgainstList($BoundCondition, $Relations, $propertyBindings, $variableBindings, $Checker)) {
 						$match = false;
 						break;
 					}
 				}
 
 				if ($match) {
-					$propertyBindings = $newPropertyBindings;
-					$variableBindings = $newVariableBindings;
 
-					return $GenerationRule;
+					// check if this combination of rule and bindings was used before for this sentence
+					// this is not allowed, because it is our check against infinite recursion
+					if ($conditionCount != 0 or $RulesApplied->check($propertyBindings, $variableBindings)) {
+
+						// keep track of all rule / bindings combinations, to avoid infinite recursion
+						$RulesApplied->addAppliedRule($GenerationRule, $propertyBindings, $variableBindings);
+
+						return array($GenerationRule, $propertyBindings, $variableBindings);
+					}
 				}
+
 			} elseif ($GenerationRule->getCondition() === null) {
-				return $GenerationRule;
+				return array($GenerationRule, $parentPropertyBindings, array());
 			}
 		}
 

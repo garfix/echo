@@ -336,7 +336,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$caught = false;
 
 		try {
-			$string = 'name#';
+			$string = 'name$';
 			$Parser->parse($string);
 		} catch (SemanticStructureParseException $E) {
 			$caught = true;

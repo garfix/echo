@@ -47,6 +47,8 @@ class SemanticStructureParser
 	const T_COLON = 'colon';
 	const T_SEMICOLON = 'semicolon';
 	const T_EQUALS_SIGN = 'equals sign';
+	const T_HASH_COMMENT = 'hash comment';
+
 	// two chars
 	const T_IMPLICATION = 'implication';
 	const T_TRANSFORMATION = 'transformation';
@@ -147,6 +149,8 @@ class SemanticStructureParser
 			if ($newPos = $this->parseSingleToken(self::T_WHITESPACE, $tokens, $pos)) {
 				$pos = $newPos;
 			} elseif ($newPos = $this->parseSingleToken(self::T_COMMENT, $tokens, $pos)) {
+				$pos = $newPos;
+			} elseif ($newPos = $this->parseSingleToken(self::T_HASH_COMMENT, $tokens, $pos)) {
 				$pos = $newPos;
 			} else {
 				break;
@@ -1194,7 +1198,7 @@ class SemanticStructureParser
 			$result = $token['contents'];
 			$pos++;
 			return $pos;
-		} elseif (in_array($token['id'], array(self::T_WHITESPACE, self::T_COMMENT))) {
+		} elseif (in_array($token['id'], array(self::T_WHITESPACE, self::T_COMMENT, self::T_HASH_COMMENT))) {
 			$pos++;
 			return $this->parseSingleToken($tokenId, $tokens, $pos, $result);
 		} else {
@@ -1241,6 +1245,12 @@ class SemanticStructureParser
 				} else {
 					$this->lastPosParsed = $pos;
 					return false;
+				}
+			} elseif ($char == '#') {
+				if (preg_match('/(#[^\n]*)/', $string, $matches, 0, $pos)) {
+					$id = self::T_HASH_COMMENT;
+					$contents = $matches[1];
+					$pos += strlen($contents) - 1;
 				}
 			} elseif ($char == '/') {
 				if (preg_match('#(//[^\n]*)#', $string, $matches, 0, $pos)) {
