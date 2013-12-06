@@ -113,6 +113,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			subject(?e, ?s) and
 			object(?e, ?o) and
 			isa(?s, Author) and
+			determiner(?s, The) and
 			link (Of, ?s, ?p) and
 			name(?o, 'Lord Byron') and
 			name(?p, 'Paradise Lost')

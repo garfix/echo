@@ -248,7 +248,8 @@
 ] [
 	form: 'the',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "the" } } }
+	features: { head: { syntax: { category: "the" } } },
+	semantics: determiner(this.entity, The)
 ] [
 	form: 'the',
 	partOfSpeech: 'insertion',
