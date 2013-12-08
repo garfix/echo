@@ -1,5 +1,5 @@
 // author of
-isa(?s, Author) and belong_to(?s, ?o) => author(?s, ?o);
+isa(?s, Author) and link(Of, ?s, ?o) => author(?s, ?o);
 
 // name
 name(?a, ?b) => name(?a, ?b);
@@ -35,13 +35,13 @@ die(?a, ?b) => die_at(?a, ?b);
 at_time(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_at(?s, ?q);
 
 // daughter
-isa(?child, Daughter) and belong_to(?child, ?parent) => child(?parent, ?child);
+isa(?child, Daughter) and link(Of, ?child, ?parent) => child(?parent, ?child);
 
 // child
-isa(?child, Child) and belong_to(?child, ?parent) => child(?parent, ?child);
+isa(?child, Child) and link(Of, ?child, ?parent) => child(?parent, ?child);
 
 // parent
-isa(?parent, Parent) and belong_to(?parent, ?child) => child(?parent, ?child);
+isa(?parent, Parent) and link(Of, ?parent, ?child) => child(?parent, ?child);
 
 // married to
 isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
@@ -61,3 +61,4 @@ manner(?o, ?q) and isa(?o, Child) => true();
 request(?a) => true();
 request_unit(?a) => true();
 aspect(?event, ?aspect) => true();
+determiner(?entity, ?det) => true();

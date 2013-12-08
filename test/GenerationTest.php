@@ -120,7 +120,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		";
 
 		$this->doTest($relations, "en", "Lord Byron was influenced by the author of Paradise Lost.");
-		//$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door de auteur van Paradise Lost.");
+		$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door de auteur van Paradise Lost.");
 	}
 
 	/**

@@ -6,7 +6,7 @@
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
 	features: { head: { syntax: { category: "possessive" } } },
-	semantics: belong_to(this.superObject, this.subObject)
+	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'april',
 	partOfSpeech: 'noun',
@@ -47,7 +47,8 @@
 ] [
 	form: 'de',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "the" } } }
+	features: { head: { syntax: { category: "the" } } },
+	semantics: determiner(this.entity, The)
 ] [
 	form: 'de',
 	partOfSpeech: 'insertion',
@@ -193,7 +194,7 @@
 	form: 'van',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "of" } } },
-	semantics: belong_to(this.superObject, this.subObject)
+	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'vlucht',
 	partOfSpeech: 'noun',

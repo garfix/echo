@@ -6,7 +6,7 @@
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
 	features: { head: { syntax: { category: "possessive" } } },
-	semantics: belong_to(this.superObject, this.subObject)
+	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'a',
 	partOfSpeech: 'determiner',
