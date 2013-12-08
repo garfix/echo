@@ -1064,6 +1064,9 @@ class SemanticStructureParser
 		if ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $string)) {
 			$pos = $newPos;
 			$atom = new Atom($string);
+		} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $string)) {
+			$pos = $newPos;
+			$atom = new Atom((string)$string);
 		} else {
 			$pos = false;
 		}

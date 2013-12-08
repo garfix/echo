@@ -100,6 +100,12 @@
 	features: { head: { syntax: { predicate: "have", tense: "past" } } },
 	semantics: isa(this.event, Have)
 ] [
+#deprecated
+	form: 'had',
+	partOfSpeech: 'simpleVerb',
+	features: { head: { syntax: { predicate: "have", tense: "past" } } },
+	semantics: isa(this.event, Have) and tense(this.event, Past)
+] [
 	form: 'het',
 	partOfSpeech: 'article',
 	features: { head: {}}

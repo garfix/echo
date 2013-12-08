@@ -183,13 +183,9 @@ class Generator
 				// go through all conditions
 				foreach ($Conditions->getPredications() as $index => $Condition) {
 
-					// bind the condition to the active property bindings
-				//	$BoundCondition = Binder::bindRelationProperties($Condition, $propertyBindings);
-					$BoundCondition = $Condition;
-
 					// try to match the condition against any one of the $Relations
 					$Checker = ($index == $conditionCount - 1) ? $RulesApplied : null;
-					if (!Matcher::matchPredicationAgainstList($BoundCondition, $Relations, $propertyBindings, $variableBindings, $Checker)) {
+					if (!Matcher::matchPredicationAgainstList($Condition, $Relations, $propertyBindings, $variableBindings, $Checker)) {
 						$match = false;
 						break;
 					}

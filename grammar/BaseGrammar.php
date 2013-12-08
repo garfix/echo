@@ -272,6 +272,21 @@ abstract class BaseGrammar implements Grammar
 			}
 		}
 
+		// check for determiner(determiner.entity, 43)
+		if ($partOfSpeech == 'determiner') {
+			if (count($predications) == 1) {
+				$Predication = reset($predications);
+				if ($Predication->getPredicate() == 'determiner') {
+					if ($Predication->getArgument(1) instanceof Atom) {
+						$name = $Predication->getArgument(1)->getName();
+						if (is_numeric($name)) {
+							return [$name, 'determiner'];
+						}
+					}
+				}
+			}
+		}
+
 		return $this->Lexicon->getWordForSemantics($partOfSpeech, $Semantics);
 	}
 }

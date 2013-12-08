@@ -123,6 +123,24 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "nl", "Lord Byron werd beïnvloed door de auteur van Paradise Lost.");
 	}
 
+	public function testHaveAndNumericDeterminer()
+	{
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			isa(?e, Have) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			name(?s, 'Mary') and
+			object(?e, ?o) and
+			isa(?o, Child) and
+			determiner(?s, 2)
+		";
+
+		$this->doTest($relations, "en", "Mary had 2 children.");
+		$this->doTest($relations, "nl", "Mary had 2 kinderen.");
+	}
+
 	/**
 	 * @param $relations
 	 * @param $language
