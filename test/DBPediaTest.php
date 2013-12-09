@@ -38,7 +38,6 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
 		$this->assertSame('Lord Byron had 2 children.', $answer);
-
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
 		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
 

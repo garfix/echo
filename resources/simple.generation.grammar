@@ -330,6 +330,18 @@
 
 # Declarative sentence
 
+// Copular sentence
+[
+	rule:
+		SDecl => NP1 auxBe NP2,
+	condition1:
+		subject(S.event, S.subject) and complement(S.event, S.complement),
+	bind: {
+		NP1.entity = S.subject;
+		NP2.entity = S.complement
+	}
+]
+
 // Passive declarative
 // Lord Byron was influenced by John Milton
 // See: The structure of modern english (2000), p 202
@@ -544,6 +556,18 @@
 		tense(auxPsv.event, ?tense),
 	word:
 		tense(auxPsv.event, ?tense)
+]
+
+# auxBe
+
+// was (auxilliary)
+[
+	rule:
+		auxBe => word,
+	condition1:
+		tense(auxBe.event, ?tense),
+	word:
+		tense(auxBe.event, ?tense)
 ]
 
 # adverb

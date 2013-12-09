@@ -55,14 +55,16 @@ class Generator
 	 * @param Grammar $Grammar
 	 * @param string $antecedent
 	 * @param PredicationList $Relations
-	 * @param array $propertyBindings An array of bindings like S.event = ?e
-	 * @throws NoLexicalEntryFoundForSemantics
+	 * @param array $parentPropertyBindings
+	 * @param RulesApplied $RulesApplied
+	 * @throws \agentecho\exception\NoLexicalEntryFoundForSemantics
 	 * @return array A partial surface representation of a sentence, as an array
 	 */
 	private function generateNode(Grammar $Grammar, $antecedent, PredicationList $Relations, array $parentPropertyBindings, RulesApplied $RulesApplied)
 	{
 		// find the first rule that matches,
 		// and bind its properties and variables
+		/** @var GenerationRule $Rule */
 		list($Rule, $thisPropertyBindings, $thisVariableBindings) = $this->findMatchingRule($Grammar, $antecedent, $Relations, $parentPropertyBindings, $RulesApplied);
 
 		$lexicalItems = [];
@@ -78,13 +80,25 @@ class Generator
 
 		} else {
 
+			$Production = $Rule->getProduction();
+
 			// go through each of the consequents
-			foreach ($Rule->getProduction()->getConsequents() as $consequent) {
+			foreach ($Production->getConsequents() as $i => $consequent) {
 
 				// assign new node properties (for example: NP.entity = S.subject)
 				$childPropertyBindings = $this->createChildProperyBindings($consequent, $thisPropertyBindings, $Rule->getAssignments());
 
-				$lexicalItems = array_merge($lexicalItems, $this->generateNode($Grammar, $consequent, $Relations, $childPropertyBindings, $RulesApplied));
+				// strip NP from NP1
+				$consequentName = $Production->getConsequentCategory($i);
+
+				// replace NP1 by NP
+				$strippedPropertyBindings = array();
+				foreach ($childPropertyBindings as $key => $value) {
+					$newKey = str_replace($consequent . '.', $consequentName . '.', $key);
+					$strippedPropertyBindings[$newKey] = $value;
+				}
+
+				$lexicalItems = array_merge($lexicalItems, $this->generateNode($Grammar, $consequentName, $Relations, $strippedPropertyBindings, $RulesApplied));
 			}
 
 		}

@@ -141,6 +141,25 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "nl", "Mary had 2 kinderen.");
 	}
 
+	public function testCopularSentence()
+	{
+		$relations = "
+			sentence(?e) and
+			mood(?e, Declarative) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			name(?s, 'Ada Lovelace') and
+			complement(?e, ?c) and
+			isa(?c, Daughter) and
+			determiner(?c, The) and
+			link(Of, ?c, ?p) and
+			name(?p, 'Lord Byron')
+		";
+
+		$this->doTest($relations, "en", "Ada Lovelace was the daughter of Lord Byron.");
+		$this->doTest($relations, "nl", "Ada Lovelace was de dochter van Lord Byron.");
+	}
+
 	/**
 	 * @param $relations
 	 * @param $language
