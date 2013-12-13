@@ -75,15 +75,6 @@ class Matcher
 				}
 			} elseif ($PredicationArgument instanceof Variable) {
 				if ($RelationArgument instanceof Variable) {
-//					if ($PredicationArgument == $RelationArgument) {
-//						// ?e = ?e
-//						$match = true;
-//					}
-
-//					else {
-//						$newVariableBindings[$PredicationArgument->getName()] = $RelationArgument;
-//						$match = true;
-//					}
 
 					// has the variable been bound?
 					if (isset($newVariableBindings[$PredicationArgument->getName()])) {

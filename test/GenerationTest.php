@@ -19,7 +19,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		// note: tense is implicitly the present
 
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			isa(?e, Walk) and
 			subject(?e, ?s) and
@@ -35,7 +35,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		// note: tense is explicitly the past
 
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			isa(?e, Walk) and
 			tense(?e, Past) and
@@ -50,7 +50,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testVerbWithDirectObject()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			isa(?e, Influence) and
 			tense(?e, Past) and
@@ -67,7 +67,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testSimplePassiveSentence()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			voice(?e, Passive) and
 			isa(?e, Influence) and
@@ -85,7 +85,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testAffirmativeSentence()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			isa(?e, Meet) and
 			mood(?e, Declarative) and
 			tense(?e, Past) and
@@ -105,7 +105,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testPrepositionalPhrase()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			voice(?e, Passive) and
 			isa(?e, Influence) and
@@ -126,7 +126,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testHaveAndNumericDeterminer()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			isa(?e, Have) and
 			tense(?e, Past) and
@@ -144,7 +144,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testCopularSentence()
 	{
 		$relations = "
-			sentence(?e) and
+			sentence(?e, S.event) and
 			mood(?e, Declarative) and
 			tense(?e, Past) and
 			subject(?e, ?s) and
@@ -158,6 +158,36 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 
 		$this->doTest($relations, "en", "Ada Lovelace was the daughter of Lord Byron.");
 		$this->doTest($relations, "nl", "Ada Lovelace was de dochter van Lord Byron.");
+	}
+
+	public function testSimpleConjunction()
+	{
+		$relations = "
+			sentence(?n1, CP.node) and
+			link(And, ?n1, ?n2, ?n3) and
+			name(?n2, 'Ada Lovelace') and
+			name(?n3, 'Allegra Byron')
+		";
+
+		$this->doTest($relations, "en", "Ada Lovelace and Allegra Byron.");
+		$this->doTest($relations, "nl", "Ada Lovelace en Allegra Byron.");
+	}
+
+	public function testConjunction()
+	{
+		$relations = "
+			sentence(?n1, CP.node) and
+			link(And, ?n1, ?e1, ?n2) and
+			link(And, ?n2, ?e2, ?n3) and
+			link(And, ?n3, ?e3, ?e4) and
+			name(?e1, 'Joe') and
+			name(?e2, 'William') and
+			name(?e3, 'Jack') and
+			name(?e4, 'Averell')
+		";
+
+		$this->doTest($relations, "en", "Joe, William, Jack and Averell.");
+		$this->doTest($relations, "nl", "Joe, William, Jack en Averell.");
 	}
 
 	/**

@@ -78,7 +78,8 @@
 ] [
 	form: 'en',
 	partOfSpeech: 'conjunction',
-	features: { head: {}}
+	features: { head: {}},
+	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'geboren',
 	partOfSpeech: 'verb',

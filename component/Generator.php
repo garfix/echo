@@ -5,6 +5,7 @@ namespace agentecho\component;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Property;
 use agentecho\exception\MissingSentenceRelationException;
 use agentecho\exception\NoLexicalEntryFoundForSemantics;
 use agentecho\exception\NoRuleFoundForAntecedent;
@@ -31,17 +32,19 @@ class Generator
 			throw new MissingSentenceRelationException();
 		}
 
-		// fetch the event of the main clause
-		$SentenceEvent = $Sentence->getArgument(0);
+		// fetch the variable and property of the main clause
+		$SentenceVariable = $Sentence->getArgument(0);
+		/** @var Property $sentenceProperty */
+		$sentenceProperty = $Sentence->getArgument(1);
 
 		// in the next rule that fires, replace S.event with $SentenceEvent, in the condition
-		$propertyBindings = array('S.event' => $SentenceEvent);
+		$propertyBindings = array((string)$sentenceProperty => $SentenceVariable);
 
 		// keep track of all the rules that have been applied
 		$RulesApplied = new RulesApplied();
 
 		// generate all lexical items
-		$lexicalItems = $this->generateNode($Grammar, 'S', $Relations, $propertyBindings, $RulesApplied);
+		$lexicalItems = $this->generateNode($Grammar, $sentenceProperty->getObject()->getName(), $Relations, $propertyBindings, $RulesApplied);
 
 		// combine the lexical items into surface text
 		$text = $this->createSurfaceText($Grammar, $lexicalItems);

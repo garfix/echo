@@ -530,6 +530,39 @@
 	}
 ]
 
+# Conjunction Phrase
+
+// Joe, William, ...
+[
+	rule:
+		CP => NP punctuationMark CP,
+	condition1:
+		link(?cp, CP.node, CP.firstEntity, CP.secondEntity) and
+		link(?cp, CP.secondEntity, ?grandchild1, ?grandchild2),
+	bind: {
+		NP.entity = CP.firstEntity;
+		conjunction.node = CP.node;
+		conjunction.firstEntity = CP.firstEntity;
+		conjunction.secondEntity = CP.secondEntity;
+		CP.node = CP.secondEntity
+	}
+]
+
+// Jack and Averell
+[
+	rule:
+		CP => NP1 conjunction NP2,
+	condition1:
+		link(?cp, CP.node, CP.firstEntity, CP.secondEntity),
+	bind: {
+		NP1.entity = CP.firstEntity;
+		conjunction.node = CP.node;
+		conjunction.firstEntity = CP.firstEntity;
+		conjunction.secondEntity = CP.secondEntity;
+		NP2.entity = CP.secondEntity
+	}
+]
+
 # passivisationPreposition
 
 // by (passivisation)
@@ -544,6 +577,18 @@
 [
 	rule:
 		punctuationMark => word
+]
+
+# conjunction
+
+// and
+[
+	rule:
+		conjunction => word,
+	condition1:
+		link(?cp, conjunction.node, conjunction.firstEntity, conjunction.secondEntity),
+	word:
+		link(?cp, conjunction.node, conjunction.firstEntity, conjunction.secondEntity)
 ]
 
 # auxPsv

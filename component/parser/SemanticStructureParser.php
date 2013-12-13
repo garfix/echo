@@ -1081,14 +1081,22 @@ class SemanticStructureParser
 			if ($newPos = $this->parseSingleToken(self::T_EQUALS_SIGN, $tokens, $pos, $string)) {
 				$pos = $newPos;
 
-				if ($pos = $this->parseTermList($tokens, $pos, $TermList)) {
+				if ($newPos = $this->parseTermList($tokens, $pos, $TermList)) {
 
 					$Assignment = new Assignment();
 					$Assignment->setLeft($Property1);
 					$Assignment->setRight($TermList);
-					return $pos;
+					return $newPos;
 
 				}
+
+//				if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
+//
+//					$Assignment = new Assignment();
+//					$Assignment->setLeft($Property1);
+//					$Assignment->setRight($Variable);
+//					return $newPos;
+//				}
 			}
 		}
 

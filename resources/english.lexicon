@@ -18,7 +18,8 @@
 ] [
 	form: 'and',
 	partOfSpeech: 'conjunction',
-	features: { head: {}}
+	features: { head: {}},
+	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'am',
 	partOfSpeech: 'verb',
