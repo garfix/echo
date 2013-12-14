@@ -162,11 +162,15 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 
 	public function testSimpleConjunction()
 	{
+		//    ?n1
+		//   /   \
+		//  ?e1  ?n2
+
 		$relations = "
 			sentence(?n1, CP.node) and
-			link(And, ?n1, ?n2, ?n3) and
-			name(?n2, 'Ada Lovelace') and
-			name(?n3, 'Allegra Byron')
+			link(And, ?n1, ?e1, ?e2) and
+			name(?e1, 'Ada Lovelace') and
+			name(?e2, 'Allegra Byron')
 		";
 
 		$this->doTest($relations, "en", "Ada Lovelace and Allegra Byron.");
@@ -175,6 +179,14 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 
 	public function testConjunction()
 	{
+		//    ?n1
+		//   /   \
+		//  ?e1  ?n2
+		//      /   \
+		//     ?e2  ?n3
+		//         /   \
+		//        ?e3   ?e4
+
 		$relations = "
 			sentence(?n1, CP.node) and
 			link(And, ?n1, ?e1, ?n2) and
@@ -186,7 +198,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?e4, 'Averell')
 		";
 
-		$this->doTest($relations, "en", "Joe, William, Jack and Averell.");
+		$this->doTest($relations, "en", "Joe, William, Jack, and Averell.");
 		$this->doTest($relations, "nl", "Joe, William, Jack en Averell.");
 	}
 
