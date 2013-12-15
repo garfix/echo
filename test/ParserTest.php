@@ -127,13 +127,13 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Parser->parseFirstLine("Ik ben 43 jaar oud.");
 		$this->assertSame('[S [NP [pronoun ik]][VP [copula ben][AP [NP [DP [numeral 43]][NBar [noun jaar]]][adjective oud]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.event, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
 
 		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
 
 		$Sentence = $Parser->parseFirstLine("I am 43 years old.");
 		$this->assertSame('[S [NP [pronoun i]][VP [copula am][AP [NP [DP [numeral 43]][NBar [noun years]]][adjective old]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.event, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseQuotes()

@@ -41,3 +41,8 @@ WhADVP
 
 adverb
 - event
+
+conjunction
+- node
+- firstEntity
+- secondEntity

@@ -226,7 +226,7 @@
 	form: 'old',
 	partOfSpeech: 'adjective',
 	features: { head: { syntax: { category: "old" } } },
-	semantics: isa(this.event, Old)
+	semantics: isa(this.object, Old)
 ] [
 	form: 'on',
 	partOfSpeech: 'preposition',

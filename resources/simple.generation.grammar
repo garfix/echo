@@ -330,7 +330,8 @@
 
 # Declarative sentence
 
-// Copular sentence
+// Copular sentence with complement
+// The ball is a toy.
 [
 	rule:
 		SDecl => NP1 auxBe NP2,
@@ -339,6 +340,19 @@
 	bind: {
 		NP1.entity = S.subject;
 		NP2.entity = S.complement
+	}
+]
+
+// Copular sentence with modifier
+// The ball is round.
+[
+	rule:
+		SDecl => NP auxBe AP,
+	condition1:
+		subject(S.event, S.subject) and modifier(S.event, S.complement),
+	bind: {
+		NP.entity = S.subject;
+		AP.entity = S.complement
 	}
 ]
 
@@ -465,6 +479,41 @@
         preposition.subObject = PP.subObject;
         NP.entity = PP.subObject
     }
+]
+
+# Adjective Phrase
+
+// 53 years old
+[
+	rule:
+		AP => NP adjective,
+	condition1:
+		modifier(AP.entity, AP.modifier),
+	bind: {
+		NP.entity = AP.modifier;
+		adjective.object = AP.entity
+	}
+]
+
+// old
+[
+	rule:
+		AP => adjective,
+	bind: {
+		adjective.object = AP.entity
+	}
+]
+
+# adjective
+
+// old
+[
+	rule:
+		adjective => word,
+	condition1:
+		isa(adjective.object, ?type),
+	word:
+		isa(adjective.object, ?type)
 ]
 
 # noun

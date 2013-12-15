@@ -164,7 +164,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	{
 		//    ?n1
 		//   /   \
-		//  ?e1  ?n2
+		//  ?e1  ?e2
 
 		$relations = "
 			sentence(?n1, CP.node) and
@@ -200,6 +200,41 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 
 		$this->doTest($relations, "en", "Joe, William, Jack, and Averell.");
 		$this->doTest($relations, "nl", "Joe, William, Jack en Averell.");
+	}
+
+	public function testModifierCopularSentence()
+	{
+		$relations = "
+			sentence(?e, S.event) and
+			mood(?e, Declarative) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			name(?s, 'Mary Shelley') and
+			modifier(?e, ?c) and
+			isa(?c, Old)
+		";
+
+		$this->doTest($relations, "en", "Mary Shelley was old.");
+		$this->doTest($relations, "nl", "Mary Shelley was oud.");
+	}
+
+	public function testModifierCopularSentenceWithNumeralAdverb()
+	{
+		$relations = "
+			sentence(?e, S.event) and
+			mood(?e, Declarative) and
+			tense(?e, Past) and
+			subject(?e, ?s) and
+			name(?s, 'Mary Shelley') and
+			modifier(?e, ?c) and
+			isa(?c, Old) and
+			modifier(?c, ?d) and
+			determiner(?d, 53) and
+			isa(?d, Year)
+		";
+
+		$this->doTest($relations, "en", "Mary Shelley was 53 years old.");
+		$this->doTest($relations, "nl", "Mary Shelley was 53 jaar oud.");
 	}
 
 	/**

@@ -191,7 +191,7 @@
 	form: 'oud',
 	partOfSpeech: 'adjective',
 	features: { head: { syntax: { predicate: "old" } } },
-	semantics: isa(this.event, Old)
+	semantics: isa(this.object, Old)
 ] [
 	form: 'ouders',
 	partOfSpeech: 'noun',

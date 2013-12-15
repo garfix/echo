@@ -1,0 +1,3 @@
+Generation
+- There must be no backtracking in generation. The correct rule is found at once. If not, refine the rules.
+

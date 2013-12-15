@@ -1,3 +1,24 @@
+2013-12-14
+
+I added generation of conjunctions.
+
+Conjunctions are represented as binary trees that grow on the right side.
+
+    ?n1
+   /   \
+  ?e1  ?n2
+      /   \
+     ?e2  ?n3
+         /   \
+        ?e3   ?e4
+
+It is built from relations like this
+
+link(And, ?n1, ?e1, ?n2)
+
+I tried several other representations, but this one proved relatively cheap in number of relations, and it proved easy to generate sentences from.
+Also note that the conjunction is not just represented by a relation; it is an entity as well. I.e. it is reified. And that means it may be modified.
+
 2013-11-23
 
 I added sentence adverbs to the generation grammar. I chose this form:

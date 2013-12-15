@@ -22,6 +22,13 @@ http://alias-i.com/lingpipe/
 ThoughtTreasure
 http://en.wikipedia.org/wiki/ThoughtTreasure
 
+C-Phrase
+https://code.google.com/p/c-phrase/
+- Natural Language Interface to Postgre / ODBC databases.
+- English language support
+- Written in Lisp, with a PHP frontend
+- 2009 - 2011
+
 TEAM
 TEAM: An experiment in the design of transportable natural language interfaces (1987)
 - benadert willekeurige databases
@@ -30,11 +37,21 @@ ORAKEL
 Towards portable natural language interfaces to knowledge bases – The case of the ORAKEL system (2008)
 - benadert willekeurige databases
 
-Interessante artikelen:
-Evaluating the Usability of Natural Language Query Languages and Interfaces to Semantic Web Knowledge Bases (lokaal)
-C-Phrase: A system for building robust natural language interfaces to databases (alleen betaald op het internet)
+Quepy
+https://github.com/machinalis/quepy
+Quepy is a python framework to transform natural language questions to queries in a database query language.
+- online demo: http://quepy.machinalis.com/
+- Works with a fixed set of expressions
+
+START
+http://start.csail.mit.edu/
+START, the world's first Web-based question answering system, has been on-line and continuously operating since December, 1993.
+- No access to source code, but many articles describing it
 
 Stanford Parser:
 http://nlp.stanford.edu:8080/parser/index.jsp
 Parts-of-speech
 http://www.comp.leeds.ac.uk/amalgam/tagsets/upenn.html
+
+Carnegie Mellon University Parser:
+http://www.link.cs.cmu.edu/link/submit-sentence-4.html
