@@ -9,7 +9,7 @@
 		VP: { head: ?h1 { agreement: ?agr, syntax: ?s1 { deepSubject: ?syntax } } }
 	},
 	semantics: {
-		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative);
     	S.event = VP.event;
     	S.subject = NP.object;
     	S.object = VP.object
@@ -41,7 +41,7 @@
 		VP: { head: { syntax: ?s1 } }
 	},
 	semantics: {
-		S.sem = VP.sem and object(S.event, S.object);
+		S.sem = VP.sem and object(S.event, S.object) and mood(S.event, Imperative);
 		S.event = VP.event;
 		S.object = VP.object
 	}
@@ -59,7 +59,7 @@
 		NP: { head: { syntax: ?s2, agreement: ?agr } }
 	},
 	semantics: {
-		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request);
+		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
         S.event = VP.event;
         S.subject = NP.object;
         S.subject = WhADVP.subject;
@@ -82,7 +82,7 @@
         VP: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?s2}, agreement: ?agr } }
     },
     semantics: {
-		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request);
+		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request) and mood(S.event, Interrogative);
 		S.event = WhADVP.event;
 		S.event = VP.event;
 		S.subject = NP.object;
@@ -102,7 +102,7 @@
         VP: { head: ?h1 { agreement: ?agr, syntax: ?s3 { deepDirectObject: ?s1 } } }
     },
     semantics: {
-		S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
 		S.event = VP.event;
 		S.subject = NP.object
     }
@@ -122,7 +122,7 @@
         NP2: { head: { syntax: ?s2 }}
     },
     semantics: {
-        S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+        S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative);
         S.event = VP.event;
         S.subject = NP2.object;
         S.object = NP1.object
@@ -142,7 +142,7 @@
         NP2: { head: { syntax: ?s2 } }
     },
     semantics: {
-       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject);
+       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
        S.subject = NP2.object;
        S.subject = NP1.object
     }
@@ -161,8 +161,8 @@
         NP: { head: { agreement: ?agr, syntax: ?s1 } }
     },
     semantics: {
-        S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and request(S.request);
-        S.event = WhADVP.object;
+        S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative);
+        S.complement = WhADVP.object;
         S.event = auxBe.event;
         S.subject = NP.object;
         S.request = WhADVP.request

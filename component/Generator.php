@@ -34,17 +34,17 @@ class Generator
 
 		// fetch the variable and property of the main clause
 		$SentenceVariable = $Sentence->getArgument(0);
-		/** @var Property $sentenceProperty */
-		$sentenceProperty = $Sentence->getArgument(1);
+		/** @var Property $SentenceProperty */
+		$SentenceProperty = $Sentence->getArgument(1);
 
 		// in the next rule that fires, replace S.event with $SentenceEvent, in the condition
-		$propertyBindings = array((string)$sentenceProperty => $SentenceVariable);
+		$propertyBindings = array((string)$SentenceProperty => $SentenceVariable);
 
 		// keep track of all the rules that have been applied
 		$RulesApplied = new RulesApplied();
 
 		// generate all lexical items
-		$lexicalItems = $this->generateNode($Grammar, $sentenceProperty->getObject()->getName(), $Relations, $propertyBindings, $RulesApplied);
+		$lexicalItems = $this->generateNode($Grammar, $SentenceProperty->getObject()->getName(), $Relations, $propertyBindings, $RulesApplied);
 
 		// combine the lexical items into surface text
 		$text = $this->createSurfaceText($Grammar, $lexicalItems);

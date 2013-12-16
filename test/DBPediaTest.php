@@ -19,7 +19,7 @@ use agentecho\grammar\DutchGrammar;
  */
 class DBPediaTest extends \PHPUnit_Framework_TestCase
 {
-	public function test()
+	private function getConversation()
 	{
 		$Echo = new AgentEcho();
 		$Echo->addKnowledgeSource(new DBPedia());
@@ -29,29 +29,56 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		$Conversation = $Echo->startConversation();
 
+		return $Conversation;
+	}
+
+	public function test1()
+	{
+		$Conversation = $this->getConversation();
+
 		// S => aux NP VP ; DBPedia
 		$answer = $Conversation->answer("Was Lord Byron influenced by the author of Paradise Lost?");
 		$this->assertSame('Yes, Lord Byron was influenced by the author of Paradise Lost.', $answer);
 		$answer = $Conversation->answer("Werd Lord Byron beïnvloed door de auteur van Paradise Lost?");
 		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
+	}
+
+	public function test2()
+	{
+		$Conversation = $this->getConversation();
 
 		// S => WhNP aux NP VP
 		$answer = $Conversation->answer("How many children did Lord Byron have?");
 		$this->assertSame('Lord Byron had 2 children.', $answer);
 		$answer = $Conversation->answer("Hoeveel kinderen had Lord Byron?");
 		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
+	}
+
+	public function test3()
+	{
+		$Conversation = $this->getConversation();
 
 		// S => aux NP NP
 		$answer = $Conversation->answer("Was Ada Lovelace the daughter of Lord Byron?");
 		$this->assertSame('Yes, Ada Lovelace was the daughter of Lord Byron.', $answer);
 		$answer = $Conversation->answer("Was Ada Lovelace een dochter van Lord Byron?");
 		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
+	}
+
+	public function test4()
+	{
+		$Conversation = $this->getConversation();
 
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
 		$this->assertSame("Ada Lovelace and Allegra Byron", $answer);
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
 		$this->assertSame("Ada Lovelace en Allegra Byron", $answer);
+	}
+
+	public function test5()
+	{
+		$Conversation = $this->getConversation();
 
 		// symmetric relations
 		$answer = $Conversation->answer("Was Lord Byron married to Anne Isabella Milbanke?");
@@ -78,7 +105,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		$answer = $Conversation->answer("How old was Mary Shelley when she died?");
 
-		$this->assertSame("Mary Shelley was 53 old.", $answer);
+		$this->assertSame("Mary Shelley was 53 years old.", $answer);
 
 #todo !
 #		$this->assertSame("She was 53 years old.", $answer);

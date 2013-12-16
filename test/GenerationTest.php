@@ -134,7 +134,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 			name(?s, 'Mary') and
 			object(?e, ?o) and
 			isa(?o, Child) and
-			determiner(?s, 2)
+			determiner(?o, 2)
 		";
 
 		$this->doTest($relations, "en", "Mary had 2 children.");

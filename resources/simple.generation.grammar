@@ -438,9 +438,9 @@
 	rule:
 		determiner => word,
 	condition1:
-		determiner(DP.entity, ?det),
+		determiner(determiner.entity, ?det),
 	word:
-		determiner(DP.entity, ?det)
+		determiner(determiner.entity, ?det)
 ]
 
 # NBar

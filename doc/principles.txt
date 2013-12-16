@@ -1,3 +1,7 @@
 Generation
 - There must be no backtracking in generation. The correct rule is found at once. If not, refine the rules.
 
+Representation
+- For the internal representation of knowledge we use relations (as in relational databases)
+- We do not use quantifiers (existential, universal), not even for determiners.
+	Both are represented as atoms in a determiner relation (for example: determiner(?n, All) )

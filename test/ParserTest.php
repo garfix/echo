@@ -117,7 +117,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
 		$this->assertSame('[S [S [WhADVP [whwordNP how][AP [adjective old]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][S [NP [pronoun she]][VP [verb died]]]]]', $Sentence->getSyntaxString());
 		$this->assertSame('Sentence {sentenceType: wh-question, Clause: Clause {predicate: be, DeepSubject: Entity {name: Mary, lastname: Shelley, number: singular}, DeepDirectObject: Entity {category: old, Determiner: Determiner {question: 1}, number: singular}, tense: past}, voice: active, RelativeClause: RelativeClause {complementizer: when, Clause: Clause {predicate: die, DeepSubject: Entity {category: subject, number: singular}, tense: past}}}', $Sentence->getObjectString());
-		$this->assertSame('manner(S1.event, S1.request) and isa(S1.event, Old) and tense(S1.event, Past) and name(S1.subject, "Mary Shelley") and subject(S1.event, S1.subject) and request(S1.request) and at_time(S1.event, S1_SBar.subEvent) and isa(S1_SBar_S.subject, Female) and reference(S1_SBar_S.subject) and isa(S1_SBar.subEvent, Die) and subject(S1_SBar.subEvent, S1_SBar_S.subject) and object(S1_SBar.subEvent, S1_SBar_S.object)', $Sentence->getSemanticsString());
+		$this->assertSame('manner(S1_S.complement, S1.request) and isa(S1_S.complement, Old) and tense(S1.event, Past) and name(S1.subject, "Mary Shelley") and subject(S1.event, S1.subject) and modifier(S1.event, S1_S.complement) and request(S1.request) and mood(S1.event, Interrogative) and at_time(S1.event, S1_SBar.subEvent) and isa(S1_SBar_S.subject, Female) and reference(S1_SBar_S.subject) and isa(S1_SBar.subEvent, Die) and subject(S1_SBar.subEvent, S1_SBar_S.subject) and object(S1_SBar.subEvent, S1_SBar_S.object) and mood(S1_SBar.subEvent, Declarative)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseNumeral()
@@ -127,13 +127,13 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Parser->parseFirstLine("Ik ben 43 jaar oud.");
 		$this->assertSame('[S [NP [pronoun ik]][VP [copula ben][AP [NP [DP [numeral 43]][NBar [noun jaar]]][adjective oud]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative)', $Sentence->getSemanticsString());
 
 		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
 
 		$Sentence = $Parser->parseFirstLine("I am 43 years old.");
 		$this->assertSame('[S [NP [pronoun i]][VP [copula am][AP [NP [DP [numeral 43]][NBar [noun years]]][adjective old]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseQuotes()

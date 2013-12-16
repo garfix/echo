@@ -1,3 +1,32 @@
+2013-12-15
+
+I discern two types of copular sentences:
+
+type 1: The ball is round. (Predicative adjective as subject complement)
+
+subject(?e, ?s)
+isa(?s, Ball)
+modifier(?e, ?m)
+isa(?m, Round)
+
+The syntactic adjective phrase is turned into a `modifier` predicate.
+
+type 2: The tree is a larch. (Predicative nominal as subject complement)
+
+subject(?e, ?s)
+isa(?s, Tree)
+complement(?e, ?c)
+isa(?c, Larch)
+
+The syntactic noun phrase is turned into a `complement` predicate.
+
+You might think that a predicate like `type` could be more convenient, but the structure is also used in sentences like this:
+
+The man is no longer the `highest` in rank.
+He is the heir to the throne.
+
+For more information, see http://en.wikipedia.org/wiki/Complement_%28linguistics%29
+
 2013-12-14
 
 I added generation of conjunctions.

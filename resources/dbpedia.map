@@ -62,3 +62,4 @@ request(?a) => true();
 request_unit(?a) => true();
 aspect(?event, ?aspect) => true();
 determiner(?entity, ?det) => true();
+mood(?event, ?mood) => true();

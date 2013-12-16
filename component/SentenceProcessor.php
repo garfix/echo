@@ -3,6 +3,8 @@
 namespace agentecho\component;
 
 use agentecho\component\KnowledgeManager;
+use agentecho\datastructure\Atom;
+use agentecho\datastructure\Constant;
 use agentecho\datastructure\ConversationContext;
 use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\exception\NoBindingsException;
@@ -78,13 +80,23 @@ class SentenceProcessor
 			$PronounProcessor->replaceReferences($Semantics, $ConversationContext);
 			$this->send(new LogEvent(array('semantics' => $Semantics)));
 
-			// process the sentence
-			$Response = $this->process($Sentence, $Semantics);
-			$this->send(new LogEvent(array('response' => $Response)));
+			$Answer = $this->answer($Semantics);
+			if ($Answer) {
 
-			// produce the surface text of the response
-			$Producer = new Producer();
-			$answer = $Producer->produce($Response, $CurrentGrammar);
+				$Generator = new Generator();
+				$answer = $Generator->generate($CurrentGrammar, $Answer);
+
+			} else {
+
+				// process the sentence
+				$Response = $this->process($Sentence, $Semantics);
+				$this->send(new LogEvent(array('response' => $Response)));
+
+				// produce the surface text of the response
+				$Producer = new Producer();
+				$answer = $Producer->produce($Response, $CurrentGrammar);
+
+			}
 
 			// substitute proper nouns by pronouns
 #todo
@@ -103,6 +115,160 @@ class SentenceProcessor
 		}
 
 		return $answer;
+	}
+
+	/**
+	 * @param PredicationList $Question
+	 * @return PredicationList|false
+	 */
+	private function answer(PredicationList $Question)
+	{
+		$Answer = false;
+
+		$Mood = $Question->getPredicationByPredicate('mood');
+		if (!$Mood) {
+			return false;
+		}
+
+		$mood = $Mood->getArgument(1)->getName();
+		if ($mood == 'Interrogative') {
+
+			// find the first argument of the request-predication
+			$Request = $Question->getPredicationByPredicate('request');
+
+			if ($Request) {
+
+				// since this is a yes-no question, check the statement
+				$result = $this->answerQuestionWithSemantics($Question);
+
+				if ($result) {
+					list($answer, $unit) = $result;
+
+					#todo: refine
+					$answer = reset($answer);
+
+					/** @var Variable $EventVariable */
+					$EventVariable = $Mood->getArgument(0)->createClone();
+
+					// generate answer from question
+					$Answer = $Question->createClone();
+
+					// sentence(?e, S.event)
+					$SentenceRelation = new Predication();
+					$SentenceRelation->setPredicate('sentence');
+					$A0 = $EventVariable->createClone();
+					$A1 = new Property();
+					$A1->setObject(new Atom('S'));
+					$A1->setName('event');
+					$SentenceRelation->setArgument(0, $A0);
+					$SentenceRelation->setArgument(1, $A1);
+					$Answer->addPredication($SentenceRelation);
+
+					// replace mood
+					$Answer->removePredication($Mood);
+					$DeclarativeMood = new Predication();
+					$DeclarativeMood->setPredicate('mood');
+					$A0 = $EventVariable->createClone();
+					$A1 = new Atom('Declarative');
+					$DeclarativeMood->setArgument(0, $A0);
+					$DeclarativeMood->setArgument(1, $A1);
+					$Answer->addPredication($DeclarativeMood);
+
+					// find requested object
+					$RequestRelation = $Question->getPredicationByPredicate('request');
+					if ($RequestRelation) {
+
+						$RequestVariable = $RequestRelation->getArgument(0)->createClone();
+
+						$MannerRelation = $Question->getPredicationByPredicate('manner');
+						if ($MannerRelation) {
+							if ($MannerRelation->getArgument(1) == $RequestVariable) {
+
+								$M = new Variable('v1'); # todo: create new variable
+
+								$R = $MannerRelation->getArgument(0);
+
+								// append the answer
+								$Modifier = new Predication();
+								$Modifier->setPredicate('modifier');
+								$Modifier->setArgument(0, $R);
+								$Modifier->setArgument(1, $M);
+								$Answer->addPredication($Modifier);
+
+								$Determiner = new Predication();
+								$Determiner->setPredicate('determiner');
+								$Determiner->setArgument(0, $M);
+								$Determiner->setArgument(1, new Atom($answer));
+								$Answer->addPredication($Determiner);
+
+								if (!$unit) {
+									return false;
+								}
+
+								$Type = new Predication();
+								$Type->setPredicate('isa');
+								$Type->setArgument(0, $M);
+								$Type->setArgument(1, $unit->createClone());
+								$Answer->addPredication($Type);
+							}
+						} else {
+							$Answer = false;
+						}
+					} else {
+						$Answer = false;
+					}
+				}
+			} else {
+				$result = $this->answerYesNoQuestionWithSemantics($Question);
+
+				if ($result) {
+				}
+			}
+
+//echo $Answer;exit;
+
+			return $Answer;
+
+		} elseif ($mood == 'wh-question') {
+
+			return false;
+
+			list($answer, $unit) = $this->answerQuestionWithSemantics($Semantics);
+
+			// incorporate the answer in the original question
+			if ($answer !== null) {
+
+				$answer = array_unique($answer);
+
+				if (count($answer) > 1) {
+
+					//$Answer = $this->createConjunction($answer);
+
+				} else {
+
+					$answer = reset($answer);
+
+				}
+			}
+
+		} elseif ($mood == 'imperative') {
+
+			return false;
+
+			#todo Imperatives are not always questions
+			$isQuestion = true;
+
+			if ($isQuestion) {
+
+				list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
+				if ($answer !== null) {
+//					$Answer = $this->createConjunction($answer);
+
+				}
+			}
+		}
+
+		return $Answer;
 	}
 
 	private function getFullTrace(\Exception $E)

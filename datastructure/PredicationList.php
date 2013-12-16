@@ -27,6 +27,22 @@ class PredicationList extends  Term
 	}
 
 	/**
+	 * @param Predication $Predication
+	 */
+	public function removePredication(Predication $Predication)
+	{
+		$new = array();
+
+		foreach ($this->predications as $P) {
+			if ($P != $Predication) {
+				$new[] = $P;
+			}
+		}
+
+		$this->predications = $new;
+	}
+
+	/**
 	 * @return Predication[]
 	 */
 	public function getPredications()
