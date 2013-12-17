@@ -685,9 +685,9 @@
 	rule:
 		pastParticipleVerb => word,
 	condition1:
-		isa(verb.event, ?type) and isa(pastParticipleVerb.event, ?type),
+		isa(pastParticipleVerb.event, ?type) and isa(pastParticipleVerb.event, ?type),
 	word:
-		isa(verb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
+		isa(pastParticipleVerb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
 ]
 
 # simpleVerb
@@ -697,9 +697,9 @@
 	rule:
 		simpleVerb => word,
 	condition1:
-		isa(verb.event, ?type) and tense(verb.event, ?tense),
+		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, ?tense)
+		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense)
 ]
 
 // verb, implicit
@@ -707,7 +707,7 @@
 	rule:
 		simpleVerb => word,
 	condition1:
-		isa(verb.event, ?type),
+		isa(simpleVerb.event, ?type),
 	word:
-		isa(verb.event, ?type) and tense(verb.event, Present)
+		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, Present)
 ]

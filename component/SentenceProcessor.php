@@ -192,14 +192,14 @@ class SentenceProcessor
 				$R = $MannerRelation->getArgument(0);
 
 				// append the answer
-				$this->addBinaryRelation($Answer, 'modifier', $R, $M);
-				$this->addBinaryRelation($Answer, 'determiner', $M, new Atom($answer));
-
-				if (!$unit) {
-					return false;
+				if ($unit) {
+					$this->addBinaryRelation($Answer, 'modifier', $R, $M);
+					$this->addBinaryRelation($Answer, 'determiner', $M, new Atom($answer));
+					$this->addBinaryRelation($Answer, 'isa', $M, $unit->createClone());
+				} else {
+					$this->addBinaryRelation($Answer, 'determiner', $R, new Atom($answer));
 				}
-
-				$this->addBinaryRelation($Answer, 'isa', $M, $unit->createClone());
+//echo $Answer;exit;
 			}
 		} else {
 			$Answer = false;

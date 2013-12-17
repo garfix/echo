@@ -97,7 +97,8 @@
 ] [
 	form: 'did',
 	partOfSpeech: 'auxDo',
-	features: { head: { syntax: { tense: "past" } } }
+	features: { head: { syntax: { tense: "past" } } },
+	semantics: tense(this.event, Past)
 ] [
 	form: 'die',
 	partOfSpeech: 'verb',

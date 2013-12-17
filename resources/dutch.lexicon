@@ -106,7 +106,7 @@
 	form: 'had',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "have", tense: "past" } } },
-	semantics: isa(this.event, Have)
+	semantics: isa(this.event, Have) and tense(this.event, Past)
 ] [
 #deprecated
 	form: 'had',
