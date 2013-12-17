@@ -44,7 +44,7 @@ isa(?child, Child) and link(Of, ?child, ?parent) => child(?parent, ?child);
 isa(?parent, Parent) and link(Of, ?parent, ?child) => child(?parent, ?child);
 
 // married to
-isa(?e, Marry) and subject(?e, ?s) and to(?e, ?o) => marry(?s, ?o);
+isa(?e, Marry) and subject(?e, ?s) and link(To, ?e, ?o) => marry(?s, ?o);
 
 // identity mappings
 label(?a, ?b) => label(?a, ?b);
@@ -63,3 +63,4 @@ request_unit(?a) => true();
 aspect(?event, ?aspect) => true();
 determiner(?entity, ?det) => true();
 mood(?event, ?mood) => true();
+voice(?event, ?voice) => true();

@@ -218,7 +218,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($relations, "nl", "Mary Shelley was oud.");
 	}
 
-	public function testModifierCopularSentenceWithNumeralAdverb()
+	public function testModifierCopularSentenceWithNumeralDeterminer()
 	{
 		$relations = "
 			sentence(?e, S.event) and
@@ -235,6 +235,22 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 
 		$this->doTest($relations, "en", "Mary Shelley was 53 years old.");
 		$this->doTest($relations, "nl", "Mary Shelley was 53 jaar oud.");
+	}
+
+	public function testVerbWithPreposition()
+	{
+		$relations = "
+			sentence(?e, S.event) and
+			mood(?e, Declarative) and
+			isa(?e, Marry) and
+			tense(?e, Past) and
+			aspect(?e, Perfect) and
+			subject(?e, ?s) and
+			name(?s, 'Lord Byron') and
+			link(To, ?e, ?o) and
+			name(?o, 'Anne Isabella Milbanke')
+		";
+		$this->doTest($relations, "en", "Lord Byron was married to Anne Isabella Milbanke.");
 	}
 
 	/**

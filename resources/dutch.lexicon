@@ -74,7 +74,8 @@
 ] [
 	form: 'een',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "a" } } }
+	features: { head: { syntax: { category: "a" } } },
+	semantics: determiner(this.entity, An)
 ] [
 	form: 'en',
 	partOfSpeech: 'conjunction',
@@ -86,10 +87,16 @@
 	features: { head: { syntax: { predicate: "bear" } } },
 	semantics: isa(this.event, Bear)
 ] [
+#deprecated
 	form: 'getrouwd',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
-	semantics: isa(this.event, Marry)
+	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
+] [
+	form: 'getrouwd',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
+	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'verb',
@@ -167,7 +174,7 @@
 	form: 'met',
 	partOfSpeech: 'preposition',
 	features: { head: { syntax: { category: "to" } } },
-	semantics: to(this.superObject, this.subObject)
+	semantics: link(To, this.superObject, this.subObject)
 ] [
 	form: 'noem',
 	partOfSpeech: 'verb',

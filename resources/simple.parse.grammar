@@ -122,7 +122,7 @@
         NP2: { head: { syntax: ?s2 }}
     },
     semantics: {
-        S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative);
+        S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative) and voice(S.event, Passive);
         S.event = VP.event;
         S.subject = NP2.object;
         S.object = NP1.object
@@ -142,8 +142,8 @@
         NP2: { head: { syntax: ?s2 } }
     },
     semantics: {
-       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
-       S.subject = NP2.object;
+       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and complement(S.event, S.complement) and mood(S.event, Interrogative);
+       S.complement = NP2.object;
        S.subject = NP1.object
     }
 
@@ -435,7 +435,7 @@ VPQ => verb AP,
     semantics: {
 		NP.sem = DP.sem and NBar.sem;
         NP.object = NBar.object;
-        NP.object = DP.superObject
+        NP.object = DP.entity
     }
 ]
 
@@ -719,7 +719,7 @@ VPQ => verb AP,
     semantics: {
         DP.sem = NP.sem and possessiveMarker.sem;
         DP.subObject = possessiveMarker.subObject;
-        DP.superObject = possessiveMarker.superObject;
+        DP.entity = possessiveMarker.superObject;
         DP.subObject = NP.object
     }
 ]

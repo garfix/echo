@@ -59,7 +59,7 @@ class PredicationList extends  Term
 	 * Returns all predications in this list with a given predicate.
 	 *
 	 * @param $predicate
-	 * @return array An array of predications
+	 * @return Predication[] An array of predications
 	 */
 	public function getPredicationsByPredicate($predicate)
 	{
@@ -78,12 +78,34 @@ class PredicationList extends  Term
 	 * Returns the first found predication with a given predicate.
 	 *
 	 * @param Predication|false $predicate
+	 * @param null $arguments Optional arguments to be matched (don't care = null)
 	 * @return Predication|false
 	 */
-	public function getPredicationByPredicate($predicate)
+	public function getPredicationByPredicate($predicate, $arguments = null)
 	{
 		$results = $this->getPredicationsByPredicate($predicate);
-		return empty($results) ? false : reset($results);
+		if (empty($results)) {
+			return false;
+		} else {
+			if ($arguments) {
+				foreach ($results as $Result) {
+					$found = true;
+					foreach ($arguments as $i => $Argument) {
+						if ($Argument !== null) {
+							if ($Result->getArgument($i) != $Argument) {
+								$found = false;
+							}
+						}
+					}
+					if ($found) {
+						return $Result;
+					}
+				}
+				return false;
+			} else {
+				return reset($results);
+			}
+		}
 	}
 
 	/**

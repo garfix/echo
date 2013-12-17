@@ -373,6 +373,18 @@
 	}
 ]
 
+[
+	rule:
+		SDecl => NP auxBe VP,
+	condition1:
+		subject(S.event, S.subject) and aspect(S.event, Perfect),
+	bind: {
+		NP.entity = S.subject;
+		auxBe.event = S.event;
+		VP.event = S.event
+	}
+]
+
 // John Walks
 [
 	rule:
@@ -553,6 +565,18 @@
 		passivisationPreposition.event = VP.event;
 		passivisationPreposition.subject = VP.subject;
 		NP.entity = VP.subject
+	}
+]
+
+// married to Anne Isabella Milbanke
+[
+	rule:
+		VP => pastParticipleVerb PP,
+	condition1:
+		isa(VP.event, ?type) and link(?link, VP.event, VP.object),
+	bind: {
+		pastParticipleVerb.event = VP.event;
+		NP.entity = VP.object
 	}
 ]
 
