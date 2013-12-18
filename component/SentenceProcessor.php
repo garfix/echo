@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
+use agentecho\datastructure\Constant;
 use agentecho\datastructure\ConversationContext;
 use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\exception\NoBindingsException;
@@ -138,7 +139,7 @@ class SentenceProcessor
 
 		} elseif ($mood == 'Imperative') {
 
-			$Answer = false;
+			$Answer =  $this->getImperativeAnswer($MoodRelation, $Question);
 		}
 
 		return $Answer;
@@ -251,7 +252,6 @@ class SentenceProcessor
 		$result = $this->answerYesNoQuestionWithSemantics($Question);
 
 		if ($result) {
-//return false;
 
 			// generate answer from question
 			$Answer = $Question->createClone();
@@ -274,6 +274,31 @@ class SentenceProcessor
 		return $Answer;
 	}
 
+	private function getImperativeAnswer(Predication $MoodRelation, PredicationList $Question)
+	{
+		# presume this is a request for information
+
+		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
+
+		$conjuncts = array();
+		foreach ($answer as $entry) {
+			$conjuncts[] = new Constant($entry);
+		}
+
+		$ConjunctionVariable = new Variable('c0');
+
+		$Answer = SentenceBuilder::buildConjunction2($conjuncts, $ConjunctionVariable);
+
+		// sentence(?c0, CP.node)
+
+		$ConjunctionProperty = new Property();
+		$ConjunctionProperty->setName('node');
+		$ConjunctionProperty->setObject(new Atom('CP'));
+		$this->addSentenceRelation($Answer, $ConjunctionVariable, $ConjunctionProperty);
+
+		return $Answer;
+	}
+
 	private function replaceVariable(PredicationList $Relations, Variable $V1, Variable $V2)
 	{
 		foreach ($Relations->getPredications() as $Predication) {
@@ -285,14 +310,19 @@ class SentenceProcessor
 		}
 	}
 
-	private function addSentenceRelation(PredicationList $Relations, Variable $EventVariable)
+	private function addSentenceRelation(PredicationList $Relations, Variable $Variable, Property $Property = null)
 	{
 		$SentenceRelation = new Predication();
 		$SentenceRelation->setPredicate('sentence');
-		$A0 = $EventVariable->createClone();
-		$A1 = new Property();
-		$A1->setObject(new Atom('S'));
-		$A1->setName('event');
+		$A0 = $Variable->createClone();
+
+		if (!$Property) {
+			$A1 = new Property();
+			$A1->setObject(new Atom('S'));
+			$A1->setName('event');
+		} else {
+			$A1 = $Property;
+		}
 		$SentenceRelation->setArgument(0, $A0);
 		$SentenceRelation->setArgument(1, $A1);
 		$Relations->addPredication($SentenceRelation);

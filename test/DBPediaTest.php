@@ -71,9 +71,9 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 
 		// S => VP
 		$answer = $Conversation->answer("Name Lord Byron's children");
-		$this->assertSame("Ada Lovelace and Allegra Byron", $answer);
+		$this->assertSame("Ada Lovelace and Allegra Byron.", $answer);
 		$answer = $Conversation->answer("Noem Lord Byron's kinderen");
-		$this->assertSame("Ada Lovelace en Allegra Byron", $answer);
+		$this->assertSame("Ada Lovelace en Allegra Byron.", $answer);
 	}
 
 	public function test5()
