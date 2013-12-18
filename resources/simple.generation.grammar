@@ -573,10 +573,22 @@
 	rule:
 		VP => pastParticipleVerb PP,
 	condition1:
-		isa(VP.event, ?type) and link(?link, VP.event, VP.object),
+		isa(VP.event, ?type) and link(?link, VP.event, VP.object) and aspect(VP.event, Perfect),
 	bind: {
 		pastParticipleVerb.event = VP.event;
-		NP.entity = VP.object
+		PP.entity = VP.object
+	}
+]
+
+// died in Missolonghi
+[
+	rule:
+		VP => simpleVerb PP,
+	condition1:
+		isa(VP.event, ?type) and link(?link, VP.event, VP.object),
+	bind: {
+		simpleVerb.event = VP.event;
+		PP.entity = VP.object
 	}
 ]
 

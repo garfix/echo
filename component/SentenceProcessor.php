@@ -7,6 +7,7 @@ use agentecho\datastructure\Constant;
 use agentecho\datastructure\ConversationContext;
 use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\exception\NoBindingsException;
+use agentecho\grammar\Grammar;
 use agentecho\phrasestructure\Sentence;
 use agentecho\phrasestructure\Entity;
 use agentecho\phrasestructure\Adverb;
@@ -82,7 +83,7 @@ class SentenceProcessor
 				$this->changeRequestPropertyInVariable($Predication);
 			}
 
-			$Answer = $this->answer($Semantics);
+			$Answer = $this->answer($Semantics, $CurrentGrammar);
 			if ($Answer) {
 
 				$Generator = new Generator();
@@ -98,6 +99,7 @@ class SentenceProcessor
 				$Producer = new Producer();
 				$answer = $Producer->produce($Response, $CurrentGrammar);
 
+$answer = 'oude code';
 			}
 
 			// substitute proper nouns by pronouns
@@ -123,7 +125,7 @@ class SentenceProcessor
 	 * @param PredicationList $Question
 	 * @return PredicationList|false
 	 */
-	private function answer(PredicationList $Question)
+	private function answer(PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		$Answer = false;
 //return false;
@@ -135,7 +137,7 @@ class SentenceProcessor
 		$mood = $MoodRelation->getArgument(1)->getName();
 		if ($mood == 'Interrogative') {
 
-			$Answer = $this->getInterrogativeAnswer($MoodRelation, $Question);
+			$Answer = $this->getInterrogativeAnswer($MoodRelation, $Question, $CurrentGrammar);
 
 		} elseif ($mood == 'Imperative') {
 
@@ -145,13 +147,13 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getInterrogativeAnswer(Predication $MoodRelation, PredicationList $Question)
+	private function getInterrogativeAnswer(Predication $MoodRelation, PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		// does the question contain a specific requested field?
 		$RequestRelation = $Question->getPredicationByPredicate('request');
 		if ($RequestRelation) {
 
-			$Answer = $this->getRequestedAnswer($MoodRelation, $RequestRelation, $Question);
+			$Answer = $this->getRequestedAnswer($MoodRelation, $RequestRelation, $Question, $CurrentGrammar);
 
 		} else {
 
@@ -162,7 +164,7 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getRequestedAnswer(Predication $MoodRelation, Predication $RequestRelation, PredicationList $Question)
+	private function getRequestedAnswer(Predication $MoodRelation, Predication $RequestRelation, PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		// since this is a yes-no question, check the statement
 		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
@@ -170,40 +172,83 @@ class SentenceProcessor
 		/** @var Variable $EventVariable */
 		$EventVariable = $MoodRelation->getArgument(0)->createClone();
 
-		#todo: refine
-		$answer = reset($answer);
+		# todo: remove earlier?
+		$answer = array_unique($answer);
 
-		// generate answer from question
-		$Answer = $Question->createClone();
+		if (count($answer) > 1) {
 
-		// sentence(?e, S.event)
-		$this->addSentenceRelation($Answer, $EventVariable);
+			$Answer = $this->getConjunctiveAnswer($answer);
 
-		// replace mood
-		$this->makeDeclarative($Answer, $EventVariable);
-
-		// find requested object
-		$RequestVariable = $RequestRelation->getArgument(0)->createClone();
-
-		$MannerRelation = $Question->getPredicationByPredicate('manner');
-		if ($MannerRelation) {
-			if ($MannerRelation->getArgument(1) == $RequestVariable) {
-
-				$M = new Variable('v1'); # todo: create new variable
-				$R = $MannerRelation->getArgument(0);
-
-				// append the answer
-				if ($unit) {
-					$this->addBinaryRelation($Answer, 'modifier', $R, $M);
-					$this->addBinaryRelation($Answer, 'determiner', $M, new Atom($answer));
-					$this->addBinaryRelation($Answer, 'isa', $M, $unit->createClone());
-				} else {
-					$this->addBinaryRelation($Answer, 'determiner', $R, new Atom($answer));
-				}
-//echo $Answer;exit;
-			}
 		} else {
-			$Answer = false;
+
+			$answer = reset($answer);
+
+			// generate answer from question
+			$Answer = $Question->createClone();
+
+			// sentence(?e, S.event)
+			$this->addSentenceRelation($Answer, $EventVariable);
+
+			// replace mood
+			$this->makeDeclarative($Answer, $EventVariable);
+
+			// find requested object
+			$RequestVariable = $RequestRelation->getArgument(0)->createClone();
+	//echo $Question;exit;
+			;
+			if ($MannerRelation = $Question->getPredicationByPredicate('manner')) {
+				if ($MannerRelation->getArgument(1) == $RequestVariable) {
+
+					$M = new Variable('v1'); # todo: create new variable
+					$R = $MannerRelation->getArgument(0);
+
+					// append the answer
+					if ($unit) {
+						$this->addBinaryRelation($Answer, 'modifier', $R, $M);
+						$this->addBinaryRelation($Answer, 'determiner', $M, new Atom($answer));
+						$this->addBinaryRelation($Answer, 'isa', $M, $unit->createClone());
+					} else {
+						$this->addBinaryRelation($Answer, 'determiner', $R, new Atom($answer));
+					}
+	//echo $Answer;exit;
+				}
+			} elseif ($LocationRelation = $Question->getPredicationByPredicate('location')) {
+
+				$E = $LocationRelation->getArgument(0);
+
+				// create location
+				$L = new Variable('v1'); # todo: create new variable
+				$this->addBinaryRelation($Answer, 'name', $L, new Constant($answer));
+
+				// create link relation
+				$this->addTertiaryRelation($Answer, 'link', new Atom('In'), $E, $L);
+
+			} elseif ($LocationRelation = $Question->getPredicationByPredicate('at_time')) {
+
+				$E = $LocationRelation->getArgument(0);
+
+				$Date = new \DateTime($answer);
+				$languageCode = $CurrentGrammar->getLanguageCode();
+
+				setlocale(LC_TIME, $languageCode . '_' . strtoupper($languageCode));
+
+				if ($languageCode == 'en') {
+	#todo why needed?
+					$date = ucfirst(strftime('%B %e, %Y', $Date->getTimestamp()));
+				} else {
+					$date = strftime('%e %B %Y', $Date->getTimestamp());
+				}
+
+				// create time
+				$L = new Variable('v1'); # todo: create new variable
+				$this->addBinaryRelation($Answer, 'name', $L, new Constant($date));
+
+				// create link relation
+				$this->addTertiaryRelation($Answer, 'link', new Atom('On'), $E, $L);
+
+			} else {
+				$Answer = false;
+			}
 		}
 
 		return $Answer;
@@ -280,6 +325,11 @@ class SentenceProcessor
 
 		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
 
+		return $this->getConjunctiveAnswer($answer);
+	}
+
+	private function getConjunctiveAnswer($answer)
+	{
 		$conjuncts = array();
 		foreach ($answer as $entry) {
 			$conjuncts[] = new Constant($entry);
@@ -348,6 +398,16 @@ class SentenceProcessor
 		$Relation->setPredicate($predicate);
 		$Relation->setArgument(0, $Arg0);
 		$Relation->setArgument(1, $Arg1);
+		$Relations->addPredication($Relation);
+	}
+
+	private function addTertiaryRelation(PredicationList $Relations, $predicate, $Arg0, $Arg1, $Arg2)
+	{
+		$Relation = new Predication();
+		$Relation->setPredicate($predicate);
+		$Relation->setArgument(0, $Arg0);
+		$Relation->setArgument(1, $Arg1);
+		$Relation->setArgument(2, $Arg2);
 		$Relations->addPredication($Relation);
 	}
 

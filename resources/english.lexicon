@@ -60,9 +60,15 @@
 	features: { head: { syntax: { category: "book" } } }
 ] [
 	form: 'born',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { head: { syntax: { predicate: "bear" } } },
+	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
+] [
+#deprecated
+	form: 'born',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "bear" } } },
-	semantics: isa(this.event, Bear)
+	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'bright',
 	partOfSpeech: 'degreeAdverb',
@@ -109,6 +115,11 @@
 	partOfSpeech: 'verb',
 	features: { arguments: 0, head: { syntax: { predicate: "die", verb_form: "infinitive" } } },
 	semantics: isa(this.event, Die)
+] [
+	form: 'died',
+	partOfSpeech: 'simpleVerb',
+	features: { arguments: 0, head: { syntax: { predicate: "die", verb_form: "infinitive" } } },
+	semantics: isa(this.event, Die) and tense(this.event, Past)
 ] [
 	form: 'died',
 	partOfSpeech: 'verb',
@@ -167,7 +178,8 @@
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "in" } } }
+	features: { head: { syntax: { category: "in" } } },
+	semantics: link(In, this.event, this.entity)
 ] [
 	form: 'influenced',
 	partOfSpeech: 'simpleVerb',
@@ -242,7 +254,8 @@
 ] [
 	form: 'on',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "on" } } }
+	features: { head: { syntax: { category: "on" } } },
+	semantics: link(On, this.event, this.entity)
 ] [
 	form: 'reads',
 	partOfSpeech: 'verb',

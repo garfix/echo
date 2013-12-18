@@ -86,7 +86,8 @@
 		S.event = WhADVP.event;
 		S.event = VP.event;
 		S.subject = NP.object;
-		S.request = WhADVP.request
+		S.request = WhADVP.request;
+		S.event = auxBe.event
     }
 ]
 

@@ -7,6 +7,7 @@ class DutchGrammar extends SimpleGrammar
 	public function __construct()
 	{
 		parent::__construct();
+
 		$this->loadLexicon(__DIR__ . '/../resources/dutch.lexicon');
 		$this->loadGenerationGrammar(__DIR__ . '/../resources/dutch.generation.grammar');
 	}

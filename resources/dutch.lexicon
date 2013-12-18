@@ -83,9 +83,15 @@
 	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'geboren',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { head: { syntax: { predicate: "bear" } } },
+	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
+] [
+#deprecated
+	form: 'geboren',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "bear" } } },
-	semantics: isa(this.event, Bear)
+	semantics: isa(this.event, Bear) and aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'getrouwd',
@@ -101,7 +107,12 @@
 	form: 'gestorven',
 	partOfSpeech: 'verb',
 	features: { head: { syntax: { predicate: "die" } } },
-	semantics: isa(this.event, Die)
+	semantics: isa(this.event, Die) and aspect(this.event, Perfect)
+] [
+	form: 'gestorven',
+	partOfSpeech: 'pastParticipleVerb',
+	features: { head: { syntax: { predicate: "die" } } },
+	semantics: isa(this.event, Die) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'had',
 	partOfSpeech: 'verb',
@@ -130,7 +141,8 @@
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "in" } } }
+	features: { head: { syntax: { category: "in" } } },
+	semantics: link(In, this.event, this.entity)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxPsv',
@@ -183,7 +195,8 @@
 ] [
 	form: 'op',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "on" } } }
+	features: { head: { syntax: { category: "on" } } },
+	semantics: link(On, this.event, this.entity)
 ] [
 	form: 'ontmoette',
 	partOfSpeech: 'simpleVerb',
