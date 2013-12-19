@@ -48,7 +48,11 @@ class LexicalEntry
 	public function getPrefixedFeatures()
 	{
 		if ($this->PrefixedFeatures === null) {
-			$tree = $this->Features->getOriginalTree();
+			if ($this->Features) {
+				$tree = $this->Features->getOriginalTree();
+			} else {
+				$tree = array('head' => null);
+			}
 			$this->PrefixedFeatures = new LabeledDAG(array($this->partOfSpeech => $tree));
 		}
 

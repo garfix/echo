@@ -1,37 +1,32 @@
 [
 	form: ',',
 	partOfSpeech: 'punctuationMark',
-	features: { head: { syntax: { category: "comma" } }, space: "after_only"}
+	features: { space: "after_only"}
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
-	features: { head: { syntax: { category: "possessive" } } },
 	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'a',
-	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "a" } } }
+	partOfSpeech: 'determiner'
 ] [
 	form: 'an',
-	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "a" } } }
+	partOfSpeech: 'determiner'
 ] [
 	form: 'and',
 	partOfSpeech: 'conjunction',
-	features: { head: {}},
 	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'am',
 	partOfSpeech: 'verb',
-	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+	features: { head: { agreement: { person: 1, number: "singular"} } }
 ] [
 	form: 'am',
 	partOfSpeech: 'copula',
-	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+	features: { head: { agreement: { person: 1, number: "singular"} } }
 ] [
 	form: 'april',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "january", monthIndex: 4 } }, capitalize: true}
+	partOfSpeech: 'noun'
 ] [
 	form: 'are',
 	partOfSpeech: 'verb',
@@ -39,321 +34,252 @@
 ] [
 	form: 'author',
 	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "author" } } },
 	semantics: isa(this.object, Author)
 ] [
 	form: 'barking',
-	partOfSpeech: 'adjective',
-	features: { head: {}}
+	partOfSpeech: 'adjective'
 ] [
 	form: 'bed',
 	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "bed" } } },
 	semantics: isa(this.object, Bed)
 ] [
 	form: 'book',
 	partOfSpeech: 'verb',
-	features: { arguments: 1, head: { agreement: { person: 2, number: "singular"}, syntax: { predicate: "book" } } }
+	features: { arguments: 1, head: { agreement: { person: 2, number: "singular"}} }
 ] [
 	form: 'book',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "book" } } }
+	partOfSpeech: 'noun'
 ] [
 	form: 'born',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { head: { syntax: { predicate: "bear" } } },
 	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'born',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "bear" } } },
 	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'bright',
-	partOfSpeech: 'degreeAdverb',
-	features: { head: {}}
+	partOfSpeech: 'degreeAdverb'
 ] [
 	form: 'by',
-	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "by" } } }
+	partOfSpeech: 'preposition'
 ] [
 	form: 'by',
 	partOfSpeech: 'passivisationPreposition',
-	features: { head: {}},
 	semantics: subject(this.event, this.subject)
 ] [
 	form: 'calms',
-	partOfSpeech: 'verb',
-	features: { head: {}}
+	partOfSpeech: 'verb'
 ] [
 	form: 'children',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "plural"}, syntax: { category: "child" } } },
+	features: { head: { agreement: { person: 3, number: "plural"} } },
 	semantics: isa(this.object, Child)
 ] [
 	form: 'daughter',
 	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "daughter" } } },
 	semantics: isa(this.object, Daughter)
 ] [
 	form: 'did',
-	partOfSpeech: 'aux',
-	features: { head: { syntax: { tense: "past" } } }
+	partOfSpeech: 'aux'
 ] [
 	form: 'did',
 	partOfSpeech: 'auxDo',
-	features: { head: { syntax: { tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'die',
 	partOfSpeech: 'verb',
-	features: { arguments: 0, head: { syntax: { predicate: "die", tense: "present", form: "simple" } } },
 	semantics: isa(this.event, Die)
 ] [
 	form: 'die',
 	partOfSpeech: 'verb',
-	features: { arguments: 0, head: { syntax: { predicate: "die", verb_form: "infinitive" } } },
 	semantics: isa(this.event, Die)
 ] [
 	form: 'died',
 	partOfSpeech: 'simpleVerb',
-	features: { arguments: 0, head: { syntax: { predicate: "die", verb_form: "infinitive" } } },
 	semantics: isa(this.event, Die) and tense(this.event, Past)
 ] [
 	form: 'died',
 	partOfSpeech: 'verb',
-	features: { arguments: 0, head: { syntax: { predicate: "die", tense: "past" } } },
 	semantics: isa(this.event, Die)
 ] [
 	form: 'dog',
-	partOfSpeech: 'noun',
-	features: { head: {}}
+	partOfSpeech: 'noun'
 ] [
 	form: 'fiercely',
-	partOfSpeech: 'adverb',
-	features: { head: {}}
+	partOfSpeech: 'adverb'
 ] [
 	form: 'flight',
-	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "singular"}, syntax: { category: "flight" } } }
+	partOfSpeech: 'noun'
 ] [
 	form: 'flowers',
-	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "plural"}, syntax: { category: "flower" } } }
+	partOfSpeech: 'noun'
 ] [
 	form: 'gives',
-	partOfSpeech: 'verb',
-	features: { head: { arguments: 2, syntax: { predicate: "give", tense: "present" } } }
+	partOfSpeech: 'verb'
 ] [
 # deprecated
 	form: 'had',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "have", tense: "past" } } },
 	semantics: isa(this.event, Have) and tense(this.event, Past)
 ] [
 	form: 'had',
 	partOfSpeech: 'simpleVerb',
-	features: { head: { syntax: { predicate: "have", tense: "past" } } },
 	semantics: isa(this.event, Have) and tense(this.event, Past)
 ] [
 	form: 'have',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "have" } } },
 	semantics: isa(this.event, Have)
 ] [
 	form: 'how',
-	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { manner: { question: "object"} } } }
+	partOfSpeech: 'whAdverb'
 ] [
 	form: 'how',
 	partOfSpeech: 'whwordNP',
-	features: { head: { syntax: { deepDirectObject: ?arg { determiner: { type: "determiner", question: true } } }, variables: { role:  ?arg  } } },
 	semantics: manner(this.object, this.adjunct)
 ] [
 	form: 'i',
 	partOfSpeech: 'pronoun',
-	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { category: "firstPerson" } }, capitalize: true},
+	features: { head: { agreement: { person: 1, number: "singular"} }, capitalize: true},
 	semantics: firstPerson(this.object)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "in" } } },
 	semantics: link(In, this.event, this.entity)
 ] [
 	form: 'influenced',
 	partOfSpeech: 'simpleVerb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
-// deze mag weg als de oude generatie regels er uit zijn
+#deprecated
 	form: 'influenced',
 	partOfSpeech: 'verb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'influenced',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxBe',
-	features: { head: { syntax: { predicate: "be", tense: "present" } } },
 	semantics: tense(this.event, Present)
 ] [
 	form: 'january',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "january", monthIndex: 1 } }, capitalize: true}
+	partOfSpeech: 'noun'
 ] [
 	form: 'many',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "many" } } },
 	semantics: many(this.object)
 ] [
 #deprecated
 	form: 'married',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'married',
 	partOfSpeech: 'simpleVerb',
-	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry) and tense(this.event, Past)
 ] [
 	form: 'married',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'met',
 	partOfSpeech: 'simpleVerb',
-	features: { },
 	semantics: isa(this.event, Meet) and tense(this.event, Past)
 ] [
 	form: 'name',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "name" } } },
 	semantics: isa(this.event, Name)
 ] [
 	form: 'of',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "of" } } },
 	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'old',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "old" } } },
-	semantics: isa(this.object, Old)
-] [
-	form: 'old',
 	partOfSpeech: 'adjective',
-	features: { head: { syntax: { category: "old" } } },
 	semantics: isa(this.object, Old)
 ] [
 	form: 'on',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "on" } } },
 	semantics: link(On, this.event, this.entity)
 ] [
 	form: 'reads',
-	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "read", tense: "present" } } }
+	partOfSpeech: 'verb'
 ] [
 	form: 'parents',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { number: "plural"} } },
 	semantics: isa(this.object, Parent)
 ] [
 	form: 'red',
-	partOfSpeech: 'adjective',
-	features: { head: { syntax: {} } }
+	partOfSpeech: 'adjective'
 ] [
 	form: 'sees',
-	partOfSpeech: 'verb',
-	features: { arguments: 1, head: { syntax: { predicate: "see", tense: "present" } } }
+	partOfSpeech: 'verb'
 ] [
 	form: 'she',
 	partOfSpeech: 'pronoun',
-	features: { head: { agreement: { person: 3, number: "singular"}, syntax: { category: "subject" } } },
 	semantics: isa(this.object, Female) and reference(this.object)
 ] [
 	form: 'the',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "the" } } },
 	semantics: determiner(this.entity, The)
 ] [
 	form: 'the',
-	partOfSpeech: 'insertion',
-	features: { head: {}}
+	partOfSpeech: 'insertion'
 ] [
 	form: 'that',
-	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "that" } } }
+	partOfSpeech: 'determiner'
 ] [
 	form: 'to',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "to" } } },
-	#semantics: to(this.superObject, this.subObject)
 	semantics: link(To, this.superObject, this.subObject)
 ] [
 	form: 'very',
-	partOfSpeech: 'degreeAdverb',
-	features: { head: {}}
+	partOfSpeech: 'degreeAdverb'
 ] [
 	form: 'walked',
 	partOfSpeech: 'simpleVerb',
-	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
 	semantics: isa(this.event, Walk) and tense(this.event, Past)
 ] [
 	form: 'walks',
 	partOfSpeech: 'simpleVerb',
-	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
 	semantics: isa(this.event, Walk) and tense(this.event, Present)
 ] [
 	form: 'was',
 	partOfSpeech: 'aux',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'was',
 	partOfSpeech: 'auxBe',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'was',
 	partOfSpeech: 'auxPsv',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'were',
 	partOfSpeech: 'verb',
-	features: { head: {agreement: { number: "plural"}, syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'when',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "when" } } },
 	semantics: at_time(this.event, this.adjunct)
 ] [
 	form: 'where',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "where" } } },
 	semantics: location(this.event, this.adjunct)
 ] [
 	form: 'who',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "identity" } } },
 	semantics: identity(this.subject, this.adjunct)
 ] [
 	form: 'yes',
 	partOfSpeech: 'adverb',
-	features: { head: { syntax: { category: "yes" } } },
 	semantics: isa(this.event, Yes)
 ] [
 	form: 'years',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { number: "plural"}, syntax: { predicate: "year" } } },
 	semantics: isa(this.object, Year)
 ]

@@ -1,268 +1,210 @@
 [
 	form: ',',
 	partOfSpeech: 'punctuationMark',
-	features: { head: { syntax: { category: "comma" } }, space: "after_only"}
+	features: { space: "after_only"}
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
-	features: { head: { syntax: { category: "possessive" } } },
 	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'april',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "january", monthIndex: 4 } }}
+	partOfSpeech: 'noun'
 ] [
 	form: 'auteur',
 	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "author" } } },
 	semantics: isa(this.object, Author)
 ] [
 	form: 'ben',
-	partOfSpeech: 'verb',
-	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+	partOfSpeech: 'verb'
 ] [
 	form: 'ben',
-	partOfSpeech: 'copula',
-	features: { head: { arguments: 0, agreement: { person: 1, number: "singular"}, syntax: { predicate: "be", tense: "present" } } }
+	partOfSpeech: 'copula'
 ] [
 	form: 'beïnvloed',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 // deze mag weg als de oude generatie regels er uit zijn
 	form: 'beïnvloed',
 	partOfSpeech: 'verb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past", form: "participle" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'beïnvloedde',
 	partOfSpeech: 'simpleVerb',
-	features: { arguments: 1, head: { syntax: { predicate: "influence", tense: "past" } } },
 	semantics: isa(this.event, Influence) and tense(this.event, Past)
 ] [
 	form: 'boek',
-	partOfSpeech: 'verb',
-	features: { head: { agreement: { person: 2, number: "singular"}, syntax: { predicate: "book" } } }
+	partOfSpeech: 'verb'
 ] [
 	form: 'de',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "the" } } },
 	semantics: determiner(this.entity, The)
 ] [
 	form: 'de',
-	partOfSpeech: 'insertion',
-	features: { head: {}}
+	partOfSpeech: 'insertion'
 ] [
 	form: 'die',
-	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "that" } } }
+	partOfSpeech: 'determiner'
 ] [
 	form: 'door',
-	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "by" } } }
+	partOfSpeech: 'preposition'
 ] [
 	form: 'door',
 	partOfSpeech: 'passivisationPreposition',
-	features: { head: {}},
 	semantics: subject(this.event, this.subject)
 ] [
 	form: 'dochter',
 	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "daughter" } } },
 	semantics: isa(this.object, Daughter)
 ] [
 	form: 'een',
 	partOfSpeech: 'determiner',
-	features: { head: { syntax: { category: "a" } } },
 	semantics: determiner(this.entity, An)
 ] [
 	form: 'en',
 	partOfSpeech: 'conjunction',
-	features: { head: {}},
 	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'geboren',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { head: { syntax: { predicate: "bear" } } },
 	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'geboren',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "bear" } } },
 	semantics: isa(this.event, Bear) and aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'getrouwd',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'getrouwd',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { head: { syntax: { predicate: "marry", tense: "past" } } },
 	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "die" } } },
 	semantics: isa(this.event, Die) and aspect(this.event, Perfect)
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'pastParticipleVerb',
-	features: { head: { syntax: { predicate: "die" } } },
 	semantics: isa(this.event, Die) and tense(this.event, Past) and aspect(this.event, Perfect)
 ] [
 	form: 'had',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "have", tense: "past" } } },
 	semantics: isa(this.event, Have) and tense(this.event, Past)
 ] [
 #deprecated
 	form: 'had',
 	partOfSpeech: 'simpleVerb',
-	features: { head: { syntax: { predicate: "have", tense: "past" } } },
 	semantics: isa(this.event, Have) and tense(this.event, Past)
 ] [
 	form: 'het',
-	partOfSpeech: 'article',
-	features: { head: {}}
+	partOfSpeech: 'article'
 ] [
 	form: 'hoeveel',
 	partOfSpeech: 'whwordNP',
-	features: { head: { syntax: { deepDirectObject: ?arg { determiner: { type: "determiner", question: true, category: "many" } } }, variables: { role:  ?arg  } } },
 	semantics: manner(this.object, this.adjunct) and many(this.object)
 ] [
 	form: 'ik',
 	partOfSpeech: 'pronoun',
-	features: { head: { agreement: { person: 1, number: "singular"}, syntax: { category: "firstPerson" } }},
 	semantics: firstPerson(this.object)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "in" } } },
 	semantics: link(In, this.event, this.entity)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxPsv',
-	features: { head: { syntax: { predicate: "be", tense: "present" } } },
 	semantics: tense(this.event, Present)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxBe',
-	features: { head: { syntax: { predicate: "be", tense: "present" } } },
 	semantics: tense(this.event, Present)
 ] [
 	form: 'ja',
 	partOfSpeech: 'adverb',
-	features: { head: { syntax: { category: "yes" } } },
 	semantics: isa(this.event, Yes)
 ] [
 	form: 'jaar',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { number: "singular"}, syntax: { predicate: "year" } } },
 	semantics: isa(this.object, Year)
 ] [
 	form: 'januari',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { category: "january", monthIndex: 1 } } }
+	partOfSpeech: 'noun'
 ] [
 	form: 'kinderen',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "plural"}, syntax: { category: "child" } } },
 	semantics: isa(this.object, Child)
 ] [
 	form: 'liep',
 	partOfSpeech: 'simpleVerb',
-	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "past" } } },
 	semantics: isa(this.event, Walk) and tense(this.event, Past)
 ] [
 	form: 'loopt',
 	partOfSpeech: 'simpleVerb',
-	features: { head: {agreement: { number: "singular"}, syntax: { predicate: "walk", tense: "present" } } },
 	semantics: isa(this.event, Walk) and tense(this.event, Present)
 ] [
 	form: 'met',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "to" } } },
 	semantics: link(To, this.superObject, this.subObject)
 ] [
 	form: 'noem',
 	partOfSpeech: 'verb',
-	features: { head: { syntax: { predicate: "name" } } },
 	semantics: isa(this.event, Name)
 ] [
 	form: 'op',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "on" } } },
 	semantics: link(On, this.event, this.entity)
 ] [
 	form: 'ontmoette',
 	partOfSpeech: 'simpleVerb',
-	features: { },
 	semantics: isa(this.event, Meet) and tense(this.event, Past)
 ] [
 	form: 'oud',
-	partOfSpeech: 'noun',
-	features: { head: { syntax: { predicate: "old" } } },
-	semantics: isa(this.object, Old)
-] [
-	form: 'oud',
 	partOfSpeech: 'adjective',
-	features: { head: { syntax: { predicate: "old" } } },
 	semantics: isa(this.object, Old)
 ] [
 	form: 'ouders',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { number: "plural"} } },
 	semantics: isa(this.object, Parent)
 ] [
 	form: 'van',
 	partOfSpeech: 'preposition',
-	features: { head: { syntax: { category: "of" } } },
 	semantics: link(Of, this.superObject, this.subObject)
 ] [
 	form: 'vlucht',
-	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "singular"}, syntax: { category: "flight" } } }
+	partOfSpeech: 'noun'
 ] [
 	form: 'was',
-	partOfSpeech: 'aux',
-	features: { head: { syntax: { predicate: "be" } } }
+	partOfSpeech: 'aux'
 ] [
 	form: 'was',
 	partOfSpeech: 'auxBe',
-	features: { head: { syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'werd',
 	partOfSpeech: 'aux',
-	features: { head: { syntax: { predicate: "become", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'werd',
 	partOfSpeech: 'auxPsv',
-	features: { head: { syntax: { predicate: "become", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'waar',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "where" } } },
 	semantics: location(this.event, this.adjunct)
 ] [
 	form: 'wanneer',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "when" } } },
 	semantics: at_time(this.event, this.adjunct)
 ] [
 	form: 'waren',
 	partOfSpeech: 'verb',
-	features: { head: {agreement: { number: "plural"}, syntax: { predicate: "be", tense: "past" } } },
 	semantics: tense(this.event, Past)
 ] [
 	form: 'wie',
 	partOfSpeech: 'whAdverb',
-	features: { head: { syntax: { category: "identity" } } },
 	semantics: identity(this.subject, this.adjunct)
 ]
