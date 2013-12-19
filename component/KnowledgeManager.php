@@ -3,8 +3,6 @@
 namespace agentecho\component;
 
 use agentecho\knowledge\KnowledgeSource;
-use agentecho\phrasestructure\Sentence;
-use agentecho\component\DataMapper;
 
 /**
  * This object provides a single interface for multiple knowledge sources and data mappers.

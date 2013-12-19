@@ -7,7 +7,6 @@ use agentecho\component\KnowledgeManager;
 use agentecho\component\Conversation;
 use agentecho\component\Parser;
 use agentecho\component\SentenceProcessor;
-use agentecho\datastructure\ConversationContext;
 use agentecho\knowledge\KnowledgeSource;
 use agentecho\grammar\Grammar;
 use agentecho\component\DataMapper;
@@ -124,8 +123,7 @@ class AgentEcho
 	{
 		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
 		$SentenceProcessor->setEventManager($this->EventManager);
-		$ConversationContext = new ConversationContext();
-		return $SentenceProcessor->reply($question, $ConversationContext, $this->Parser);
+		return $SentenceProcessor->reply($question, $this->Parser);
 	}
 
 	/**

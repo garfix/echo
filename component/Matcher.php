@@ -3,7 +3,6 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
-use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Property;

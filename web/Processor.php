@@ -144,9 +144,6 @@ class Processor
 		if ($key == 'syntax') {
 			$View = new SyntaxView();
 			$html = $View->getHtml($value);
-		} elseif ($key == 'phraseSpecification') {
-			$View = new PhraseStructureView();
-			$html = $View->getHtml($value);
 		} elseif ($key == 'semantics') {
 			$View = new PredicationListView();
 			$html = $View->getHtml($value);
@@ -158,9 +155,6 @@ class Processor
 			$html = $View->getHtml($value);
 		} elseif ($key == 'query') {
 			$View = new SparqlQueryView();
-			$html = $View->getHtml($value);
-		} elseif ($key == 'response') {
-			$View = new PhraseStructureView();
 			$html = $View->getHtml($value);
 		} elseif ($key == 'bindings') {
 			$View = new BindingsView();

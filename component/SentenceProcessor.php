@@ -4,15 +4,9 @@ namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\ConversationContext;
 use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\exception\NoBindingsException;
 use agentecho\grammar\Grammar;
-use agentecho\phrasestructure\Sentence;
-use agentecho\phrasestructure\Entity;
-use agentecho\phrasestructure\Adverb;
-use agentecho\phrasestructure\Date;
-use agentecho\phrasestructure\SentenceBuilder;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
@@ -42,11 +36,10 @@ class SentenceProcessor
 	 * and using $ConversationContext to process pronouns.
 	 *
 	 * @param string $question
-	 * @param ConversationContext $ConversationContext
 	 * @param Parser $Parser
 	 * @return string
 	 */
-	public function reply($question, ConversationContext $ConversationContext, Parser $Parser)
+	public function reply($question, Parser $Parser)
 	{
 		$this->send(new LogEvent(array('question' => $question)));
 
@@ -59,23 +52,14 @@ class SentenceProcessor
 			$CurrentGrammar = $Parser->getCurrentGrammar();
 
 			// extract the Sentence
-			$Sentence = $SentenceContext->getRootObject();
 			$this->send(new LogEvent(array('syntax' => $SentenceContext->getPhraseSpecification())));
-			$this->send(new LogEvent(array('phraseSpecification' => $Sentence)));
 
 			// extract semantics
 			$Semantics = $SentenceContext->getSemantics();
 
-			// update the subject of the conversation
-			$ContextProcessor = new ContextProcessor();
-			$ContextProcessor->updateSubject($Sentence, $ConversationContext);
-
-			// resolve pronouns
-			$PronounProcessor = new PronounProcessor();
-			$PronounProcessor->replacePronounsByProperNouns($Sentence, $ConversationContext);
-
 			// replace references
-			$PronounProcessor->replaceReferences($Semantics, $ConversationContext);
+			$PronounProcessor = new PronounProcessor();
+			$PronounProcessor->replaceReferences($Semantics);
 			$this->send(new LogEvent(array('semantics' => $Semantics)));
 
 			// replace all request properties with variables
@@ -84,23 +68,9 @@ class SentenceProcessor
 			}
 
 			$Answer = $this->answer($Semantics, $CurrentGrammar);
-			if ($Answer) {
 
-				$Generator = new Generator();
-				$answer = $Generator->generate($CurrentGrammar, $Answer);
-
-			} else {
-
-				// process the sentence
-				$Response = $this->process($Sentence, $Semantics);
-				$this->send(new LogEvent(array('response' => $Response)));
-
-				// produce the surface text of the response
-				$Producer = new Producer();
-				$answer = $Producer->produce($Response, $CurrentGrammar);
-
-$answer = 'oude code';
-			}
+			$Generator = new Generator();
+			$answer = $Generator->generate($CurrentGrammar, $Answer);
 
 			// substitute proper nouns by pronouns
 #todo
@@ -337,7 +307,7 @@ $answer = 'oude code';
 
 		$ConjunctionVariable = new Variable('c0');
 
-		$Answer = SentenceBuilder::buildConjunction2($conjuncts, $ConjunctionVariable);
+		$Answer = SentenceBuilder::buildConjunction($conjuncts, $ConjunctionVariable);
 
 		// sentence(?c0, CP.node)
 
@@ -421,136 +391,6 @@ $answer = 'oude code';
 		);
 
 		return array_merge(array($topLevel), $E->getTrace());
-	}
-
-	/**
-	 * @param Sentence $Sentence
-	 * @return PhraseStructure
-	 */
-	private function process(Sentence $Sentence, PredicationList $Semantics)
-	{
-		$Answer = null;
-
-		$sentenceType = $Sentence->getSentenceType();
-		if ($sentenceType == 'yes-no-question') {
-
-			// since this is a yes-no question, check the statement
-			$result = $this->answerYesNoQuestionWithSemantics($Semantics);
-
-			if ($result) {
-				$Answer = $Sentence->createClone();
-
-				$Adverb = new Adverb();
-				$Adverb->setCategory('yes');
-				$Answer->getClause()->setAdverb($Adverb);
-
-				$Answer->setSentenceType(Sentence::DECLARATIVE);
-			}
-
-		} elseif ($sentenceType == 'wh-question') {
-
-			list($answer, $unit) = $this->answerQuestionWithSemantics($Semantics);
-
-			// incorporate the answer in the original question
-			if ($answer !== null) {
-
-				$answer = array_unique($answer);
-
-				if (count($answer) > 1) {
-
-					$Answer = $this->createConjunction($answer);
-
-				} else {
-
-					$answer = reset($answer);
-
-					$Answer = $Sentence->createClone();
-
-					#todo: this should be made more generic
-
-					if ($Clause = $Answer->getClause()) {
-
-						$found = false;
-
-						// how many?
-						if ($DeepDirectObject = $Clause->getDeepDirectObject()) {
-							if ($Determiner = $DeepDirectObject->getDeterminer()) {
-								if ($Determiner->isQuestion()) {
-									$Answer->setSentenceType(Sentence::DECLARATIVE);
-									$Determiner->setQuestion(false);
-
-									if ($unit) {
-										$Determiner->setUnit($unit);
-									}
-
-									$Determiner->setCategory($answer);
-
-									$found = true;
-								}
-							}
-						}
-
-						// when / where?
-						if (!$found) {
-							if ($Preposition = $Clause->getPreposition()) {
-								if ($Object = $Preposition->getObject()) {
-									if ($Object->isQuestion()) {
-										if ($Preposition->getCategory() == 'where') {
-											$Answer->setSentenceType(Sentence::DECLARATIVE);
-											$Preposition->setCategory('in');
-											$Object->setName($answer);
-											$Object->setQuestion(false);
-										}
-										if ($Preposition->getCategory() == 'when') {
-											$Answer->setSentenceType(Sentence::DECLARATIVE);
-											$Preposition->setCategory('on');
-
-											// in stead of "name" create a new Date object
-											list($year, $month, $day) = explode('-', $answer);
-											$Date = new Date();
-											$Date->setYear((int)$year);
-											$Date->setMonth((int)$month);
-											$Date->setDay((int)$day);
-											$Preposition->setObject($Date);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-		} elseif ($Sentence->getSentenceType() == 'imperative') {
-
-			#todo Imperatives are not always questions
-			$isQuestion = true;
-
-			if ($isQuestion) {
-
-				list($answer, $unit) = $this->answerQuestionWithSemantics($Semantics);
-				if ($answer !== null) {
-					$Answer = $this->createConjunction($answer);
-
-				}
-			}
-		}
-
-		return $Answer;
-	}
-
-	private function createConjunction($operands)
-	{
-		$entities = array();
-
-		foreach ($operands as $name) {
-
-             $Entity = new Entity();
-             $Entity->setName($name);
-
-             $entities[] = $Entity;
-		}
-		return SentenceBuilder::buildConjunction($entities);
 	}
 
 	private function answerQuestionWithSemantics(PredicationList $PredicationList)

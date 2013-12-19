@@ -4,7 +4,7 @@ namespace agentecho\test;
 
 require_once __DIR__ . '/../Autoload.php';
 
-use \agentecho\datastructure\LabeledDAG;
+use agentecho\datastructure\LabeledDAG;
 
 class LabeledDAGTest extends \PHPUnit_Framework_TestCase
 {

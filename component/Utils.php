@@ -33,7 +33,7 @@ class Utils
 	 *      ...
 	 * )
 	 *
-	 * @param array $matchingPredicationsPerPrecondition
+	 * @param array $input
 	 * @return array
 	 */
 	public static function createPermutations(array $input)

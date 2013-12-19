@@ -2,10 +2,6 @@
 
 namespace agentecho\component;
 
-use agentecho\phrasestructure\Sentence;
-use agentecho\datastructure\ConversationContext;
-use agentecho\phrasestructure\PhraseStructure;
-use agentecho\phrasestructure\Entity;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\Property;
@@ -15,34 +11,6 @@ use agentecho\datastructure\Property;
  */
 class PronounProcessor
 {
-	/**
-	 * Changes all pronouns in $Sentence to their referents.
-	 * Updates $Context to store subjects and objects.
-	 *
-	 * @param Sentence $Sentence
-	 * @param ConversationContext $Context
-	 */
-	public function replacePronounsByProperNouns(Sentence $Sentence, ConversationContext $Context)
-	{
-		$Subject = $Context->getSubject();
-
-		$Sentence->visit(
-			function(PhraseStructure $Phrase) use ($Subject)
-			{
-				if ($Phrase instanceof Entity) {
-
-					/** @var Entity $Entity  */
-					$Entity = $Phrase;
-
-					// replace pronoun by proper noun
-					if ($Entity->getCategory() == 'subject') {
-						$Entity->setCategory(null);
-						$Entity->setName($Subject->getName());
-					}
-				}
-			});
-	}
-
 	/**
 	 * Dummy interpretation for pronoun resolution on the semantic level.
 	 * Replaces all properties predicated with reference() by S.subject

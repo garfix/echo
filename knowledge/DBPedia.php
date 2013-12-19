@@ -4,14 +4,10 @@ namespace agentecho\knowledge;
 
 use agentecho\component\LogEvent;
 use agentecho\datastructure\Constant;
-use agentecho\phrasestructure\Sentence;
-use agentecho\phrasestructure\Entity;
-use agentecho\phrasestructure\Clause;
 use agentecho\datastructure\PredicationList;
 use agentecho\component\DataMapper;
 use agentecho\datastructure\SparqlQuery;
 use agentecho\datastructure\Predication;
-use agentecho\exception\DataMappingFailedException;
 
 /**
  * An adapter for DBPedia.
@@ -39,7 +35,6 @@ class DBPedia extends KnowledgeSource
 	private function  queryDBPedia($query)
 	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
-#$result = false;
 
 		if ($result === false) {
 
@@ -109,15 +104,12 @@ class DBPedia extends KnowledgeSource
 
 	public function answer(PredicationList $Question)
 	{
-$b = (string)$Question;
 		// turn the expanded question into a set of database relations
 		$Relations = $this->getDataMapper()->mapPredications($Question);
 		$this->send(new LogEvent(array('relations' => $Relations)));
 
 		// convert the database relations into a query
 		$Query = $this->createDatabaseQuery($Relations);
-
-$sparql = (string)$Query;
 
 		$this->send(new LogEvent(array('query' => $Query)));
 

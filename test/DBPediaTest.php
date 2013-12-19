@@ -8,8 +8,6 @@ use agentecho\AgentEcho;
 use agentecho\component\DataMapper;
 use agentecho\component\GrammarFactory;
 use agentecho\knowledge\DBPedia;
-use agentecho\grammar\EnglishGrammar;
-use agentecho\grammar\DutchGrammar;
 
 /**
  * Question answering
@@ -32,7 +30,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		return $Conversation;
 	}
 
-	public function test1()
+	public function testNestedPrepositionalPhraseQuestion()
 	{
 		$Conversation = $this->getConversation();
 
@@ -43,7 +41,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Ja, Lord Byron werd beïnvloed door de auteur van Paradise Lost.', $answer);
 	}
 
-	public function test2()
+	public function testQuestionThatRequiresCount()
 	{
 		$Conversation = $this->getConversation();
 
@@ -54,7 +52,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Lord Byron had 2 kinderen.', $answer);
 	}
 
-	public function test3()
+	public function testDoubleNounPhraseQuestion()
 	{
 		$Conversation = $this->getConversation();
 
@@ -65,7 +63,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('Ja, Ada Lovelace was een dochter van Lord Byron.', $answer);
 	}
 
-	public function test4()
+	public function testImperativeSentence()
 	{
 		$Conversation = $this->getConversation();
 
@@ -76,7 +74,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame("Ada Lovelace en Allegra Byron.", $answer);
 	}
 
-	public function test5()
+	public function testSymmetricRelationQuestion()
 	{
 		$Conversation = $this->getConversation();
 
@@ -93,7 +91,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	 * The answer is calculated.
 	 * Uses a dependent clause
 	 */
-	public function testCalculatedAnswer()
+	public function testQuestionThatRequiresCalculation()
 	{
 		$Echo = new AgentEcho();
 		$Echo->addGrammar($English = GrammarFactory::getGrammar('en'));

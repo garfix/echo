@@ -4,10 +4,8 @@ namespace agentecho\test;
 
 require_once __DIR__ . '/../Autoload.php';
 
-use \agentecho\AgentEcho;
+use agentecho\AgentEcho;
 use agentecho\component\GrammarFactory;
-use \agentecho\grammar\EnglishGrammar;
-use \agentecho\grammar\DutchGrammar;
 
 class ConversationTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,7 +2,6 @@
 
 namespace agentecho\component;
 
-use agentecho\component\FunctionInvoker;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\Predication;
 
@@ -16,6 +15,7 @@ class Assigner
 	 *
 	 * @param Predication $LetPredication
 	 * @param array $arguments
+	 * @return array
 	 */
 	public function applyLet(Predication $LetPredication, array $arguments)
 	{

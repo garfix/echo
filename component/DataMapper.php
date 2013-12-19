@@ -3,14 +3,10 @@
 namespace agentecho\component;
 
 use agentecho\component\parser\MapParser;
-use agentecho\component\parser\SemanticStructureParser;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\PredicationList;
-use agentecho\datastructure\Predication;
 use agentecho\datastructure\Variable;
-use agentecho\component\Utils;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\exception\DataMappingFailedException;
 

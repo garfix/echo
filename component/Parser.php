@@ -2,13 +2,10 @@
 
 namespace agentecho\component;
 
-use agentecho\exception\EchoException;
 use agentecho\exception\NoSemanticsAtTopLevelException;
 use agentecho\grammar\Grammar;
-use agentecho\component\Lexer;
 use agentecho\datastructure\SentenceContext;
 use agentecho\exception\ParseException;
-use agentecho\phrasestructure\Sentence;
 
 /**
  * This class parses a surface text into a phrase specification.
@@ -53,7 +50,6 @@ class Parser
 		return $this->CurrentGrammar;
 	}
 
-	//public function parseSentenceGivenMultipleGrammars($input)
 	public function parse($input)
 	{
 		$sentences = array();
@@ -126,10 +122,13 @@ class Parser
 	/**
 	 * This function turns a line of text into structured meaning.
 	 *
-	 * @param string $text Raw input.
-	 * @param array $context The roles that are currently active.
-	 * @throws LexicalItemException
-	 * @throws ParseException
+	 * @param $input
+	 * @param \agentecho\datastructure\SentenceContext $Sentence
+	 * @param \agentecho\grammar\Grammar $Grammar
+	 * @throws \agentecho\exception\ParseException
+	 * @throws \agentecho\exception\NoSemanticsAtTopLevelException
+	 * @internal param string $text Raw input.
+	 * @internal param array $context The roles that are currently active.
 	 */
 	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
 	{
@@ -150,55 +149,5 @@ class Parser
 		if ($result['tree']['semantics'] === null) {
 			throw new NoSemanticsAtTopLevelException();
 		}
-
-		$phraseSpecification = $Sentence->getPhraseSpecification();
-		$Sentence->RootObject = $this->buildObjectStructure($phraseSpecification['features']['head']);
-	}
-
-	/**
-	 * This function turns a phrase specification into an object structure.
-	 * @param $phraseSpecification
-	 * @return Entity
-	 */
-	private function buildObjectStructure(array $phraseSpecification)
-	{
-		if (isset($phraseSpecification['sentenceType'])) {
-			$E = new Sentence();
-		} elseif (isset($phraseSpecification['type'])) {
-			$className = '\\agentecho\\phrasestructure\\' . ucfirst($phraseSpecification['type']);
-			$E = new $className();
-		} else {
-			$a = 0;
-		}
-
-		$attributeNames = array_keys($E->getAttributes());
-
-		foreach ($phraseSpecification as $name => $value) {
-
-			if (in_array($name, $attributeNames)) {
-
-				$func = 'set' . ucfirst($name);
-
-				$E->$func($value);
-
-			} elseif (in_array(ucfirst($name), $attributeNames)) {
-
-				$func = 'set' . $name;
-
-				if (!$value) {
-					throw new EchoException($name . ' has no value');
-				}
-
-				$Entity = $this->buildObjectStructure($value);
-
-				$E->$func($Entity);
-
-			} else {
-				$i = 0;
-			}
-
-		}
-
-		return $E;
 	}
 }

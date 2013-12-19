@@ -1,51 +1,24 @@
 <?php
 
-namespace agentecho\phrasestructure;
+namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Variable;
 use \agentecho\exception\BuildException;
-use \agentecho\phrasestructure\Conjunction;
 
 class SentenceBuilder
 {
-    /**
-     * Builds a (nested) conjunction of an array of entities.
-     *
-     * @return Conjunction
-     */
-    public static function buildConjunction(array $entities)
-    {
-        if (count($entities) < 2) {
-            throw new BuildException();
-        }
-
-        $Right = array_pop($entities);
-
-        if (count($entities) > 1) {
-            $Left = self::buildConjunction($entities);
-        } else {
-            $Left = array_shift($entities);
-        }
-
-        $Conjunction = new Conjunction();
-
-        $Conjunction->setLeftEntity($Left);
-        $Conjunction->setRightEntity($Right);
-
-        return $Conjunction;
-    }
-
 	/**
 	 * Creates a set of conjunction relations from given entities.
 	 *
 	 * @param array $entities Constants, atoms, or variables, or a combination thereof.
+	 * @param \agentecho\datastructure\Variable $RootVariable
 	 * @throws \agentecho\exception\BuildException
 	 * @return PredicationList
 	 */
-	public static function buildConjunction2(array $entities, Variable $RootVariable)
+	public static function buildConjunction(array $entities, Variable $RootVariable)
 	{
 		static $idGen = 0;
 

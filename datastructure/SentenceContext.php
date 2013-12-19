@@ -2,9 +2,6 @@
 
 namespace agentecho\datastructure;
 
-use agentecho\phrasestructure\Sentence;
-use agentecho\datastructure\PredicationList;
-
 /**
  * A blackboard for a sentence in progress.
  */
@@ -35,16 +32,7 @@ class SentenceContext
 	/** @var The syntax tree with added features */
 	private $phraseSpecification = null;
 
-	/** @var The root object of the object structure. */
-	public $RootObject = null;
-
 	public $Semantics = null;
-
-	/** @return Sentence */
-	public function getRootObject()
-	{
-		return $this->RootObject;
-	}
 
 	public function setPhraseSpecification($specification)
 	{
@@ -107,16 +95,6 @@ class SentenceContext
 		$string .= ']';
 
 		return $string;
-	}
-
-	public function getStructure()
-	{
-		return $this->phraseSpecification['features']['head']['sentenceType'];
-	}
-
-	public function getObjectString()
-	{
-		return (string)$this->RootObject;
 	}
 
 	/**

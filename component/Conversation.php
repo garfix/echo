@@ -2,11 +2,8 @@
 
 namespace agentecho\component;
 
-use agentecho\component\KnowledgeManager;
 use agentecho\grammar\Grammar;
 use agentecho\exception\ConfigurationException;
-use agentecho\phrasestructure\Sentence;
-use agentecho\datastructure\ConversationContext;
 
 /**
  * This class implements a discourse between a user and Echo.
@@ -15,9 +12,6 @@ use agentecho\datastructure\ConversationContext;
  */
 class Conversation
 {
-	/** @var ConversationContext Local memory store for the roles in the conversation */
-	private $ConversationContext = null;
-
 	/** @var KnowledgeManager The agent having the conversation */
 	private $KnowledgeManager;
 
@@ -29,7 +23,6 @@ class Conversation
 	 */
 	public function __construct(KnowledgeManager $KnowledgeManager, Parser $Parser)
 	{
-		$this->ConversationContext = new ConversationContext();
 		$this->KnowledgeManager = $KnowledgeManager;
 		$this->Parser = $Parser;
 	}
@@ -53,7 +46,7 @@ class Conversation
 			$SentenceProcessor->setEventManager($this->EventManager);
 		}
 
-		$answer = $SentenceProcessor->reply($question, $this->ConversationContext, $this->Parser);
+		$answer = $SentenceProcessor->reply($question, $this->Parser);
 
 		return $answer;
 	}
