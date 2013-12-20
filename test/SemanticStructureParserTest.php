@@ -231,20 +231,6 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testLabeledDag()
-	{
-		$Parser = new SemanticStructureParser();
-		$string = '{noun: {head: {tense: ?t, person: 1}}, verb: {head: {tense: ?t}}}';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-
-		$string = '{noun: {head: {syntax: ?sem1 {role: ?role}}}, verb: {head: {syntax: ?sem1}}}';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
 	public function testTree()
 	{
 		$Parser = new SemanticStructureParser();
@@ -257,7 +243,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	public function testParseRule()
 	{
 		$Parser = new SemanticStructureParser();
-		$string = '[rule: S => NP VP, features: {a: 1}]';
+		$string = '[rule: S => NP VP]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -267,7 +253,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new ParseRulesParser();
 
-		$string = '[rule: S => NP VP, features: {a: 1}] [rule: S => VP, features: {b: 1, c: 2}]';
+		$string = '[rule: S => NP VP]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -283,7 +269,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new GenerationRulesParser();
 
-		$string = '[rule: S => NP VP, condition: [b: 2, c: match], features: {a: 1}] [rule: S => VP, condition: [b: 3, c: true], features: {b: 1, c: 2}]';
+		$string = '[rule: S => NP VP] [rule: S => VP]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -299,7 +285,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new LexiconParser();
 
-		$string = "[form: 'werd', partOfSpeech: 'auxPsv', features: {head: {syntax: {predicate: 'be', tense: 'past'}}}, semantics: tense(this.event, Past)]";
+		$string = "[form: 'werd', partOfSpeech: 'auxPsv']";
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

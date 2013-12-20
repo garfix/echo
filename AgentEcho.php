@@ -29,7 +29,6 @@ use agentecho\component\DataMapper;
  * - Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
  * - Portable to other languages (so: no fancy PHP-specific idiosyncracies)
  * - Create independent functions that could be used without the context of the agent (i.e. getPlural($word)
- * - The lexicon should be kept as simple as possible (it is possible to create complex features sets in it, but this often leads to hard to debug problems)
  * - Don't invent meanings. 'Where' means where; not: 'unknown location'. The meaning of cat is cat. A meaning is best described by the word that is normally used for it.
  *
  * Preconditions:

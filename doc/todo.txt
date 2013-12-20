@@ -3,8 +3,6 @@ Ooit:
  * sentenceType => mood (later een keer; ben er nog niet uit wat ik hiermee doe)
  * 1st person (in artikel voorbeeld => 3rd person)
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
- * default feature values (bv. voice=active) bij het uitvoeren van DAG unification
- * Welke mogen weg? features / head / syntax?
  * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
  * Sentence: verplaats voice naar clause
  * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
@@ -26,7 +24,6 @@ Volgende zinnen:
 Nu:
 
 * De niet-web code is nog niet UNICODE-proof
-* Maak van de output "53 years"
 * Noem de object in NP.object: entity, om verwarring met het syntactische object te voorkomen
 * Verander AP in AdjP
 * Maak een cleane API waarin op een nette manier aangepaste dependencies kunnen worden geinjecteerd, en zorg voor defaults

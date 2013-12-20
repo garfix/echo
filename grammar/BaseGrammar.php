@@ -5,18 +5,14 @@ namespace agentecho\grammar;
 use agentecho\component\parser\GenerationRulesParser;
 use agentecho\component\parser\LexiconParser;
 use agentecho\component\parser\ParseRulesParser;
-use agentecho\component\Utils;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\ParseRules;
 use agentecho\datastructure\GenerationRules;
 use agentecho\datastructure\Predication;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Atom;
-use agentecho\exception\ProductionException;
 use agentecho\datastructure\Lexicon;
-use agentecho\exception\WordNotFoundException;
 
 /**
  * This class contains some basic grammar functions.
@@ -169,20 +165,6 @@ abstract class BaseGrammar implements Grammar
 	}
 
 	/**
-	 * Returns the features for a word, starting with $partOfSpeech as a new root.
-	 * @return LabeledDAG
-	 */
-	public function getFeaturesForWord($word, $partOfSpeech)
-	{
-		$Entry = $this->Lexicon->getEntry($word, $partOfSpeech);
-		if ($Entry) {
-			return $Entry->getPrefixedFeatures();
-		} else {
-			return new LabeledDAG(array($partOfSpeech => array('head' => array('syntax' => array('name' => $word)))));
-		}
-	}
-
-	/**
 	 * Returns the semantics of a word.
 	 * @param $word
 	 * @param $partOfSpeech
@@ -211,43 +193,6 @@ abstract class BaseGrammar implements Grammar
 		} else {
 			return null;
 		}
-	}
-
-	/**
-	 * @param $partOfSpeech
-	 * @param array $features
-	 * @return bool|int|string
-	 * @throws WordNotFoundException
-	 */
-	public function getWordForFeatures($partOfSpeech, array $features)
-	{
-		$word = false;
-
-		if ($partOfSpeech == 'propernoun') {
-			if (isset($features['head']['syntax']['name'])) {
-				$word = $features['head']['syntax']['name'];
-			}
-		} elseif ($partOfSpeech == 'determiner') {
-			if (is_numeric($features['head']['syntax']['category'])) {
-				$word = $features['head']['syntax']['category'];
-			} else {
-				$word = $this->Lexicon->getWordForFeatures($partOfSpeech, $features);
-			}
-		} elseif ($partOfSpeech == 'numeral') {
-			if (is_numeric($features['head']['syntax']['value'])) {
-				$word = $features['head']['syntax']['value'];
-			} else {
-				$word = $this->Lexicon->getWordForFeatures($partOfSpeech, $features);
-			}
-		} else {
-			$word = $this->Lexicon->getWordForFeatures($partOfSpeech, $features);
-			if (!$word) {
-
-				throw new WordNotFoundException($partOfSpeech, Utils::stringify($features));
-			}
-		}
-
-		return $word;
 	}
 
 	/**

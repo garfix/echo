@@ -2,7 +2,6 @@
 
 namespace agentecho\grammar;
 
-use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\PredicationList;
 
@@ -60,14 +59,6 @@ interface Grammar
 	public function isPartOfSpeech($constituent);
 
 	/**
-	 * Returns a word that matches the specified features.
-	 * @param $partOfSpeech
-	 * @param array $features
-	 * @return string|false
-	 */
-	public function getWordForFeatures($partOfSpeech, array $features);
-
-	/**
 	 * Returns a word, given its semantics.
 	 *
 	 * @param string $partOfSpeech
@@ -75,12 +66,6 @@ interface Grammar
 	 * @return mixed An array of [word, partOfSpeech], or false;
 	 */
 	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics);
-
-	/**
-	 * Returns the features for a word, starting with $partOfSpeech as a new root.
-	 * @return LabeledDAG
-	 */
-	public function getFeaturesForWord($word, $partOfSpeech);
 
 	/**
 	 * Returns true if $word is a word in the lexicon.

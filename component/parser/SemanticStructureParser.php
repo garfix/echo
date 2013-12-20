@@ -17,9 +17,7 @@ use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
-use agentecho\datastructure\LabeledDAG;
 use agentecho\datastructure\Tree;
-use agentecho\datastructure\AssociativeArray;
 use agentecho\datastructure\ProductionRule;
 use agentecho\datastructure\ParseRule;
 use agentecho\datastructure\GenerationRule;
@@ -129,8 +127,6 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseLabeledDag($tokens, $pos, $Result)) {
-			$pos = $newPos;
 		} elseif ($newPos = $this->parseTree($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseParseRule($tokens, $pos, $Result)) {
@@ -211,12 +207,6 @@ class SemanticStructureParser
 						$ParseRule->setSemantics($Semantics);
 					}
 
-				} elseif ($label == 'features') {
-
-					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
-						$ParseRule->setFeatures($Features);
-					}
-
 				} else {
 					return false;
 				}
@@ -284,12 +274,6 @@ class SemanticStructureParser
 						$ParseRule->setAssignments($List);
 					}
 
-				} elseif ($label == 'features') {
-
-					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
-						$ParseRule->setFeatures($Features);
-					}
-
 				} else {
 					return false;
 				}
@@ -338,12 +322,6 @@ class SemanticStructureParser
 						$LexicalEntry->setPartOfSpeech($partOfSpeech);
 					}
 
-				} elseif ($label == 'features') {
-
-					if ($pos = $this->parseLabeledDag($tokens, $pos, $Features)) {
-						$LexicalEntry->setFeatures($Features);
-					}
-
 				} elseif ($label == 'semantics') {
 
 					if ($pos = $this->parsePredicationList($tokens, $pos, $Semantics)) {
@@ -366,88 +344,6 @@ class SemanticStructureParser
 
 				return $pos;
 
-			}
-		}
-
-		return false;
-	}
-
-	private function parseLabeledDag(array $tokens, $pos, &$LabeledDag)
-	{
-		if ($pos = $this->parseLabeledDagTree($tokens, $pos, $tree)) {
-
-			$LabeledDag = new LabeledDAG($tree);
-
-			return $pos;
-		}
-
-		return false;
-	}
-
-	private function parseLabeledDagTree(array $tokens, $pos, &$tree)
-	{
-		$tree = array();
-
-		// {
-		if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
-
-			// label
-			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
-				$pos = $newPos;
-
-				// :
-				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
-
-					// reference variable (optional)
-					if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
-						$pos = $newPos;
-						$variable = (string)$Variable;
-					} else {
-						$variable = null;
-					}
-
-					// constant or tree
-					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
-						$pos = $newPos;
-						$value = $constant->getName();
-					} elseif ($newPos = $this->parseBoolean($tokens, $pos, $boolean)) {
-						$pos = $newPos;
-						$value = $boolean;
-					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
-						$pos = $newPos;
-						$value = $number;
-					} elseif ($newPos = $this->parseLabeledDagTree($tokens, $pos, $subTree)) {
-						$pos = $newPos;
-						$value = $subTree;
-					} elseif ($variable !== null) {
-						// there is just the reference variable
-						$value = $variable;
-						$variable = null;
-					} else {
-						return false;
-					}
-
-					// add field
-					if ($variable !== null) {
-						$label .= '{' . $variable . '}';
-					}
-					$tree[$label] = $value;
-
-				} else {
-					return false;
-				}
-
-				// ,
-				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
-					$pos = $newPos;
-				} else {
-					break;
-				}
-			}
-
-			// }
-			if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
-				return $pos;
 			}
 		}
 

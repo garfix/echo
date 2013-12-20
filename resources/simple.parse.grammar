@@ -3,11 +3,6 @@
 
 	rule:
 		S => NP VP,
-	features: {
-		S: { head: ?h1 { sentenceType: 'declarative', voice: 'active', clause: ?s1 } },
-		NP: { head: { agreement: ?agr, syntax: ?syntax } },
-		VP: { head: ?h1 { agreement: ?agr, syntax: ?s1 { deepSubject: ?syntax } } }
-	},
 	semantics: {
 		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative);
     	S.event = VP.event;
@@ -17,29 +12,10 @@
 ]
 
 [
-	// Lady Lovelace was born
-
-	// NOT USED?
-
-	rule:
-		S => NP aux VP,
-	features: {
-		S: { head: ?h1 { sentenceType: 'declarative', voice: 'active', clause: ?s1 } },
-		NP: { head: { agreement: ?agr, syntax: ?syntax } },
-		aux: { },
-		VP: { head: ?h1 { agreement: ?agr, syntax: ?s1 { deepSubject: ?syntax } } }
-	}
-]
-
-[
 	// Drive! / Book that flight / She died
 
 	rule:
 		S => VP,
-	features: {
-		S: { head: { sentenceType: 'imperative', clause: ?s1 } },
-		VP: { head: { syntax: ?s1 } }
-	},
 	semantics: {
 		S.sem = VP.sem and object(S.event, S.object) and mood(S.event, Imperative);
 		S.event = VP.event;
@@ -52,12 +28,6 @@
 
 	rule:
 		S => WhADVP VP NP,
-	features: {
-		S: { head: ?h1 { sentenceType: 'wh-question', voice: 'active', clause: ?s1 } },
-		WhADVP: { head: { syntax: ?s1 } },
-		VP: { head: ?h1 { syntax: ?s1 { deepSubject: ?s2}, agreement: ?agr } },
-		NP: { head: { syntax: ?s2, agreement: ?agr } }
-	},
 	semantics: {
 		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
         S.event = VP.event;
@@ -74,13 +44,6 @@
 
 	rule:
         S => WhADVP auxBe NP VP,
-    features: {
-        S: { head: ?h1 { sentenceType: 'wh-question', voice: 'active', clause: ?s1 { tense: ?tense } } },
-        WhADVP: { head: { syntax: ?s1 } },
-        auxBe: { head: { syntax: { tense: ?tense } } },
-        NP: { head: { syntax: ?s2, agreement: ?agr } },
-        VP: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?s2}, agreement: ?agr } }
-    },
     semantics: {
 		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request) and mood(S.event, Interrogative);
 		S.event = WhADVP.event;
@@ -96,12 +59,6 @@
 
 	rule:
         S => aux NP VP,
-    features: {
-        S: { head: ?h1 { sentenceType: 'yes-no-question', voice: 'active', clause: ?s3 } },
-        aux: { head: { agreement: ?agr } },
-        NP: { head: { agreement: ?agr, syntax: ?s1 } },
-        VP: { head: ?h1 { agreement: ?agr, syntax: ?s3 { deepDirectObject: ?s1 } } }
-    },
     semantics: {
 		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
 		S.event = VP.event;
@@ -114,14 +71,6 @@
 
 	rule:
         S => aux NP1 VP passivisationPreposition NP2,
-    features: {
-        S: { head: ?h1 { sentenceType: 'yes-no-question', voice: 'passive', clause: ?s3 } },
-        aux: { },
-        NP1: { head: { agreement: ?agr, syntax: ?s1 } },
-        VP: { head: ?h1 { agreement: ?agr, syntax: ?s3 { predicate: ?p, deepSubject: ?s2, deepDirectObject: ?s1 } } },
-        passivisationPreposition: {},
-        NP2: { head: { syntax: ?s2 }}
-    },
     semantics: {
         S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative) and voice(S.event, Passive);
         S.event = VP.event;
@@ -136,12 +85,6 @@
 
 	rule:
         S => auxBe NP1 NP2,
-    features: {
-        S: { head: ?h1 { sentenceType: 'yes-no-question', voice: 'active', clause: ?s3 } },
-        auxBe: { head: ?h1 { syntax: ?s3 { tense: ?tense, type: 'clause', deepSubject: ?s1, deepDirectObject: ?s2 }} },
-        NP1: { head: { syntax: ?s1 } },
-        NP2: { head: { syntax: ?s2 } }
-    },
     semantics: {
        S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and complement(S.event, S.complement) and mood(S.event, Interrogative);
        S.complement = NP2.object;
@@ -155,12 +98,6 @@
 
 	rule:
         S => WhADVP auxBe NP,
-    features: {
-        S: { head: ?h1 { sentenceType: 'wh-question', voice: 'active', clause: ?s3, relativeClause: ?s4 } },
-        WhADVP: { head: { syntax: ?s3 } },
-        auxBe: { head: ?h1 { agreement: ?agr, syntax: ?s3 { type: 'clause', deepSubject: ?s1 } } },
-        NP: { head: { agreement: ?agr, syntax: ?s1 } }
-    },
     semantics: {
         S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative);
         S.complement = WhADVP.object;
@@ -176,11 +113,6 @@
 
 	rule:
 		S1 => S2 SBar,
-	features: {
-		S1: { head: ?h1 { relativeClause: ?s1 } },
-		S2: { head: ?h1 },
-		SBar: { head: { syntax: ?s1 } }
-	},
 	semantics: {
 		S1.sem = S2.sem and SBar.sem;
 		S1.event = S2.event;
@@ -196,11 +128,6 @@
 
 	rule:
 		SBar => whAdverb S,
-	features: {
-		SBar: { head: { syntax: { type: 'relativeClause', clause: ?s2, complementizer: ?cat } } },
-		whAdverb: { head: { syntax: { category: ?cat } } },
-		S: { head: { syntax: ?s2 } }
-	},
 	semantics: {
 		SBar.sem = whAdverb.sem and S.sem;
 		SBar.superEvent = whAdverb.event;
@@ -216,10 +143,6 @@
 
 	rule:
 		VP => verb,
-	features: {
-		VP: { head: ?h1 {syntax: { type: 'clause' } } },
-		verb: { head: ?h1 }
-	},
 	semantics: {
 		VP.sem = verb.sem;
 		VP.event = verb.event
@@ -232,11 +155,6 @@
 
 	rule:
 		VP => verb NP,
-	features: {
-		VP: { head: ?h1 {syntax: ?s1 { type: 'clause' } } },
-		verb: { head: ?h1 { syntax: ?s1 { deepDirectObject: ?object } } },
-		NP: { head: { syntax: ?object } }
-	},
 	semantics: {
 		VP.sem = verb.sem and NP.sem and object(VP.event, VP.object);
 		VP.event = verb.event;
@@ -249,40 +167,11 @@
 
 	rule:
 		VP => verb NP1 NP2,
-	features: {
-		VP: { head: ?h1 {syntax: ?s1 { type: 'clause' } } },
-		verb: { head: ?h1 { arguments: 2, syntax: ?s1 { deepDirectObject: ?directObject, deepIndirectObject: ?indirectObject } } },
-		NP1: { head: { syntax: ?indirectObject } },
-		NP2: { head: { syntax: ?directObject } }
-	},
 	semantics: {
-
-
-// S ??? => VP
-
 		S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
-		S.event = VP.event;
+		S.event = verb.event;
 		S.subject = NP1.object;
 		S.object = NP2.object
-	}
-]
-
-[
-	// drives quickly
-
-// todo: create test sentence
-
-	rule:
-VPQ => verb AP,
-	features: {
-		VP: { head: ?h1 {arguments: 0, syntax: ?s1 { type: 'clause' } } },
-		verb: { head: ?h1 { syntax: ?s1 } },
-		AP: { }
-	},
-	semantics: {
-		VP.sem = verb.sem and AP.sem;
-		VP.event = verb.event;
-		VP.subject = AP.object
 	}
 ]
 
@@ -291,11 +180,6 @@ VPQ => verb AP,
 
 	rule:
 		VP => copula AP,
-	features: {
-		VP: { head: ?h1 { arguments: 0, syntax: ?s1 { type: 'clause', complement: ?object } } },
-		copula: { head: ?h1 { syntax: ?s1 } },
-		AP: { head: { syntax: { object: ?object } } }
-	},
 	semantics: {
 		VP.sem = AP.sem;
 		VP.event = AP.event;
@@ -308,11 +192,6 @@ VPQ => verb AP,
 
 	rule:
 		VP => verb PP,
-	features: {
-		VP: { head: ?h1 { syntax: ?s1 { type: 'clause' } } },
-		verb: { head: ?h1 { syntax: ?s1 { preposition: ?prep } } },
-		PP: { head: { syntax: ?prep } }
-	},
 	semantics: {
 		VP.sem = verb.sem and PP.sem;
 		VP.event = verb.event;
@@ -328,10 +207,6 @@ VPQ => verb AP,
 
 	rule:
         WhADVP => whAdverb,
-    features: {
-        WhADVP: {  },
-        whAdverb: { head: { syntax: { category: "identity"} } }
-    },
     semantics: {
         WhADVP.sem = whAdverb.sem;
         WhADVP.request = whAdverb.adjunct;
@@ -344,10 +219,6 @@ VPQ => verb AP,
 
 	rule:
         WhADVP => whAdverb,
-    features: {
-        WhADVP: { head: { syntax: { preposition: { type: 'preposition', category: ?cat, object: { type: 'entity', question: 1 } } } } },
-        whAdverb: { head: { syntax: { category: ?cat } } }
-    },
     semantics: {
         WhADVP.sem = whAdverb.sem;
         WhADVP.request = whAdverb.adjunct;
@@ -360,11 +231,6 @@ VPQ => verb AP,
 
 	rule:
         WhADVP => whwordNP NP,
-    features: {
-        WhADVP: { head: ?h1 },
-        whwordNP: { head: ?h1 { variables: { role: ?role } } },
-        NP: { head: { syntax: ?role } }
-    },
     semantics: {
 		WhADVP.sem = whwordNP.sem and NP.sem;
 		WhADVP.object = whwordNP.object;
@@ -378,11 +244,6 @@ VPQ => verb AP,
 
 	rule:
         WhADVP => whwordNP AP,
-    features: {
-        WhADVP: { head: ?h1 },
-        whwordNP: { head: ?h1 { variables: { role: ?role } } },
-        AP: { head: { syntax: ?role { type: 'entity' }} }
-    },
     semantics: {
 		WhADVP.sem = whwordNP.sem and AP.sem;
 		WhADVP.object = whwordNP.object;
@@ -398,10 +259,6 @@ VPQ => verb AP,
 
 	rule:
         NP => PN,
-    features: {
-        NP: { head: ?h1 { syntax: { type: 'entity' } } },
-        PN: { head: ?h1 }
-    },
     semantics: {
 		NP.sem = PN.sem;
         NP.object = PN.object
@@ -413,10 +270,6 @@ VPQ => verb AP,
 
 	rule:
         NP => pronoun,
-    features: {
-        NP: { head: ?h1 { syntax: { type: 'entity' } } },
-        pronoun: { head: ?h1 }
-    },
     semantics: {
 		NP.sem = pronoun.sem;
         NP.object = pronoun.object
@@ -428,11 +281,6 @@ VPQ => verb AP,
 
 	rule:
         NP => DP NBar,
-    features: {
-        NP: { head: ?h1 { syntax: ?s1 { type: 'entity' } } },
-        DP: { head: { syntax: ?entity } },
-        NBar: { head: ?h1 { syntax: ?s1 { determiner: ?entity } } }
-    },
     semantics: {
 		NP.sem = DP.sem and NBar.sem;
         NP.object = NBar.object;
@@ -445,10 +293,6 @@ VPQ => verb AP,
 
 	rule:
         NP => NBar,
-    features: {
-        NP: { head: ?h1 { syntax: ?s1 { type: 'entity' } } },
-        NBar: { head: ?h1 { syntax: ?s1 } }
-    },
     semantics: {
 		NP.sem = NBar.sem;
         NP.object = NBar.object
@@ -462,10 +306,6 @@ VPQ => verb AP,
 
 	rule:
         NBar => noun,
-    features: {
-        NBar: { head: ?h1 },
-        noun: { head: ?h1 }
-    },
     semantics: {
 		NBar.sem = noun.sem;
         NBar.object = noun.object
@@ -477,11 +317,6 @@ VPQ => verb AP,
 
 	rule:
         NBar1 => AP NBar2,
-    features: {
-        NBar1: { head: ?h1 },
-        AP: { },
-        NBar2: { head: ?h1 }
-    },
     semantics: {
 		NBar1.sem = AP.sem and NBar2.sem;
         NBar1.object = NBar2.object
@@ -496,11 +331,6 @@ VPQ => verb AP,
 
 	rule:
         NBar => NBar2 PP,
-    features: {
-        NBar: { head: { syntax: ?s1 } },
-        NBar2: { head: { syntax: ?s1 { preposition: ?prep } } },
-        PP: { head: { syntax: ?prep } }
-    },
     semantics: {
 		NBar.sem = NBar2.sem and PP.sem;
         NBar.object = NBar2.object;
@@ -515,10 +345,6 @@ VPQ => verb AP,
 
 	rule:
         PN => propernoun,
-    features: {
-        PN: { head: { syntax: { type: 'entity', name: ?name } } },
-        propernoun: { head: { syntax: { name: ?name } } }
-    },
     semantics: {
 		PN.sem = name(PN.object, propernoun.text);
         PN.object = propernoun.object
@@ -530,11 +356,6 @@ VPQ => verb AP,
 
 	rule:
         PN => propernoun1 propernoun2,
-    features: {
-        PN: { head: { syntax: { type: 'entity', name: ?firstName, lastname: ?lastName } } },
-        propernoun1: { head: { syntax: { name: ?firstName } } },
-        propernoun2: { head: { syntax: { name: ?lastName } } }
-    },
     semantics: {
 		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text);
         PN.object = propernoun1.object;
@@ -547,12 +368,6 @@ VPQ => verb AP,
 
 	rule:
         PN => propernoun1 propernoun2 propernoun3,
-    features: {
-        PN: { head: { syntax: { type: 'entity', name: ?firstName, middlename: ?middleName, lastname: ?lastName } } },
-        propernoun1: { head: { syntax: { name: ?firstName } } },
-        propernoun2: { head: { syntax: { name: ?middleName } } },
-        propernoun3: { head: { syntax: { name: ?lastName } } },
-    },
     semantics: {
 		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
         PN.object = propernoun1.object;
@@ -566,12 +381,6 @@ VPQ => verb AP,
 
 	rule:
         PN => propernoun1 insertion propernoun2,
-    features: {
-        PN: { head: ?h1 { syntax: { type: 'entity', name: ?firstName, insertion: ?insertion, lastname: ?lastName } } },
-        propernoun1: { head: { syntax: { name: ?firstName } } },
-        insertion: { head: { syntax: { insertion: ?insertion} } },
-        propernoun2: { head: { syntax: { name: ?lastName } } }
-    },
     semantics: {
         PN.sem = name(PN.object, propernoun1.text + " " + insertion.text + " " + propernoun2.text);
         PN.object = propernoun1.object;
@@ -584,11 +393,6 @@ VPQ => verb AP,
 [
 	rule:
 		PP => preposition NP,
-	features: {
-		PP: { head: ?h1 { syntax: ?s1 { type: 'preposition'} } },
-		preposition: { head: ?h1 { syntax: ?s1 { object: ?object } } },
-		NP: { head: { syntax: ?object } }
-	},
 	semantics: {
 		PP.sem = preposition.sem and NP.sem;
 		PP.superObject = preposition.superObject;
@@ -604,10 +408,6 @@ VPQ => verb AP,
 
 	rule:
 		AP => adjective,
-	features: {
-		AP: { head: ?h1 },
-		adjective: { head: ?h1 }
-	},
 	semantics: {
 		AP.sem = adjective.sem
 	}
@@ -618,11 +418,6 @@ VPQ => verb AP,
 
 	rule:
 		AP => AdvP adjective,
-	features: {
-		AP: { head: ?h1 },
-		AdvP: { head: ?h1 },
-		adjective: { head: ?h1 }
-	},
 	semantics: {
 		AP.sem = AdvP.sem and adjective.sem
 	}
@@ -633,11 +428,6 @@ VPQ => verb AP,
 
 	rule:
 		AP => degreeAdverb adjective,
-	features: {
-		AP: { head: ?h1 },
-		degreeAdverb: { head: ?h1 },
-		adjective: { head: ?h1 }
-	},
 	semantics: {
 		AP.sem = degreeAdverb.sem and adjective.sem
 	}
@@ -648,11 +438,6 @@ VPQ => verb AP,
 
 	rule:
 		AP => NP adjective,
-	features: {
-		AP: { head: { syntax: { object: ?object } } },
-		NP: { },
-		adjective: { head: { syntax: ?object } }
-	},
 	semantics: {
 		AP.sem = NP.sem and adjective.sem
 	}
@@ -665,10 +450,6 @@ VPQ => verb AP,
 
 	rule:
         AdvP => adverb,
-    features: {
-        AdvP: { head: ?h1 },
-        adverb: { head: ?h1 }
-    },
     semantics: {
         AP.sem = AdvP.sem and adverb.sem
     }
@@ -679,11 +460,6 @@ VPQ => verb AP,
 
 	rule:
         AdvP => degreeAdverb adverb,
-    features: {
-        AdvP: { head: ?h1 },
-        degreeAdverb: { head: ?h1 },
-        adverb: { head: ?h1 }
-    },
     semantics: {
         AP.sem = AdvP.sem and degreeAdverb.sem and adverb.sem
     }
@@ -693,15 +469,8 @@ VPQ => verb AP,
 
 [
 	// the
-
-	// TODO NOT USED
-
 	rule:
         DP => determiner,
-    features: {
-        DP: { head: ?h1 { syntax: { type: 'determiner' } } },
-        determiner: { head: ?h1 }
-    },
     semantics: {
         DP.sem = determiner.sem
     }
@@ -712,11 +481,6 @@ VPQ => verb AP,
 
 	rule:
         DP => NP possessiveMarker,
-    features: {
-        DP: { head: ?h1 { syntax: ?s1 { type: 'determiner' } } },
-        NP: { head: { syntax: ?object } },
-        possessiveMarker: { head: ?h1 { syntax: ?s1 { object: ?object }}}
-    },
     semantics: {
         DP.sem = NP.sem and possessiveMarker.sem;
         DP.subObject = possessiveMarker.subObject;
@@ -731,10 +495,6 @@ VPQ => verb AP,
 
 	rule:
 		DP => numeral,
-	features: {
-		DP: { head: { syntax: { type: 'determiner', object: ?object } } },
-		numeral: { head: { syntax: { value: ?object } } }
-	},
 	semantics: {
 		DP.sem = numeral.sem
 	}

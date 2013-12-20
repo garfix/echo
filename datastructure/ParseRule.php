@@ -2,10 +2,6 @@
 
 namespace agentecho\datastructure;
 
-use agentecho\datastructure\LabeledDAG;
-use agentecho\datastructure\ProductionRule;
-use agentecho\datastructure\AssignmentList;
-
 /**
  * @author Patrick van Bergen
  */
@@ -14,27 +10,8 @@ class ParseRule
 	/** @var ProductionRule */
 	private $Production = null;
 
-	/** @var LabeledDAG */
-	private $Features = null;
-
 	/** @var AssignmentList */
 	private $Semantics = null;
-
-	/**
-	 * @param LabeledDAG $Features
-	 */
-	public function setFeatures(LabeledDAG $Features)
-	{
-		$this->Features = $Features;
-	}
-
-	/**
-	 * @return LabeledDAG
-	 */
-	public function getFeatures()
-	{
-		return $this->Features;
-	}
 
 	/**
 	 * @param ProductionRule $Production
@@ -74,10 +51,6 @@ class ParseRule
 
 		if ($this->Production) {
 			$values[] = 'rule: ' . $this->Production;
-		}
-
-		if ($this->Features) {
-			$values[] = 'features: ' . $this->Features;
 		}
 
 		if ($this->Semantics) {

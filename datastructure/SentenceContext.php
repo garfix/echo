@@ -29,7 +29,7 @@ class SentenceContext
 	/** @var The token that ends the sentence, like . ! ? or SentenceContext::INDIGNATION */
 	public $terminator = null;
 
-	/** @var The syntax tree with added features */
+	/** @var The syntax tree */
 	private $phraseSpecification = null;
 
 	public $Semantics = null;

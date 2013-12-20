@@ -1,7 +1,6 @@
 [
 	form: ',',
-	partOfSpeech: 'punctuationMark',
-	features: { space: "after_only"}
+	partOfSpeech: 'punctuationMark'
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
@@ -18,19 +17,16 @@
 	semantics: link(And, this.node, this.firstEntity, this.secondEntity)
 ] [
 	form: 'am',
-	partOfSpeech: 'verb',
-	features: { head: { agreement: { person: 1, number: "singular"} } }
+	partOfSpeech: 'verb'
 ] [
 	form: 'am',
-	partOfSpeech: 'copula',
-	features: { head: { agreement: { person: 1, number: "singular"} } }
+	partOfSpeech: 'copula'
 ] [
 	form: 'april',
 	partOfSpeech: 'noun'
 ] [
 	form: 'are',
-	partOfSpeech: 'verb',
-	features: { head: { agreement: { person: 1, number: "plural" } }, arguments: 1}
+	partOfSpeech: 'verb'
 ] [
 	form: 'author',
 	partOfSpeech: 'noun',
@@ -44,8 +40,7 @@
 	semantics: isa(this.object, Bed)
 ] [
 	form: 'book',
-	partOfSpeech: 'verb',
-	features: { arguments: 1, head: { agreement: { person: 2, number: "singular"}} }
+	partOfSpeech: 'verb'
 ] [
 	form: 'book',
 	partOfSpeech: 'noun'
@@ -74,7 +69,6 @@
 ] [
 	form: 'children',
 	partOfSpeech: 'noun',
-	features: { head: { agreement: { person: 3, number: "plural"} } },
 	semantics: isa(this.object, Child)
 ] [
 	form: 'daughter',
@@ -141,7 +135,6 @@
 ] [
 	form: 'i',
 	partOfSpeech: 'pronoun',
-	features: { head: { agreement: { person: 1, number: "singular"} }, capitalize: true},
 	semantics: firstPerson(this.object)
 ] [
 	form: 'in',

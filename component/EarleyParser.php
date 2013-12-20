@@ -5,7 +5,6 @@ namespace agentecho\component;
 use agentecho\datastructure\ParseRule;
 use agentecho\datastructure\ProductionRule;
 use agentecho\grammar\Grammar;
-use agentecho\datastructure\LabeledDAG;
 use agentecho\exception\SemanticsNotFoundException;
 use agentecho\component\parser\SemanticStructureParser;
 
@@ -121,7 +120,6 @@ class EarleyParser
 			'dotPosition' => 1,
 			'startWordIndex' => 0,
 			'endWordIndex' => 0,
-			'dag' => new LabeledDAG(),
 			'semantics' => null,
 		);
 
@@ -140,7 +138,7 @@ class EarleyParser
 			// go through all chart entries in this position (entries will be added while we're in the loop)
 			for ($j = 0; $j < count($this->chart[$i]); $j++) {
 
-				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex, dag)
+				// a state is a complete entry in the chart (rule, dotPosition, startWordIndex, endWordIndex)
 				$state = $this->chart[$i][$j];
 
 				// check if the entry is parsed completely
@@ -196,7 +194,6 @@ class EarleyParser
 				'dotPosition' => 1,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex,
-				'dag' => $newRule->getFeatures(),
 				'semantics' => null,
 			);
 			$this->enqueue($predictedState, $endWordIndex);
@@ -219,7 +216,6 @@ class EarleyParser
 
 		if ($this->Grammar->isWordAPartOfSpeech($endWord, $nextConsequent)) {
 
-			$DAG = $this->Grammar->getFeaturesForWord($endWord, $nextConsequent);
 			$Semantics = $this->Grammar->getSemanticsForWord($endWord, $nextConsequent);
 
 			if ($Semantics === false) {
@@ -237,7 +233,6 @@ class EarleyParser
 				'dotPosition' => 2,
 				'startWordIndex' => $endWordIndex,
 				'endWordIndex' => $endWordIndex + 1,
-				'dag' => $DAG,
 				'semantics' => $Semantics,
 			);
 
@@ -273,30 +268,22 @@ class EarleyParser
 				continue;
 			}
 
-			$completedAntecedentLabel = $completedAntecedent;
-			$chartedConsequentLabel = $rule->getProduction()->getConsequent($dotPosition - 1);
+			$advancedState = array(
+				'rule' => $rule,
+				'dotPosition' => $dotPosition + 1,
+				'startWordIndex' => $chartedState['startWordIndex'],
+				'endWordIndex' => $completedState['endWordIndex'],
+				'semantics' => null
+			);
 
-			$NewDag = $this->unifyStates($completedState['dag'], $chartedState['dag'], $completedAntecedentLabel, $chartedConsequentLabel);
-			if ($NewDag !== false) {
+			// store extra information to make it easier to extract parse trees later
+			$treeComplete = $this->storeStateInfo($completedState, $chartedState, $advancedState);
 
-				$advancedState = array(
-					'rule' => $rule,
-					'dotPosition' => $dotPosition + 1,
-					'startWordIndex' => $chartedState['startWordIndex'],
-					'endWordIndex' => $completedState['endWordIndex'],
-					'dag' => $NewDag,
-					'semantics' => null
-				);
-
-				// store extra information to make it easier to extract parse trees later
-				$treeComplete = $this->storeStateInfo($completedState, $chartedState, $advancedState);
-
-				if ($treeComplete) {
-					break;
-				}
-
-				$this->enqueue($advancedState, $completedState['endWordIndex']);
+			if ($treeComplete) {
+				break;
 			}
+
+			$this->enqueue($advancedState, $completedState['endWordIndex']);
 		}
 
 		return $treeComplete;
@@ -506,11 +493,7 @@ class EarleyParser
 				$presentState['rule'] == $state['rule'] &&
 				$presentState['dotPosition'] == $state['dotPosition'] &&
 				$presentState['startWordIndex'] == $state['startWordIndex'] &&
-				$presentState['endWordIndex'] == $state['endWordIndex'] &&
-				// this could be replaced by a fast test for subsumption of both dags;
-				// however, accepting the duplicate state is probably faster than the fastest test for subsumption
-				// an added complexity would be the implication of semantic structures
-				true
+				$presentState['endWordIndex'] == $state['endWordIndex']
 				) {
 					return true;
 			}
@@ -539,24 +522,6 @@ class EarleyParser
 			$SemanticStructure = $Parser->parse($semanticSpecification);
 			return $SemanticStructure;
 		}
-	}
-
-	/**
-	 * Returns a new LabeledDAG object that is the unification of $ChartedDag and a single path in $CompletedDag.
-	 *
-	 * @param LabeledDAG $CompletedDag
-	 * @param LabeledDAG $ChartedDag
-	 * @param $antecedent A label in $CompletedDag that will be unified with $ChartedDag
-	 * @param $consequent Same label, except for the @ index
-	 * @return false|LabeledDAG
-	 */
-	private function unifyStates(LabeledDAG $CompletedDag, LabeledDAG $ChartedDag, $antecedent, $consequent)
-	{
-		$PartialCompletedDag = $CompletedDag->followPath($antecedent)->renameLabel($antecedent, $consequent);
-
-		$UniDag = $PartialCompletedDag->unify($ChartedDag);
-
-		return $UniDag;
 	}
 
 	private function showDebug($function, array $state)
@@ -616,6 +581,7 @@ class EarleyParser
 
 	/**
 	 * Turns a parse state into a parse tree branch
+	 * @param array $state
 	 * @return array A branch.
 	 */
 	private function extractParseTreeBranch(array $state)
@@ -637,13 +603,6 @@ class EarleyParser
 
 		if ($this->Grammar->isPartOfSpeech($antecedent)) {
 			$branch['word'] = $rule->getProduction()->getConsequentCategory(0);
-		}
-
-		$dagTree = $state['dag']->getTree();
-		$branch['features'] = null;
-
-		if (isset($dagTree[$antecedent])) {
-			$branch['features'] = $dagTree[$antecedent];
 		}
 
 		$branch['semantics'] = $state['semantics'];

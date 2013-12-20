@@ -221,7 +221,7 @@ class Generator
 					}
 				}
 
-			} elseif ($GenerationRule->getCondition() === null) {
+			} else {
 				return array($GenerationRule, $parentPropertyBindings, array());
 			}
 		}
@@ -251,17 +251,10 @@ class Generator
 
 			list($word, $partOfSpeech) = $lexicalItems[$i];
 
-			$Features = $Grammar->getFeaturesForWord($word, $partOfSpeech);
+			$space = $word != ',';
 
-			$space = $Features->getPathValue(array($partOfSpeech, 'space'));
-			$capitalize = $Features->getPathValue(array($partOfSpeech, 'capitalize'));
-
-			if ($space != 'after_only') {
+			if ($space) {
 				$text .= ' ';
-			}
-
-			if ($capitalize) {
-				$word = ucfirst($word);
 			}
 
 			$text .= $word;

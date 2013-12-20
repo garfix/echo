@@ -1,7 +1,6 @@
 [
 	form: ',',
-	partOfSpeech: 'punctuationMark',
-	features: { space: "after_only"}
+	partOfSpeech: 'punctuationMark'
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',

@@ -13,51 +13,8 @@ class LexicalEntry
 	/** @var string $partOfSpeech */
 	private $partOfSpeech;
 
-	/** @var LabeledDAG $Features */
-	private $Features;
-
 	/** @var PredicationList $Semantics */
 	private $Semantics;
-
-	/**
-	 * @var LabeledDAG $PrefixedFeatures Like features, but $partOfSpeech is added as the first entry with the original root as its value.
-	 */
-	private $PrefixedFeatures = null;
-
-	/**
-	 * @param \agentecho\datastructure\LabeledDAG $Features
-	 */
-	public function setFeatures($Features)
-	{
-		$this->Features = $Features;
-	}
-
-	/**
-	 * @return \agentecho\datastructure\LabeledDAG
-	 */
-	public function getFeatures()
-	{
-		return isset($this->Features) ? $this->Features : new LabeledDAG();
-	}
-
-	/**
-	 * Returns the features of this entry, extended with $partOfSpeech as the new root.
-	 *
-	 * @return LabeledDAG|null
-	 */
-	public function getPrefixedFeatures()
-	{
-		if ($this->PrefixedFeatures === null) {
-			if ($this->Features) {
-				$tree = $this->Features->getOriginalTree();
-			} else {
-				$tree = array('head' => null);
-			}
-			$this->PrefixedFeatures = new LabeledDAG(array($this->partOfSpeech => $tree));
-		}
-
-		return $this->PrefixedFeatures;
-	}
 
 	/**
 	 * @param \agentecho\datastructure\PredicationList $Semantics
@@ -117,10 +74,6 @@ class LexicalEntry
 
 		if ($this->partOfSpeech) {
 			$values[] = 'partOfSpeech: ' . "'" . $this->partOfSpeech . "'";
-		}
-
-		if ($this->Features) {
-			$values[] = 'features: ' . $this->Features;
 		}
 
 		if ($this->Semantics) {

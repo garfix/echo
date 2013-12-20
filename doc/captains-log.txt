@@ -1,3 +1,23 @@
+2013-12-20
+
+I created a full set of generation rules to be able to generate all answers from relations alone. Now I removed all unification based
+code from the library. The only test that now really fails was this:
+
+		// agreement fail
+		$caught = false;
+		try {
+			$Parser->parseFirstLine('I are Patrick');
+		} catch (ParseException $E) {
+			$caught = true;
+		}
+		$this->assertSame(true, $caught);
+
+The sentence "I are Patrick" will now be parsed as if there is no problem. For now, this is not important. Once it becomes a problem,
+I will tackle the problem using semantic conflicts, not unification conflicts.
+
+Once I started complex unification structures I quickly found that myself like a fly in a spider's web. It was an interesting experience,
+but unification based problem solving is very tough business. One gets lost easily.
+
 2013-12-15
 
 I discern two types of copular sentences:

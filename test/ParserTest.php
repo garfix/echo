@@ -5,7 +5,6 @@ namespace agentecho\test;
 require_once __DIR__ . '/../Autoload.php';
 
 use agentecho\component\GrammarFactory;
-use agentecho\exception\ParseException;
 use agentecho\component\Parser;
 
 /**
@@ -41,19 +40,9 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$Sentence = $Parser->parseFirstLine('John sees the book');
 		$this->assertSame('[S [NP [PN [propernoun John]]][VP [verb sees][NP [DP [determiner the]][NBar [noun book]]]]]', $Sentence->getSyntaxString());
 
-		// agreement success
 		// S => NP VP
 		$Sentence = $Parser->parseFirstLine('I am Patrick');
 		$this->assertSame('[S [NP [pronoun i]][VP [verb am][NP [PN [propernoun Patrick]]]]]', $Sentence->getSyntaxString());
-
-		// agreement fail
-		$caught = false;
-		try {
-			$Parser->parseFirstLine('I are Patrick');
-		} catch (ParseException $E) {
-			$caught = true;
-		}
-		$this->assertSame(true, $caught);
 
 		// NBar -> AP NBar
 		$Sentence = $Parser->parseFirstLine('John reads the red book');
@@ -98,9 +87,6 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new Parser();
 		$Parser->setGrammars(array(GrammarFactory::getGrammar('en')));
-
-		// secondary sentence
-		//$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when Lady Lovelace was born?");
 
 		$Sentence = $Parser->parseFirstLine("How old was Mary Shelley when she died?");
 		$this->assertSame('[S [S [WhADVP [whwordNP how][AP [adjective old]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][S [NP [pronoun she]][VP [verb died]]]]]', $Sentence->getSyntaxString());

@@ -84,78 +84,6 @@ class Lexicon
 		return isset($this->wordFormIndex[$word]);
 	}
 
-	/**
-	 * Returns the first word in the lexicon that matches $features.
-	 *
-	 * @param $partOfSpeech
-	 * @param array $features
-	 * @return string|null
-	 */
-	public function getWordForFeatures($partOfSpeech, array $features)
-	{
-		$flattenedFeatures = $this->flattenFeatures($partOfSpeech, $features);
-		$resultWords = array();
-		$new = true;
-
-		foreach ($flattenedFeatures as $flattenedFeature) {
-			if (isset($this->matchIndex[$flattenedFeature])) {
-				if ($new) {
-					$resultWords = $this->matchIndex[$flattenedFeature];
-				} else {
-					$resultWords = array_intersect($resultWords, $this->matchIndex[$flattenedFeature]);
-				}
-			}
-			$new = false;
-		}
-
-		if (!empty($resultWords)) {
-			$firstWord = array_shift($resultWords);
-			$result = $firstWord;
-		} else {
-			$result = false;
-		}
-
-		// no features => first word
-		if ($result === false && empty($flattenedFeatures)) {
-			// find the first part-of-speech
-			foreach ($this->wordFormIndex as $word => $partsOfSpeech) {
-				if (isset($partsOfSpeech[$partOfSpeech])) {
-					$result = $word;
-					break;
-				}
-			}
-		}
-
-		return $result;
-	}
-
-	private function flattenFeatures($partOfSpeech, array $features)
-	{
-		$flattened = array();
-
-		$this->indexFeatures2($flattened, $partOfSpeech, $features, '');
-
-		return $flattened;
-	}
-
-	private function indexFeatures2(array &$flattened, $partOfSpeech, $features, $path)
-	{
-		if (is_array($features)) {
-			foreach($features as $name => $value) {
-				$newPath = $path . '/' . $name;
-				$this->indexFeatures2($flattened, $partOfSpeech, $value, $newPath);
-			}
-		} else {
-
-			if ($features) {
-
-				$path .= '=' . $features;
-				$flattened[] = $partOfSpeech . ':' . $path;
-
-			}
-		}
-	}
-
 	public function __toString()
 	{
 		return implode("\n", $this->entries);
@@ -166,31 +94,10 @@ class Lexicon
 		// index word form
 		$this->wordFormIndex[$Entry->getWordForm()][$Entry->getPartOfSpeech()] = $Entry;
 
-		// index features
-		$this->indexFeatures($Entry->getWordForm(), $this->matchIndex, $Entry->getPartOfSpeech(), $Entry->getFeatures()->getTree(), '');
-
 		// index semantics
 		foreach ($Entry->getSemantics()->getPredications() as $Predication) {
 			$predicate = $Predication->getPredicate();
 			$this->predicateIndex[$Entry->getPartOfSpeech()][$predicate][(string)$Entry] = $Entry;
-		}
-	}
-
-	private function indexFeatures($word, array &$matchIndex, $partOfSpeech, $features, $path)
-	{
-		if (is_array($features)) {
-			foreach($features as $name => $value) {
-				$newPath = $path . '/' . $name;
-				$this->indexFeatures($word, $matchIndex, $partOfSpeech, $value, $newPath);
-			}
-		} else {
-
-			if ($features) {
-
-				$path .= '=' . $features;
-				$matchIndex[$partOfSpeech . ':' . $path][] = $word;
-
-			}
 		}
 	}
 
