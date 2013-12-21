@@ -249,17 +249,10 @@ class SemanticStructureParser
 						$ParseRule->setProduction($Production);
 					}
 
-
 				} elseif ($label == 'condition') {
 
-					if ($pos = $this->parseTree($tokens, $pos, $Tree)) {
-						$ParseRule->setCondition($Tree);
-					}
-
-				} elseif ($label == 'condition1') {
-
 					if ($pos = $this->parsePredicationList($tokens, $pos, $List)) {
-						$ParseRule->setCondition1($List);
+						$ParseRule->setCondition($List);
 					}
 
 				} elseif ($label == 'word') {

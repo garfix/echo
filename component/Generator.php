@@ -187,7 +187,7 @@ class Generator
 		// go through all rules
 		foreach ($rules as $GenerationRule) {
 
-			$Conditions = $GenerationRule->getCondition1();
+			$Conditions = $GenerationRule->getcondition();
 			if ($Conditions !== null) {
 
 				$propertyBindings = $parentPropertyBindings;

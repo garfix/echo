@@ -4,7 +4,7 @@
 [
 	rule:
 		S => adverb punctuationMark SDecl,
-	condition1:
+	condition:
 		qualification(S.event, S.qualification),
 	bind: {
 		SDecl.event = S.event;
@@ -16,7 +16,7 @@
 [
 	rule:
 		S => SDecl,
-	condition1:
+	condition:
 		mood(S.event, Declarative),
 	bind: {
 		SDecl.event = S.event
@@ -30,7 +30,7 @@
 [
 	rule:
 		SDecl => NP1 auxBe NP2,
-	condition1:
+	condition:
 		subject(S.event, S.subject) and complement(S.event, S.complement),
 	bind: {
 		NP1.entity = S.subject;
@@ -43,7 +43,7 @@
 [
 	rule:
 		SDecl => NP auxBe AP,
-	condition1:
+	condition:
 		subject(S.event, S.subject) and modifier(S.event, S.complement),
 	bind: {
 		NP.entity = S.subject;
@@ -57,7 +57,7 @@
 [
 	rule:
 		SDecl => NP auxPsv VP,
-	condition1:
+	condition:
 		subject(S.event, S.subject) and object(S.event, S.object) and voice(S.event, Passive),
 	bind: {
 		NP.entity = S.object;
@@ -71,7 +71,7 @@
 [
 	rule:
 		SDecl => NP auxBe VP,
-	condition1:
+	condition:
 		subject(S.event, S.subject) and aspect(S.event, Perfect),
 	bind: {
 		NP.entity = S.subject;
@@ -84,7 +84,7 @@
 [
 	rule:
 		SDecl => NP VP,
-	condition1:
+	condition:
 		subject(S.event, S.subject),
 	bind: {
 		NP.entity = S.subject;
@@ -99,7 +99,7 @@
 [
 	rule:
 		NP => propernoun,
-	condition1:
+	condition:
 		name(NP.entity, ?name),
 	bind: {
 		propernoun.entity = NP.entity
@@ -120,7 +120,7 @@
 [
 	rule:
 		NP => noun,
-	condition1:
+	condition:
 		name(NP.entity, ?name),
 	bind: {
 		noun.entity = NP.entity
@@ -144,7 +144,7 @@
 [
 	rule:
 		determiner => word,
-	condition1:
+	condition:
 		determiner(determiner.entity, ?det),
 	word:
 		determiner(determiner.entity, ?det)
@@ -156,7 +156,7 @@
 [
 	rule:
 		NBar => NBar PP,
-	condition1:
+	condition:
 		link(?link, NBar.entity, ?entity),
 	bind: {
 		NBar.entity = NBar.entity;
@@ -179,7 +179,7 @@
 [
 	rule:
 		PP => preposition NP,
-	condition1:
+	condition:
     	link(?link, PP.superObject, PP.subObject),
     bind: {
         preposition.superObject = PP.superObject;
@@ -194,7 +194,7 @@
 [
 	rule:
 		AP => NP adjective,
-	condition1:
+	condition:
 		modifier(AP.entity, AP.modifier),
 	bind: {
 		NP.entity = AP.modifier;
@@ -217,7 +217,7 @@
 [
 	rule:
 		adjective => word,
-	condition1:
+	condition:
 		isa(adjective.object, ?type),
 	word:
 		isa(adjective.object, ?type)
@@ -229,7 +229,7 @@
 [
 	rule:
 		noun => word,
-	condition1:
+	condition:
 		isa(noun.object, ?type),
 	word:
 		isa(noun.object, ?type)
@@ -241,7 +241,7 @@
 [
 	rule:
 		propernoun => word,
-	condition1:
+	condition:
 		name(propernoun.entity, ?name),
 	word:
 		name(propernoun.entity, ?name)
@@ -253,7 +253,7 @@
 [
 	rule:
 		VP => pastParticipleVerb passivisationPreposition NP,
-	condition1:
+	condition:
 		isa(VP.event, ?type) and subject(VP.event, VP.subject) and voice(VP.event, Passive),
 	bind: {
 		pastParticipleVerb.event = VP.event;
@@ -267,7 +267,7 @@
 [
 	rule:
 		VP => pastParticipleVerb PP,
-	condition1:
+	condition:
 		isa(VP.event, ?type) and link(?link, VP.event, VP.object) and aspect(VP.event, Perfect),
 	bind: {
 		pastParticipleVerb.event = VP.event;
@@ -279,7 +279,7 @@
 [
 	rule:
 		VP => simpleVerb PP,
-	condition1:
+	condition:
 		isa(VP.event, ?type) and link(?link, VP.event, VP.object),
 	bind: {
 		simpleVerb.event = VP.event;
@@ -291,7 +291,7 @@
 [
 	rule:
 		VP => simpleVerb NP,
-	condition1:
+	condition:
 		isa(VP.event, ?type) and object(VP.event, VP.object),
 	bind: {
 		simpleVerb.event = VP.event;
@@ -303,7 +303,7 @@
 [
 	rule:
 		VP => simpleVerb,
-	condition1:
+	condition:
 		isa(VP.event, ?type),
 	bind: {
 		simpleVerb.event = VP.event
@@ -332,7 +332,7 @@
 [
 	rule:
 		conjunction => word,
-	condition1:
+	condition:
 		link(?cp, conjunction.node, conjunction.firstEntity, conjunction.secondEntity),
 	word:
 		link(?cp, conjunction.node, conjunction.firstEntity, conjunction.secondEntity)
@@ -344,7 +344,7 @@
 [
 	rule:
 		auxPsv => word,
-	condition1:
+	condition:
 		tense(auxPsv.event, ?tense),
 	word:
 		tense(auxPsv.event, ?tense)
@@ -356,7 +356,7 @@
 [
 	rule:
 		auxBe => word,
-	condition1:
+	condition:
 		tense(auxBe.event, ?tense),
 	word:
 		tense(auxBe.event, ?tense)
@@ -368,7 +368,7 @@
 [
 	rule:
 		adverb => word,
-	condition1:
+	condition:
 		isa(adverb.event, ?type),
 	word:
 		isa(adverb.event, ?type)
@@ -380,7 +380,7 @@
 [
 	rule:
 		preposition => word,
-	condition1:
+	condition:
 		link(?prep, ?super, ?sub),
 	word:
 		link(?prep, ?super, ?sub)
@@ -391,7 +391,7 @@
 [
 	rule:
 		pastParticipleVerb => word,
-	condition1:
+	condition:
 		isa(pastParticipleVerb.event, ?type) and isa(pastParticipleVerb.event, ?type),
 	word:
 		isa(pastParticipleVerb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
@@ -403,7 +403,7 @@
 [
 	rule:
 		simpleVerb => word,
-	condition1:
+	condition:
 		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense),
 	word:
 		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense)
@@ -413,7 +413,7 @@
 [
 	rule:
 		simpleVerb => word,
-	condition1:
+	condition:
 		isa(simpleVerb.event, ?type),
 	word:
 		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, Present)

@@ -11,7 +11,7 @@ class GenerationRule
 	private $Production = null;
 
 	/** @var PredicationList */
-	private $Condition1 = null;
+	private $Condition = null;
 
 	/** @var AssignmentList */
 	private $Assignments = null;
@@ -36,19 +36,19 @@ class GenerationRule
 	}
 
 	/**
-	 * @param PredicationList $Condition1
+	 * @param PredicationList $Condition
 	 */
-	public function setCondition1(PredicationList $Condition1)
+	public function setCondition(PredicationList $Condition)
 	{
-		$this->Condition1 = $Condition1;
+		$this->Condition = $Condition;
 	}
 
 	/**
 	 * @return PredicationList
 	 */
-	public function getCondition1()
+	public function getCondition()
 	{
-		return $this->Condition1;
+		return $this->Condition;
 	}
 
 	/**
