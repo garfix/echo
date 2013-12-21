@@ -179,11 +179,11 @@
 	// ben 43 jaar oud
 
 	rule:
-		VP => copula AP,
+		VP => copula AdjP,
 	semantics: {
-		VP.sem = AP.sem;
-		VP.event = AP.event;
-		VP.object = AP.object
+		VP.sem = AdjP.sem;
+		VP.event = AdjP.event;
+		VP.object = AdjP.object
 	}
 ]
 
@@ -243,11 +243,11 @@
 	// how old
 
 	rule:
-        WhADVP => whwordNP AP,
+        WhADVP => whwordNP AdjP,
     semantics: {
-		WhADVP.sem = whwordNP.sem and AP.sem;
+		WhADVP.sem = whwordNP.sem and AdjP.sem;
 		WhADVP.object = whwordNP.object;
-		WhADVP.object = AP.object;
+		WhADVP.object = AdjP.object;
 		WhADVP.request = whwordNP.adjunct
     }
 ]
@@ -316,9 +316,9 @@
 	// blue car
 
 	rule:
-        NBar1 => AP NBar2,
+        NBar1 => AdjP NBar2,
     semantics: {
-		NBar1.sem = AP.sem and NBar2.sem;
+		NBar1.sem = AdjP.sem and NBar2.sem;
         NBar1.object = NBar2.object
     }
 ]
@@ -407,9 +407,9 @@
 	// red
 
 	rule:
-		AP => adjective,
+		AdjP => adjective,
 	semantics: {
-		AP.sem = adjective.sem
+		AdjP.sem = adjective.sem
 	}
 ]
 
@@ -417,9 +417,9 @@
 	// fiercely barking
 
 	rule:
-		AP => AdvP adjective,
+		AdjP => AdvP adjective,
 	semantics: {
-		AP.sem = AdvP.sem and adjective.sem
+		AdjP.sem = AdvP.sem and adjective.sem
 	}
 ]
 
@@ -427,9 +427,9 @@
 	// bright red
 
 	rule:
-		AP => degreeAdverb adjective,
+		AdjP => degreeAdverb adjective,
 	semantics: {
-		AP.sem = degreeAdverb.sem and adjective.sem
+		AdjP.sem = degreeAdverb.sem and adjective.sem
 	}
 ]
 
@@ -437,9 +437,9 @@
 	// (i am) 43 years old
 
 	rule:
-		AP => NP adjective,
+		AdjP => NP adjective,
 	semantics: {
-		AP.sem = NP.sem and adjective.sem
+		AdjP.sem = NP.sem and adjective.sem
 	}
 ]
 
@@ -451,7 +451,7 @@
 	rule:
         AdvP => adverb,
     semantics: {
-        AP.sem = AdvP.sem and adverb.sem
+        AdvP.sem = adverb.sem
     }
 ]
 
@@ -461,7 +461,7 @@
 	rule:
         AdvP => degreeAdverb adverb,
     semantics: {
-        AP.sem = AdvP.sem and degreeAdverb.sem and adverb.sem
+        AdvP.sem = degreeAdverb.sem and adverb.sem
     }
 ]
 

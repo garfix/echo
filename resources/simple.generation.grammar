@@ -42,12 +42,12 @@
 // The ball is round.
 [
 	rule:
-		SDecl => NP auxBe AP,
+		SDecl => NP auxBe AdjP,
 	condition:
 		subject(S.event, S.subject) and modifier(S.event, S.complement),
 	bind: {
 		NP.entity = S.subject;
-		AP.entity = S.complement
+		AdjP.entity = S.complement
 	}
 ]
 
@@ -193,21 +193,21 @@
 // 53 years old
 [
 	rule:
-		AP => NP adjective,
+		AdjP => NP adjective,
 	condition:
-		modifier(AP.entity, AP.modifier),
+		modifier(AdjP.entity, AdjP.modifier),
 	bind: {
-		NP.entity = AP.modifier;
-		adjective.object = AP.entity
+		NP.entity = AdjP.modifier;
+		adjective.object = AdjP.entity
 	}
 ]
 
 // old
 [
 	rule:
-		AP => adjective,
+		AdjP => adjective,
 	bind: {
-		adjective.object = AP.entity
+		adjective.object = AdjP.entity
 	}
 ]
 
