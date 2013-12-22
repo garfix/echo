@@ -17,8 +17,8 @@ class Lexer
 	 * Analyses a raw $string and places the result in $Sentence.
 	 *
 	 * @param $string
-	 * @param $Sentence
-	 * @throws LexicalItemException
+	 * @param \agentecho\datastructure\SentenceInformation $Sentence
+	 * @param \agentecho\grammar\Grammar $Grammar
 	 */
 	public function analyze($string, SentenceInformation $Sentence, Grammar $Grammar)
 	{
@@ -80,6 +80,7 @@ class Lexer
 	 * and should therefore be treated as separate lexical items
 	 *
 	 * @param array $words An array of words
+	 * @param Grammar $Grammar
 	 * @return array Unglued words
 	 */
 	private function unglue(array $words, Grammar $Grammar)
@@ -109,7 +110,8 @@ class Lexer
 	 * todo coumpound words
 	 *
 	 * @param SentenceInformation $Sentence
-	 * @throws LexicalItemException
+	 * @param Grammar $Grammar
+	 * @return bool
 	 */
 	private function glue(SentenceInformation $Sentence, Grammar $Grammar)
 	{
@@ -138,12 +140,23 @@ class Lexer
 		return true;
 	}
 
+	/**
+	 * Check if all $lexicalItems are known by the $Grammar
+	 *
+	 * @param Grammar $Grammar
+	 * @param array $lexicalItems
+	 * @throws \agentecho\exception\LexicalItemException
+	 */
 	private function recognize(Grammar $Grammar, array $lexicalItems)
 	{
 		foreach ($lexicalItems as $lexicalItem) {
+			// check if known word
 			if (!$Grammar->wordExists($lexicalItem)) {
+				// check if numeral
 				if (!is_numeric($lexicalItem)) {
+					// check if proper noun
 					if (!preg_match('/^[A-Z]/', $lexicalItem)) {
+						// neither of these
 						throw new LexicalItemException($lexicalItem);
 					}
 				}

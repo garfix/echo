@@ -44,6 +44,7 @@ class SentenceProcessor
 	 */
 	public function reply($question, Conversation $Conversation)
 	{
+		// notify the question
 		$this->send(new LogEvent(array('question' => $question)));
 
 		try {
@@ -54,7 +55,7 @@ class SentenceProcessor
 			// update the current grammar from the language found in this sentence
 			$CurrentGrammar = $Conversation->getCurrentGrammar();
 
-			// extract the Sentence
+			// notify the syntax
 			$this->send(new LogEvent(array('syntax' => $SentenceInformation->getPhraseSpecification())));
 
 			// get semantics
@@ -63,6 +64,8 @@ class SentenceProcessor
 			// replace references
 			$PronounProcessor = new PronounProcessor();
 			$PronounProcessor->replaceReferences($Semantics);
+
+			// notify the semantics
 			$this->send(new LogEvent(array('semantics' => $Semantics)));
 
 			// replace all request properties with variables
@@ -70,16 +73,17 @@ class SentenceProcessor
 				$this->changeRequestPropertyInVariable($Predication);
 			}
 
+			// answer the question
 			$Answer = $this->answer($Semantics, $CurrentGrammar);
-
-			$Generator = new Generator();
-			$answer = $Generator->generate($CurrentGrammar, $Answer);
 
 			// substitute proper nouns by pronouns
 #todo
 
-		}
-		catch (EchoException $E) {
+			// generate the surface representation
+			$Generator = new Generator();
+			$answer = $Generator->generate($CurrentGrammar, $Answer);
+
+		} catch (EchoException $E) {
 
 			if ($E instanceof EchoException) {
 				$translatedMessage = Translations::translate($E->getMessageText(), $Conversation->getCurrentGrammar()->getLanguageCode());

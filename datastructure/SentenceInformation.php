@@ -32,15 +32,15 @@ class SentenceInformation
 	private $Semantics = null;
 
 	/**
-	 * @param \agentecho\datastructure\An $words
+	 * @param string[] $words
 	 */
-	public function setWords($words)
+	public function setWords(array $words)
 	{
 		$this->words = $words;
 	}
 
 	/**
-	 * @return \agentecho\datastructure\An
+	 * @return string[]
 	 */
 	public function getWords()
 	{

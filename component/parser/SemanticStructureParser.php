@@ -12,12 +12,10 @@ use agentecho\datastructure\Property;
 use agentecho\datastructure\Assignment;
 use agentecho\datastructure\TermList;
 use agentecho\datastructure\AssignmentList;
-use agentecho\datastructure\GoalClause;
 use agentecho\datastructure\DataMapping;
 use agentecho\datastructure\Map;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\BinaryOperation;
-use agentecho\datastructure\Tree;
 use agentecho\datastructure\ProductionRule;
 use agentecho\datastructure\ParseRule;
 use agentecho\datastructure\GenerationRule;
@@ -113,8 +111,6 @@ class SemanticStructureParser
 	{
 		if ($newPos = $this->parseMap($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parseGoalClause($tokens, $pos, $Result)) {
-			$pos = $newPos;
 		} elseif ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
@@ -126,8 +122,6 @@ class SemanticStructureParser
 		} elseif ($newPos = $this->parseProductionRule($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
-			$pos = $newPos;
-		} elseif ($newPos = $this->parseTree($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseParseRule($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -343,96 +337,6 @@ class SemanticStructureParser
 		return false;
 	}
 
-	private function parseTree(array $tokens, $pos, &$Tree)
-	{
-		if ($pos = $this->parseTreeBranch($tokens, $pos, $branch)) {
-
-			$Tree = new Tree($branch);
-
-			return $pos;
-		}
-
-		return false;
-	}
-
-	private function parseTreeBranch(array $tokens, $pos, &$branch)
-	{
-		$branch = array();
-
-		// [
-		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
-
-			// label
-			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
-				$pos = $newPos;
-
-				// :
-				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
-
-					// constant or tree
-					if ($newPos = $this->parseConstant($tokens, $pos, $constant)) {
-						$pos = $newPos;
-						$value = $constant->getName();
-					} elseif ($newPos = $this->parseBoolean($tokens, $pos, $boolean)) {
-						$pos = $newPos;
-						$value = $boolean;
-					} elseif ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $identifier)) {
-						if ($identifier == 'match') {
-							$pos = $newPos;
-							$value = null;
-						} else {
-							return false;
-						}
-					} elseif ($newPos = $this->parseSingleToken(self::T_NUMBER, $tokens, $pos, $number)) {
-						$pos = $newPos;
-						$value = $number;
-					} elseif ($newPos = $this->parseTreeBranch($tokens, $pos, $subTree)) {
-						$pos = $newPos;
-						$value = $subTree;
-					} else {
-						return false;
-					}
-
-					$branch[$label] = $value;
-
-				} else {
-					return false;
-				}
-
-				// ,
-				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
-					$pos = $newPos;
-				} else {
-					break;
-				}
-			}
-
-			// ]
-			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
-				return $pos;
-			}
-		}
-
-		return false;
-	}
-
-	private function parseBoolean(array $tokens, $pos, &$boolean)
-	{
-		if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $identifier)) {
-			if ($identifier == 'true') {
-				$boolean = true;
-			} elseif ($identifier == 'false') {
-				$boolean = false;
-			} else {
-				return false;
-			}
-
-			return $pos;
-		}
-
-		return false;
-	}
-
 	protected function parseMap(array $tokens, $pos, &$Map)
 	{
 		$mappings = array();
@@ -465,37 +369,11 @@ class SemanticStructureParser
 	}
 
 	/**
-	 * Parses grandfather(?x, ?z) :- father(?x, ?y) and father(?y, ?z)
-	 *
-	 * @param array $tokens
-	 * @param $pos
-	 * @param $GoalClause
-	 * @return bool
-	 */
-	private function parseGoalClause(array $tokens, $pos, &$GoalClause)
-	{
-		if ($pos = $this->parsePredicationList($tokens, $pos, $GoalList)) {
-
-			if ($pos = $this->parseSingleToken(self::T_IMPLICATION, $tokens, $pos)) {
-
-				if ($pos = $this->parsePredicationList($tokens, $pos, $MeansList)) {
-
-					$GoalClause = new GoalClause();
-					$GoalClause->setGoal($GoalList);
-					$GoalClause->setMeans($MeansList);
-					return $pos;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	/**
 	 * Parses age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2) and diff(?d2, ?d1, ?a)
 	 * @param array $tokens
 	 * @param $pos
-	 * @param $GoalClause
+	 * @param $DataMapping
+	 * @return bool
 	 */
 	private function parseDataMapping(array $tokens, $pos, &$DataMapping)
 	{
@@ -802,45 +680,6 @@ class SemanticStructureParser
 		return false;
 	}
 
-	/**
-	 * Parses a list of ?a = f(?b, ?c), ?d = g(?a)
-	 */
-	private function parseVariableAssignmentList(array $tokens, $pos, &$AssignmentList)
-	{
-		$count = 0;
-		$assignments = array($count => null);
-
-		if ($newPos = $this->parseVariableAssignment($tokens, $pos, $assignments[$count])) {
-			$pos = $newPos;
-			$count++;
-
-			while ($newPos) {
-
-				// and
-				if ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
-					$pos = $newPos;
-
-					// argument
-					$assignments[$count] = null;
-					if ($newPos = $this->parseVariableAssignment($tokens, $pos, $assignments[$count])) {
-						$pos = $newPos;
-						$count++;
-					} else {
-						return false;
-					}
-
-				}
-
-			}
-
-			$AssignmentList = new AssignmentList();
-			$AssignmentList->setAssignments($assignments);
-			return $pos;
-		}
-
-		return false;
-	}
-
 	private function parseProperty(array $tokens, $pos, &$Property)
 	{
 		// parse an atom
@@ -976,36 +815,6 @@ class SemanticStructureParser
 					$Assignment->setLeft($Property1);
 					$Assignment->setRight($TermList);
 					return $newPos;
-
-				}
-
-//				if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
-//
-//					$Assignment = new Assignment();
-//					$Assignment->setLeft($Property1);
-//					$Assignment->setRight($Variable);
-//					return $newPos;
-//				}
-			}
-		}
-
-		return false;
-	}
-
-	private function parseVariableAssignment(array $tokens, $pos, &$Assignment)
-	{
-		if ($newPos = $this->parseVariable($tokens, $pos, $Variable)) {
-			$pos = $newPos;
-
-			if ($newPos = $this->parseSingleToken(self::T_EQUALS_SIGN, $tokens, $pos, $string)) {
-				$pos = $newPos;
-
-				if ($pos = $this->parseFunctionApplication($tokens, $pos, $FunctionApplication)) {
-
-					$Assignment = new Assignment();
-					$Assignment->setLeft($Variable);
-					$Assignment->setRight($FunctionApplication);
-					return $pos;
 
 				}
 			}

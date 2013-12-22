@@ -151,39 +151,6 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testGoalClause()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = 'grandfather(?x, ?z) :- father(?x, ?y) and father(?y, ?z)';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
-	public function testMultiplePredicationGoal()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = 'wet(?x) and cold(?x) :- rains(?x)';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
-	public function testGoalClauseWithLet()
-	{
-		$Parser = new SemanticStructureParser();
-
-		$string = 'grandfather(?x, ?z) :- father(?x, ?y) and let(?z, older(?y))';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-
-		// regression: check if `older` was parsed as a function application
-		$this->assertTrue($Structure->getMeans()->getPredication(1)->getArgument(1) instanceof \agentecho\datastructure\FunctionApplication);
-	}
-
 	public function testMap()
 	{
 		$Parser = new SemanticStructureParser();
@@ -226,15 +193,6 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 
 		$string = 'PN.sem = name(PN.subject, propernoun1.text + " " + propernoun2.text)';
-		$Structure = $Parser->parse($string);
-		$serialized = $Parser->serialize($Structure);
-		$this->assertEquals($string, $serialized);
-	}
-
-	public function testTree()
-	{
-		$Parser = new SemanticStructureParser();
-		$string = '[noun: [head: [tense: true, person: true]], verb: [head: [tense: true]]]';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
