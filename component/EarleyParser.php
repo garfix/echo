@@ -11,7 +11,7 @@ use agentecho\component\parser\SemanticStructureParser;
 /**
  * An implementation of Earley's top-down chart parsing algorithm as described in
  * "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
- * It is the basic algorithm (p 381) extended with unification (p 431) and semantics (p 570)
+ * It is the basic algorithm (p 381) extended with semantics (p 570)
  */
 class EarleyParser
 {
@@ -77,10 +77,13 @@ class EarleyParser
 	/**
 	 * Returns the first tree that can be parsed from $words, given a $Grammar.
 	 *
+	 * @param \agentecho\grammar\Grammar $Grammar
+	 * @param array $words
 	 * @return array A structure:
 	 * - success: boolean
 	 * - tree: either a tree, or null
 	 * - errorMessages: either null or a message
+	 * - lastParsedIndex: the index of the last word that was used in a parse
 	 */
 	public static function getFirstTree(Grammar $Grammar, array $words)
 	{
@@ -248,6 +251,7 @@ class EarleyParser
 	 * - this $state is NP -> noun, it has been completed
 	 * - now proceed all other states in the chart that are waiting for an NP at the current position
 	 *
+	 * @param array $completedState
 	 * @return bool Tree complete?
 	 */
 	private function complete(array $completedState)
@@ -291,6 +295,9 @@ class EarleyParser
 
 	/**
 	 * Store extra information to make it easier to extract parse trees later
+	 * @param array $completedState
+	 * @param array $chartedState
+	 * @param array $advancedState
 	 * @return bool Tree complete?
 	 */
 	private function storeStateInfo(array $completedState, array $chartedState, array &$advancedState)

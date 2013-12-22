@@ -3,6 +3,7 @@
 namespace agentecho\test;
 
 use agentecho\AgentEcho;
+use agentecho\component\AgentConfig;
 use agentecho\component\DataMapper;
 use agentecho\component\GrammarFactory;
 use agentecho\knowledge\DBPedia;
@@ -56,15 +57,19 @@ class WebTest extends \PHPUnit_Framework_TestCase
 	{
 		static $Echo = null;
 
+		$Grammar = GrammarFactory::getGrammar($language);
+
 		if ($Echo === null) {
 
-			$Echo = new AgentEcho();
-			$Echo->addKnowledgeSource(new DBPedia());
-			$Echo->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+			$Config = new AgentConfig();
+			$Config->setGrammars([GrammarFactory::getGrammar('en'), GrammarFactory::getGrammar('nl')]);
+			$Config->addKnowledgeSource(new DBPedia());
+			$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
 
+			$Echo = new AgentEcho($Config);
 		}
 
-		$Echo->setGrammar(GrammarFactory::getGrammar($language));
+		$Echo->setCurrentGrammar($Grammar);
 
 		return $Echo->answer($question);
 	}

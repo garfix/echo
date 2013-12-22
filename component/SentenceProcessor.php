@@ -4,8 +4,12 @@ namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
+use agentecho\datastructure\SentenceContext;
 use agentecho\exception\DataBaseMultipleResultsException;
+use agentecho\exception\LexicalItemException;
 use agentecho\exception\NoBindingsException;
+use agentecho\exception\NoSemanticsAtTopLevelException;
+use agentecho\exception\ParseException;
 use agentecho\grammar\Grammar;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Predication;
@@ -36,20 +40,20 @@ class SentenceProcessor
 	 * and using $ConversationContext to process pronouns.
 	 *
 	 * @param string $question
-	 * @param Parser $Parser
+	 * @param Conversation $Conversation
 	 * @return string
 	 */
-	public function reply($question, Parser $Parser)
+	public function reply($question, Conversation $Conversation)
 	{
 		$this->send(new LogEvent(array('question' => $question)));
 
 		try {
 
 			// parse the sentence
-			$SentenceContext = $Parser->parseFirstLine($question);
+			$SentenceContext = $this->parseFirstLine($question, $Conversation);
 
 			// update the current grammar from the language found in this sentence
-			$CurrentGrammar = $Parser->getCurrentGrammar();
+			$CurrentGrammar = $Conversation->getCurrentGrammar();
 
 			// extract the Sentence
 			$this->send(new LogEvent(array('syntax' => $SentenceContext->getPhraseSpecification())));
@@ -79,7 +83,7 @@ class SentenceProcessor
 		catch (EchoException $E) {
 
 			if ($E instanceof EchoException) {
-				$translatedMessage = Translations::translate($E->getMessageText(), $Parser->getCurrentGrammar()->getLanguageCode());
+				$translatedMessage = Translations::translate($E->getMessageText(), $Conversation->getCurrentGrammar()->getLanguageCode());
 				$E->setMessageText($translatedMessage);
 			}
 
@@ -93,12 +97,13 @@ class SentenceProcessor
 
 	/**
 	 * @param PredicationList $Question
+	 * @param Grammar $CurrentGrammar
 	 * @return PredicationList|false
 	 */
 	private function answer(PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		$Answer = false;
-//return false;
+
 		$MoodRelation = $Question->getPredicationByPredicate('mood');
 		if (!$MoodRelation) {
 			return false;
@@ -115,6 +120,103 @@ class SentenceProcessor
 		}
 
 		return $Answer;
+	}
+
+	public function parse($input, Conversation $Conversation)
+	{
+		$sentences = array();
+
+		$this->send(new Event($input));
+
+		if (trim($input) == '') {
+			return $sentences;
+		}
+
+		// create an array of grammars in which the current one is in the front
+		$grammars = array($Conversation->getCurrentGrammar());
+
+		foreach ($Conversation->getGrammars() as $Grammar) {
+			if ($Grammar != $Conversation->getCurrentGrammar()) {
+				$grammars[] = $Grammar;
+			}
+		}
+
+		$Exception = null;
+
+		// try to parse the sentence in each of the available grammars
+		foreach ($grammars as $Grammar) {
+
+			$Sentence = new SentenceContext();
+
+			try {
+				$this->parseSentence($input, $Sentence, $Grammar);
+
+				$sentences[] = $Sentence;
+				$Sentence->setLanguage($Grammar->getLanguage());
+
+				// update current language
+				$Conversation->setCurrentGrammar($Grammar);
+
+				// now parse the rest of the input, if there is one
+				// this code works either in ltr and rtl languages (not that i tried ;)
+				$restInput = str_replace($Sentence->surfaceText, '', $input);
+				return array_merge($sentences, $this->parse($restInput, $Conversation));
+
+			} catch (\Exception $E) {
+
+				// save the first exception
+				if (!$Exception) {
+					$Exception = $E;
+				}
+
+			}
+		}
+
+		// all grammars failed; throw the first exception
+		throw $Exception;
+	}
+
+	/**
+	 * Parses $input into a series of Sentences, but returns only the first of these,
+	 *
+	 * @param string $input
+	 * @param Conversation $Conversation
+	 * @return SentenceContext
+	 */
+	public function parseFirstLine($input, Conversation $Conversation)
+	{
+		$sentences = $this->parse($input, $Conversation);
+		return $sentences ? $sentences[0] : false;
+	}
+
+	/**
+	 * This function turns a line of text into structured meaning.
+	 *
+	 * @param $input
+	 * @param SentenceContext $Sentence
+	 * @param Grammar $Grammar
+	 * @throws ParseException
+	 * @throws NoSemanticsAtTopLevelException
+	 */
+	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
+	{
+		// analyze words
+		$Lexer = new Lexer();
+		$Lexer->analyze($input, $Sentence, $Grammar);
+
+		// create a phrase specification from these lexical items
+		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
+		$Sentence->setPhraseSpecification($result['tree']);
+		$Sentence->setSemantics($result['tree']['semantics']);
+
+		if (!$result['success']) {
+
+			throw new ParseException(implode(' ', array_slice($Sentence->lexicalItems, $result['lastParsedIndex'] - 1, 4)));
+		}
+
+		if ($result['tree']['semantics'] === null) {
+			throw new NoSemanticsAtTopLevelException();
+		}
 	}
 
 	private function getInterrogativeAnswer(Predication $MoodRelation, PredicationList $Question, Grammar $CurrentGrammar)
@@ -164,8 +266,7 @@ class SentenceProcessor
 
 			// find requested object
 			$RequestVariable = $RequestRelation->getArgument(0)->createClone();
-	//echo $Question;exit;
-			;
+
 			if ($MannerRelation = $Question->getPredicationByPredicate('manner')) {
 				if ($MannerRelation->getArgument(1) == $RequestVariable) {
 
@@ -180,7 +281,6 @@ class SentenceProcessor
 					} else {
 						$this->addBinaryRelation($Answer, 'determiner', $R, new Atom($answer));
 					}
-	//echo $Answer;exit;
 				}
 			} elseif ($LocationRelation = $Question->getPredicationByPredicate('location')) {
 

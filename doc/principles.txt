@@ -1,3 +1,13 @@
+Basic principles:
+- Easy to learn and use (the user should not need to add stuff that can be preprogrammed)
+- Fast (use the fastest algorithms known)
+- Testable (every function needs a unit test)
+- Provide really helpful error messages
+- Configurable: grammars, and knowledge sources, and other dependencies are injected, not hardcoded
+- Portable to other languages (so: no fancy PHP-specific idiosyncracies)
+- Create independent functions that could be used without the context of the agent (i.e. getPlural($word)
+- We can ask of the user that he enters grammatically and lexically correct sentences.
+
 Generation
 - There must be no backtracking in generation. The correct rule is found at once. If not, refine the rules.
 
@@ -5,3 +15,4 @@ Representation
 - For the internal representation of knowledge we use relations (as in relational databases)
 - We do not use quantifiers (existential, universal), not even for determiners.
 	Both are represented as atoms in a determiner relation (for example: determiner(?n, All) )
+- Don't invent meanings. 'Where' means where; not: 'unknown location'. The meaning of 'cat' is cat. A meaning is best described by the word that is normally used for it.

@@ -12,42 +12,48 @@ use agentecho\exception\ConfigurationException;
  */
 class Conversation
 {
-	/** @var KnowledgeManager The agent having the conversation */
-	private $KnowledgeManager;
+	/** @var Grammar $CurrentGrammar The grammar that will be tried first,
+	 * and the grammar that was last used to successfully parse a sentence */
+	private $CurrentGrammar = null;
 
-	/** @var Parser */
-	private $Parser = null;
+	/** @var Grammar[] */
+	private $grammars;
 
 	/**
 	 * @throws ConfigurationException
 	 */
-	public function __construct(KnowledgeManager $KnowledgeManager, Parser $Parser)
+	public function __construct(array $grammars)
 	{
-		$this->KnowledgeManager = $KnowledgeManager;
-		$this->Parser = $Parser;
-	}
+		$this->grammars = $grammars;
 
-	public function setCurrentGrammar(Grammar $Grammar)
-	{
-		$this->Parser->setCurrentGrammar($Grammar);
+		if (empty($this->grammars)) {
+			throw new ConfigurationException();
+		}
+
+		$this->CurrentGrammar = reset($grammars);
 	}
 
 	/**
-	 * High-level: reply to the human readable $question with a human readable sentence
-	 *
-	 * @param string $question
-	 * @return string The response
+	 * @param Grammar $Grammar
 	 */
-	public function answer($question)
+	public function setCurrentGrammar(Grammar $Grammar)
 	{
-		$SentenceProcessor = new SentenceProcessor($this->KnowledgeManager);
+		$this->CurrentGrammar = $Grammar;
+	}
 
-		if (isset($this->EventManager)) {
-			$SentenceProcessor->setEventManager($this->EventManager);
-		}
+	/**
+	 * @return Grammar
+	 */
+	public function getCurrentGrammar()
+	{
+		return $this->CurrentGrammar;
+	}
 
-		$answer = $SentenceProcessor->reply($question, $this->Parser);
-
-		return $answer;
+	/**
+	 * @return Grammar[]
+	 */
+	public function getGrammars()
+	{
+		return $this->grammars;
 	}
 }

@@ -3,6 +3,7 @@
 namespace agentecho\web;
 
 use agentecho\AgentEcho;
+use agentecho\component\AgentConfig;
 use agentecho\component\DataMapper;
 use agentecho\component\GrammarFactory;
 use agentecho\component\LogEvent;
@@ -388,11 +389,9 @@ class Processor
 
 	private function getResponse($sentence)
 	{
-		$Agent = new AgentEcho();
+		$Config = new AgentConfig();
 
-		$logs = array();
-
-		$Agent->addListener(function($Event) use (&$logs) {
+		$Config->addListener(function($Event) use (&$logs) {
 			if ($Event instanceof LogEvent) {
 				$logs = array_merge($logs, $Event->getParams());
 			}
@@ -400,15 +399,19 @@ class Processor
 
 		switch ($this->language) {
 			case 'en':
-				$Agent->addGrammar(GrammarFactory::getGrammar('en'));
+				$Config->addGrammar(GrammarFactory::getGrammar('en'));
 				break;
 			case 'nl':
-				$Agent->addGrammar(GrammarFactory::getGrammar('nl'));
+				$Config->addGrammar(GrammarFactory::getGrammar('nl'));
 				break;
 		}
 
-		$Agent->addKnowledgeSource(new DBPedia());
-		$Agent->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Config->addKnowledgeSource(new DBPedia());
+		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+
+		$Agent = new AgentEcho($Config);
+
+		$logs = array();
 
 		$answer = $Agent->answer($sentence);
 
