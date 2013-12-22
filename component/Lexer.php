@@ -2,7 +2,7 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\SentenceContext;
+use agentecho\datastructure\SentenceInformation;
 use agentecho\exception\LexicalItemException;
 use agentecho\grammar\Grammar;
 
@@ -20,29 +20,29 @@ class Lexer
 	 * @param $Sentence
 	 * @throws LexicalItemException
 	 */
-	public function analyze($string, SentenceContext $Sentence, Grammar $Grammar)
+	public function analyze($string, SentenceInformation $Sentence, Grammar $Grammar)
 	{
 		// turns $input into $Sentence->words
 		$this->splitIntoWords($string, $Sentence);
 
 		// split words that should be treated as separate lexical items
 		// since these glued-together words have different parts-of-speech
-		$Sentence->words = $this->unglue($Sentence->words, $Grammar);
+		$Sentence->setWords($this->unglue($Sentence->getWords(), $Grammar));
 
 		// make words lowercase
 		// glue together words that should form a single lexical item
 #todo: split lowercasing and gluing
 		$this->glue($Sentence, $Grammar);
 
-		$this->recognize($Grammar, $Sentence->lexicalItems);
+		$this->recognize($Grammar, $Sentence->getLexicalItems());
 	}
 
 	/**
 	 * Assigns the values $Sentence->input and $Sentence->words of $Phrase from the value of $input
 	 * @param string $input This input can contain more than one natural language sentence.
-	 * @param SentenceContext $Sentence
+	 * @param SentenceInformation $Sentence
 	 */
-	private function splitIntoWords($input, SentenceContext $Sentence)
+	private function splitIntoWords($input, SentenceInformation $Sentence)
 	{
 		$terminator = null;
 
@@ -70,9 +70,9 @@ class Lexer
 			$words[] = $token;
 		}
 
-		$Sentence->words = $words;
-		$Sentence->surfaceText = substr($input, 0, $index);
-		$Sentence->terminator = $terminator;
+		$Sentence->setWords($words);
+		$Sentence->setSurfaceText(substr($input, 0, $index));
+		$Sentence->setTerminator($terminator);
 	}
 
 	/**
@@ -108,14 +108,14 @@ class Lexer
 	 *
 	 * todo coumpound words
 	 *
-	 * @param SentenceContext $Sentence
+	 * @param SentenceInformation $Sentence
 	 * @throws LexicalItemException
 	 */
-	private function glue(SentenceContext $Sentence, Grammar $Grammar)
+	private function glue(SentenceInformation $Sentence, Grammar $Grammar)
 	{
 		$lexicalItems = array();
-		$words = $Sentence->words;
-		$count = count($Sentence->words);
+		$words = $Sentence->getWords();
+		$count = count($words);
 
 		for ($i = 0; $i < $count; $i++) {
 
@@ -134,7 +134,7 @@ class Lexer
 			}
 		}
 
-		$Sentence->lexicalItems = $lexicalItems;
+		$Sentence->setLexicalItems($lexicalItems);
 		return true;
 	}
 

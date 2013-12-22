@@ -3,10 +3,7 @@
 namespace agentecho;
 
 use agentecho\component\AgentConfig;
-use agentecho\component\EventManager;
-use agentecho\component\KnowledgeManager;
 use agentecho\component\Conversation;
-use agentecho\component\Parser;
 use agentecho\component\SentenceProcessor;
 use agentecho\grammar\Grammar;
 

@@ -4,9 +4,8 @@ namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\SentenceContext;
+use agentecho\datastructure\SentenceInformation;
 use agentecho\exception\DataBaseMultipleResultsException;
-use agentecho\exception\LexicalItemException;
 use agentecho\exception\NoBindingsException;
 use agentecho\exception\NoSemanticsAtTopLevelException;
 use agentecho\exception\ParseException;
@@ -30,7 +29,7 @@ class SentenceProcessor
 	/** @var KnowledgeManager The agent having the conversation */
 	private $KnowledgeManager;
 
-	public function __construct(KnowledgeManager $KnowledgeManager)
+	public function __construct(KnowledgeManager $KnowledgeManager = null)
 	{
 		$this->KnowledgeManager = $KnowledgeManager;
 	}
@@ -50,16 +49,16 @@ class SentenceProcessor
 		try {
 
 			// parse the sentence
-			$SentenceContext = $this->parseFirstLine($question, $Conversation);
+			$SentenceInformation = $this->parseFirstLine($question, $Conversation);
 
 			// update the current grammar from the language found in this sentence
 			$CurrentGrammar = $Conversation->getCurrentGrammar();
 
 			// extract the Sentence
-			$this->send(new LogEvent(array('syntax' => $SentenceContext->getPhraseSpecification())));
+			$this->send(new LogEvent(array('syntax' => $SentenceInformation->getPhraseSpecification())));
 
-			// extract semantics
-			$Semantics = $SentenceContext->getSemantics();
+			// get semantics
+			$Semantics = $SentenceInformation->getSemantics();
 
 			// replace references
 			$PronounProcessor = new PronounProcessor();
@@ -122,15 +121,25 @@ class SentenceProcessor
 		return $Answer;
 	}
 
+	/**
+	 * Tries to parse $input in the $Conversation's current grammar,
+	 * or any of its other grammars.
+	 *
+	 * @param $input
+	 * @param Conversation $Conversation
+	 * @return array
+	 * @throws \Exception
+	 * @throws null
+	 */
 	public function parse($input, Conversation $Conversation)
 	{
-		$sentences = array();
-
 		$this->send(new Event($input));
 
 		if (trim($input) == '') {
-			return $sentences;
+			return [];
 		}
+
+		$sentences = array();
 
 		// create an array of grammars in which the current one is in the front
 		$grammars = array($Conversation->getCurrentGrammar());
@@ -141,25 +150,25 @@ class SentenceProcessor
 			}
 		}
 
+		// keep track of the _first_ exception that is cast
 		$Exception = null;
 
 		// try to parse the sentence in each of the available grammars
 		foreach ($grammars as $Grammar) {
 
-			$Sentence = new SentenceContext();
-
 			try {
-				$this->parseSentence($input, $Sentence, $Grammar);
+
+				// parse a single line with a single grammar
+				$Sentence = $this->parseSentence($input, $Grammar);
 
 				$sentences[] = $Sentence;
-				$Sentence->setLanguage($Grammar->getLanguage());
 
 				// update current language
 				$Conversation->setCurrentGrammar($Grammar);
 
 				// now parse the rest of the input, if there is one
-				// this code works either in ltr and rtl languages (not that i tried ;)
-				$restInput = str_replace($Sentence->surfaceText, '', $input);
+				$restInput = str_replace($Sentence->getSurfaceText(), '', $input);
+
 				return array_merge($sentences, $this->parse($restInput, $Conversation));
 
 			} catch (\Exception $E) {
@@ -181,7 +190,7 @@ class SentenceProcessor
 	 *
 	 * @param string $input
 	 * @param Conversation $Conversation
-	 * @return SentenceContext
+	 * @return SentenceInformation
 	 */
 	public function parseFirstLine($input, Conversation $Conversation)
 	{
@@ -190,33 +199,38 @@ class SentenceProcessor
 	}
 
 	/**
-	 * This function turns a line of text into structured meaning.
+	 * This function turns a line of text into a SentenceInformation
 	 *
 	 * @param $input
-	 * @param SentenceContext $Sentence
 	 * @param Grammar $Grammar
-	 * @throws ParseException
-	 * @throws NoSemanticsAtTopLevelException
+	 * @return \agentecho\datastructure\SentenceInformation
+	 * @throws \agentecho\exception\ParseException
+	 * @throws \agentecho\exception\NoSemanticsAtTopLevelException
 	 */
-	private function parseSentence($input, SentenceContext $Sentence, Grammar $Grammar)
+	public function parseSentence($input, Grammar $Grammar)
 	{
+		$Sentence = new SentenceInformation();
+
+		$Sentence->setLanguage($Grammar->getLanguage());
+
 		// analyze words
 		$Lexer = new Lexer();
 		$Lexer->analyze($input, $Sentence, $Grammar);
 
 		// create a phrase specification from these lexical items
-		$result = EarleyParser::getFirstTree($Grammar, $Sentence->lexicalItems);
+		$result = EarleyParser::getFirstTree($Grammar, $Sentence->getLexicalItems());
 		$Sentence->setPhraseSpecification($result['tree']);
 		$Sentence->setSemantics($result['tree']['semantics']);
 
 		if (!$result['success']) {
-
-			throw new ParseException(implode(' ', array_slice($Sentence->lexicalItems, $result['lastParsedIndex'] - 1, 4)));
+			throw new ParseException(implode(' ', array_slice($Sentence->getLexicalItems(), $result['lastParsedIndex'] - 1, 4)));
 		}
 
 		if ($result['tree']['semantics'] === null) {
 			throw new NoSemanticsAtTopLevelException();
 		}
+
+		return $Sentence;
 	}
 
 	private function getInterrogativeAnswer(Predication $MoodRelation, PredicationList $Question, Grammar $CurrentGrammar)
@@ -541,34 +555,25 @@ class SentenceProcessor
 
 	private function interpret(PredicationList $RawSemantics)
 	{
-//		// extract the question predication
-//		$predications = $RawSemantics->getPredications();
-//		if (!$predications) {
-//			return array();
-//		}
-//
-//		// replace all request properties with variables
-//		foreach ($predications as $Predication) {
-//			$this->changeRequestPropertyInVariable($Predication);
-//		}
+		$ExpandedQuestion = $RawSemantics;
 
-		// first explode the predications into all possible solution paths
-		// this is an array of predicationlists (or predication-arrays)
-		$interpreters = $this->KnowledgeManager->getInterpreters();
+		if ($this->KnowledgeManager) {
 
-		if (!empty($interpreters)) {
+			// first explode the predications into all possible solution paths
+			// this is an array of predicationlists (or predication-arrays)
+			$interpreters = $this->KnowledgeManager->getInterpreters();
 
-#todo: multiple
-			$DataMapper = reset($interpreters);
+			if (!empty($interpreters)) {
 
-			$DataMapper->setAllowUnprocessedPredications();
-			$DataMapper->setIterate();
+	#todo: multiple
+				$DataMapper = reset($interpreters);
 
-			$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
+				$DataMapper->setAllowUnprocessedPredications();
+				$DataMapper->setIterate();
 
-		} else {
+				$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
 
-			$ExpandedQuestion = $RawSemantics;
+			}
 
 		}
 
@@ -580,8 +585,6 @@ class SentenceProcessor
 	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
 	{
 		$Interpretation = $this->interpret($PredicationList);
-
-$a = (string)$Interpretation;
 
 		$bindings = $this->createBindings($Interpretation);
 		$this->send(new LogEvent(array('bindings' => $bindings)));
@@ -597,37 +600,41 @@ $a = (string)$Interpretation;
 
 	private function createBindings(PredicationList $ExpandedQuestion)
 	{
-		$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
 		$bindings = array();
-		$Exception = null;
 
-		foreach ($knowledgeSources as $KnowledgeSource) {
-$a = (string)$ExpandedQuestion;
+		if ($this->KnowledgeManager) {
 
-			if (isset($this->EventManager)) {
-				$KnowledgeSource->setEventManager($this->EventManager);
-			}
+			$knowledgeSources = $this->KnowledgeManager->getKnowledgeSources();
+			$Exception = null;
 
-			try {
-				// execute the query
-				$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
+			foreach ($knowledgeSources as $KnowledgeSource) {
 
-				if ($newBindings) {
-
-					// perform the translations
-					$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
-
-					$bindings = array_merge($bindings, $newBindings);
+				if (isset($this->EventManager)) {
+					$KnowledgeSource->setEventManager($this->EventManager);
 				}
 
-			} catch (\Exception $E) {
-				$Exception = $E;
+				try {
+					// execute the query
+					$newBindings = $KnowledgeSource->answer($ExpandedQuestion);
+
+					if ($newBindings) {
+
+						// perform the translations
+						$newBindings = $this->performTranslations($newBindings, $ExpandedQuestion);
+
+						$bindings = array_merge($bindings, $newBindings);
+					}
+
+				} catch (\Exception $E) {
+					$Exception = $E;
+				}
+
 			}
 
-		}
+			if (empty($bindings) && !is_null($Exception)) {
+				throw $Exception;
+			}
 
-		if (empty($bindings) && !is_null($Exception)) {
-			throw $Exception;
 		}
 
 		$this->send(new LogEvent(array('bindings' => $bindings)));
