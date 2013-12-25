@@ -1,13 +1,25 @@
 [
+	rule:
+		S => Clause,
+	semantics: {
+		S.sem = Clause.sem and sentence(S.event);
+		S.event = Clause.event;
+		S.subject = Clause.subject;
+		S.object = Clause.object;
+		S.request = Clause.request
+	}
+]
+
+[
 	// John drives / She died
 
 	rule:
-		S => NP VP,
+		Clause => NP VP,
 	semantics: {
-		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative);
-    	S.event = VP.event;
-    	S.subject = NP.entity;
-    	S.object = VP.object
+		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, S.object) and mood(Clause.event, Declarative);
+    	Clause.event = VP.event;
+    	Clause.subject = NP.entity;
+    	Clause.object = VP.object
 	}
 ]
 
@@ -15,11 +27,11 @@
 	// Drive! / Book that flight / She died
 
 	rule:
-		S => VP,
+		Clause => VP,
 	semantics: {
-		S.sem = VP.sem and object(S.event, S.object) and mood(S.event, Imperative);
-		S.event = VP.event;
-		S.object = VP.object
+		Clause.sem = VP.sem and object(Clause.event, Clause.object) and mood(Clause.event, Imperative);
+		Clause.event = VP.event;
+		Clause.object = VP.object
 	}
 ]
 
@@ -27,15 +39,15 @@
 	// Who Is John? / How many children had Lord Byron? / Who were Lord Byron's parents?
 
 	rule:
-		S => WhADVP VP NP,
+		Clause => WhADVP VP NP,
 	semantics: {
-		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
-        S.event = VP.event;
-        S.subject = NP.entity;
-        S.subject = WhADVP.subject;
-        S.object = WhADVP.entity;
-        S.request = WhADVP.request;
-        S.event = WhADVP.event
+		Clause.sem = WhADVP.sem and VP.sem and NP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and request(Clause.request) and mood(Clause.event, Interrogative);
+        Clause.event = VP.event;
+        Clause.subject = NP.entity;
+        Clause.subject = WhADVP.subject;
+        Clause.object = WhADVP.entity;
+        Clause.request = WhADVP.request;
+        Clause.event = WhADVP.event
 	}
 ]
 
@@ -43,14 +55,14 @@
 	// Where was John born?
 
 	rule:
-        S => WhADVP auxBe NP VP,
+        Clause => WhADVP auxBe NP VP,
     semantics: {
-		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request) and mood(S.event, Interrogative);
-		S.event = WhADVP.event;
-		S.event = VP.event;
-		S.subject = NP.entity;
-		S.request = WhADVP.request;
-		S.event = auxBe.event
+		Clause.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(Clause.event, Clause.subject) and request(Clause.request) and mood(Clause.event, Interrogative);
+		Clause.event = WhADVP.event;
+		Clause.event = VP.event;
+		Clause.subject = NP.entity;
+		Clause.request = WhADVP.request;
+		Clause.event = auxBe.event
     }
 ]
 
@@ -58,11 +70,11 @@
 	// Was John driving?
 
 	rule:
-        S => aux NP VP,
+        Clause => aux NP VP,
     semantics: {
-		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
-		S.event = VP.event;
-		S.subject = NP.entity
+		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and mood(Clause.event, Interrogative);
+		Clause.event = VP.event;
+		Clause.subject = NP.entity
     }
 ]
 
@@ -70,12 +82,12 @@
 	// Was the car driven by John?
 
 	rule:
-        S => aux NP1 VP passivisationPreposition NP2,
+        Clause => aux NP1 VP passivisationPreposition NP2,
     semantics: {
-        S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative) and voice(S.event, Passive);
-        S.event = VP.event;
-        S.subject = NP2.entity;
-        S.object = NP1.entity
+        Clause.sem = NP1.sem and NP2.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and mood(Clause.event, Interrogative) and voice(Clause.event, Passive);
+        Clause.event = VP.event;
+        Clause.subject = NP2.entity;
+        Clause.object = NP1.entity
     }
 ]
 
@@ -84,11 +96,11 @@
 	// Was Ada Lovelace the daughter of Lord Byron?
 
 	rule:
-        S => auxBe NP1 NP2,
+        Clause => auxBe NP1 NP2,
     semantics: {
-       S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and complement(S.event, S.complement) and mood(S.event, Interrogative);
-       S.complement = NP2.entity;
-       S.subject = NP1.entity
+       Clause.sem = auxBe.sem and NP1.sem and NP2.sem and subject(Clause.event, Clause.subject) and complement(Clause.event, Clause.complement) and mood(Clause.event, Interrogative);
+       Clause.complement = NP2.entity;
+       Clause.subject = NP1.entity
     }
 
 ]
@@ -97,13 +109,13 @@
 	// How old was Mary Shelley?
 
 	rule:
-        S => WhADVP auxBe NP,
+        Clause => WhADVP auxBe NP,
     semantics: {
-        S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative);
-        S.complement = WhADVP.entity;
-        S.event = auxBe.event;
-        S.subject = NP.entity;
-        S.request = WhADVP.request
+        Clause.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(Clause.event, Clause.subject) and modifier(Clause.event, Clause.complement) and request(Clause.request) and mood(Clause.event, Interrogative);
+        Clause.complement = WhADVP.entity;
+        Clause.event = auxBe.event;
+        Clause.subject = NP.entity;
+        Clause.request = WhADVP.request
     }
 
 ]
@@ -112,14 +124,14 @@
 	// How old was Mary Shelley when she died?
 
 	rule:
-		S1 => S2 SBar,
+		Clause1 => Clause2 SBar,
 	semantics: {
-		S1.sem = S2.sem and SBar.sem;
-		S1.event = S2.event;
-		S1.subject = S2.subject;
-		S1.object = S2.object;
-		S1.event = SBar.superEvent;
-		S1.request = S2.request
+		Clause1.sem = Clause2.sem and SBar.sem;
+		Clause1.event = Clause2.event;
+		Clause1.subject = Clause2.subject;
+		Clause1.object = Clause2.object;
+		Clause1.event = SBar.superEvent;
+		Clause1.request = Clause2.request
 	}
 ]
 
@@ -127,12 +139,12 @@
 	// S-Bar, see 'The structure of modern english' - Brinton (2000) - p. 230
 
 	rule:
-		SBar => whAdverb S,
+		SBar => whAdverb Clause,
 	semantics: {
-		SBar.sem = whAdverb.sem and S.sem;
+		SBar.sem = whAdverb.sem and Clause.sem;
 		SBar.superEvent = whAdverb.event;
 		SBar.subEvent = whAdverb.adjunct;
-		SBar.subEvent = S.event
+		SBar.subEvent = Clause.event
 	}
 ]
 

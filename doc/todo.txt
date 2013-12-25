@@ -1,16 +1,10 @@
 Ooit:
 
- * sentenceType => mood (later een keer; ben er nog niet uit wat ik hiermee doe)
  * 1st person (in artikel voorbeeld => 3rd person)
  * De zinseinde-detectie is te beperkt (zoeken naar een punt)
- * Haal zo veel mogelijk de rare constructies weg uit het lexicon!
- * Sentence: verplaats voice naar clause
- * Scheidt de talen voor goals en mappings, want je wilt de constructies uit de ene taal niet toestaan in de andere
- * Maak commentaarregels
  * Maak includes
  * Regelnummers in parse foutmeldingen
  * Veel datastructuren moeten immutable zijn; vervang setters daarom door constructor parameters
- * Los de todo's op.
 
  Zorg ervoor dat het compleet, simpel en robuust is. Dat is veel belangrijker dan dat het bijzondere dingen kan!!!
 
@@ -24,9 +18,9 @@ Volgende zinnen:
 Nu:
 
 * De niet-web code is nog niet UNICODE-proof
-* Maak een cleane API waarin op een nette manier aangepaste dependencies kunnen worden geinjecteerd, en zorg voor defaults
 * Verander 'predication' in 'relation'
+* Zorg ervoor dat de regels in lexicons en maps gecheckt wordt op betekenis (NP.bla <- error)
 * Property: 'object' hoeft geen zelfstandig object te zijn, alleen de naam is relevant, toch?
-* Een samengestelde zin levert meerdere mood-relaties op.
 * Maak een speciale relation mapping van vraag-zin en antwoord, naar antwoordzin (nu wordt dit nog in code uitgeschreven)
-
+* los alle #todo's op in de code
+* is het nodig om een S.request te hebben? Een request() relatie is toch genoeg?

@@ -23,6 +23,17 @@
 	}
 ]
 
+// partial sentences: conjunction
+[
+	rule:
+		S => CP,
+	condition:
+		link(?cp, S.event, ?left, ?right),
+	bind: {
+		CP.node = S.event
+	}
+]
+
 # Declarative sentence
 
 // Copular sentence with complement

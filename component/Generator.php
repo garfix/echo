@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\AssignmentList;
+use agentecho\datastructure\Atom;
 use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\PredicationList;
 use agentecho\datastructure\Property;
@@ -34,8 +35,11 @@ class Generator
 
 		// fetch the variable and property of the main clause
 		$SentenceVariable = $Sentence->getArgument(0);
+
 		/** @var Property $SentenceProperty */
-		$SentenceProperty = $Sentence->getArgument(1);
+		$SentenceProperty = new Property();
+		$SentenceProperty->setName('event');
+		$SentenceProperty->setObject(new Atom('S'));
 
 		// in the next rule that fires, replace S.event with $SentenceEvent, in the condition
 		$propertyBindings = array((string)$SentenceProperty => $SentenceVariable);

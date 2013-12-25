@@ -107,7 +107,15 @@ class SentenceProcessor
 	{
 		$Answer = false;
 
-		$MoodRelation = $Question->getPredicationByPredicate('mood');
+		$SentenceRelation = $Question->getPredicationByPredicate('sentence');
+		if (!$SentenceRelation) {
+			return false;
+		}
+
+		/** @var Variable $SentenceEvent */
+		$SentenceEvent = $SentenceRelation->getArgument(0);
+
+		$MoodRelation = $Question->getPredicationByPredicate('mood', [$SentenceEvent]);
 		if (!$MoodRelation) {
 			return false;
 		}
@@ -115,11 +123,11 @@ class SentenceProcessor
 		$mood = $MoodRelation->getArgument(1)->getName();
 		if ($mood == 'Interrogative') {
 
-			$Answer = $this->getInterrogativeAnswer($MoodRelation, $Question, $CurrentGrammar);
+			$Answer = $this->getInterrogativeAnswer($SentenceEvent, $Question, $CurrentGrammar);
 
 		} elseif ($mood == 'Imperative') {
 
-			$Answer =  $this->getImperativeAnswer($MoodRelation, $Question);
+			$Answer =  $this->getImperativeAnswer($SentenceEvent, $Question);
 		}
 
 		return $Answer;
@@ -237,30 +245,27 @@ class SentenceProcessor
 		return $Sentence;
 	}
 
-	private function getInterrogativeAnswer(Predication $MoodRelation, PredicationList $Question, Grammar $CurrentGrammar)
+	private function getInterrogativeAnswer(Variable $SentenceEvent, PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		// does the question contain a specific requested field?
 		$RequestRelation = $Question->getPredicationByPredicate('request');
 		if ($RequestRelation) {
 
-			$Answer = $this->getRequestedAnswer($MoodRelation, $RequestRelation, $Question, $CurrentGrammar);
+			$Answer = $this->getRequestedAnswer($SentenceEvent, $RequestRelation, $Question, $CurrentGrammar);
 
 		} else {
 
-			$Answer = $this->getYesNoAnswer($MoodRelation, $Question);
+			$Answer = $this->getYesNoAnswer($SentenceEvent, $Question);
 
 		}
 
 		return $Answer;
 	}
 
-	private function getRequestedAnswer(Predication $MoodRelation, Predication $RequestRelation, PredicationList $Question, Grammar $CurrentGrammar)
+	private function getRequestedAnswer(Variable $SentenceEvent, Predication $RequestRelation, PredicationList $Question, Grammar $CurrentGrammar)
 	{
 		// since this is a yes-no question, check the statement
 		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
-
-		/** @var Variable $EventVariable */
-		$EventVariable = $MoodRelation->getArgument(0)->createClone();
 
 		# todo: remove earlier?
 		$answer = array_unique($answer);
@@ -276,11 +281,8 @@ class SentenceProcessor
 			// generate answer from question
 			$Answer = $Question->createClone();
 
-			// sentence(?e, S.event)
-			$this->addSentenceRelation($Answer, $EventVariable);
-
 			// replace mood
-			$this->makeDeclarative($Answer, $EventVariable);
+			$this->makeDeclarative($Answer, $SentenceEvent);
 
 			// find requested object
 			$RequestVariable = $RequestRelation->getArgument(0)->createClone();
@@ -342,31 +344,28 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getYesNoAnswer(Predication $MoodRelation, PredicationList $Question)
+	private function getYesNoAnswer(Variable $SentenceEvent, PredicationList $Question)
 	{
 		$ComplementRelation = $Question->getPredicationByPredicate('complement');
 		if ($ComplementRelation) {
 
-			$Answer = $this->getComplementYesNoAnswer($MoodRelation, $ComplementRelation, $Question);
+			$Answer = $this->getComplementYesNoAnswer($SentenceEvent, $ComplementRelation, $Question);
 
 		} else {
 
-			$Answer = $this->getDefaultYesNoAnswer($MoodRelation, $Question);
+			$Answer = $this->getDefaultYesNoAnswer($SentenceEvent, $Question);
 
 		}
 
 		return $Answer;
 	}
 
-	private function getComplementYesNoAnswer(Predication $MoodRelation, Predication $ComplementRelation, PredicationList $Question)
+	private function getComplementYesNoAnswer(Variable $SentenceEvent, Predication $ComplementRelation, PredicationList $Question)
 	{
-		/** @var Variable $EventVariable */
-		$EventVariable = $ComplementRelation->getArgument(0);
-
 		/** @var Variable $ComplementVariable */
 		$ComplementVariable = $ComplementRelation->getArgument(1);
 
-		$SubjectRelation = $Question->getPredicationByPredicate('subject', [$EventVariable, null]);
+		$SubjectRelation = $Question->getPredicationByPredicate('subject', [$SentenceEvent, null]);
 		/** @var Variable $SubjectVariable */
 		$SubjectVariable = $SubjectRelation->getArgument(1);
 
@@ -375,10 +374,10 @@ class SentenceProcessor
 		$AdaptedQuestion = $Question->createClone();
 		$this->replaceVariable($AdaptedQuestion, $ComplementVariable, $SubjectVariable);
 
-		return $this->getDefaultYesNoAnswer($MoodRelation, $AdaptedQuestion);
+		return $this->getDefaultYesNoAnswer($SentenceEvent, $AdaptedQuestion);
 	}
 
-	private function getDefaultYesNoAnswer(Predication $MoodRelation, PredicationList $Question)
+	private function getDefaultYesNoAnswer(Variable $SentenceEvent, PredicationList $Question)
 	{
 		$Answer = false;
 
@@ -389,25 +388,19 @@ class SentenceProcessor
 			// generate answer from question
 			$Answer = $Question->createClone();
 
-			/** @var Variable $EventVariable */
-			$EventVariable = $MoodRelation->getArgument(0)->createClone();
-
-			// sentence(?e, S.event)
-			$this->addSentenceRelation($Answer, $EventVariable);
-
 			// replace mood
-			$this->makeDeclarative($Answer, $EventVariable);
+			$this->makeDeclarative($Answer, $SentenceEvent);
 
 			// add 'yes'
 			$Q = new Variable('v1'); # todo: create new variable
-			$this->addBinaryRelation($Answer, 'qualification', $EventVariable, $Q);
+			$this->addBinaryRelation($Answer, 'qualification', $SentenceEvent, $Q);
 			$this->addBinaryRelation($Answer, 'isa', $Q, new Atom('Yes'));
 		}
 
 		return $Answer;
 	}
 
-	private function getImperativeAnswer(Predication $MoodRelation, PredicationList $Question)
+	private function getImperativeAnswer(Variable $SentenceEvent, PredicationList $Question)
 	{
 		# presume this is a request for information
 
@@ -427,12 +420,8 @@ class SentenceProcessor
 
 		$Answer = SentenceBuilder::buildConjunction($conjuncts, $ConjunctionVariable);
 
-		// sentence(?c0, CP.node)
-
-		$ConjunctionProperty = new Property();
-		$ConjunctionProperty->setName('node');
-		$ConjunctionProperty->setObject(new Atom('CP'));
-		$this->addSentenceRelation($Answer, $ConjunctionVariable, $ConjunctionProperty);
+		// sentence(?c0)
+		$this->addSentenceRelation($Answer, $ConjunctionVariable);
 
 		return $Answer;
 	}
@@ -448,32 +437,23 @@ class SentenceProcessor
 		}
 	}
 
-	private function addSentenceRelation(PredicationList $Relations, Variable $Variable, Property $Property = null)
+	private function addSentenceRelation(PredicationList $Relations, Variable $Variable)
 	{
 		$SentenceRelation = new Predication();
 		$SentenceRelation->setPredicate('sentence');
-		$A0 = $Variable->createClone();
 
-		if (!$Property) {
-			$A1 = new Property();
-			$A1->setObject(new Atom('S'));
-			$A1->setName('event');
-		} else {
-			$A1 = $Property;
-		}
-		$SentenceRelation->setArgument(0, $A0);
-		$SentenceRelation->setArgument(1, $A1);
+		$SentenceRelation->setArgument(0, $Variable);
 		$Relations->addPredication($SentenceRelation);
 	}
 
-	private function makeDeclarative(PredicationList $Relations, Variable $EventVariable)
+	private function makeDeclarative(PredicationList $Relations, Variable $SentenceEvent)
 	{
 		$Mood = $Relations->getPredicationByPredicate('mood');
 
 		$Relations->removePredication($Mood);
 		$DeclarativeMood = new Predication();
 		$DeclarativeMood->setPredicate('mood');
-		$A0 = $EventVariable->createClone();
+		$A0 = $SentenceEvent->createClone();
 		$A1 = new Atom('Declarative');
 		$DeclarativeMood->setArgument(0, $A0);
 		$DeclarativeMood->setArgument(1, $A1);

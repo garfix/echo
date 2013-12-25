@@ -64,3 +64,4 @@ aspect(?event, ?aspect) => true();
 determiner(?entity, ?det) => true();
 mood(?event, ?mood) => true();
 voice(?event, ?voice) => true();
+sentence(?event) => true();

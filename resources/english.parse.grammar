@@ -3,15 +3,15 @@
 	// Where did Lord Byron die?
 
 	rule:
-		S => WhADVP auxDo NP VP,
+		Clause => WhADVP auxDo NP VP,
 	semantics: {
-		S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and
-			subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
-		S.event = VP.event;
-		S.subject = NP.entity;
-		S.object = WhADVP.entity;
-		S.request = WhADVP.request;
-		S.event = WhADVP.event;
-		S.event = auxDo.event
+		Clause.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and
+			subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and request(Clause.request) and mood(Clause.event, Interrogative);
+		Clause.event = VP.event;
+		Clause.subject = NP.entity;
+		Clause.object = WhADVP.entity;
+		Clause.request = WhADVP.request;
+		Clause.event = WhADVP.event;
+		Clause.event = auxDo.event
 	}
 ]
