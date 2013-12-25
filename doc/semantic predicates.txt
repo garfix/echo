@@ -1,11 +1,9 @@
 subject(?event, ?entity)
 object(?event, ?entity)
-isa(?event|?entity, ?constant)
-tense(?event, ?constant)
-mood(?event, ?constant)
-voice(?event, ?constant)
-? link(?constant, ?event, ?entity) // link(On, ?sit, ?theTable)
-
-
+isa(?event|?entity, ?atom)
+tense(?event, ?atom)
+mood(?event, ?atom)
+voice(?event, ?atom)
+link(?atom, ?event|?entity, ?entity)
 qualification(?event, ?qualification)
 modification(?event|?entity, ?entity)

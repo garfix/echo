@@ -8,8 +8,8 @@
 		S.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and
 			subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
 		S.event = VP.event;
-		S.subject = NP.object;
-		S.object = WhADVP.object;
+		S.subject = NP.entity;
+		S.object = WhADVP.entity;
 		S.request = WhADVP.request;
 		S.event = WhADVP.event;
 		S.event = auxDo.event

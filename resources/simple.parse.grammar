@@ -6,7 +6,7 @@
 	semantics: {
 		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative);
     	S.event = VP.event;
-    	S.subject = NP.object;
+    	S.subject = NP.entity;
     	S.object = VP.object
 	}
 ]
@@ -31,9 +31,9 @@
 	semantics: {
 		S.sem = WhADVP.sem and VP.sem and NP.sem and subject(S.event, S.subject) and object(S.event, S.object) and request(S.request) and mood(S.event, Interrogative);
         S.event = VP.event;
-        S.subject = NP.object;
+        S.subject = NP.entity;
         S.subject = WhADVP.subject;
-        S.object = WhADVP.object;
+        S.object = WhADVP.entity;
         S.request = WhADVP.request;
         S.event = WhADVP.event
 	}
@@ -48,7 +48,7 @@
 		S.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(S.event, S.subject) and request(S.request) and mood(S.event, Interrogative);
 		S.event = WhADVP.event;
 		S.event = VP.event;
-		S.subject = NP.object;
+		S.subject = NP.entity;
 		S.request = WhADVP.request;
 		S.event = auxBe.event
     }
@@ -62,7 +62,7 @@
     semantics: {
 		S.sem = NP.sem and VP.sem and subject(S.event, S.subject) and mood(S.event, Interrogative);
 		S.event = VP.event;
-		S.subject = NP.object
+		S.subject = NP.entity
     }
 ]
 
@@ -74,8 +74,8 @@
     semantics: {
         S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Interrogative) and voice(S.event, Passive);
         S.event = VP.event;
-        S.subject = NP2.object;
-        S.object = NP1.object
+        S.subject = NP2.entity;
+        S.object = NP1.entity
     }
 ]
 
@@ -87,8 +87,8 @@
         S => auxBe NP1 NP2,
     semantics: {
        S.sem = auxBe.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and complement(S.event, S.complement) and mood(S.event, Interrogative);
-       S.complement = NP2.object;
-       S.subject = NP1.object
+       S.complement = NP2.entity;
+       S.subject = NP1.entity
     }
 
 ]
@@ -100,9 +100,9 @@
         S => WhADVP auxBe NP,
     semantics: {
         S.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative);
-        S.complement = WhADVP.object;
+        S.complement = WhADVP.entity;
         S.event = auxBe.event;
-        S.subject = NP.object;
+        S.subject = NP.entity;
         S.request = WhADVP.request
     }
 
@@ -158,7 +158,7 @@
 	semantics: {
 		VP.sem = verb.sem and NP.sem and object(VP.event, VP.object);
 		VP.event = verb.event;
-		VP.object = NP.object
+		VP.object = NP.entity
 	}
 ]
 
@@ -170,8 +170,8 @@
 	semantics: {
 		S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
 		S.event = verb.event;
-		S.subject = NP1.object;
-		S.object = NP2.object
+		S.subject = NP1.entity;
+		S.object = NP2.entity
 	}
 ]
 
@@ -183,7 +183,7 @@
 	semantics: {
 		VP.sem = AdjP.sem;
 		VP.event = AdjP.event;
-		VP.object = AdjP.object
+		VP.object = AdjP.entity
 	}
 ]
 
@@ -195,7 +195,7 @@
 	semantics: {
 		VP.sem = verb.sem and PP.sem;
 		VP.event = verb.event;
-		VP.event = PP.superObject
+		VP.event = PP.superEntity
 	}
 ]
 
@@ -233,8 +233,8 @@
         WhADVP => whwordNP NP,
     semantics: {
 		WhADVP.sem = whwordNP.sem and NP.sem;
-		WhADVP.object = whwordNP.object;
-		WhADVP.object = NP.object;
+		WhADVP.entity = whwordNP.entity;
+		WhADVP.entity = NP.entity;
 		WhADVP.request = whwordNP.adjunct
     }
 ]
@@ -246,8 +246,8 @@
         WhADVP => whwordNP AdjP,
     semantics: {
 		WhADVP.sem = whwordNP.sem and AdjP.sem;
-		WhADVP.object = whwordNP.object;
-		WhADVP.object = AdjP.object;
+		WhADVP.entity = whwordNP.entity;
+		WhADVP.entity = AdjP.entity;
 		WhADVP.request = whwordNP.adjunct
     }
 ]
@@ -261,7 +261,7 @@
         NP => PN,
     semantics: {
 		NP.sem = PN.sem;
-        NP.object = PN.object
+        NP.entity = PN.entity
     }
 ]
 
@@ -272,7 +272,7 @@
         NP => pronoun,
     semantics: {
 		NP.sem = pronoun.sem;
-        NP.object = pronoun.object
+        NP.entity = pronoun.entity
     }
 ]
 
@@ -283,8 +283,8 @@
         NP => DP NBar,
     semantics: {
 		NP.sem = DP.sem and NBar.sem;
-        NP.object = NBar.object;
-        NP.object = DP.entity
+        NP.entity = NBar.entity;
+        NP.entity = DP.entity
     }
 ]
 
@@ -295,7 +295,7 @@
         NP => NBar,
     semantics: {
 		NP.sem = NBar.sem;
-        NP.object = NBar.object
+        NP.entity = NBar.entity
     }
 ]
 
@@ -308,7 +308,7 @@
         NBar => noun,
     semantics: {
 		NBar.sem = noun.sem;
-        NBar.object = noun.object
+        NBar.entity = noun.entity
     }
 ]
 
@@ -319,7 +319,7 @@
         NBar1 => AdjP NBar2,
     semantics: {
 		NBar1.sem = AdjP.sem and NBar2.sem;
-        NBar1.object = NBar2.object
+        NBar1.entity = NBar2.entity
     }
 ]
 
@@ -333,8 +333,8 @@
         NBar => NBar2 PP,
     semantics: {
 		NBar.sem = NBar2.sem and PP.sem;
-        NBar.object = NBar2.object;
-        NBar.object = PP.superObject
+        NBar.entity = NBar2.entity;
+        NBar.entity = PP.superEntity
     }
 ]
 
@@ -346,8 +346,8 @@
 	rule:
         PN => propernoun,
     semantics: {
-		PN.sem = name(PN.object, propernoun.text);
-        PN.object = propernoun.object
+		PN.sem = name(PN.entity, propernoun.text);
+        PN.entity = propernoun.entity
     }
 ]
 
@@ -357,9 +357,9 @@
 	rule:
         PN => propernoun1 propernoun2,
     semantics: {
-		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text);
-        PN.object = propernoun1.object;
-        PN.object = propernoun2.object
+		PN.sem = name(PN.entity, propernoun1.text + " " + propernoun2.text);
+        PN.entity = propernoun1.entity;
+        PN.entity = propernoun2.entity
     }
 ]
 
@@ -369,10 +369,10 @@
 	rule:
         PN => propernoun1 propernoun2 propernoun3,
     semantics: {
-		PN.sem = name(PN.object, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
-        PN.object = propernoun1.object;
-        PN.object = propernoun2.object;
-        PN.object = propernoun3.object
+		PN.sem = name(PN.entity, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
+        PN.entity = propernoun1.entity;
+        PN.entity = propernoun2.entity;
+        PN.entity = propernoun3.entity
     }
 ]
 
@@ -382,9 +382,9 @@
 	rule:
         PN => propernoun1 insertion propernoun2,
     semantics: {
-        PN.sem = name(PN.object, propernoun1.text + " " + insertion.text + " " + propernoun2.text);
-        PN.object = propernoun1.object;
-        PN.object = propernoun2.object
+        PN.sem = name(PN.entity, propernoun1.text + " " + insertion.text + " " + propernoun2.text);
+        PN.entity = propernoun1.entity;
+        PN.entity = propernoun2.entity
     }
 ]
 
@@ -395,9 +395,9 @@
 		PP => preposition NP,
 	semantics: {
 		PP.sem = preposition.sem and NP.sem;
-		PP.superObject = preposition.superObject;
-		PP.subObject = preposition.subObject;
-		PP.subObject = NP.object
+		PP.superEntity = preposition.superEntity;
+		PP.subEntity = preposition.subEntity;
+		PP.subEntity = NP.entity
 	}
 ]
 
@@ -483,9 +483,9 @@
         DP => NP possessiveMarker,
     semantics: {
         DP.sem = NP.sem and possessiveMarker.sem;
-        DP.subObject = possessiveMarker.subObject;
-        DP.entity = possessiveMarker.superObject;
-        DP.subObject = NP.object
+        DP.subEntity = possessiveMarker.subEntity;
+        DP.entity = possessiveMarker.superEntity;
+        DP.subEntity = NP.entity
     }
 ]
 

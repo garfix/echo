@@ -55,7 +55,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'isa(noun.object, Bird)';
+		$string = 'isa(noun.entity, Bird)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -145,7 +145,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = '{S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.object}';
+		$string = '{S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.entity}';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

@@ -160,7 +160,7 @@
 		link(?link, NBar.entity, ?entity),
 	bind: {
 		NBar.entity = NBar.entity;
-		PP.superObject = NBar.entity
+		PP.superEntity = NBar.entity
 	}
 ]
 
@@ -169,7 +169,7 @@
 	rule:
 		NBar => noun,
 	bind: {
-		noun.object = NBar.entity
+		noun.entity = NBar.entity
 	}
 ]
 
@@ -180,11 +180,11 @@
 	rule:
 		PP => preposition NP,
 	condition:
-    	link(?link, PP.superObject, PP.subObject),
+    	link(?link, PP.superEntity, PP.subEntity),
     bind: {
-        preposition.superObject = PP.superObject;
-        preposition.subObject = PP.subObject;
-        NP.entity = PP.subObject
+        preposition.superEntity = PP.superEntity;
+        preposition.subEntity = PP.subEntity;
+        NP.entity = PP.subEntity
     }
 ]
 
@@ -198,7 +198,7 @@
 		modifier(AdjP.entity, AdjP.modifier),
 	bind: {
 		NP.entity = AdjP.modifier;
-		adjective.object = AdjP.entity
+		adjective.entity = AdjP.entity
 	}
 ]
 
@@ -207,7 +207,7 @@
 	rule:
 		AdjP => adjective,
 	bind: {
-		adjective.object = AdjP.entity
+		adjective.entity = AdjP.entity
 	}
 ]
 
@@ -218,9 +218,9 @@
 	rule:
 		adjective => word,
 	condition:
-		isa(adjective.object, ?type),
+		isa(adjective.entity, ?type),
 	word:
-		isa(adjective.object, ?type)
+		isa(adjective.entity, ?type)
 ]
 
 # noun
@@ -230,9 +230,9 @@
 	rule:
 		noun => word,
 	condition:
-		isa(noun.object, ?type),
+		isa(noun.entity, ?type),
 	word:
-		isa(noun.object, ?type)
+		isa(noun.entity, ?type)
 ]
 
 # propernoun

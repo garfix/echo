@@ -24,7 +24,6 @@ Volgende zinnen:
 Nu:
 
 * De niet-web code is nog niet UNICODE-proof
-* Noem de object in NP.object: entity, om verwarring met het syntactische object te voorkomen
 * Maak een cleane API waarin op een nette manier aangepaste dependencies kunnen worden geinjecteerd, en zorg voor defaults
 * Verander 'predication' in 'relation'
 * Property: 'object' hoeft geen zelfstandig object te zijn, alleen de naam is relevant, toch?

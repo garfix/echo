@@ -22,11 +22,11 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Rule = $Parser->parse("{
 			S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
 			S.event = VP.event;
-			S.subject = NP.object
+			S.subject = NP.entity
 		}");
 
 		$childNodeSemantics = array(
-			'NP' => $Parser->parse("name(NP.object, 'John')"),
+			'NP' => $Parser->parse("name(NP.entity, 'John')"),
 			'VP' => $Parser->parse("isa(VP.event, Walk)"),
 		);
 
@@ -44,13 +44,13 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Rule = $Parser->parse("{
 			S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
 			S.event = VP.event;
-			S.subject = NP1.object;
-			S.object = NP2.object
+			S.subject = NP1.entity;
+			S.object = NP2.entity
 		}");
 
 		$childNodeSemantics = array(
-			'NP1' => $Parser->parse("name(NP.object, 'John')"),
-			'NP2' => $Parser->parse("isa(NP.object, Car)"),
+			'NP1' => $Parser->parse("name(NP.entity, 'John')"),
+			'NP2' => $Parser->parse("isa(NP.entity, Car)"),
 			'VP' => $Parser->parse("isa(VP.event, Drive)"),
 		);
 
@@ -66,8 +66,8 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			PN.sem = name(PN.object, propernoun1.text);
-			PN.object = propernoun1.object
+			PN.sem = name(PN.entity, propernoun1.text);
+			PN.entity = propernoun1.entity
 		}");
 
 		$childNodeTexts = array(
@@ -76,7 +76,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
 
-		$this->assertSame('name(PN.object, "John")', (string)$Result);
+		$this->assertSame('name(PN.entity, "John")', (string)$Result);
 	}
 
 	public function testChildAssignmentsTwoOperands()
@@ -86,9 +86,9 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			PN.sem = name(PN.object, propernoun1.text + ' ' + propernoun2.text);
-			PN.object = propernoun1.object;
-			PN.object = propernoun2.object
+			PN.sem = name(PN.entity, propernoun1.text + ' ' + propernoun2.text);
+			PN.entity = propernoun1.entity;
+			PN.entity = propernoun2.entity
 		}");
 
 		$childNodeTexts = array(
@@ -98,7 +98,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
 
-		$this->assertSame('name(PN.object, "John Wilks")', (string)$Result);
+		$this->assertSame('name(PN.entity, "John Wilks")', (string)$Result);
 	}
 
 	public function testChildAssignmentsThreeOperands()
@@ -108,10 +108,10 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			PN.sem = name(PN.object, propernoun1.text + ' ' + propernoun2.text + ' ' + propernoun3.text);
-			PN.object = propernoun1.object;
-			PN.object = propernoun2.object;
-			PN.object = propernoun3.object
+			PN.sem = name(PN.entity, propernoun1.text + ' ' + propernoun2.text + ' ' + propernoun3.text);
+			PN.entity = propernoun1.entity;
+			PN.entity = propernoun2.entity;
+			PN.entity = propernoun3.entity
 		}");
 
 		$childNodeTexts = array(
@@ -122,6 +122,6 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, array(), $childNodeTexts);
 
-		$this->assertSame('name(PN.object, "Patrick van Bergen")', (string)$Result);
+		$this->assertSame('name(PN.entity, "Patrick van Bergen")', (string)$Result);
 	}
 }

@@ -5,7 +5,7 @@ S:
 - request (bij wh-questions)
 
 NP:
-- object / entity
+- entity
 
 VP
 - event
@@ -21,16 +21,16 @@ SBar:
 - subEvent
 
 preposition:
-- subObject
-- superObject
+- superEntity
+- subEntity
 
 PP:
-- subObject
-- superObject
+- superEntity
+- subEntity
 
 DP:
-- subObject
-- superObject
+- superEntity
+- subEntity
 
 All objects:
 - text

@@ -4,14 +4,14 @@
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
-	semantics: link(Of, this.superObject, this.subObject)
+	semantics: link(Of, this.superEntity, this.subEntity)
 ] [
 	form: 'april',
 	partOfSpeech: 'noun'
 ] [
 	form: 'auteur',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Author)
+	semantics: isa(this.entity, Author)
 ] [
 	form: 'ben',
 	partOfSpeech: 'verb'
@@ -54,7 +54,7 @@
 ] [
 	form: 'dochter',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Daughter)
+	semantics: isa(this.entity, Daughter)
 ] [
 	form: 'een',
 	partOfSpeech: 'determiner',
@@ -104,11 +104,11 @@
 ] [
 	form: 'hoeveel',
 	partOfSpeech: 'whwordNP',
-	semantics: manner(this.object, this.adjunct) and many(this.object)
+	semantics: manner(this.entity, this.adjunct) and many(this.entity)
 ] [
 	form: 'ik',
 	partOfSpeech: 'pronoun',
-	semantics: firstPerson(this.object)
+	semantics: firstPerson(this.entity)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
@@ -128,14 +128,14 @@
 ] [
 	form: 'jaar',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Year)
+	semantics: isa(this.entity, Year)
 ] [
 	form: 'januari',
 	partOfSpeech: 'noun'
 ] [
 	form: 'kinderen',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Child)
+	semantics: isa(this.entity, Child)
 ] [
 	form: 'liep',
 	partOfSpeech: 'simpleVerb',
@@ -147,7 +147,7 @@
 ] [
 	form: 'met',
 	partOfSpeech: 'preposition',
-	semantics: link(To, this.superObject, this.subObject)
+	semantics: link(To, this.superEntity, this.subEntity)
 ] [
 	form: 'noem',
 	partOfSpeech: 'verb',
@@ -163,15 +163,15 @@
 ] [
 	form: 'oud',
 	partOfSpeech: 'adjective',
-	semantics: isa(this.object, Old)
+	semantics: isa(this.entity, Old)
 ] [
 	form: 'ouders',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Parent)
+	semantics: isa(this.entity, Parent)
 ] [
 	form: 'van',
 	partOfSpeech: 'preposition',
-	semantics: link(Of, this.superObject, this.subObject)
+	semantics: link(Of, this.superEntity, this.subEntity)
 ] [
 	form: 'vlucht',
 	partOfSpeech: 'noun'

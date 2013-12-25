@@ -4,7 +4,7 @@
 ] [
 	form: "'s",
 	partOfSpeech: 'possessiveMarker',
-	semantics: link(Of, this.superObject, this.subObject)
+	semantics: link(Of, this.superEntity, this.subEntity)
 ] [
 	form: 'a',
 	partOfSpeech: 'determiner'
@@ -30,14 +30,14 @@
 ] [
 	form: 'author',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Author)
+	semantics: isa(this.entity, Author)
 ] [
 	form: 'barking',
 	partOfSpeech: 'adjective'
 ] [
 	form: 'bed',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Bed)
+	semantics: isa(this.entity, Bed)
 ] [
 	form: 'book',
 	partOfSpeech: 'verb'
@@ -69,11 +69,11 @@
 ] [
 	form: 'children',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Child)
+	semantics: isa(this.entity, Child)
 ] [
 	form: 'daughter',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Daughter)
+	semantics: isa(this.entity, Daughter)
 ] [
 	form: 'did',
 	partOfSpeech: 'aux'
@@ -131,11 +131,11 @@
 ] [
 	form: 'how',
 	partOfSpeech: 'whwordNP',
-	semantics: manner(this.object, this.adjunct)
+	semantics: manner(this.entity, this.adjunct)
 ] [
 	form: 'i',
 	partOfSpeech: 'pronoun',
-	semantics: firstPerson(this.object)
+	semantics: firstPerson(this.entity)
 ] [
 	form: 'in',
 	partOfSpeech: 'preposition',
@@ -163,7 +163,7 @@
 ] [
 	form: 'many',
 	partOfSpeech: 'determiner',
-	semantics: many(this.object)
+	semantics: many(this.entity)
 ] [
 #deprecated
 	form: 'married',
@@ -188,11 +188,11 @@
 ] [
 	form: 'of',
 	partOfSpeech: 'preposition',
-	semantics: link(Of, this.superObject, this.subObject)
+	semantics: link(Of, this.superEntity, this.subEntity)
 ] [
 	form: 'old',
 	partOfSpeech: 'adjective',
-	semantics: isa(this.object, Old)
+	semantics: isa(this.entity, Old)
 ] [
 	form: 'on',
 	partOfSpeech: 'preposition',
@@ -203,7 +203,7 @@
 ] [
 	form: 'parents',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Parent)
+	semantics: isa(this.entity, Parent)
 ] [
 	form: 'red',
 	partOfSpeech: 'adjective'
@@ -213,7 +213,7 @@
 ] [
 	form: 'she',
 	partOfSpeech: 'pronoun',
-	semantics: isa(this.object, Female) and reference(this.object)
+	semantics: isa(this.entity, Female) and reference(this.entity)
 ] [
 	form: 'the',
 	partOfSpeech: 'determiner',
@@ -227,7 +227,7 @@
 ] [
 	form: 'to',
 	partOfSpeech: 'preposition',
-	semantics: link(To, this.superObject, this.subObject)
+	semantics: link(To, this.superEntity, this.subEntity)
 ] [
 	form: 'very',
 	partOfSpeech: 'degreeAdverb'
@@ -274,5 +274,5 @@
 ] [
 	form: 'years',
 	partOfSpeech: 'noun',
-	semantics: isa(this.object, Year)
+	semantics: isa(this.entity, Year)
 ]

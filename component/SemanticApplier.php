@@ -25,15 +25,15 @@ class SemanticApplier
 	 *
 	 * Example (an Assignmentlist that can be paraphrased as):
 	 * 	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
-	 *	S.event = WhNP.object;
-	 *	S.subject = NP.object;
+	 *	S.event = WhNP.entity;
+	 *	S.subject = NP.entity;
 	 *	S.request = WhNP.request
 	 *
 	 * @param array $childNodeSemantics An array of [cat => SemanticStructure]
 	 * @param array $childNodeTexts An array of [cat => sentence text associated with these nodes]
 	 *
 	 * Example:
-	 *  NP => isa(this.object, Old)
+	 *  NP => isa(this.entity, Old)
 	 *
 	 * @return SemanticStructure A predication list
 	 */
@@ -42,7 +42,7 @@ class SemanticApplier
 		if ($Rule instanceof AssignmentList) {
 
 			// A rule consists of one or more assignments
-			// like: S.event = WhNP.object
+			// like: S.event = WhNP.entity
 			$assignments = $Rule->getAssignments();
 
 			// look up the syntactic category
@@ -86,10 +86,10 @@ class SemanticApplier
 	 *      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
 	 *
 	 * $childPropertyBindings example:
-	 *      ['object' => NP.object]
+	 *      ['entity' => NP.entity]
 	 *
 	 * $childNodeSemantics example:
-	 *      'NP' => isa(this.object, Old)
+	 *      'NP' => isa(this.entity, Old)
 	 *
 	 * @return PredicationList
 	 */
@@ -154,10 +154,10 @@ class SemanticApplier
 	 *      WhNP.sem
 	 *
 	 * $childPropertyBindings example:
-	 *      ['object' => NP.object]
+	 *      ['entity' => NP.entity]
 	 *
 	 * $childNodeSemantics example:
-	 *      'NP' => isa(this.object, Old)
+	 *      'NP' => isa(this.entity, Old)
 	 *
 	 * @return array
 	 */
@@ -196,7 +196,7 @@ class SemanticApplier
 	 * Replaces all property arguments (like NP.subject) in a child-semantics predication with the matching
 	 * properties in the parent-semantics. These are given in $childPropertyBindings.
 	 *
-	 * @param \agentecho\datastructure\Predication $Predication A predication like 'name(NP.object, "John")'
+	 * @param \agentecho\datastructure\Predication $Predication A predication like 'name(NP.entity, "John")'
 	 * @param array $childPropertyBindings
 	 * @param string $childId The child node semantics id (like NP1, or VP)
 	 */
@@ -249,7 +249,7 @@ class SemanticApplier
 	/*
 	 * For predications like
 	 *
-	 *     name(this.object, propernoun1.text + ' ' + propernoun2.text)
+	 *     name(this.entity, propernoun1.text + ' ' + propernoun2.text)
 	 *
 	 * replace the argument
 	 *

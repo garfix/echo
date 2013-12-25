@@ -181,7 +181,7 @@ abstract class BaseGrammar implements Grammar
 			$List = new PredicationList();
 
 			$Prop = new Property();
-			$Prop->setName('object');
+			$Prop->setName('entity');
 			$Prop->setObject(new Atom('this'));
 
 			$Pred = new Predication();
