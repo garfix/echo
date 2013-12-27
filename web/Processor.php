@@ -22,7 +22,7 @@ use agentecho\web\component\LineEditor;
 use agentecho\web\view\BackTraceView;
 use agentecho\web\view\BindingsView;
 use agentecho\web\view\PhraseStructureView;
-use agentecho\web\view\PredicationListView;
+use agentecho\web\view\RelationListView;
 use agentecho\web\view\SparqlQueryView;
 use agentecho\web\view\SyntaxView;
 
@@ -146,13 +146,13 @@ class Processor
 			$View = new SyntaxView();
 			$html = $View->getHtml($value);
 		} elseif ($key == 'semantics') {
-			$View = new PredicationListView();
+			$View = new RelationListView();
 			$html = $View->getHtml($value);
 		} elseif ($key == 'interpretation') {
-			$View = new PredicationListView();
+			$View = new RelationListView();
 			$html = $View->getHtml($value);
 		} elseif ($key == 'relations') {
-			$View = new PredicationListView();
+			$View = new RelationListView();
 			$html = $View->getHtml($value);
 		} elseif ($key == 'query') {
 			$View = new SparqlQueryView();

@@ -95,8 +95,8 @@ class Lexicon
 		$this->wordFormIndex[$Entry->getWordForm()][$Entry->getPartOfSpeech()] = $Entry;
 
 		// index semantics
-		foreach ($Entry->getSemantics()->getPredications() as $Predication) {
-			$predicate = $Predication->getPredicate();
+		foreach ($Entry->getSemantics()->getRelations() as $Relation) {
+			$predicate = $Relation->getPredicate();
 			$this->predicateIndex[$Entry->getPartOfSpeech()][$predicate][(string)$Entry] = $Entry;
 		}
 	}
@@ -105,14 +105,14 @@ class Lexicon
 	 * Returns the first lexical entry [word, partOfSpeech] found that matches a series of $Semantics relations.
 	 *
 	 * @param string $partOfSpeech
-	 * @param PredicationList $Semantics
+	 * @param RelationList $Semantics
 	 * @return array|bool
 	 */
-	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics)
+	public function getWordForSemantics($partOfSpeech, RelationList $Semantics)
 	{
-		$predications = $Semantics->getPredications();
+		$relations = $Semantics->getRelations();
 
-		if (empty($predications)) {
+		if (empty($relations)) {
 
 			// no semantic constraints: find the first entry with the part-of-speech
 			foreach ($this->entries as $Entry) {
@@ -123,12 +123,12 @@ class Lexicon
 
 		} else {
 
-			// for each of the $Semantics predications, find the lexical entries that have it
+			// for each of the $Semantics relations, find the lexical entries that have it
 			/** @var LexicalEntry[] $entries */
 			$entries = array();
-			foreach ($predications as $Predication) {
+			foreach ($relations as $Relation) {
 
-				$predicate = $Predication->getPredicate();
+				$predicate = $Relation->getPredicate();
 
 				if (isset($this->predicateIndex[$partOfSpeech][$predicate])) {
 					if (empty($entries)) {
@@ -137,18 +137,18 @@ class Lexicon
 						$entries = array_intersect_key($entries, $this->predicateIndex[$partOfSpeech][$predicate]);
 					}
 				} else {
-					// no entries have this predication
+					// no entries have this relation
 					return false;
 				}
 			}
 
-			// check each of $Semantics predications against the predications of the lexical entries
+			// check each of $Semantics relations against the relations of the lexical entries
 			foreach ($entries as $Entry) {
 				$success = true;
-				foreach ($Semantics->getPredications() as $Predication) {
+				foreach ($Semantics->getRelations() as $Relation) {
 					$propertyBindings = array();
 					$variableBindings = array();
-					if (!Matcher::matchPredicationAgainstList($Predication, $Entry->getSemantics(), $propertyBindings, $variableBindings)) {
+					if (!Matcher::matchRelationAgainstList($Relation, $Entry->getSemantics(), $propertyBindings, $variableBindings)) {
 						$success = false;
 						break;
 					}

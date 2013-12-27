@@ -3,8 +3,8 @@
 namespace agentecho\component\parser;
 
 use agentecho\exception\SemanticStructureParseException;
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
@@ -113,7 +113,7 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseAssignmentList($tokens, $pos, $Result)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parsePredicationList($tokens, $pos, $Result)) {
+		} elseif ($newPos = $this->parseRelationList($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parsePropertyAssignment($tokens, $pos, $Result)) {
 			$pos = $newPos;
@@ -245,13 +245,13 @@ class SemanticStructureParser
 
 				} elseif ($label == 'condition') {
 
-					if ($pos = $this->parsePredicationList($tokens, $pos, $List)) {
+					if ($pos = $this->parseRelationList($tokens, $pos, $List)) {
 						$ParseRule->setCondition($List);
 					}
 
 				} elseif ($label == 'word') {
 
-					if ($pos = $this->parsePredicationList($tokens, $pos, $List)) {
+					if ($pos = $this->parseRelationList($tokens, $pos, $List)) {
 						$ParseRule->setWordSemantics($List);
 					}
 
@@ -311,7 +311,7 @@ class SemanticStructureParser
 
 				} elseif ($label == 'semantics') {
 
-					if ($pos = $this->parsePredicationList($tokens, $pos, $Semantics)) {
+					if ($pos = $this->parseRelationList($tokens, $pos, $Semantics)) {
 						$LexicalEntry->setSemantics($Semantics);
 					}
 
@@ -377,15 +377,15 @@ class SemanticStructureParser
 	 */
 	private function parseDataMapping(array $tokens, $pos, &$DataMapping)
 	{
-		if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList1)) {
+		if ($pos = $this->parseRelationList($tokens, $pos, $RelationList1)) {
 
 			if ($pos = $this->parseSingleToken(self::T_TRANSFORMATION, $tokens, $pos)) {
 
-				if ($pos = $this->parsePredicationList($tokens, $pos, $PredicationList2)) {
+				if ($pos = $this->parseRelationList($tokens, $pos, $RelationList2)) {
 
 					$DataMapping = new DataMapping();
-					$DataMapping->setPreList($PredicationList1);
-					$DataMapping->setPostList($PredicationList2);
+					$DataMapping->setPreList($RelationList1);
+					$DataMapping->setPostList($RelationList2);
 					return $pos;
 				}
 			}
@@ -408,7 +408,7 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseProperty($tokens, $pos, $Term)) {
 			$pos = $newPos;
-		} elseif ($newPos = $this->parsePredication($tokens, $pos, $Term)) {
+		} elseif ($newPos = $this->parseRelation($tokens, $pos, $Term)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -416,7 +416,7 @@ class SemanticStructureParser
 		return $pos;
 	}
 
-	private function parsePredicationLet(array $tokens, $pos, &$Predication)
+	private function parseRelationLet(array $tokens, $pos, &$Relation)
 		{
 			$predicate = null;
 			$arguments = array();
@@ -449,9 +449,9 @@ class SemanticStructureParser
 						if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
 							$pos = $newPos;
 
-							$Predication = new Predication();
-							$Predication->setPredicate($predicate);
-							$Predication->setArguments($arguments);
+							$Relation = new Relation();
+							$Relation->setPredicate($predicate);
+							$Relation->setArguments($arguments);
 
 							return $pos;
 						}
@@ -462,10 +462,10 @@ class SemanticStructureParser
 			return false;
 		}
 
-	private function parsePredication(array $tokens, $pos, &$Predication)
+	private function parseRelation(array $tokens, $pos, &$Relation)
 	{
 		// special case: let
-		if ($newPos = $this->parsePredicationLet($tokens, $pos, $Predication)) {
+		if ($newPos = $this->parseRelationLet($tokens, $pos, $Relation)) {
 			$pos = $newPos;
 			return $pos;
 		}
@@ -509,9 +509,9 @@ class SemanticStructureParser
 				if ($newPos = $this->parseSingleToken(self::T_BRACKET_CLOSE, $tokens, $pos)) {
 					$pos = $newPos;
 
-					$Predication = new Predication();
-					$Predication->setPredicate($predicate);
-					$Predication->setArguments($arguments);
+					$Relation = new Relation();
+					$Relation->setPredicate($predicate);
+					$Relation->setArguments($arguments);
 
 					return $pos;
 				}
@@ -521,12 +521,12 @@ class SemanticStructureParser
 		return false;
 	}
 
-	private function parsePredicationList(array $tokens, $pos, &$PredicationList)
+	private function parseRelationList(array $tokens, $pos, &$RelationList)
 	{
 		$count = 0;
-		$predications = array($count => null);
+		$relations = array($count => null);
 
-		if ($newPos = $this->parsePredication($tokens, $pos, $predications[$count])) {
+		if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
 			$pos = $newPos;
 			$count++;
 
@@ -537,8 +537,8 @@ class SemanticStructureParser
 					$pos = $newPos;
 
 					// argument
-					$predications[$count] = null;
-					if ($newPos = $this->parsePredication($tokens, $pos, $predications[$count])) {
+					$relations[$count] = null;
+					if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
 						$pos = $newPos;
 						$count++;
 					} else {
@@ -549,8 +549,8 @@ class SemanticStructureParser
 
 			}
 
-			$PredicationList = new PredicationList();
-			$PredicationList->setPredications($predications);
+			$RelationList = new RelationList();
+			$RelationList->setRelations($relations);
 			return $pos;
 		}
 

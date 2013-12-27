@@ -10,8 +10,8 @@ use agentecho\exception\NoBindingsException;
 use agentecho\exception\NoSemanticsAtTopLevelException;
 use agentecho\exception\ParseException;
 use agentecho\grammar\Grammar;
-use agentecho\datastructure\PredicationList;
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\RelationList;
+use agentecho\datastructure\Relation;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
 use agentecho\exception\MissingRequestFieldException;
@@ -69,8 +69,8 @@ class SentenceProcessor
 			$this->send(new LogEvent(array('semantics' => $Semantics)));
 
 			// replace all request properties with variables
-			foreach ($Semantics->getPredications() as $Predication) {
-				$this->changeRequestPropertyInVariable($Predication);
+			foreach ($Semantics->getRelations() as $Relation) {
+				$this->changeRequestPropertyInVariable($Relation);
 			}
 
 			// answer the question
@@ -99,15 +99,15 @@ class SentenceProcessor
 	}
 
 	/**
-	 * @param PredicationList $Question
+	 * @param RelationList $Question
 	 * @param Grammar $CurrentGrammar
-	 * @return PredicationList|false
+	 * @return RelationList|false
 	 */
-	private function answer(PredicationList $Question, Grammar $CurrentGrammar)
+	private function answer(RelationList $Question, Grammar $CurrentGrammar)
 	{
 		$Answer = false;
 
-		$SentenceRelation = $Question->getPredicationByPredicate('sentence');
+		$SentenceRelation = $Question->getRelationByPredicate('sentence');
 		if (!$SentenceRelation) {
 			return false;
 		}
@@ -115,7 +115,7 @@ class SentenceProcessor
 		/** @var Variable $SentenceEvent */
 		$SentenceEvent = $SentenceRelation->getArgument(0);
 
-		$MoodRelation = $Question->getPredicationByPredicate('mood', [$SentenceEvent]);
+		$MoodRelation = $Question->getRelationByPredicate('mood', [$SentenceEvent]);
 		if (!$MoodRelation) {
 			return false;
 		}
@@ -245,10 +245,10 @@ class SentenceProcessor
 		return $Sentence;
 	}
 
-	private function getInterrogativeAnswer(Variable $SentenceEvent, PredicationList $Question, Grammar $CurrentGrammar)
+	private function getInterrogativeAnswer(Variable $SentenceEvent, RelationList $Question, Grammar $CurrentGrammar)
 	{
 		// does the question contain a specific requested field?
-		$RequestRelation = $Question->getPredicationByPredicate('request');
+		$RequestRelation = $Question->getRelationByPredicate('request');
 		if ($RequestRelation) {
 
 			$Answer = $this->getRequestedAnswer($SentenceEvent, $RequestRelation, $Question, $CurrentGrammar);
@@ -262,7 +262,7 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getRequestedAnswer(Variable $SentenceEvent, Predication $RequestRelation, PredicationList $Question, Grammar $CurrentGrammar)
+	private function getRequestedAnswer(Variable $SentenceEvent, Relation $RequestRelation, RelationList $Question, Grammar $CurrentGrammar)
 	{
 		// since this is a yes-no question, check the statement
 		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
@@ -287,7 +287,7 @@ class SentenceProcessor
 			// find requested object
 			$RequestVariable = $RequestRelation->getArgument(0)->createClone();
 
-			if ($MannerRelation = $Question->getPredicationByPredicate('manner')) {
+			if ($MannerRelation = $Question->getRelationByPredicate('manner')) {
 				if ($MannerRelation->getArgument(1) == $RequestVariable) {
 
 					$M = new Variable('v1'); # todo: create new variable
@@ -302,7 +302,7 @@ class SentenceProcessor
 						$this->addBinaryRelation($Answer, 'determiner', $R, new Atom($answer));
 					}
 				}
-			} elseif ($LocationRelation = $Question->getPredicationByPredicate('location')) {
+			} elseif ($LocationRelation = $Question->getRelationByPredicate('location')) {
 
 				$E = $LocationRelation->getArgument(0);
 
@@ -313,7 +313,7 @@ class SentenceProcessor
 				// create link relation
 				$this->addTertiaryRelation($Answer, 'link', new Atom('In'), $E, $L);
 
-			} elseif ($LocationRelation = $Question->getPredicationByPredicate('at_time')) {
+			} elseif ($LocationRelation = $Question->getRelationByPredicate('at_time')) {
 
 				$E = $LocationRelation->getArgument(0);
 
@@ -344,9 +344,9 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getYesNoAnswer(Variable $SentenceEvent, PredicationList $Question)
+	private function getYesNoAnswer(Variable $SentenceEvent, RelationList $Question)
 	{
-		$ComplementRelation = $Question->getPredicationByPredicate('complement');
+		$ComplementRelation = $Question->getRelationByPredicate('complement');
 		if ($ComplementRelation) {
 
 			$Answer = $this->getComplementYesNoAnswer($SentenceEvent, $ComplementRelation, $Question);
@@ -360,12 +360,12 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getComplementYesNoAnswer(Variable $SentenceEvent, Predication $ComplementRelation, PredicationList $Question)
+	private function getComplementYesNoAnswer(Variable $SentenceEvent, Relation $ComplementRelation, RelationList $Question)
 	{
 		/** @var Variable $ComplementVariable */
 		$ComplementVariable = $ComplementRelation->getArgument(1);
 
-		$SubjectRelation = $Question->getPredicationByPredicate('subject', [$SentenceEvent, null]);
+		$SubjectRelation = $Question->getRelationByPredicate('subject', [$SentenceEvent, null]);
 		/** @var Variable $SubjectVariable */
 		$SubjectVariable = $SubjectRelation->getArgument(1);
 
@@ -377,7 +377,7 @@ class SentenceProcessor
 		return $this->getDefaultYesNoAnswer($SentenceEvent, $AdaptedQuestion);
 	}
 
-	private function getDefaultYesNoAnswer(Variable $SentenceEvent, PredicationList $Question)
+	private function getDefaultYesNoAnswer(Variable $SentenceEvent, RelationList $Question)
 	{
 		$Answer = false;
 
@@ -400,7 +400,7 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function getImperativeAnswer(Variable $SentenceEvent, PredicationList $Question)
+	private function getImperativeAnswer(Variable $SentenceEvent, RelationList $Question)
 	{
 		# presume this is a request for information
 
@@ -426,57 +426,57 @@ class SentenceProcessor
 		return $Answer;
 	}
 
-	private function replaceVariable(PredicationList $Relations, Variable $V1, Variable $V2)
+	private function replaceVariable(RelationList $Relations, Variable $V1, Variable $V2)
 	{
-		foreach ($Relations->getPredications() as $Predication) {
-			foreach ($Predication->getArguments() as $i => $Argument) {
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $i => $Argument) {
 				if ($Argument == $V1) {
-					$Predication->setArgument($i, $V2->createClone());
+					$Relation->setArgument($i, $V2->createClone());
 				}
 			}
 		}
 	}
 
-	private function addSentenceRelation(PredicationList $Relations, Variable $Variable)
+	private function addSentenceRelation(RelationList $Relations, Variable $Variable)
 	{
-		$SentenceRelation = new Predication();
+		$SentenceRelation = new Relation();
 		$SentenceRelation->setPredicate('sentence');
 
 		$SentenceRelation->setArgument(0, $Variable);
-		$Relations->addPredication($SentenceRelation);
+		$Relations->addRelation($SentenceRelation);
 	}
 
-	private function makeDeclarative(PredicationList $Relations, Variable $SentenceEvent)
+	private function makeDeclarative(RelationList $Relations, Variable $SentenceEvent)
 	{
-		$Mood = $Relations->getPredicationByPredicate('mood');
+		$Mood = $Relations->getRelationByPredicate('mood');
 
-		$Relations->removePredication($Mood);
-		$DeclarativeMood = new Predication();
+		$Relations->removeRelation($Mood);
+		$DeclarativeMood = new Relation();
 		$DeclarativeMood->setPredicate('mood');
 		$A0 = $SentenceEvent->createClone();
 		$A1 = new Atom('Declarative');
 		$DeclarativeMood->setArgument(0, $A0);
 		$DeclarativeMood->setArgument(1, $A1);
-		$Relations->addPredication($DeclarativeMood);
+		$Relations->addRelation($DeclarativeMood);
 	}
 
-	private function addBinaryRelation(PredicationList $Relations, $predicate, $Arg0, $Arg1)
+	private function addBinaryRelation(RelationList $Relations, $predicate, $Arg0, $Arg1)
 	{
-		$Relation = new Predication();
+		$Relation = new Relation();
 		$Relation->setPredicate($predicate);
 		$Relation->setArgument(0, $Arg0);
 		$Relation->setArgument(1, $Arg1);
-		$Relations->addPredication($Relation);
+		$Relations->addRelation($Relation);
 	}
 
-	private function addTertiaryRelation(PredicationList $Relations, $predicate, $Arg0, $Arg1, $Arg2)
+	private function addTertiaryRelation(RelationList $Relations, $predicate, $Arg0, $Arg1, $Arg2)
 	{
-		$Relation = new Predication();
+		$Relation = new Relation();
 		$Relation->setPredicate($predicate);
 		$Relation->setArgument(0, $Arg0);
 		$Relation->setArgument(1, $Arg1);
 		$Relation->setArgument(2, $Arg2);
-		$Relations->addPredication($Relation);
+		$Relations->addRelation($Relation);
 	}
 
 	private function getFullTrace(\Exception $E)
@@ -491,9 +491,9 @@ class SentenceProcessor
 		return array_merge(array($topLevel), $E->getTrace());
 	}
 
-	private function answerQuestionWithSemantics(PredicationList $PredicationList)
+	private function answerQuestionWithSemantics(RelationList $RelationList)
 	{
-		$Interpretation = $this->interpret($PredicationList);
+		$Interpretation = $this->interpret($RelationList);
 
 		$bindings = $this->createBindings($Interpretation);
 
@@ -505,13 +505,13 @@ class SentenceProcessor
 		if ($bindings) {
 
 			// check if there is a unit for the answer
-			$Unit = $Interpretation->getPredicationByPredicate('request_unit');
+			$Unit = $Interpretation->getRelationByPredicate('request_unit');
 			if ($Unit) {
 				$unit = $Unit->getArgument(0);
 			}
 
-			// find the first argument of the request-predication
-			$Request = $Interpretation->getPredicationByPredicate('request');
+			// find the first argument of the request-relation
+			$Request = $Interpretation->getRelationByPredicate('request');
 
 			if ($Request) {
 				$argument = $Request->getFirstArgument()->getName();
@@ -537,14 +537,14 @@ class SentenceProcessor
 		return array($response, $unit);
 	}
 
-	private function interpret(PredicationList $RawSemantics)
+	private function interpret(RelationList $RawSemantics)
 	{
 		$ExpandedQuestion = $RawSemantics;
 
 		if ($this->KnowledgeManager) {
 
-			// first explode the predications into all possible solution paths
-			// this is an array of predicationlists (or predication-arrays)
+			// first explode the relations into all possible solution paths
+			// this is an array of relationlists (or relation-arrays)
 			$interpreters = $this->KnowledgeManager->getInterpreters();
 
 			if (!empty($interpreters)) {
@@ -552,10 +552,10 @@ class SentenceProcessor
 	#todo: multiple
 				$DataMapper = reset($interpreters);
 
-				$DataMapper->setAllowUnprocessedPredications();
+				$DataMapper->setAllowUnprocessedRelations();
 				$DataMapper->setIterate();
 
-				$ExpandedQuestion = $DataMapper->mapPredications($RawSemantics);
+				$ExpandedQuestion = $DataMapper->mapRelations($RawSemantics);
 
 			}
 
@@ -566,9 +566,9 @@ class SentenceProcessor
 		return $ExpandedQuestion;
 	}
 
-	private function answerYesNoQuestionWithSemantics(PredicationList $PredicationList)
+	private function answerYesNoQuestionWithSemantics(RelationList $RelationList)
 	{
-		$Interpretation = $this->interpret($PredicationList);
+		$Interpretation = $this->interpret($RelationList);
 
 		$bindings = $this->createBindings($Interpretation);
 		$this->send(new LogEvent(array('bindings' => $bindings)));
@@ -582,7 +582,7 @@ class SentenceProcessor
 		return !empty($bindings);
 	}
 
-	private function createBindings(PredicationList $ExpandedQuestion)
+	private function createBindings(RelationList $ExpandedQuestion)
 	{
 		$bindings = array();
 
@@ -627,44 +627,44 @@ class SentenceProcessor
 	}
 
 	/**
-	 * Invokes all `let`- and `aggregate`- predications in $Predications on $bindings
+	 * Invokes all `let`- and `aggregate`- relations in $Relations on $bindings
 	 *
 	 * @param $newBindings
-	 * @param \agentecho\datastructure\PredicationList $Predications
+	 * @param \agentecho\datastructure\RelationList $Relations
 	 *
 	 * @return array A new list of bindings.
 	 */
-	private function performTranslations($bindings, PredicationList $Predications)
+	private function performTranslations($bindings, RelationList $Relations)
 	{
 		$Assigner = new Assigner();
 		$Aggregator = new Aggregator();
 
 		foreach ($bindings as &$binding) {
-			foreach ($Predications->getPredications() as $Predication) {
-				if ($Predication->getPredicate() == 'let') {
-					$binding = $Assigner->applyLet($Predication, $binding);
+			foreach ($Relations->getRelations() as $Relation) {
+				if ($Relation->getPredicate() == 'let') {
+					$binding = $Assigner->applyLet($Relation, $binding);
 				}
 			}
 		}
 
-		foreach ($Predications->getPredications() as $Predication) {
-			if ($Predication->getPredicate() == 'aggregate') {
+		foreach ($Relations->getRelations() as $Relation) {
+			if ($Relation->getPredicate() == 'aggregate') {
 
-				$bindings = array($Aggregator->applyAggregate($Predication, $bindings));
+				$bindings = array($Aggregator->applyAggregate($Relation, $bindings));
 			}
 		}
 
 		return $bindings;
 	}
 
-	private function changeRequestPropertyInVariable(Predication $Predication)
+	private function changeRequestPropertyInVariable(Relation $Relation)
 	{
-		foreach ($Predication->getArguments() as $index => $Argument) {
+		foreach ($Relation->getArguments() as $index => $Argument) {
 			if ($Argument instanceof Property) {
 				$propertyName = $Argument->getName();
 				$objectName = $Argument->getObject()->getName();
 				$Variable = new Variable($objectName . '_' . $propertyName);
-				$Predication->setArgument($index, $Variable);
+				$Relation->setArgument($index, $Variable);
 			}
 		}
 	}

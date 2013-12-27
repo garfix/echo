@@ -3,8 +3,8 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Variable;
 
@@ -14,21 +14,21 @@ use agentecho\datastructure\Variable;
 class Matcher
 {
 	/**
-	 * Tries to match $Predication against a predication in $Relations.
+	 * Tries to match $Relation against a relation in $Relations.
 	 * Returns the bindings, if successful, or false.
 	 *
-	 * @param Predication $Predication
-	 * @param PredicationList $Relations
+	 * @param Relation $Relation
+	 * @param RelationList $Relations
 	 * @param array $propertyBindings
 	 * @param array $variableBindings
 	 * @param BindingChecker $Checker
 	 * @return array|bool
 	 */
-	public static function matchPredicationAgainstList(Predication $Predication, PredicationList $Relations,
+	public static function matchRelationAgainstList(Relation $TestRelation, RelationList $Relations,
 	                                                   array &$propertyBindings, array &$variableBindings, BindingChecker $Checker = null)
 	{
-		foreach ($Relations->getPredications() as $Relation) {
-			if (self::matchPredicationAgainstPredication($Predication, $Relation, $propertyBindings, $variableBindings)) {
+		foreach ($Relations->getRelations() as $Relation) {
+			if (self::matchRelationAgainstRelation($TestRelation, $Relation, $propertyBindings, $variableBindings)) {
 
 				if (!$Checker or $Checker->check($propertyBindings, $variableBindings)) {
 
@@ -41,74 +41,74 @@ class Matcher
 	}
 
 	/**
-	 * Tries to match $Predication against $Relation.
+	 * Tries to match $Relation against $Relation.
 	 * Returns the bindings, if successful, or false.
 	 *
-	 * @param Predication $Predication
-	 * @param Predication $Relation
+	 * @param Relation $Relation
+	 * @param Relation $Relation
 	 * @param $propertyBindings
 	 * @param $variableBindings
 	 * @return bool
 	 */
-	public static function matchPredicationAgainstPredication(Predication $Predication, Predication $Relation, array &$propertyBindings, array &$variableBindings)
+	public static function matchRelationAgainstRelation(Relation $TestRelation, Relation $Relation, array &$propertyBindings, array &$variableBindings)
 	{
-		if ($Predication->getPredicate() != $Relation->getPredicate()) {
+		if ($TestRelation->getPredicate() != $Relation->getPredicate()) {
 			return false;
 		}
 
 		$newPropertyBindings = $propertyBindings;
 		$newVariableBindings = $variableBindings;
 
-		foreach ($Predication->getArguments() as $index => $PredicationArgument) {
+		foreach ($TestRelation->getArguments() as $index => $TestRelationArgument) {
 
 			$match = false;
 
 			$RelationArgument = $Relation->getArgument($index);
 
-			if ($PredicationArgument instanceof Atom) {
+			if ($TestRelationArgument instanceof Atom) {
 				if ($RelationArgument instanceof Atom) {
-					if ($PredicationArgument == $RelationArgument) {
+					if ($TestRelationArgument == $RelationArgument) {
 						// Declarative = Declarative
 						$match = true;
 					}
 				}
-			} elseif ($PredicationArgument instanceof Variable) {
+			} elseif ($TestRelationArgument instanceof Variable) {
 				if ($RelationArgument instanceof Variable) {
 
 					// has the variable been bound?
-					if (isset($newVariableBindings[$PredicationArgument->getName()])) {
+					if (isset($newVariableBindings[$TestRelationArgument->getName()])) {
 						// check if it was bound to the same variable
-						if ($newVariableBindings[$PredicationArgument->getName()] == $RelationArgument) {
+						if ($newVariableBindings[$TestRelationArgument->getName()] == $RelationArgument) {
 							$match = true;
 						}
 					} else {
-						$newVariableBindings[$PredicationArgument->getName()] = $RelationArgument;
+						$newVariableBindings[$TestRelationArgument->getName()] = $RelationArgument;
 						$match = true;
 					}
 
 				} else {
 					// presume constant or atom
 					// ?e = Of, ?name = "John Milton"
-					$newVariableBindings[$PredicationArgument->getName()] = $RelationArgument;
+					$newVariableBindings[$TestRelationArgument->getName()] = $RelationArgument;
 					$match = true;
 				}
-			} elseif ($PredicationArgument instanceof Property) {
+			} elseif ($TestRelationArgument instanceof Property) {
 				if ($RelationArgument instanceof Variable) {
 					// S.subject = ?s
-					if (isset($newPropertyBindings[(string)$PredicationArgument])) {
-						if ($newPropertyBindings[(string)$PredicationArgument] == $RelationArgument) {
+					if (isset($newPropertyBindings[(string)$TestRelationArgument])) {
+						if ($newPropertyBindings[(string)$TestRelationArgument] == $RelationArgument) {
 							$match = true;
 						}
 					} else {
-						$newPropertyBindings[(string)$PredicationArgument] = $RelationArgument;
+						$newPropertyBindings[(string)$TestRelationArgument] = $RelationArgument;
 						$match = true;
 					}
 
 				} elseif ($RelationArgument instanceof Property) {
-					if ($RelationArgument->getName() == $PredicationArgument->getName()) {
+					if ($RelationArgument->getName() == $TestRelationArgument->getName()) {
 						$relationObjectName = $RelationArgument->getObject()->getName();
-						$predicationObjectName = $PredicationArgument->getObject()->getName();
-						if ($relationObjectName == 'this' || $relationObjectName == $predicationObjectName) {
+						$testRelationObjectName = $TestRelationArgument->getObject()->getName();
+						if ($relationObjectName == 'this' || $relationObjectName == $testRelationObjectName) {
 							// verb.event = verb.event
 							// verb.event = this.event
 							$match = true;

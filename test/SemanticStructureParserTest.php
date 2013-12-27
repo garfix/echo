@@ -15,7 +15,7 @@ require_once __DIR__ . '/../Autoload.php';
  */
 class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 {
-	public function testPredicationWithConstant()
+	public function testRelationWithConstant()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -36,7 +36,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testPredicationWithAtomAndVariable()
+	public function testRelationWithAtomAndVariable()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -51,7 +51,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testPredicationWithProperty()
+	public function testRelationWithProperty()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -61,7 +61,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testPredicationWithoutArguments()
+	public function testRelationWithoutArguments()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -101,7 +101,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testParsePredicationList()
+	public function testParseRelationList()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -121,7 +121,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testAssignmentWithPredicationList()
+	public function testAssignmentWithRelationList()
 	{
 		$Parser = new SemanticStructureParser();
 
@@ -131,7 +131,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($string, $serialized);
 	}
 
-	public function testAssignmentWithPropertyAndPredication()
+	public function testAssignmentWithPropertyAndRelation()
 	{
 		$Parser = new SemanticStructureParser();
 

@@ -2,8 +2,8 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\PredicationList;
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\RelationList;
+use agentecho\datastructure\Relation;
 use agentecho\datastructure\Property;
 
 /**
@@ -15,23 +15,23 @@ class PronounProcessor
 	 * Dummy interpretation for pronoun resolution on the semantic level.
 	 * Replaces all properties predicated with reference() by S.subject
 	 */
-	public function replaceReferences(PredicationList $PredicationList)
+	public function replaceReferences(RelationList $RelationList)
 	{
 		$referents = array();
 
 		// find the referenced properties
-		/** @var Predication $Predication */
-		foreach ($PredicationList->getPredications() as $Predication) {
-			if ($Predication->getPredicate() == 'reference') {
-				$Referent = $Predication->getFirstArgument();
+		/** @var Relation $Relation */
+		foreach ($RelationList->getRelations() as $Relation) {
+			if ($Relation->getPredicate() == 'reference') {
+				$Referent = $Relation->getFirstArgument();
 				$referents[] = $Referent;
 			}
 		}
 
 		// collect referenced properties by S.subject
 		$replacements = array();
-		foreach ($PredicationList->getPredications() as $Predication) {
-			$arguments = $Predication->getArguments();
+		foreach ($RelationList->getRelations() as $Relation) {
+			$arguments = $Relation->getArguments();
 			foreach ($arguments as $Argument) {
 				if ($Argument instanceof Property) {
 					foreach ($referents as $Referent) {

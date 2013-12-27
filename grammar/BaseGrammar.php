@@ -8,8 +8,8 @@ use agentecho\component\parser\ParseRulesParser;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\ParseRules;
 use agentecho\datastructure\GenerationRules;
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Lexicon;
@@ -168,7 +168,7 @@ abstract class BaseGrammar implements Grammar
 	 * Returns the semantics of a word.
 	 * @param $word
 	 * @param $partOfSpeech
-	 * @return PredicationList|null
+	 * @return RelationList|null
 	 */
 	public function getSemanticsForWord($word, $partOfSpeech)
 	{
@@ -176,19 +176,19 @@ abstract class BaseGrammar implements Grammar
 		if ($Entry) {
 			return $Entry->getSemantics();
 		} elseif ($partOfSpeech == 'propernoun') {
-			return new PredicationList();
+			return new RelationList();
 		} elseif ($partOfSpeech == 'numeral') {
-			$List = new PredicationList();
+			$List = new RelationList();
 
 			$Prop = new Property();
 			$Prop->setName('entity');
 			$Prop->setObject(new Atom('this'));
 
-			$Pred = new Predication();
+			$Pred = new Relation();
 			$Pred->setPredicate('determiner');
 			$Pred->setArguments(array($Prop, new Constant($word)));
 
-			$List->setPredications(array($Pred));
+			$List->setRelations(array($Pred));
 			return $List;
 		} else {
 			return null;
@@ -199,19 +199,19 @@ abstract class BaseGrammar implements Grammar
 	 * Returns a word, given its semantics.
 	 *
 	 * @param string $partOfSpeech
-	 * @param PredicationList $Semantics
+	 * @param RelationList $Semantics
 	 * @return mixed An array of [word, partOfSpeech], or false;
 	 */
-	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics)
+	public function getWordForSemantics($partOfSpeech, RelationList $Semantics)
 	{
-		$predications = $Semantics->getPredications();
+		$relations = $Semantics->getRelations();
 
 		// check for name(propernoun.entity, "Some Name")
 		if ($partOfSpeech == 'propernoun') {
-			if (count($predications) == 1) {
-				$Predication = reset($predications);
-				if ($Predication->getPredicate() == 'name') {
-					$name = $Predication->getArgument(1)->getName();
+			if (count($relations) == 1) {
+				$Relation = reset($relations);
+				if ($Relation->getPredicate() == 'name') {
+					$name = $Relation->getArgument(1)->getName();
 					return [$name, 'propernoun'];
 				}
 			}
@@ -219,11 +219,11 @@ abstract class BaseGrammar implements Grammar
 
 		// check for determiner(determiner.entity, 43)
 		if ($partOfSpeech == 'determiner') {
-			if (count($predications) == 1) {
-				$Predication = reset($predications);
-				if ($Predication->getPredicate() == 'determiner') {
-					if ($Predication->getArgument(1) instanceof Atom) {
-						$name = $Predication->getArgument(1)->getName();
+			if (count($relations) == 1) {
+				$Relation = reset($relations);
+				if ($Relation->getPredicate() == 'determiner') {
+					if ($Relation->getArgument(1) instanceof Atom) {
+						$name = $Relation->getArgument(1)->getName();
 						if (is_numeric($name)) {
 							return [$name, 'determiner'];
 						}

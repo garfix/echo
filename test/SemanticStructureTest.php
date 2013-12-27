@@ -2,8 +2,8 @@
 
 namespace agentecho\test;
 
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\Atom;
 
@@ -14,34 +14,34 @@ require_once __DIR__ . '/../Autoload.php';
  */
 class SemanticStructureTest extends \PHPUnit_Framework_TestCase
 {
-	public function testPredicationVariableNames()
+	public function testRelationVariableNames()
 	{
-		$Predication = new Predication();
+		$Relation = new Relation();
 		$Arg1 = new Atom('ape');
 		$Arg2 = new Variable('x');
 		$Arg3 = new Variable('y');
-		$Predication->setArguments(array($Arg1, $Arg2, $Arg3));
+		$Relation->setArguments(array($Arg1, $Arg2, $Arg3));
 
-		$this->assertSame(array('x' => 'x', 'y' => 'y'), $Predication->getVariableNames());
+		$this->assertSame(array('x' => 'x', 'y' => 'y'), $Relation->getVariableNames());
 	}
 
-	public function testPredicationListVariableNames()
+	public function testRelationListVariableNames()
 	{
-		$Predication1 = new Predication();
+		$Relation1 = new Relation();
 		$Arg1 = new Atom('ape');
 		$Arg2 = new Variable('x');
 		$Arg3 = new Variable('y');
-		$Predication1->setArguments(array($Arg1, $Arg2, $Arg3));
+		$Relation1->setArguments(array($Arg1, $Arg2, $Arg3));
 
-		$Predication2 = new Predication();
+		$Relation2 = new Relation();
 		$Arg1 = new Variable('y');
 		$Arg2 = new Atom('ape');
 		$Arg3 = new Variable('z');
-		$Predication2->setArguments(array($Arg1, $Arg2, $Arg3));
+		$Relation2->setArguments(array($Arg1, $Arg2, $Arg3));
 
-		$PredicationList = new PredicationList();
-		$PredicationList->setPredications(array($Predication1, $Predication2));
+		$RelationList = new RelationList();
+		$RelationList->setRelations(array($Relation1, $Relation2));
 
-		$this->assertSame(array('x' => 'x', 'y' => 'y', 'z' => 'z'), $PredicationList->getVariableNames());
+		$this->assertSame(array('x' => 'x', 'y' => 'y', 'z' => 'z'), $RelationList->getVariableNames());
 	}
 }

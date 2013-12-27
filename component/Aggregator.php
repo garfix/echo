@@ -2,7 +2,7 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\Relation;
 use agentecho\datastructure\FunctionApplication;
 
 /**
@@ -13,15 +13,15 @@ class Aggregator
 	/**
 	 * In a let(?a, ?b), place the result of ?b in ?a.
 	 *
-	 * @param Predication $LetPredication
+	 * @param Relation $LetRelation
 	 * @param array $arguments
 	 */
-	public function applyAggregate(Predication $AggregatorPredication, array $results)
+	public function applyAggregate(Relation $AggregatorRelation, array $results)
 	{
 		$Invoker = new FunctionInvoker();
-		$Variable = $AggregatorPredication->getFirstArgument();
+		$Variable = $AggregatorRelation->getFirstArgument();
 		$varName = $Variable->getName();
-		$Value = $AggregatorPredication->getSecondArgument();
+		$Value = $AggregatorRelation->getSecondArgument();
 
 		if ($Value instanceof FunctionApplication) {
 

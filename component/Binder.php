@@ -2,8 +2,8 @@
 
 namespace agentecho\component;
 
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 
 /**
@@ -23,11 +23,11 @@ class Binder
 	 *
 	 *  subject(?e, S.subject)
 	 *
-	 * @param Predication $Relation
+	 * @param Relation $Relation
 	 * @param array $bindings
-	 * @return Predication If replacements were made, a new Predication, otherwise $Relation.
+	 * @return Relation If replacements were made, a new Relation, otherwise $Relation.
 	 */
-	public static function bindRelationVariables(Predication $Relation, array &$bindings)
+	public static function bindRelationVariables(Relation $Relation, array &$bindings)
 	{
 		$replacementsMade = false;
 		$NewRelation = $Relation;
@@ -54,12 +54,12 @@ class Binder
 		return $NewRelation;
 	}
 
-	public static function bindRelationsVariables(PredicationList $Relations, array &$bindings)
+	public static function bindRelationsVariables(RelationList $Relations, array &$bindings)
 	{
-		$NewList = new PredicationList();
+		$NewList = new RelationList();
 
-		foreach ($Relations->getPredications() as $Relation) {
-			$NewList->addPredication(self::bindRelationVariables($Relation, $bindings));
+		foreach ($Relations->getRelations() as $Relation) {
+			$NewList->addRelation(self::bindRelationVariables($Relation, $bindings));
 		}
 
 		return $NewList;

@@ -5,13 +5,13 @@ namespace agentecho\component;
 use agentecho\component\parser\MapParser;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\Map;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\exception\DataMappingFailedException;
 
 /**
- * This class maps logical predications to database relations, based on a declarative representation found in a map-file.
+ * This class maps logical relations to database relations, based on a declarative representation found in a map-file.
  *
  * @author Patrick van Bergen
  */
@@ -21,9 +21,9 @@ class DataMapper
 	private $Map = array();
 
 	/** @var bool  */
-	private $allowUnprocessedPredications = false;
+	private $allowUnprocessedRelations = false;
 
-	/** @var bool Map again when not all predications have been mapped? */
+	/** @var bool Map again when not all relations have been mapped? */
 	private $iterate = false;
 
 	public function __construct($mapFile)
@@ -33,9 +33,9 @@ class DataMapper
 		$this->Map = $Parser->parse($string);
 	}
 
-	public function setAllowUnprocessedPredications($allow = true)
+	public function setAllowUnprocessedRelations($allow = true)
 	{
-		$this->allowUnprocessedPredications = $allow;
+		$this->allowUnprocessedRelations = $allow;
 	}
 
 	public function setIterate($iterate = true)
@@ -44,18 +44,18 @@ class DataMapper
 	}
 
 	/**
-	 * Maps all predications in $Predications to their relation counterparts (also predications) in $mapFile.
-	 * One or more predications may be mapped to zero or more relations.
-	 * A single predication may be used in multiple mappings.
+	 * Maps all relations in $Relations to their relation counterparts (also relations) in $mapFile.
+	 * One or more relations may be mapped to zero or more relations.
+	 * A single relation may be used in multiple mappings.
 	 *
-	 * If not all predications could be mapped, the function returns false.
+	 * If not all relations could be mapped, the function returns false.
 	 *
-	 * @param PredicationList $Predications
-	 * @return PredicationList|false
+	 * @param RelationList $Relations
+	 * @return RelationList|false
 	 */
-	public function mapPredications(PredicationList $Predications)
+	public function mapRelations(RelationList $Relations)
 	{
-		$newPredications = $this->performMapping($Predications);
+		$newRelations = $this->performMapping($Relations);
 
 		if ($this->iterate) {
 
@@ -65,59 +65,59 @@ class DataMapper
 
 			while (!$same) {
 
-				$iteratedPredications = $this->performMapping($newPredications);
+				$iteratedRelations = $this->performMapping($newRelations);
 
-				$same = ($iteratedPredications == $newPredications);
+				$same = ($iteratedRelations == $newRelations);
 
-				$newPredications = $iteratedPredications;
+				$newRelations = $iteratedRelations;
 
 			}
 
 		}
 
-		return $newPredications;
+		return $newRelations;
 	}
 
-	private function performMapping(PredicationList $Predications)
+	private function performMapping(RelationList $Relations)
 	{
-		/** @var $newPredications Store the newly created predications */
-		$newPredications = array();
-		/** @var $usedPredications Remember which predications are used (an array of indexes) */
-		$usedPredications = array();
+		/** @var $newRelations Store the newly created relations */
+		$newRelations = array();
+		/** @var $usedRelations Remember which relations are used (an array of indexes) */
+		$usedRelations = array();
 
-		/** @var $usedVariables A name => name list of all used variables in $Predications */
-		$usedVariables = $Predications->getVariableNames();
+		/** @var $usedVariables A name => name list of all used variables in $Relations */
+		$usedVariables = $Relations->getVariableNames();
 
 		// go through each mapping
 		foreach ($this->Map->getMappings() as $Mapping) {
 
-			$prePredications = $Mapping->getPreList()->getPredications();
+			$preRelations = $Mapping->getPreList()->getRelations();
 
-			/** @var array A zero-based indexed array that keeps track of all predications that match each precondition */
-			$matchingPredicationsPerPrecondition = array_fill(0, count($prePredications), array());
+			/** @var array A zero-based indexed array that keeps track of all relations that match each precondition */
+			$matchingRelationsPerPrecondition = array_fill(0, count($preRelations), array());
 
 			// go through all preconditions of the mapping
-			foreach ($prePredications as $conditionIndex => $PrePredication) {
+			foreach ($preRelations as $conditionIndex => $PreRelation) {
 
-				// check this precondition with all predications
-				foreach ($Predications->getPredications() as $predicationIndex => $Predication) {
+				// check this precondition with all relations
+				foreach ($Relations->getRelations() as $relationIndex => $Relation) {
 
-					if (($result = $PrePredication->match($Predication)) !== false) {
+					if (($result = $PreRelation->match($Relation)) !== false) {
 
-						$matchingPredicationsPerPrecondition[$conditionIndex][] = array(
+						$matchingRelationsPerPrecondition[$conditionIndex][] = array(
 							'result' => $result,
-							'predicationIndex' => $predicationIndex
+							'relationIndex' => $relationIndex
 						);
 					}
 				}
 			}
 
 			// create all permutations for each of the precondition matches
-			$permutations = Utils::createPermutations($matchingPredicationsPerPrecondition);
+			$permutations = Utils::createPermutations($matchingRelationsPerPrecondition);
 
 			foreach ($permutations as $row) {
 
-				// create a combined argument map and mark predications as used
+				// create a combined argument map and mark relations as used
 				$argumentMap = array();
 				$mergeSuccess = true;
 				foreach ($row as $singleArgumentMap) {
@@ -131,50 +131,50 @@ class DataMapper
 
 				if ($mergeSuccess) {
 
-					// all pre-predications are marked as used
+					// all pre-relations are marked as used
 					foreach ($row as $singleArgumentMap) {
-						$usedPredications[$singleArgumentMap['predicationIndex']] = true;
+						$usedRelations[$singleArgumentMap['relationIndex']] = true;
 					}
 
-					// create new predications filled in with the values in argument map
-					foreach ($Mapping->getPostList()->getPredications() as $PostPredication) {
-						$NewPredication = $PostPredication->createClone();
+					// create new relations filled in with the values in argument map
+					foreach ($Mapping->getPostList()->getRelations() as $PostRelation) {
+						$NewRelation = $PostRelation->createClone();
 
-						// replace the variables in the new predication
-						$this->replaceVariables($NewPredication, $argumentMap, $usedVariables);
+						// replace the variables in the new relation
+						$this->replaceVariables($NewRelation, $argumentMap, $usedVariables);
 
-						$newPredications[] = $NewPredication;
+						$newRelations[] = $NewRelation;
 					}
 				}
 			}
 		}
 
-		// which predications were not involved in the mapping?
-		$missingPredications = array_diff_key($Predications->getPredications(), $usedPredications);
+		// which relations were not involved in the mapping?
+		$missingRelations = array_diff_key($Relations->getRelations(), $usedRelations);
 
-		if ($this->allowUnprocessedPredications) {
+		if ($this->allowUnprocessedRelations) {
 
-			// add the unused predications to the new ones
+			// add the unused relations to the new ones
 
-			$newPredications = array_merge($missingPredications, $newPredications);
+			$newRelations = array_merge($missingRelations, $newRelations);
 
 		} else {
 
-			// check if all predications are used
+			// check if all relations are used
 
-			if (count($usedPredications) != count($Predications->getPredications())) {
+			if (count($usedRelations) != count($Relations->getRelations())) {
 
-				throw new DataMappingFailedException(implode(', ', $missingPredications));
+				throw new DataMappingFailedException(implode(', ', $missingRelations));
 			}
 
 		}
 
-		$uniquePredications = array_unique($newPredications);
+		$uniqueRelations = array_unique($newRelations);
 
-		$NewPredicationList = new PredicationList();
+		$NewRelationList = new RelationList();
 #todo: many true() results are combined into one; is this a problem? can it happen to other relations?
-		$NewPredicationList->setPredications($uniquePredications);
-		return $NewPredicationList;
+		$NewRelationList->setRelations($uniqueRelations);
+		return $NewRelationList;
 	}
 
 	private function replaceVariables($Term, array &$argumentMap, array &$usedVariables)
@@ -198,8 +198,8 @@ class DataMapper
 					}
 				} else {
 					// no, create a new variable
-					$newName = PredicationUtils::createUnusedVariableName($usedVariables);
-					// make sure this variable will not be used again in this predicationlist
+					$newName = RelationUtils::createUnusedVariableName($usedVariables);
+					// make sure this variable will not be used again in this relationlist
 					$usedVariables[$newName] = $newName;
 					// use this same variable when used in this mapping rule
 					$argumentMap[$varName] = new Variable($newName);

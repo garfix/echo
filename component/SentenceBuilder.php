@@ -3,8 +3,8 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\Atom;
-use agentecho\datastructure\Predication;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\Relation;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 use \agentecho\exception\BuildException;
 
@@ -16,7 +16,7 @@ class SentenceBuilder
 	 * @param array $entities Constants, atoms, or variables, or a combination thereof.
 	 * @param \agentecho\datastructure\Variable $RootVariable
 	 * @throws \agentecho\exception\BuildException
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public static function buildConjunction(array $entities, Variable $RootVariable)
 	{
@@ -26,16 +26,16 @@ class SentenceBuilder
 			throw new BuildException();
         }
 
-		$Relations = new PredicationList();
+		$Relations = new RelationList();
 		$count = count($entities);
 
 		$RightNode = new Variable('n' . ++$idGen);
 		$NameNode = $entities[$count - 1];
 
-		$Relation = new Predication();
+		$Relation = new Relation();
 		$Relation->setPredicate('name');
 		$Relation->setArguments(array($RightNode, $NameNode));
-		$Relations->addPredication($Relation);
+		$Relations->addRelation($Relation);
 
 		for ($i = $count - 2; $i >= 0; $i--) {
 
@@ -48,15 +48,15 @@ class SentenceBuilder
 			$LeftNode = new Variable('n' . ++$idGen);
 			$NameNode = $entities[$i];
 
-			$Relation = new Predication();
+			$Relation = new Relation();
 			$Relation->setPredicate('name');
 			$Relation->setArguments(array($LeftNode, $NameNode));
-			$Relations->addPredication($Relation);
+			$Relations->addRelation($Relation);
 
-			$Relation = new Predication();
+			$Relation = new Relation();
 			$Relation->setPredicate('link');
 			$Relation->setArguments(array(new Atom('And'), $TopNode, $LeftNode, $RightNode));
-			$Relations->addPredication($Relation);
+			$Relations->addRelation($Relation);
 
 			$RightNode = $TopNode;
 		}

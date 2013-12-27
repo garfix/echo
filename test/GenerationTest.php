@@ -7,7 +7,7 @@ require_once __DIR__ . '/../Autoload.php';
 use agentecho\component\Generator;
 use agentecho\component\GrammarFactory;
 use agentecho\component\parser\SemanticStructureParser;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 
 /**
  * @author Patrick van Bergen
@@ -263,7 +263,7 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		$Parser = new SemanticStructureParser();
 		$Generator = new Generator();
 
-		/** @var PredicationList $Sentence */
+		/** @var RelationList $Sentence */
 		$Sentence = $Parser->parse($relations);
 
 		$surfaceRepresentation = $Generator->generate($Grammar = GrammarFactory::getGrammar($language), $Sentence);

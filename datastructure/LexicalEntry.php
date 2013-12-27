@@ -13,11 +13,11 @@ class LexicalEntry
 	/** @var string $partOfSpeech */
 	private $partOfSpeech;
 
-	/** @var PredicationList $Semantics */
+	/** @var RelationList $Semantics */
 	private $Semantics;
 
 	/**
-	 * @param \agentecho\datastructure\PredicationList $Semantics
+	 * @param \agentecho\datastructure\RelationList $Semantics
 	 */
 	public function setSemantics($Semantics)
 	{
@@ -25,11 +25,11 @@ class LexicalEntry
 	}
 
 	/**
-	 * @return \agentecho\datastructure\PredicationList
+	 * @return \agentecho\datastructure\RelationList
 	 */
 	public function getSemantics()
 	{
-		return isset($this->Semantics) ? $this->Semantics : new PredicationList();
+		return isset($this->Semantics) ? $this->Semantics : new RelationList();
 	}
 
 	/**

@@ -3,8 +3,8 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\BinaryOperation;
-use agentecho\datastructure\PredicationList;
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\RelationList;
+use agentecho\datastructure\Relation;
 use agentecho\datastructure\AssignmentList;
 use agentecho\datastructure\Property;
 use agentecho\datastructure\SemanticStructure;
@@ -19,7 +19,7 @@ use agentecho\exception\OperandNotTextException;
 class SemanticApplier
 {
 	/**
-	 * Applies $Rule to $childNodeSemantics to produce a new semantic structure (a predication list)
+	 * Applies $Rule to $childNodeSemantics to produce a new semantic structure (a relation list)
 	 *
 	 * @param AssignmentList $Rule It is an assignmentlist now; it may grow out into a complete program
 	 *
@@ -35,7 +35,7 @@ class SemanticApplier
 	 * Example:
 	 *  NP => isa(this.entity, Old)
 	 *
-	 * @return SemanticStructure A predication list
+	 * @return SemanticStructure A relation list
 	 */
 	public function apply($Rule, $childNodeSemantics, $childNodeTexts = array())
 	{
@@ -72,7 +72,7 @@ class SemanticApplier
 				}
 			}
 
-			// create the predication list from this semantic attachment and the child nodes
+			// create the relation list from this semantic attachment and the child nodes
 			$Semantics = $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $childNodeTexts, $parentSyntacticCategory);
 
 			return $Semantics;
@@ -80,7 +80,7 @@ class SemanticApplier
 	}
 
 	/**
-	 * Create a new predication list that forms the semantic attachment of the current node.
+	 * Create a new relation list that forms the semantic attachment of the current node.
 	 *
 	 * $SemanticAttachment example:
 	 *      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
@@ -91,48 +91,48 @@ class SemanticApplier
 	 * $childNodeSemantics example:
 	 *      'NP' => isa(this.entity, Old)
 	 *
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, array $childNodeTexts, $parentSyntacticCategory)
 	{
-		$predications = array();
+		$relations = array();
 
 		// each of the terms of the semantic expression needs to be instantiated with the child properties
 		foreach ($SemanticAttachment->getTerms() as $Term) {
 
-			// there are two kinds of terms: properties (like NP.sem) and predications (like isa(this.event, Live))
+			// there are two kinds of terms: properties (like NP.sem) and relations (like isa(this.event, Live))
 			if ($Term instanceof Property) {
 
 				if ($Term->getName() == 'sem') {
 
-					// add the child node's predications to this node's predications
-					$childPredications = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childNodeTexts, $childPropertyBindings, $parentSyntacticCategory);
+					// add the child node's relations to this node's relations
+					$childRelations = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childNodeTexts, $childPropertyBindings, $parentSyntacticCategory);
 
-					$predications = array_merge($predications, $childPredications);
+					$relations = array_merge($relations, $childRelations);
 
 				} else {
 					die("Only sem is allowed as property.");
 				}
 
-			} elseif ($Term instanceof Predication) {
+			} elseif ($Term instanceof Relation) {
 
-				$ClonedPredication = $this->calculatePredicationArguments($Term, $childNodeTexts);
+				$ClonedRelation = $this->calculateRelationArguments($Term, $childNodeTexts);
 
-				$predications[] = $ClonedPredication;
+				$relations[] = $ClonedRelation;
 
 			} else {
 				die("don't know this term");
 			}
 		}
 
-		$PredicationList = new PredicationList();
-		$PredicationList->setPredications($predications);
-		return $PredicationList;
+		$RelationList = new RelationList();
+		$RelationList->setRelations($relations);
+		return $RelationList;
 	}
 
-	private function replaceThisBySyntacticCategory(Predication $Predication, $syntacticCategory)
+	private function replaceThisBySyntacticCategory(Relation $Relation, $syntacticCategory)
 	{
-		foreach ($Predication->getArguments() as $Argument) {
+		foreach ($Relation->getArguments() as $Argument) {
 			if ($Argument instanceof Property) {
 				/** @var $Property Property */
 				$Property = $Argument;
@@ -168,24 +168,24 @@ class SemanticApplier
 
 		// look up the semantics of the child node, copy it, and replace its properties by the properties of the current node
 		if (isset($childNodeSemantics[$childId])) {
-			$childPredications = $childNodeSemantics[$childId]->getPredications();
+			$childRelations = $childNodeSemantics[$childId]->getRelations();
 
-			$clonedPredications = array();
-			foreach ($childPredications as $Predication) {
+			$clonedRelations = array();
+			foreach ($childRelations as $Relation) {
 
-				// copy the predication of the child
-				$ClonedPredication = $Predication->createClone();
+				// copy the relation of the child
+				$ClonedRelation = $Relation->createClone();
 
 				// replace 'this' in all its arguments by the name of the syntactic category
-				$this->replaceThisBySyntacticCategory($ClonedPredication, $childId);
+				$this->replaceThisBySyntacticCategory($ClonedRelation, $childId);
 
 				// replace child's variables by parent variables according to $childPropertyBindings
-				$this->replaceProperties($ClonedPredication, $childPropertyBindings, $parentSyntacticCategory, $childId);
+				$this->replaceProperties($ClonedRelation, $childPropertyBindings, $parentSyntacticCategory, $childId);
 
-				$clonedPredications[] = $ClonedPredication;
+				$clonedRelations[] = $ClonedRelation;
 			}
 
-			return $clonedPredications;
+			return $clonedRelations;
 		} else {
 			//die("don't know this name");
 			return array();
@@ -193,17 +193,17 @@ class SemanticApplier
 	}
 
 	/**
-	 * Replaces all property arguments (like NP.subject) in a child-semantics predication with the matching
+	 * Replaces all property arguments (like NP.subject) in a child-semantics relation with the matching
 	 * properties in the parent-semantics. These are given in $childPropertyBindings.
 	 *
-	 * @param \agentecho\datastructure\Predication $Predication A predication like 'name(NP.entity, "John")'
+	 * @param \agentecho\datastructure\Relation $Relation A relation like 'name(NP.entity, "John")'
 	 * @param array $childPropertyBindings
 	 * @param string $childId The child node semantics id (like NP1, or VP)
 	 */
-	private function replaceProperties(Predication $Predication, array $childPropertyBindings, $parentSyntacticCategory, $childId)
+	private function replaceProperties(Relation $Relation, array $childPropertyBindings, $parentSyntacticCategory, $childId)
 	{
 		/** @var Property $Argument */
-		foreach ($Predication->getArguments() as $Argument) {
+		foreach ($Relation->getArguments() as $Argument) {
 
 			if ($Argument instanceof Property) {
 
@@ -247,7 +247,7 @@ class SemanticApplier
 	}
 
 	/*
-	 * For predications like
+	 * For relations like
 	 *
 	 *     name(this.entity, propernoun1.text + ' ' + propernoun2.text)
 	 *
@@ -259,20 +259,20 @@ class SemanticApplier
 	 *
 	 *     "Lord Byron"
 	 *
-	 * @return Predication
+	 * @return Relation
 	 */
-	private function calculatePredicationArguments(Predication $Predication, array $childNodeTexts)
+	private function calculateRelationArguments(Relation $Relation, array $childNodeTexts)
 	{
-		/** @var Predication $NewPredication  */
-		$NewPredication = $Predication->createClone();
+		/** @var Relation $NewRelation  */
+		$NewRelation = $Relation->createClone();
 
-		foreach ($NewPredication->getArguments() as $index => $Argument) {
+		foreach ($NewRelation->getArguments() as $index => $Argument) {
 
-			$NewPredication->setArgument($index, $this->calculateArgument($Argument, $childNodeTexts));
+			$NewRelation->setArgument($index, $this->calculateArgument($Argument, $childNodeTexts));
 
 		}
 
-		return $NewPredication;
+		return $NewRelation;
 	}
 
 	/*

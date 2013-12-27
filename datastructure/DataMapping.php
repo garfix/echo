@@ -2,7 +2,7 @@
 
 namespace agentecho\datastructure;
 
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 
 /**
  * This structure maps one set of relations to another.
@@ -13,14 +13,14 @@ use agentecho\datastructure\PredicationList;
  */
 class DataMapping
 {
-	/** @var PredicationList $PreList */
+	/** @var RelationList $PreList */
 	private $PreList;
 
-	/** @var PredicationList $PostList */
+	/** @var RelationList $PostList */
 	private $PostList;
 
 	/**
-	 * @param PredicationList $PostList
+	 * @param RelationList $PostList
 	 */
 	public function setPostList($PostList)
 	{
@@ -28,7 +28,7 @@ class DataMapping
 	}
 
 	/**
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public function getPostList()
 	{
@@ -36,15 +36,15 @@ class DataMapping
 	}
 
 	/**
-	 * @param PredicationList $PreList
+	 * @param RelationList $PreList
 	 */
-	public function setPreList(PredicationList $PreList)
+	public function setPreList(RelationList $PreList)
 	{
 		$this->PreList = $PreList;
 	}
 
 	/**
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public function getPreList()
 	{

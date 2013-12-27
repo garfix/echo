@@ -10,13 +10,13 @@ class GenerationRule
 	/** @var ProductionRule */
 	private $Production = null;
 
-	/** @var PredicationList */
+	/** @var RelationList */
 	private $Condition = null;
 
 	/** @var AssignmentList */
 	private $Assignments = null;
 
-	/** @var PredicationList */
+	/** @var RelationList */
 	private $WordSemantics = null;
 
 	/**
@@ -36,15 +36,15 @@ class GenerationRule
 	}
 
 	/**
-	 * @param PredicationList $Condition
+	 * @param RelationList $Condition
 	 */
-	public function setCondition(PredicationList $Condition)
+	public function setCondition(RelationList $Condition)
 	{
 		$this->Condition = $Condition;
 	}
 
 	/**
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public function getCondition()
 	{
@@ -52,19 +52,19 @@ class GenerationRule
 	}
 
 	/**
-	 * @param PredicationList $WordSemantics
+	 * @param RelationList $WordSemantics
 	 */
-	public function setWordSemantics(PredicationList $WordSemantics)
+	public function setWordSemantics(RelationList $WordSemantics)
 	{
 		$this->WordSemantics = $WordSemantics;
 	}
 
 	/**
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public function getWordSemantics()
 	{
-		return $this->WordSemantics !== null ? $this->WordSemantics : new PredicationList();
+		return $this->WordSemantics !== null ? $this->WordSemantics : new RelationList();
 	}
 
 	/**

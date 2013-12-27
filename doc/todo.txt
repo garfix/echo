@@ -18,7 +18,6 @@ Volgende zinnen:
 Nu:
 
 * De niet-web code is nog niet UNICODE-proof
-* Verander 'predication' in 'relation'
 * Zorg ervoor dat de regels in lexicons en maps gecheckt wordt op betekenis (NP.bla <- error)
 * Property: 'object' hoeft geen zelfstandig object te zijn, alleen de naam is relevant, toch?
 * Maak een speciale relation mapping van vraag-zin en antwoord, naar antwoordzin (nu wordt dit nog in code uitgeschreven)

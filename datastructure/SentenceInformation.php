@@ -28,7 +28,7 @@ class SentenceInformation
 	/** @var array Raw Earley parser data structure */
 	private $phraseSpecification = null;
 
-	/** @var PredicationList */
+	/** @var RelationList */
 	private $Semantics = null;
 
 	/**
@@ -112,7 +112,7 @@ class SentenceInformation
 	}
 
 	/**
-	 * @param PredicationList $Semantics
+	 * @param RelationList $Semantics
 	 */
 	public function setSemantics($Semantics)
 	{
@@ -120,7 +120,7 @@ class SentenceInformation
 	}
 
 	/**
-	 * @return PredicationList
+	 * @return RelationList
 	 */
 	public function getSemantics()
 	{

@@ -5,7 +5,7 @@ namespace agentecho\component;
 /**
  * @author Patrick van Bergen
  */
-class PredicationUtils
+class RelationUtils
 {
 	/**
 	 * Variable names are found in  $variableKeyNameList.

@@ -3,15 +3,15 @@
 namespace agentecho\knowledge;
 
 use agentecho\component\EventSender;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 
 abstract class KnowledgeSource
 {
 	use EventSender;
 
 	/**
-	 * @param PredicationList $Question
+	 * @param RelationList $Question
 	 * @return array An array of result sets (bindings).
 	 */
-	public abstract function answer(PredicationList $Question);
+	public abstract function answer(RelationList $Question);
 }

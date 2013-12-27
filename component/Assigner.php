@@ -3,7 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\FunctionApplication;
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\Relation;
 
 /**
  * @author Patrick van Bergen
@@ -13,16 +13,16 @@ class Assigner
 	/**
 	 * In a let(?a, ?b), place the result of ?b in ?a.
 	 *
-	 * @param Predication $LetPredication
+	 * @param Relation $LetRelation
 	 * @param array $arguments
 	 * @return array
 	 */
-	public function applyLet(Predication $LetPredication, array $arguments)
+	public function applyLet(Relation $LetRelation, array $arguments)
 	{
 		$Invoker = new FunctionInvoker();
-		$Variable = $LetPredication->getFirstArgument();
+		$Variable = $LetRelation->getFirstArgument();
 		$varName = $Variable->getName();
-		$Value = $LetPredication->getSecondArgument();
+		$Value = $LetRelation->getSecondArgument();
 
 		if ($Value instanceof FunctionApplication) {
 			$arguments[$varName] = $Invoker->applyFunctionApplication($Value, $arguments);

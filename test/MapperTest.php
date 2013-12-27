@@ -43,7 +43,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 	{
 		$Mapper = new DataMapper(__DIR__ . '/../resources/testMapper.map');
 		$Mapper->setIterate(true);
-		$Mapper->setAllowUnprocessedPredications(true);
+		$Mapper->setAllowUnprocessedRelations(true);
 
 		$Parser = new SemanticStructureParser();
 
@@ -54,7 +54,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 	private function performMapper(SemanticStructureParser $Parser, DataMapper $Mapper, $in, $out)
 	{
 		$Question = $Parser->parse($in);
-		$Relations = $Mapper->mapPredications($Question);
+		$Relations = $Mapper->mapRelations($Question);
 
 		$result = (string)$Relations;
 		$this->assertEquals($out, $result);

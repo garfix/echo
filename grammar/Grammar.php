@@ -3,7 +3,7 @@
 namespace agentecho\grammar;
 
 use agentecho\datastructure\GenerationRule;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 
 /**
  * A grammar should describe the rules of a language.
@@ -62,10 +62,10 @@ interface Grammar
 	 * Returns a word, given its semantics.
 	 *
 	 * @param string $partOfSpeech
-	 * @param PredicationList $Semantics
+	 * @param RelationList $Semantics
 	 * @return mixed An array of [word, partOfSpeech], or false;
 	 */
-	public function getWordForSemantics($partOfSpeech, PredicationList $Semantics);
+	public function getWordForSemantics($partOfSpeech, RelationList $Semantics);
 
 	/**
 	 * Returns true if $word is a word in the lexicon.

@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Predication extends Term
+class Relation extends Term
 {
 	private $predicate = null;
 
@@ -57,7 +57,7 @@ class Predication extends Term
 	}
 
 	/**
-	 * Returns a name => name list of the names of the variables used in this predication.
+	 * Returns a name => name list of the names of the variables used in this relation.
 	 * @return array
 	 */
 	public function getVariableNames()
@@ -81,7 +81,7 @@ class Predication extends Term
 
 	public function createClone()
 	{
-		$Clone = new Predication();
+		$Clone = new Relation();
 		$Clone->setPredicate($this->predicate);
 
 		$arguments = array();
@@ -94,19 +94,19 @@ class Predication extends Term
 	}
 
 	/**
-	 * Returns false if $Predication does not match this predication;
+	 * Returns false if $Relation does not match this relation;
 	 * and an array of mapped variable values on a match.
 	 *
-	 * @param Predication $Predication
+	 * @param Relation $Relation
 	 * @return array|bool
 	 */
-	public function match(Predication $Predication)
+	public function match(Relation $Relation)
 	{
-		if ($Predication->getPredicate() != $this->predicate) {
+		if ($Relation->getPredicate() != $this->predicate) {
 			return false;
 		}
 
-		$hisArguments = $Predication->getArguments();
+		$hisArguments = $Relation->getArguments();
 		if (count($hisArguments) != count($this->arguments)) {
 			return false;
 		}

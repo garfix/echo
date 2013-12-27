@@ -4,22 +4,22 @@ namespace agentecho\web\view;
 
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 
 /**
  * @author Patrick van Bergen
  */
-class PredicationListView extends TreeView
+class RelationListView extends TreeView
 {
-	public function getHtml(PredicationList $PredicationList)
+	public function getHtml(RelationList $RelationList)
 	{
 		$html = '';
 
-		foreach ($PredicationList->getPredications() as $Predication) {
+		foreach ($RelationList->getRelations() as $Relation) {
 			$attributeHtml = array();
 
-			foreach($Predication->getArguments() as $Argument) {
+			foreach($Relation->getArguments() as $Argument) {
 
 				if ($Argument instanceof Constant) {
 					$valueHtml = $this->markAsConstant($Argument);
@@ -34,7 +34,7 @@ class PredicationListView extends TreeView
 				$attributeHtml[] = ' ' . $valueHtml . ' ';
 			}
 
-			$html .= $this->markAsType($Predication->getPredicate()) . ' (' . implode(',', $attributeHtml) . ')' . $this->eol();
+			$html .= $this->markAsType($Relation->getPredicate()) . ' (' . implode(',', $attributeHtml) . ')' . $this->eol();
 		}
 
 		return $html;

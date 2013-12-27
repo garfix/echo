@@ -4,10 +4,10 @@ namespace agentecho\knowledge;
 
 use agentecho\component\LogEvent;
 use agentecho\datastructure\Constant;
-use agentecho\datastructure\PredicationList;
+use agentecho\datastructure\RelationList;
 use agentecho\component\DataMapper;
 use agentecho\datastructure\SparqlQuery;
-use agentecho\datastructure\Predication;
+use agentecho\datastructure\Relation;
 
 /**
  * An adapter for DBPedia.
@@ -102,10 +102,10 @@ class DBPedia extends KnowledgeSource
 		file_put_contents($path, $json);
 	}
 
-	public function answer(PredicationList $Question)
+	public function answer(RelationList $Question)
 	{
 		// turn the expanded question into a set of database relations
-		$Relations = $this->getDataMapper()->mapPredications($Question);
+		$Relations = $this->getDataMapper()->mapRelations($Question);
 		$this->send(new LogEvent(array('relations' => $Relations)));
 
 		// convert the database relations into a query
@@ -126,11 +126,11 @@ class DBPedia extends KnowledgeSource
 		return $this->Mapper;
 	}
 
-	private function createDatabaseQuery(PredicationList $Relations)
+	private function createDatabaseQuery(RelationList $Relations)
 	{
 		$Query = new SparqlQuery();
 
-		foreach ($Relations->getPredications() as $Relation) {
+		foreach ($Relations->getRelations() as $Relation) {
 
 			$this->convertRelationIntoClauses($Relation, $Query);
 		}
@@ -138,7 +138,7 @@ class DBPedia extends KnowledgeSource
 		return $Query;
 	}
 
-	private function convertRelationIntoClauses(Predication $Relation, SparqlQuery $Query)
+	private function convertRelationIntoClauses(Relation $Relation, SparqlQuery $Query)
 	{
 		$predicate = $Relation->getPredicate();
 
@@ -246,7 +246,7 @@ class DBPedia extends KnowledgeSource
 				$Query->select("?{$object}");
 				break;
 			default:
-				die('Relation not defined: ' . $predicate);
+				die('Predicate not defined: ' . $predicate);
 				break;
 		}
 	}
