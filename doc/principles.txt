@@ -1,5 +1,5 @@
 Basic principles:
-- Easy to learn and use (the user should not need to add stuff that can be preprogrammed)
+- Easy to learn and use (the user should not need to add stuff that can be added as declaration in a text file)
 - Fast (use the fastest algorithms known)
 - Testable (every function needs a unit test)
 - Provide really helpful error messages
