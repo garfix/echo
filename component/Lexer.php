@@ -29,12 +29,8 @@ class Lexer
 		// since these glued-together words have different parts-of-speech
 		$Sentence->setWords($this->unglue($Sentence->getWords(), $Grammar));
 
-		// make words lowercase
-		// glue together words that should form a single lexical item
-#todo: split lowercasing and gluing
-		$this->glue($Sentence, $Grammar);
-
-		$this->recognize($Grammar, $Sentence->getLexicalItems());
+		// turn wordforms into lexical items
+		$Sentence->setLexicalItems($this->formLexicalItems($Sentence->getWords(), $Grammar));
 	}
 
 	/**
@@ -107,16 +103,14 @@ class Lexer
 	 * - in the grammar's lexicon
 	 * - in the knowledge base
 	 *
-	 * todo coumpound words
-	 *
-	 * @param SentenceInformation $Sentence
+	 * @param array $words
 	 * @param Grammar $Grammar
+	 * @throws \agentecho\exception\LexicalItemException
 	 * @return bool
 	 */
-	private function glue(SentenceInformation $Sentence, Grammar $Grammar)
+	private function formLexicalItems(array $words, Grammar $Grammar)
 	{
 		$lexicalItems = array();
-		$words = $Sentence->getWords();
 		$count = count($words);
 
 		for ($i = 0; $i < $count; $i++) {
@@ -131,39 +125,28 @@ class Lexer
 
 			} else {
 
-				$lexicalItems[] = $word;
+				// check if numeral
+				if (!is_numeric($word)) {
+					// check if proper noun
+					if (!preg_match('/^[A-Z]/', $word)) {
+						// neither of these
+						throw new LexicalItemException($word);
+					}
+				}
 
+				$lexicalItems[] = $word;
 			}
 		}
 
-		$Sentence->setLexicalItems($lexicalItems);
-		return true;
+		return $lexicalItems;
 	}
 
 	/**
-	 * Check if all $lexicalItems are known by the $Grammar
-	 *
-	 * @param Grammar $Grammar
-	 * @param array $lexicalItems
-	 * @throws \agentecho\exception\LexicalItemException
+	 * @param $string
+	 * @param $index
+	 * @param $isTerminator
+	 * @return string
 	 */
-	private function recognize(Grammar $Grammar, array $lexicalItems)
-	{
-		foreach ($lexicalItems as $lexicalItem) {
-			// check if known word
-			if (!$Grammar->wordExists($lexicalItem)) {
-				// check if numeral
-				if (!is_numeric($lexicalItem)) {
-					// check if proper noun
-					if (!preg_match('/^[A-Z]/', $lexicalItem)) {
-						// neither of these
-						throw new LexicalItemException($lexicalItem);
-					}
-				}
-			}
-		}
-	}
-
 	private function getNextToken($string, &$index, &$isTerminator)
 	{
 		$length = strlen($string);
