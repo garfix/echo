@@ -106,7 +106,7 @@ class SemanticApplier
 				if ($Term->getName() == 'sem') {
 
 					// add the child node's relations to this node's relations
-					$childRelations = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childNodeTexts, $childPropertyBindings, $parentSyntacticCategory);
+					$childRelations = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory);
 
 					$relations = array_merge($relations, $childRelations);
 
@@ -161,7 +161,7 @@ class SemanticApplier
 	 *
 	 * @return array
 	 */
-	private function inheritChildNodeSemantics(Property $Term, array $childNodeSemantics, array $childNodeTexts, array $childPropertyBindings, $parentSyntacticCategory)
+	private function inheritChildNodeSemantics(Property $Term, array $childNodeSemantics, array $childPropertyBindings, $parentSyntacticCategory)
 	{
 		// take the category of the term (i.e. NP or NP1)
 		$childId = $Term->getObject()->getName();

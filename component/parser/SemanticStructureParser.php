@@ -46,7 +46,6 @@ class SemanticStructureParser
 	const T_HASH_COMMENT = 'hash comment';
 
 	// two chars
-	const T_IMPLICATION = 'implication';
 	const T_TRANSFORMATION = 'transformation';
 	const T_COMMENT = 'comment';
 	// content
@@ -63,7 +62,8 @@ class SemanticStructureParser
 	private $lastPosParsed = 0;
 
 	/**
-	 * @param $semanticStructureString
+	 * @param string $string
+	 * @return mixed The structure that was created during the parse.
 	 * @throws SemanticStructureParseException
 	 */
 	public function parse($string)
@@ -82,16 +82,20 @@ class SemanticStructureParser
 		$result = null;
 		$this->lastPosParsed = 0;
 
+		// call the main function
 		$pos = $this->parseMain($tokens, $pos, $result);
-
 
 		// parse trailing whitespace
 		if ($newPos = $this->parseWhitespace($tokens, $pos)) {
 			$pos = $newPos;
 		}
 
+		// have all tokens been used?
 		if ($pos == count($tokens)) {
+
+			// yes: parse ok
 			return $result;
+
 		} else {
 
 			// build the partial string from tokens
@@ -967,10 +971,6 @@ class SemanticStructureParser
 					$contents = $matches[1];
 					$pos += strlen($contents) - 1;
 				}
-			} elseif (substr($string, $pos, 2) == ':-') {
-				$id = self::T_IMPLICATION;
-				$contents = ':-';
-				$pos += 2 - 1;
 			} elseif (substr($string, $pos, 2) == '=>') {
 				$id = self::T_TRANSFORMATION;
 				$contents = '=>';
