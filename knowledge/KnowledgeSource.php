@@ -2,7 +2,7 @@
 
 namespace agentecho\knowledge;
 
-use agentecho\component\EventSender;
+use agentecho\component\events\EventSender;
 use agentecho\datastructure\RelationList;
 
 abstract class KnowledgeSource

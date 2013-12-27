@@ -2,7 +2,7 @@
 
 namespace agentecho\knowledge;
 
-use agentecho\component\LogEvent;
+use agentecho\component\events\LogEvent;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\RelationList;
 use agentecho\component\DataMapper;

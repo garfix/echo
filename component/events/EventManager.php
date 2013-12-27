@@ -1,6 +1,6 @@
 <?php
 
-namespace agentecho\component;
+namespace agentecho\component\events;
 
 /**
  * @author Patrick van Bergen

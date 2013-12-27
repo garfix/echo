@@ -2,6 +2,7 @@
 
 namespace agentecho\component;
 
+use agentecho\component\events\EventManager;
 use agentecho\knowledge\KnowledgeSource;
 use agentecho\grammar\Grammar;
 

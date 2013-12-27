@@ -2,6 +2,8 @@
 
 namespace agentecho\component;
 
+use agentecho\component\events\EventSender;
+use agentecho\component\events\LogEvent;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\SentenceInformation;
