@@ -2,6 +2,8 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\Variable;
+
 /**
  * @author Patrick van Bergen
  */
@@ -30,5 +32,16 @@ class RelationUtils
 		}
 
 		return $varName;
+	}
+
+	/**
+	 * Creates a unique variable, while considering existing variable names.
+	 *
+	 * @param array $variableKeyNameList
+	 * @return Variable
+	 */
+	public static function createUnusedVariable(array $variableKeyNameList)
+	{
+		return new Variable(self::createUnusedVariableName($variableKeyNameList));
 	}
 }

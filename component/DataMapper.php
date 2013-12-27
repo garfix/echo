@@ -20,27 +20,11 @@ class DataMapper
 	/** @var Map */
 	private $Map = array();
 
-	/** @var bool  */
-	private $allowUnprocessedRelations = false;
-
-	/** @var bool Map again when not all relations have been mapped? */
-	private $iterate = false;
-
 	public function __construct($mapFile)
 	{
 		$string = file_get_contents($mapFile);
 		$Parser = new MapParser();
 		$this->Map = $Parser->parse($string);
-	}
-
-	public function setAllowUnprocessedRelations($allow = true)
-	{
-		$this->allowUnprocessedRelations = $allow;
-	}
-
-	public function setIterate($iterate = true)
-	{
-		$this->iterate = $iterate;
 	}
 
 	/**
@@ -51,13 +35,15 @@ class DataMapper
 	 * If not all relations could be mapped, the function returns false.
 	 *
 	 * @param RelationList $Relations
+	 * @param bool $iterate
+	 * @param bool $allowUnprocessedRelations
 	 * @return RelationList|false
 	 */
-	public function mapRelations(RelationList $Relations)
+	public function mapRelations(RelationList $Relations, $iterate = false, $allowUnprocessedRelations = false)
 	{
-		$newRelations = $this->performMapping($Relations);
+		$newRelations = $this->performMapping($Relations, $allowUnprocessedRelations);
 
-		if ($this->iterate) {
+		if ($iterate) {
 
 			// iterate until stable
 
@@ -65,7 +51,7 @@ class DataMapper
 
 			while (!$same) {
 
-				$iteratedRelations = $this->performMapping($newRelations);
+				$iteratedRelations = $this->performMapping($newRelations, $allowUnprocessedRelations);
 
 				$same = ($iteratedRelations == $newRelations);
 
@@ -78,7 +64,7 @@ class DataMapper
 		return $newRelations;
 	}
 
-	private function performMapping(RelationList $Relations)
+	private function performMapping(RelationList $Relations, $allowUnprocessedRelations)
 	{
 		/** @var $newRelations Store the newly created relations */
 		$newRelations = array();
@@ -152,7 +138,7 @@ class DataMapper
 		// which relations were not involved in the mapping?
 		$missingRelations = array_diff_key($Relations->getRelations(), $usedRelations);
 
-		if ($this->allowUnprocessedRelations) {
+		if ($allowUnprocessedRelations) {
 
 			// add the unused relations to the new ones
 
@@ -172,7 +158,6 @@ class DataMapper
 		$uniqueRelations = array_unique($newRelations);
 
 		$NewRelationList = new RelationList();
-#todo: many true() results are combined into one; is this a problem? can it happen to other relations?
 		$NewRelationList->setRelations($uniqueRelations);
 		return $NewRelationList;
 	}

@@ -22,9 +22,6 @@ use agentecho\datastructure\GenerationRule;
 use agentecho\datastructure\LexicalEntry;
 
 /**
- *
- * todo: the parser now allows possibilities that I don't need; these may be removed at some later point
- *
  * @author Patrick van Bergen
  */
 class SemanticStructureParser

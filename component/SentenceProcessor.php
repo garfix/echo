@@ -267,9 +267,6 @@ class SentenceProcessor
 		// since this is a yes-no question, check the statement
 		list($answer, $unit) = $this->answerQuestionWithSemantics($Question);
 
-		# todo: remove earlier?
-		$answer = array_unique($answer);
-
 		if (count($answer) > 1) {
 
 			$Answer = $this->getConjunctiveAnswer($answer);
@@ -290,7 +287,7 @@ class SentenceProcessor
 			if ($MannerRelation = $Question->getRelationByPredicate('manner')) {
 				if ($MannerRelation->getArgument(1) == $RequestVariable) {
 
-					$M = new Variable('v1'); # todo: create new variable
+					$M = RelationUtils::createUnusedVariable($Question->getVariableNames());
 					$R = $MannerRelation->getArgument(0);
 
 					// append the answer
@@ -307,7 +304,7 @@ class SentenceProcessor
 				$E = $LocationRelation->getArgument(0);
 
 				// create location
-				$L = new Variable('v1'); # todo: create new variable
+				$L = RelationUtils::createUnusedVariable($Question->getVariableNames());
 				$this->addBinaryRelation($Answer, 'name', $L, new Constant($answer));
 
 				// create link relation
@@ -320,17 +317,20 @@ class SentenceProcessor
 				$Date = new \DateTime($answer);
 				$languageCode = $CurrentGrammar->getLanguageCode();
 
-				setlocale(LC_TIME, $languageCode . '_' . strtoupper($languageCode));
+				if ($languageCode == 'en') {
+					setlocale(LC_TIME, 'en_US.UTF-8');
+				} else {
+					setlocale(LC_TIME, 'nl_NL');
+				}
 
 				if ($languageCode == 'en') {
-	#todo why needed?
-					$date = ucfirst(strftime('%B %e, %Y', $Date->getTimestamp()));
+					$date = strftime('%B %e, %Y', $Date->getTimestamp());
 				} else {
 					$date = strftime('%e %B %Y', $Date->getTimestamp());
 				}
 
 				// create time
-				$L = new Variable('v1'); # todo: create new variable
+				$L = RelationUtils::createUnusedVariable($Question->getVariableNames());
 				$this->addBinaryRelation($Answer, 'name', $L, new Constant($date));
 
 				// create link relation
@@ -392,7 +392,7 @@ class SentenceProcessor
 			$this->makeDeclarative($Answer, $SentenceEvent);
 
 			// add 'yes'
-			$Q = new Variable('v1'); # todo: create new variable
+			$Q = RelationUtils::createUnusedVariable($Question->getVariableNames());
 			$this->addBinaryRelation($Answer, 'qualification', $SentenceEvent, $Q);
 			$this->addBinaryRelation($Answer, 'isa', $Q, new Atom('Yes'));
 		}
@@ -499,8 +499,6 @@ class SentenceProcessor
 
 		$unit = null;
 
-#todo: there should be only 1 result, or all results are identical
-
 		// the variable 'request' in $bindings should hold the answer
 		if ($bindings) {
 
@@ -534,6 +532,8 @@ class SentenceProcessor
 
 		}
 
+		$response = array_unique($response);
+
 		return array($response, $unit);
 	}
 
@@ -547,18 +547,10 @@ class SentenceProcessor
 			// this is an array of relationlists (or relation-arrays)
 			$interpreters = $this->KnowledgeManager->getInterpreters();
 
-			if (!empty($interpreters)) {
+			foreach($interpreters as $Interpreter) {
 
-	#todo: multiple
-				$DataMapper = reset($interpreters);
-
-				$DataMapper->setAllowUnprocessedRelations();
-				$DataMapper->setIterate();
-
-				$ExpandedQuestion = $DataMapper->mapRelations($RawSemantics);
-
+				$ExpandedQuestion = $Interpreter->mapRelations($RawSemantics, true, true);
 			}
-
 		}
 
 		$this->send(new LogEvent(array('interpretation' => $ExpandedQuestion)));

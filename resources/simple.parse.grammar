@@ -339,14 +339,12 @@
 	// car in the lot
 	// the author of Paradise Lost
 
-	// TODO: change NBar into NBar1 (strange DBPedia fail)
-
 	rule:
-        NBar => NBar2 PP,
+        NBar1 => NBar2 PP,
     semantics: {
-		NBar.sem = NBar2.sem and PP.sem;
-        NBar.entity = NBar2.entity;
-        NBar.entity = PP.superEntity
+		NBar1.sem = NBar2.sem and PP.sem;
+        NBar1.entity = NBar2.entity;
+        NBar1.entity = PP.superEntity
     }
 ]
 
