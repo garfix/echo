@@ -3,6 +3,7 @@ S:
 - subject
 - object
 - request (bij wh-questions)
+- complement (bij copula sentences)
 
 NP:
 - entity

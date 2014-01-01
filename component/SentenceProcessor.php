@@ -7,6 +7,7 @@ use agentecho\component\events\LogEvent;
 use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\SentenceInformation;
+use agentecho\exception\BuildException;
 use agentecho\exception\DataBaseMultipleResultsException;
 use agentecho\exception\NoBindingsException;
 use agentecho\exception\NoSemanticsAtTopLevelException;
@@ -72,7 +73,7 @@ class SentenceProcessor
 
 			// replace all request properties with variables
 			foreach ($Semantics->getRelations() as $Relation) {
-				$this->changeRequestPropertyInVariable($Relation);
+				$this->changeRequestPropertyIntoVariable($Relation);
 			}
 
 			// answer the question
@@ -675,7 +676,7 @@ class SentenceProcessor
 	/**
 	 * Invokes all `let`- and `aggregate`- relations in $Relations on $bindings
 	 *
-	 * @param $newBindings
+	 * @param $bindings
 	 * @param \agentecho\datastructure\RelationList $Relations
 	 *
 	 * @return array A new list of bindings.
@@ -703,7 +704,7 @@ class SentenceProcessor
 		return $bindings;
 	}
 
-	private function changeRequestPropertyInVariable(Relation $Relation)
+	private function changeRequestPropertyIntoVariable(Relation $Relation)
 	{
 		foreach ($Relation->getArguments() as $index => $Argument) {
 			if ($Argument instanceof Property) {

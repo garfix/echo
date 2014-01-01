@@ -12,6 +12,7 @@ use agentecho\datastructure\TermList;
 use agentecho\datastructure\Constant;
 use agentecho\exception\OperandNotAcceptedException;
 use agentecho\exception\OperandNotTextException;
+use agentecho\exception\SemanticAttachmentException;
 
 /**
  * @author Patrick van Bergen
@@ -21,7 +22,7 @@ class SemanticApplier
 	/**
 	 * Applies $Rule to $childNodeSemantics to produce a new semantic structure (a relation list)
 	 *
-	 * @param AssignmentList $Rule It is an assignmentlist now; it may grow out into a complete program
+	 * @param AssignmentList $List It is an assignmentlist now; it may grow out into a complete program
 	 *
 	 * Example (an Assignmentlist that can be paraphrased as):
 	 * 	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
@@ -37,46 +38,41 @@ class SemanticApplier
 	 *
 	 * @return SemanticStructure A relation list
 	 */
-	public function apply($Rule, $childNodeSemantics, $childNodeTexts = array())
+	public function apply(AssignmentList $List, $childNodeSemantics, $childNodeTexts = array())
 	{
-		if ($Rule instanceof AssignmentList) {
+		// A rule consists of one or more assignments
+		// like: S.event = WhNP.entity
+		$assignments = $List->getAssignments();
 
-			// A rule consists of one or more assignments
-			// like: S.event = WhNP.entity
-			$assignments = $Rule->getAssignments();
+		// save the parent's node name
+		$parentNodeName = $assignments[0]->getLeft()->getObject()->getName();
 
-			// look up the syntactic category
-			$parentSyntacticCategory = $assignments[0]->getLeft()->getObject()->getName();
+		/** @var TermList $Attachment  */
+		$SemanticAttachment = null;
+		/** @var array $childPropertyBindings */
+		$childPropertyBindings = array();
 
-			/** @var TermList $Attachment  */
-			$SemanticAttachment = null;
-			/** @var array $childPropertyBindings */
-			$childPropertyBindings = array();
+		// extract the semantic attachment and the bindings to child semantic properties
+		// into two separate variables
+		foreach ($assignments as $Assignment) {
 
-			// extract the semantic attachment and the bindings to child semantic properties
-			// into two separate variables
-			foreach ($assignments as $Assignment) {
+			/** @var Property $Left  */
+			$Left = $Assignment->getLeft();
+			/** @var TermList $Right  */
+			$Right = $Assignment->getRight();
 
-				/** @var Property $Left  */
-				$Left = $Assignment->getLeft();
-				/** @var TermList $Right  */
-				$Right = $Assignment->getRight();
-
-				/** @var TermList $Attachments  */
-				if ($Left->getName() == 'sem') {
-					// assignment of semantics (i.e. VP.sem = verb.sem)
-					$SemanticAttachment = $Right;
-				} else {
-					// binding of child property to parent property (VP.event = verb.event)
-					$childPropertyBindings[] = array($Left->getName() => $Right);
-				}
+			/** @var TermList $Attachments  */
+			if ($Left->getName() == 'sem') {
+				// assignment of semantics (i.e. VP.sem = verb.sem)
+				$SemanticAttachment = $Right;
+			} else {
+				// binding of child property to parent property (VP.event = verb.event)
+				$childPropertyBindings[(string)$Right] = $Left;
 			}
-
-			// create the relation list from this semantic attachment and the child nodes
-			$Semantics = $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $childNodeTexts, $parentSyntacticCategory);
-
-			return $Semantics;
 		}
+
+		// create the relation list from this semantic attachment and the child nodes
+		return $this->applyAttachment($SemanticAttachment, $childPropertyBindings, $childNodeSemantics, $childNodeTexts, $parentNodeName);
 	}
 
 	/**
@@ -85,194 +81,195 @@ class SemanticApplier
 	 * $SemanticAttachment example:
 	 *      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
 	 *
-	 * $childPropertyBindings example:
-	 *      ['entity' => NP.entity]
+	 * $childPropertyBindings example (left is child property as a string, right is parent property):
+	 *      ['NP.entity' => WhNP.entity]
 	 *
 	 * $childNodeSemantics example:
 	 *      'NP' => isa(this.entity, Old)
 	 *
+	 * @param TermList $SemanticAttachment
+	 * @param array $childPropertyBindings
+	 * @param array $childNodeSemantics
+	 * @param array $childNodeTexts
+	 * @param $parentNodeName
+	 * @throws SemanticAttachmentException
 	 * @return RelationList
 	 */
-	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, array $childNodeTexts, $parentSyntacticCategory)
+	private function applyAttachment(TermList $SemanticAttachment, array $childPropertyBindings, array $childNodeSemantics, array $childNodeTexts, $parentNodeName)
 	{
-		$relations = array();
+		// create new relations from the semantic attachment
+		// explode child semantics (.sem) terms of the semantic attachment
+		$Relations = $this->expandChildSemantics($SemanticAttachment, $childNodeSemantics);
 
-		// each of the terms of the semantic expression needs to be instantiated with the child properties
+		// execute operations
+		$this->executeOperations($Relations, $childNodeTexts);
+
+		// replace child properties with parent properties
+		$this->replaceChildPropertiesWithParentProperties($Relations, $childPropertyBindings);
+
+		// change the parent property NBar1 into NBar, and the orphaned child AdjP into NBar_AdjP
+		$this->normalizeNodeNames($Relations, $parentNodeName);
+
+		return $Relations;
+	}
+
+	/**
+	 * Creates a set of relations from $SemanticAttachment. Expands .sem terms into new relations.
+	 *
+	 * @param TermList $SemanticAttachment
+	 * @param RelationList[] $childNodeSemantics
+	 * @return RelationList
+	 * @throws SemanticAttachmentException
+	 */
+	private function expandChildSemantics(TermList $SemanticAttachment, array $childNodeSemantics)
+	{
+		$Relations = new RelationList();
+
 		foreach ($SemanticAttachment->getTerms() as $Term) {
 
-			// there are two kinds of terms: properties (like NP.sem) and relations (like isa(this.event, Live))
 			if ($Term instanceof Property) {
 
 				if ($Term->getName() == 'sem') {
 
-					// add the child node's relations to this node's relations
-					$childRelations = $this->inheritChildNodeSemantics($Term, $childNodeSemantics, $childPropertyBindings, $parentSyntacticCategory);
+					$childNodeName = $Term->getObject()->getName();
+					if (isset($childNodeSemantics[$childNodeName])) {
 
-					$relations = array_merge($relations, $childRelations);
+						$ChildSemantics = $childNodeSemantics[$childNodeName]->createClone();
+
+						// replace NP.entity with NP1.entity
+						// replace this.entity with NP1.entity
+						$this->renameNodeNames($ChildSemantics, $childNodeName);
+
+						$Relations->appendRelations($ChildSemantics->getRelations());
+					}
 
 				} else {
-					die("Only sem is allowed as property.");
+					throw new SemanticAttachmentException("Only sem is allowed as property (not: " . $Term . ')');
 				}
 
 			} elseif ($Term instanceof Relation) {
 
-				$ClonedRelation = $this->calculateRelationArguments($Term, $childNodeTexts);
-
-				$relations[] = $ClonedRelation;
+				$Relations->addRelation($Term->createClone());
 
 			} else {
-				die("don't know this term");
+				throw new SemanticAttachmentException("Unaccepted term class: " . get_class($Term));
 			}
 		}
 
-		$RelationList = new RelationList();
-		$RelationList->setRelations($relations);
-		return $RelationList;
-	}
-
-	private function replaceThisBySyntacticCategory(Relation $Relation, $syntacticCategory)
-	{
-		foreach ($Relation->getArguments() as $Argument) {
-			if ($Argument instanceof Property) {
-				/** @var $Property Property */
-				$Property = $Argument;
-				$Object = $Property->getObject();
-				if ($Object->getName() == 'this') {
-					$Object->setName($syntacticCategory);
-				}
-			}
-		}
+		return $Relations;
 	}
 
 	/**
-	 * Given a semantic attachment like
-	 *    S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
-	 * this function processes WhNP.sem, auxBe.sem, and NP.sem as $Term
-	 * and returns the semantics of the child node (i.e. WnNP, auxBe, or NP)
+	 * Replaces all nodenames `this` with $childNodeName.
+	 * If $childNodeName contains an index, replaces all nodenames `NP` with `NP1`
 	 *
-	 * $Term example:
-	 *      WhNP.sem
-	 *
-	 * $childPropertyBindings example:
-	 *      ['entity' => NP.entity]
-	 *
-	 * $childNodeSemantics example:
-	 *      'NP' => isa(this.entity, Old)
-	 *
-	 * @return array
+	 * @param RelationList $Relations
+	 * @param $childNodeName
 	 */
-	private function inheritChildNodeSemantics(Property $Term, array $childNodeSemantics, array $childPropertyBindings, $parentSyntacticCategory)
+	private function renameNodeNames(RelationList $Relations, $childNodeName)
 	{
-		// take the category of the term (i.e. NP or NP1)
-		$childId = $Term->getObject()->getName();
+		preg_match('/^([a-zA-Z]+)/', $childNodeName, $matches);
+		$childNodeNameProper = $matches[1];
 
-		// look up the semantics of the child node, copy it, and replace its properties by the properties of the current node
-		if (isset($childNodeSemantics[$childId])) {
-			$childRelations = $childNodeSemantics[$childId]->getRelations();
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $Argument) {
 
-			$clonedRelations = array();
-			foreach ($childRelations as $Relation) {
+				if ($Argument instanceof Property) {
 
-				// copy the relation of the child
-				$ClonedRelation = $Relation->createClone();
+					/** @var $Property Property */
+					$Property = $Argument;
 
-				// replace 'this' in all its arguments by the name of the syntactic category
-				$this->replaceThisBySyntacticCategory($ClonedRelation, $childId);
+					$Object = $Property->getObject();
+					$name = $Object->getName();
 
-				// replace child's variables by parent variables according to $childPropertyBindings
-				$this->replaceProperties($ClonedRelation, $childPropertyBindings, $parentSyntacticCategory, $childId);
+					if ($name == 'this') {
 
-				$clonedRelations[] = $ClonedRelation;
-			}
+						$Object->setName($childNodeName);
 
-			return $clonedRelations;
-		} else {
-			//die("don't know this name");
-			return array();
-		}
-	}
+					} elseif ($name == $childNodeNameProper) {
 
-	/**
-	 * Replaces all property arguments (like NP.subject) in a child-semantics relation with the matching
-	 * properties in the parent-semantics. These are given in $childPropertyBindings.
-	 *
-	 * @param \agentecho\datastructure\Relation $Relation A relation like 'name(NP.entity, "John")'
-	 * @param array $childPropertyBindings
-	 * @param string $childId The child node semantics id (like NP1, or VP)
-	 */
-	private function replaceProperties(Relation $Relation, array $childPropertyBindings, $parentSyntacticCategory, $childId)
-	{
-		/** @var Property $Argument */
-		foreach ($Relation->getArguments() as $Argument) {
+						$Object->setName($childNodeName);
 
-			if ($Argument instanceof Property) {
-
-				// this is the name of the property that needs to be replaced
-				$childName = $Argument->getName();
-
-				$found = false;
-
-				// go through all bindings to find the one that has $childName as its name
-				foreach ($childPropertyBindings as $binding) {
-
-					foreach ($binding as $parentName => $TermList) {
-
-						$terms = $TermList->getTerms();
-						$Property = reset($terms);
-						$name = $Property->getName();
-						$category = $Property->getObject()->getName();
-
-						if ($category == $childId and $name == $childName) {
-							$Argument->setName($parentName);
-							$found = true;
-
-							// change the name of the object
-							$Argument->getObject()->setName($parentSyntacticCategory);
-
-							break 2;
-						}
 					}
 				}
+			}
+		}
+	}
 
-				if (!$found) {
+	/**
+	 * @param RelationList $Relations
+	 * @param array $childNodeTexts
+	 */
+	private function executeOperations(RelationList $Relations, array $childNodeTexts)
+	{
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $i => $Argument) {
 
-					// update the name of the object
-					$Argument->getObject()->setName(
-						$parentSyntacticCategory . '_' . $Argument->getObject()->getName()
-					);
+				$Relation->setArgument($i, $this->calculateArgument($Argument, $childNodeTexts));
+			}
+		}
+	}
 
+	/**
+	 * Replaces each child property (i.e. verb.event) with its paired parent property (i.e. VP.event).
+	 *
+	 * @param RelationList $Relations
+	 * @param array Property[] $childPropertyBindings
+	 */
+	private function replaceChildPropertiesWithParentProperties(RelationList $Relations, array $childPropertyBindings)
+	{
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $i => $Argument) {
+
+				if ($Argument instanceof Property) {
+
+					$PropertyString = (String)$Argument;
+
+					if (isset($childPropertyBindings[$PropertyString])) {
+
+						$ParentProperty = $childPropertyBindings[$PropertyString];
+
+						$Relation->setArgument($i, $ParentProperty->createClone());
+					}
 				}
 			}
 		}
 	}
 
-	/*
-	 * For relations like
+	/**
+	 * Prepare node names for use outside this context.
+	 * Change the parent property NBar1 into NBar, and the orphaned child AdjP into NBar_AdjP
 	 *
-	 *     name(this.entity, propernoun1.text + ' ' + propernoun2.text)
-	 *
-	 * replace the argument
-	 *
-	 *     propernoun1.text + ' ' + propernoun2.text
-	 *
-	 * with the constant
-	 *
-	 *     "Lord Byron"
-	 *
-	 * @return Relation
+	 * @param $Relations
+	 * @param string $parentNodeName
 	 */
-	private function calculateRelationArguments(Relation $Relation, array $childNodeTexts)
+	private function normalizeNodeNames(RelationList $Relations, $parentNodeName)
 	{
-		/** @var Relation $NewRelation  */
-		$NewRelation = $Relation->createClone();
+		preg_match('/^([a-zA-Z]+)/', $parentNodeName, $matches);
+		$parentNodeNameProper = $matches[1];
 
-		foreach ($NewRelation->getArguments() as $index => $Argument) {
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $i => $Argument) {
 
-			$NewRelation->setArgument($index, $this->calculateArgument($Argument, $childNodeTexts));
+				if ($Argument instanceof Property) {
 
+					$nodeName = $Argument->getObject()->getName();
+					if ($nodeName == $parentNodeName) {
+
+						// change parent node name NBar1 into NBar
+						$newName = $parentNodeNameProper;
+
+					} else {
+
+						// create a unique name for an orphaned child: i.e. NBar_AdjP
+						$newName = $parentNodeNameProper . '_' . $nodeName;
+
+					}
+
+					$Argument->getObject()->setName($newName);
+				}
+			}
 		}
-
-		return $NewRelation;
 	}
 
 	/*
@@ -290,13 +287,14 @@ class SemanticApplier
 	 */
 	private function calculateArgument($Argument, array $childNodeTexts)
 	{
+		// example: propernoun1.text + ' '
 		if ($Argument instanceof BinaryOperation) {
 
 			$operator = $Argument->getOperator();
-			$operands = $Argument->getOperands();
 
+			// make sure all operands are reduced to constants
 			$calculatedOperands = array();
-			foreach ($operands as $Operand) {
+			foreach ($Argument->getOperands() as $Operand) {
 				$calculatedOperands[] = $this->calculateArgument($Operand, $childNodeTexts);
 			}
 
@@ -316,26 +314,30 @@ class SemanticApplier
 				$NewArgument = new Constant(implode('', $scalarOperands));
 
 			} else {
-				die('Unknown operator:' . $operator);
+				throw new SemanticAttachmentException('Unknown operator:' . $operator);
 			}
 
+		// example: propernoun1.text
 		} elseif ($Argument instanceof Property) {
 
-			$category = $Argument->getObject()->getName();
-			$propertyName = $Argument->getName();
+			$nodeName = $Argument->getObject()->getName();
 
-			if ($propertyName == 'text') {
-				if (isset($childNodeTexts[$category])) {
-					$NewArgument = new Constant($childNodeTexts[$category]);
+			if ($Argument->getName() == 'text') {
+				if (isset($childNodeTexts[$nodeName])) {
+					$NewArgument = new Constant($childNodeTexts[$nodeName]);
 				} else {
 					throw new OperandNotTextException((string)$Argument);
 				}
 			} else {
+
 				$NewArgument = $Argument;
 			}
 
 		} else {
+
+			// constant or variable
 			$NewArgument = $Argument;
+
 		}
 
 		return $NewArgument;

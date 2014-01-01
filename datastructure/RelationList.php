@@ -27,6 +27,16 @@ class RelationList extends  Term
 	}
 
 	/**
+	 * Add relations
+	 *
+	 * @param array $relations
+	 */
+	public function appendRelations(array $relations)
+	{
+		$this->relations = array_merge($this->relations, $relations);
+	}
+
+	/**
 	 * @param Relation $Relation
 	 */
 	public function removeRelation(Relation $Relation)

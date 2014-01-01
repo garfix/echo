@@ -124,4 +124,46 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertSame('name(PN.entity, "Patrick van Bergen")', (string)$Result);
 	}
+
+	public function testRelationWithChildProperties()
+	{
+		$Parser = new SemanticStructureParser();
+		$Applier = new SemanticApplier();
+
+		/** @var AssignmentList $Rule  */
+		$Rule = $Parser->parse("{
+			NBar.sem = NP1.sem and NP2.sem and modifier(NP2.entity, NP1.entity);
+			NBar.entity = NP2.entity
+		}");
+
+		$childNodeSemantics = array(
+			'NP1' => $Parser->parse("name(this.entity, 'John')"),
+			'NP2' => $Parser->parse("isa(this.entity, Car)")
+		);
+
+		$Result = $Applier->apply($Rule, $childNodeSemantics, array());
+
+		$this->assertSame("name(NBar_NP1.entity, \"John\") and isa(NBar.entity, Car) and modifier(NBar.entity, NBar_NP1.entity)", (string)$Result);
+	}
+
+	public function testRuleWithIndexedAntecedent()
+	{
+		$Parser = new SemanticStructureParser();
+		$Applier = new SemanticApplier();
+
+		/** @var AssignmentList $Rule  */
+		$Rule = $Parser->parse("{
+			NBar1.sem = NBar2.sem and AdjP.sem and modifier(NBar1.entity, AdjP.entity);
+			NBar1.entity = NBar2.entity
+		}");
+
+		$childNodeSemantics = array(
+			'NBar2' => $Parser->parse("isa(this.entity, Car)"),
+			'AdjP' => $Parser->parse("isa(this.entity, Red)")
+		);
+
+		$Result = $Applier->apply($Rule, $childNodeSemantics, array());
+
+		$this->assertSame("isa(NBar.entity, Car) and isa(NBar_AdjP.entity, Red) and modifier(NBar.entity, NBar_AdjP.entity)", (string)$Result);
+	}
 }

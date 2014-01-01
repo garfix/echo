@@ -6,7 +6,8 @@
 		S.event = Clause.event;
 		S.subject = Clause.subject;
 		S.object = Clause.object;
-		S.request = Clause.request
+		S.request = Clause.request;
+		S.complement = Clause.complement
 	}
 ]
 
@@ -16,7 +17,7 @@
 	rule:
 		Clause => NP VP,
 	semantics: {
-		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, S.object) and mood(Clause.event, Declarative);
+		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and mood(Clause.event, Declarative);
     	Clause.event = VP.event;
     	Clause.subject = NP.entity;
     	Clause.object = VP.object
@@ -102,7 +103,6 @@
        Clause.complement = NP2.entity;
        Clause.subject = NP1.entity
     }
-
 ]
 
 [
@@ -117,7 +117,6 @@
         Clause.subject = NP.entity;
         Clause.request = WhADVP.request
     }
-
 ]
 
 [
@@ -131,7 +130,8 @@
 		Clause1.subject = Clause2.subject;
 		Clause1.object = Clause2.object;
 		Clause1.event = SBar.superEvent;
-		Clause1.request = Clause2.request
+		Clause1.request = Clause2.request;
+		Clause1.complement = Clause2.complement
 	}
 ]
 
@@ -168,7 +168,7 @@
 	rule:
 		VP => verb NP,
 	semantics: {
-		VP.sem = verb.sem and NP.sem and object(VP.event, VP.object);
+		VP.sem = verb.sem and NP.sem;
 		VP.event = verb.event;
 		VP.object = NP.entity
 	}
@@ -221,6 +221,7 @@
         WhADVP => whAdverb,
     semantics: {
         WhADVP.sem = whAdverb.sem;
+        WhADVP.event = whAdverb.event;
         WhADVP.request = whAdverb.adjunct;
         WhADVP.subject = whAdverb.subject
     }
@@ -330,7 +331,7 @@
 	rule:
         NBar1 => AdjP NBar2,
     semantics: {
-		NBar1.sem = AdjP.sem and NBar2.sem;
+		NBar1.sem = AdjP.sem and NBar2.sem and modifier(NBar2.entity, AdjP.entity);
         NBar1.entity = NBar2.entity
     }
 ]
@@ -419,7 +420,8 @@
 	rule:
 		AdjP => adjective,
 	semantics: {
-		AdjP.sem = adjective.sem
+		AdjP.sem = adjective.sem;
+		AdjP.entity = adjective.entity
 	}
 ]
 
@@ -429,7 +431,9 @@
 	rule:
 		AdjP => AdvP adjective,
 	semantics: {
-		AdjP.sem = AdvP.sem and adjective.sem
+		AdjP.sem = AdvP.sem and adjective.sem;
+		AdjP.entity = AdvP.entity;
+        AdjP.entity = adjective.entity
 	}
 ]
 
@@ -439,7 +443,9 @@
 	rule:
 		AdjP => degreeAdverb adjective,
 	semantics: {
-		AdjP.sem = degreeAdverb.sem and adjective.sem
+		AdjP.sem = degreeAdverb.sem and adjective.sem;
+		AdjP.entity = degreeAdverb.entity;
+        AdjP.entity = adjective.entity
 	}
 ]
 
@@ -449,7 +455,9 @@
 	rule:
 		AdjP => NP adjective,
 	semantics: {
-		AdjP.sem = NP.sem and adjective.sem
+		AdjP.sem = NP.sem and adjective.sem;
+		AdjP.entity = NP.entity;
+		AdjP.entity = adjective.entity
 	}
 ]
 
@@ -482,7 +490,8 @@
 	rule:
         DP => determiner,
     semantics: {
-        DP.sem = determiner.sem
+        DP.sem = determiner.sem;
+        DP.entity = determiner.entity
     }
 ]
 
@@ -506,7 +515,8 @@
 	rule:
 		DP => numeral,
 	semantics: {
-		DP.sem = numeral.sem
+		DP.sem = numeral.sem;
+		DP.entity = numeral.entity
 	}
 ]
 

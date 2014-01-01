@@ -24,3 +24,4 @@ Nu:
 * Maak een speciale relation mapping van vraag-zin en antwoord, naar antwoordzin (nu wordt dit nog in code uitgeschreven)
 * los alle #todo's op in de code
 * is het nodig om een S.request te hebben? Een request() relatie is toch genoeg?
+* Verwijder die() statements

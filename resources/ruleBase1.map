@@ -1,7 +1,8 @@
 subject(?e, ?s) and complement(?e, ?c) => subject(?e, ?c);
 
 // how old
-manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old) => subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b))) and request_unit(Year);
+manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old)
+	=> subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and let(?q, daysToYears(subtractDates(?t, ?b))) and request_unit(Year);
 
 // how many
 manner(?o, ?q) and many(?o) => aggregate(?q, count(?o));

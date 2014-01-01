@@ -68,6 +68,16 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame('[S [Clause [NP [PN [propernoun John]]][VP [verb gives][NP [PN [propernoun Mary]]][NP [NBar [noun flowers]]]]]]', $Sentence->getSyntaxString());
 	}
 
+	public function testParseRelations()
+	{
+		$English = GrammarFactory::getGrammar('en');
+
+		$Processor = new SentenceProcessor();
+
+		$Sentence = $Processor->parseSentence('John reads the red book', $English);
+		$this->assertSame('name(S.subject, "John") and isa(S.event, Read) and tense(S.event, Present) and determiner(S.object, The) and isa(S_Clause_VP_NP_NBar_AdjP.entity, Red) and isa(S.object, Book) and modifier(S.object, S_Clause_VP_NP_NBar_AdjP.entity) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+	}
+
 	public function testParseDegreeAdverb()
 	{
 		$Processor = new SentenceProcessor();
@@ -104,7 +114,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Processor->parseSentence("How old was Mary Shelley when she died?", $English);
 		$this->assertSame('[S [Clause [Clause [WhADVP [whwordNP how][AdjP [adjective old]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][Clause [NP [pronoun she]][VP [verb died]]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('manner(S_Clause1_Clause.complement, S.request) and isa(S_Clause1_Clause.complement, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and modifier(S.event, S_Clause1_Clause.complement) and request(S.request) and mood(S.event, Interrogative) and at_time(S.event, S_Clause1_SBar.subEvent) and isa(S.subject, Female) and reference(S.subject) and isa(S_Clause1_SBar.subEvent, Die) and subject(S_Clause1_SBar.subEvent, S.subject) and object(S_Clause1_SBar.subEvent, S.object) and mood(S_Clause1_SBar.subEvent, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+		$this->assertSame('manner(S.complement, S.request) and isa(S.complement, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative) and at_time(S.event, S_Clause_SBar.subEvent) and isa(S_Clause_SBar_Clause.subject, Female) and reference(S_Clause_SBar_Clause.subject) and isa(S_Clause_SBar.subEvent, Die) and subject(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.subject) and object(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.object) and mood(S_Clause_SBar.subEvent, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseNumeral()

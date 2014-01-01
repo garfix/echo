@@ -43,7 +43,8 @@
 	partOfSpeech: 'verb'
 ] [
 	form: 'book',
-	partOfSpeech: 'noun'
+	partOfSpeech: 'noun',
+	semantics: isa(this.entity, Book)
 ] [
 	form: 'born',
 	partOfSpeech: 'pastParticipleVerb',
@@ -199,14 +200,16 @@
 	semantics: link(On, this.event, this.entity)
 ] [
 	form: 'reads',
-	partOfSpeech: 'verb'
+	partOfSpeech: 'verb',
+	semantics: isa(this.event, Read) and tense(this.event, Present)
 ] [
 	form: 'parents',
 	partOfSpeech: 'noun',
 	semantics: isa(this.entity, Parent)
 ] [
 	form: 'red',
-	partOfSpeech: 'adjective'
+	partOfSpeech: 'adjective',
+	semantics: isa(this.entity, Red)
 ] [
 	form: 'sees',
 	partOfSpeech: 'verb'
