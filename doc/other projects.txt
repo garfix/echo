@@ -1,9 +1,15 @@
+Libraries: NLG
+==============
+
 SimpleNLG
 http://code.google.com/p/simplenlg/
 - Java
 - object oriented language generation
 - owner: Ehud Reiter (van: Building Natural Language Generation Systems)
 - NB: je kunt ook gewoon stukjes zin aan de object structuur toevoegen
+
+Libraries: NLP
+==============
 
 NLTK
 http://code.google.com/p/nltk/
@@ -19,8 +25,14 @@ LingPipe
 http://alias-i.com/lingpipe/
 - Java
 
+Applications
+============
+
 ThoughtTreasure
 http://en.wikipedia.org/wiki/ThoughtTreasure
+
+Natural Language Interfaces
+===========================
 
 C-Phrase
 https://code.google.com/p/c-phrase/
@@ -37,16 +49,38 @@ ORAKEL
 Towards portable natural language interfaces to knowledge bases – The case of the ORAKEL system (2008)
 - benadert willekeurige databases
 
+Online Q & A
+============
+
+Evi
+http://www.evi.com/
+- via an API (simple question-answer only)
+- api: http://developer.evi.com/download/
+- forum: http://support.evi.com/forums
+
+Wolfram Alpha
+www.wolframalpha.com/
+- api: http://products.wolframalpha.com/api/documentation.html
+- forum: http://community.wolfram.com/content?curTag=software%20development
+
+START
+http://start.csail.mit.edu/
+START, the world's first Web-based question answering system, has been on-line and continuously operating since December, 1993.
+- No access to source code, but many articles describing it
+
+Watson (IBM)
+- via an API (simple question-answer only)
+- api: https://www.ibmdw.net/watson/docs/category/access-the-question-and-answer-api/
+- forum: https://www.ibmdw.net/answers?community=watson
+
 Quepy
 https://github.com/machinalis/quepy
 Quepy is a python framework to transform natural language questions to queries in a database query language.
 - online demo: http://quepy.machinalis.com/
 - Works with a fixed set of expressions
 
-START
-http://start.csail.mit.edu/
-START, the world's first Web-based question answering system, has been on-line and continuously operating since December, 1993.
-- No access to source code, but many articles describing it
+Online parsers
+==============
 
 Stanford Parser:
 http://nlp.stanford.edu:8080/parser/index.jsp
