@@ -2,6 +2,7 @@
 
 namespace agentecho\component\parser;
 
+use agentecho\datastructure\FormulationRule;
 use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Relation;
 use agentecho\datastructure\RelationList;
@@ -260,6 +261,54 @@ class SemanticStructureParser
 
 					if ($pos = $this->parseAssignmentList($tokens, $pos, $List)) {
 						$ParseRule->setAssignments($List);
+					}
+
+				} else {
+					return false;
+				}
+
+				// ,
+				if ($newPos = $this->parseSingleToken(self::T_COMMA, $tokens, $pos)) {
+					$pos = $newPos;
+				} else {
+					break;
+				}
+			}
+
+			if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_CLOSE, $tokens, $pos)) {
+
+				return $pos;
+
+			}
+		}
+
+		return false;
+	}
+
+	protected function  parseFormulationRule($tokens, $pos, &$FormulationRule)
+	{
+		if ($pos = $this->parseSingleToken(self::T_SQUARE_BRACKET_OPEN, $tokens, $pos)) {
+
+			$FormulationRule = new FormulationRule();
+
+			// label
+			while ($newPos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $label)) {
+				$pos = $newPos;
+
+				// :
+				if ($pos = $this->parseSingleToken(self::T_COLON, $tokens, $pos)) {
+				}
+
+				if ($label == 'condition') {
+
+					if ($pos = $this->parseRelationList($tokens, $pos, $List)) {
+						$FormulationRule->setCondition($List);
+					}
+
+				} elseif ($label == 'add') {
+
+					if ($pos = $this->parseRelationList($tokens, $pos, $List)) {
+						$FormulationRule->setAddList($List);
 					}
 
 				} else {

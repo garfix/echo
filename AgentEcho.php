@@ -41,8 +41,8 @@ class AgentEcho
 	 */
 	public function answer($question)
 	{
-		$SentenceProcessor = new SentenceProcessor($this->Config->getKnowledgeManager());
+		$SentenceProcessor = new SentenceProcessor();
 		$SentenceProcessor->setEventManager($this->Config->getEventManager());
-		return $SentenceProcessor->reply($question, $this->Conversation);
+		return $SentenceProcessor->reply($question, $this->Conversation, $this->Config->getKnowledgeManager());
 	}
 }

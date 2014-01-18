@@ -54,6 +54,11 @@ class Binder
 		return $NewRelation;
 	}
 
+	/**
+	 * @param RelationList $Relations
+	 * @param array $bindings
+	 * @return RelationList
+	 */
 	public static function bindRelationsVariables(RelationList $Relations, array &$bindings)
 	{
 		$NewList = new RelationList();

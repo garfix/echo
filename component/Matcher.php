@@ -17,7 +17,37 @@ class Matcher
 	 * Tries to match $Relation against a relation in $Relations.
 	 * Returns the bindings, if successful, or false.
 	 *
-	 * @param Relation $Relation
+	 * @param RelationList $TestRelationList
+	 * @param RelationList $Relations
+	 * @param array $propertyBindings
+	 * @param array $variableBindings
+	 * @param BindingChecker $Checker
+	 * @return array|bool
+	 */
+	public static function matchRelationListAgainstRelationList(RelationList $TestRelationList, RelationList $Relations,
+		array &$propertyBindings, array &$variableBindings, BindingChecker $Checker = null)
+	{
+		$variableBindings = array();
+		$match = true;
+
+		// go through all conditions
+		foreach ($TestRelationList->getRelations() as $Condition) {
+
+			// try to match the condition against any one of the $Relations
+			if (!Matcher::matchRelationAgainstList($Condition, $Relations, $propertyBindings, $variableBindings, $Checker)) {
+				$match = false;
+				break;
+			}
+		}
+
+		return $match;
+	}
+
+	/**
+	 * Tries to match $Relation against a relation in $Relations.
+	 * Returns the bindings, if successful, or false.
+	 *
+	 * @param Relation $TestRelation
 	 * @param RelationList $Relations
 	 * @param array $propertyBindings
 	 * @param array $variableBindings
@@ -44,15 +74,19 @@ class Matcher
 	 * Tries to match $Relation against $Relation.
 	 * Returns the bindings, if successful, or false.
 	 *
+	 * @param Relation $TestRelation
 	 * @param Relation $Relation
-	 * @param Relation $Relation
-	 * @param $propertyBindings
-	 * @param $variableBindings
+	 * @param array $propertyBindings
+	 * @param array $variableBindings
 	 * @return bool
 	 */
 	public static function matchRelationAgainstRelation(Relation $TestRelation, Relation $Relation, array &$propertyBindings, array &$variableBindings)
 	{
 		if ($TestRelation->getPredicate() != $Relation->getPredicate()) {
+			return false;
+		}
+
+		if ($TestRelation->getArgumentCount() != $Relation->getArgumentCount()) {
 			return false;
 		}
 

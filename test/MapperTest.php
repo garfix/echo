@@ -14,7 +14,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 {
 	public function testMapperSimple()
 	{
-		$Mapper = new DataMapper(__DIR__ . '/../resources/testMapper.map');
+		$Mapper = new DataMapper(__DIR__ . '/helpers/testMapper.map');
 		$Parser = new SemanticStructureParser();
 
 		// map 1 to 1
@@ -41,7 +41,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 
 	public function testRecursiveMapping()
 	{
-		$Mapper = new DataMapper(__DIR__ . '/../resources/testMapper.map');
+		$Mapper = new DataMapper(__DIR__ . '/helpers/testMapper.map');
 		$Parser = new SemanticStructureParser();
 
 		$out = 'home_2_main_street(?p, ?s2) and main_street_2_town(?s2, ?s1) and town_2_forest(?s1, ?s3) and forest_2_school(?s3, ?p)';

@@ -32,6 +32,26 @@ class DBPedia extends KnowledgeSource
 		$this->dataMapFile = __DIR__ . '/../resources/dbpedia.map';
 	}
 
+	/**
+	 * @param RelationList $Question
+	 * @return array An array of result sets (bindings).
+	 */
+	public function answer(RelationList $Question)
+	{
+		// turn the expanded question into a set of database relations
+		$Relations = $this->getDataMapper()->mapRelations($Question);
+		$this->send(new LogEvent(array('relations' => $Relations)));
+
+		// convert the database relations into a query
+		$Query = $this->createDatabaseQuery($Relations);
+
+		$this->send(new LogEvent(array('query' => $Query)));
+
+		$resultSets = $this->processQuery($Query);
+
+		return $resultSets;
+	}
+
 	private function  queryDBPedia($query)
 	{
 		$result = self::$cacheResults ? $this->getResultFromCache($query) : false;
@@ -100,22 +120,6 @@ class DBPedia extends KnowledgeSource
 		}
 		$json = json_encode($cache);
 		file_put_contents($path, $json);
-	}
-
-	public function answer(RelationList $Question)
-	{
-		// turn the expanded question into a set of database relations
-		$Relations = $this->getDataMapper()->mapRelations($Question);
-		$this->send(new LogEvent(array('relations' => $Relations)));
-
-		// convert the database relations into a query
-		$Query = $this->createDatabaseQuery($Relations);
-
-		$this->send(new LogEvent(array('query' => $Query)));
-
-		$resultSets = $this->processQuery($Query);
-
-		return $resultSets;
 	}
 
 	private function getDataMapper()

@@ -404,7 +404,7 @@ class Processor
 		}
 
 		$Config->addKnowledgeSource(new DBPedia());
-		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/basic.interpretations'));
 
 		$Agent = new AgentEcho($Config);
 

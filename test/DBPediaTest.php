@@ -23,7 +23,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 		$Config = new AgentConfig();
 
 		$Config->addKnowledgeSource(new DBPedia());
-		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/basic.interpretations'));
 		$Config->addGrammar(GrammarFactory::getGrammar('en'));
 		$Config->addGrammar(GrammarFactory::getGrammar('nl'));
 
@@ -95,7 +95,7 @@ class DBPediaTest extends \PHPUnit_Framework_TestCase
 	{
 		$Config = new AgentConfig();
 		$Config->addKnowledgeSource(new DBPedia());
-		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+		$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/basic.interpretations'));
 		$Config->addGrammar(GrammarFactory::getGrammar('en'));
 
 		$Echo = new AgentEcho($Config);

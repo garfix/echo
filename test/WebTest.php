@@ -64,7 +64,7 @@ class WebTest extends \PHPUnit_Framework_TestCase
 			$Config = new AgentConfig();
 			$Config->setGrammars([GrammarFactory::getGrammar('en'), GrammarFactory::getGrammar('nl')]);
 			$Config->addKnowledgeSource(new DBPedia());
-			$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/ruleBase1.map'));
+			$Config->addInterpreter(new DataMapper(__DIR__ . '/../resources/basic.interpretations'));
 
 			$Echo = new AgentEcho($Config);
 		}

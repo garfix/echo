@@ -25,3 +25,14 @@ Nu:
 * los alle #todo's op in de code
 * is het nodig om een S.request te hebben? Een request() relatie is toch genoeg?
 * Verwijder die() statements
+* Verwijder alle 'semantics' termen
+* De Answerer is nu nog te hardgecodeerd; het moet mogelijk zijn een andere answer map file mee te geven
+* interpretatie is taal-afhankelijk en bevat de directe representaties van taal-specifieke idiomen. Na de interpretatie is de relatie-structuur
+ niet alleen taal-onafhankelijk, maar ook "logisch": het beschrijft de zaken op een "letterlijke" manier, zodat het precies het probleem of de taak beschrijft die behandeld moet worden.
+* vervang location() relaties, e.d. door generiekere varianten
+* Wat ik een relation noem is eigenlijk een tuple
+
+Major challanges:
+* Provide efficient and generic grammars and lexicons for major languages
+* Provide efficient and generic interpretations and answers for common sentences
+* Provide datasources for common database types
