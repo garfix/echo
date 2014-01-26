@@ -7,6 +7,8 @@ use agentecho\component\parser\FormulatorRulesParser;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\FormulationRule;
 use agentecho\datastructure\FormulationRules;
+use agentecho\datastructure\FunctionApplication;
+use agentecho\datastructure\RelationTemplate;
 use agentecho\datastructure\Variable;
 use agentecho\exception\FormulatorException;
 use agentecho\grammar\Grammar;
@@ -99,29 +101,113 @@ class Formulator
 	 */
 	private function createAnswerRelations(RelationList $Question, FormulationRule $Rule, array $answerBindings, array $ruleBindings)
 	{
-		$Answer = $Question->createClone();
-
+		// combine the rule bindings with the answer bindings
 		$bindings = $ruleBindings;
-
-#note: we're presuming that all answers are in the first row of the answer bindings
-
 		foreach ($ruleBindings as $name => $RuleBinding) {
 
 			if ($RuleBinding instanceof Variable) {
 				$variableName = $RuleBinding->getName();
 
-				if (isset($answerBindings[0][$variableName])) {
+				foreach ($answerBindings as $answerBinding) {
 
-					$bindingValue = $answerBindings[0][$variableName];
-					$bindings[$name] = new Constant($bindingValue);
+					if (isset($answerBinding[$variableName])) {
+
+						$bindingValue = $answerBinding[$variableName];
+
+						if ($Rule->getType() == FormulationRule::TYPE_MULTIPLE) {
+							if (!isset($bindings[$name]) || !is_array($bindings[$name])) {
+								$bindings[$name] = array();
+							}
+							$bindings[$name][] = new Constant($bindingValue);
+						} else {
+							$bindings[$name] = new Constant($bindingValue);
+						}
+					}
 				}
 			}
 		}
 
-		// add relations
-		$AnswerAppend = Binder::bindRelationsVariables($Rule->getAddList(), $bindings);
-		$Answer->appendRelations($AnswerAppend->getRelations());
+		// get the relations of rule and bind them to the new variables
+		$AnswerRelations = Binder::bindRelationsVariables($Rule->getProduction(), $bindings);
 
-		return $Answer;
+		// expand the relation templates
+		$AnswerRelations = $this->expandRelationTemplates($AnswerRelations, $bindings, $Question);
+
+		// execute the functions in the new relations
+		$AnswerRelations = $this->executeFunctions($AnswerRelations);
+
+		return $AnswerRelations;
+	}
+
+	/**
+	 * Expands a new list of $Relations, but with with all relation template expanded.
+	 *
+	 * @param RelationList $Relations
+	 * @param array $bindings
+	 * @param \agentecho\datastructure\RelationList $Question
+	 * @return RelationList
+	 */
+	private function expandRelationTemplates(RelationList $Relations, array $bindings, RelationList $Question)
+	{
+		$NewList = new RelationList();
+
+		foreach ($Relations->getRelations() as $Relation) {
+
+			if ($Relation instanceof RelationTemplate) {
+
+				$NewInstances = $this->applyTemplate($Relation, $bindings, $Question);
+				$NewList->appendRelationList($NewInstances);
+
+			} else {
+				$NewList->addRelation($Relation);
+			}
+
+		}
+
+		return $NewList;
+	}
+
+	/**
+	 * Performs the $Template's function to its arguments,
+	 * and returns a list of relations.
+	 *
+	 * @param RelationTemplate $Template
+	 * @param array $bindings
+	 * @param RelationList $Question
+	 * @return RelationList
+	 */
+	private function applyTemplate(RelationTemplate $Template, array $bindings, RelationList $Question)
+	{
+		/** @var FunctionApplication $FunctionApplication */
+		$FunctionApplication = $Template->getFirstArgument();
+
+		$arguments = array();
+		foreach ($FunctionApplication->getArguments() as $FormalParameter) {
+			$parameterName = $FormalParameter->getName();
+# ok?
+			if (isset($bindings[$parameterName])) {
+				$arguments[$parameterName] = $bindings[$parameterName];
+			} else {
+				$arguments[$parameterName] = $FormalParameter;
+			}
+		}
+
+		$Invoker = new FunctionInvoker();
+		$Relations = $Invoker->applyTemplateFunctionApplication($FunctionApplication, $arguments, $Question);
+
+		return $Relations;
+	}
+
+	/**
+	 * Executes all functions in each of $Relation's arguments,
+	 * and returns these same relations.
+	 *
+	 * @param RelationList $Relations
+	 * @return RelationList
+	 */
+	private function executeFunctions(RelationList $Relations)
+	{
+#todo
+		return $Relations;
 	}
 }

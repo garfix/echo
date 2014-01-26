@@ -1,7 +1,8 @@
 [
 	condition:
 		location(?event, ?request),
-	add:
-		link (In, ?event, ?p) and
+	production:
+		{{ question() }} and
+		link(In, ?event, ?p) and
         name(?p, ?request)
 ]

@@ -5,7 +5,7 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class FunctionApplication
+class FunctionApplication implements ArgumentTerm
 {
 	/** @var string */
 	private $name;
@@ -16,7 +16,7 @@ class FunctionApplication
 	/**
 	 * @param array $arguments
 	 */
-	public function setArguments($arguments)
+	public function setArguments(array $arguments)
 	{
 		$this->arguments = $arguments;
 	}
@@ -24,6 +24,16 @@ class FunctionApplication
 	public function setArgument($index, $Argument)
 	{
 		$this->arguments[$index] = $Argument;
+	}
+
+	public function getArgument($index)
+	{
+		return $this->arguments[$index];
+	}
+
+	public function getArgumentCount()
+	{
+		return count($this->arguments);
 	}
 
 	/**

@@ -37,6 +37,16 @@ class RelationList extends  Term
 	}
 
 	/**
+	 * Add relations
+	 *
+	 * @param RelationList $List
+	 */
+	public function appendRelationList(RelationList $List)
+	{
+		$this->appendRelations($List->getRelations());
+	}
+
+	/**
 	 * @param Relation $Relation
 	 */
 	public function removeRelation(Relation $Relation)

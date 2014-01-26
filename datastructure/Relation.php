@@ -5,11 +5,11 @@ namespace agentecho\datastructure;
 /**
  * @author Patrick van Bergen
  */
-class Relation extends Term
+class Relation extends Term implements ArgumentTerm
 {
-	private $predicate = null;
+	protected $predicate = null;
 
-	private $arguments = array();
+	protected $arguments = array();
 
 	public function setPredicate($predicate)
 	{

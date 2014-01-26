@@ -2,6 +2,8 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\ArgumentTerm;
+use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\Relation;
 use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
@@ -23,16 +25,16 @@ class Binder
 	 *
 	 *  subject(?e, S.subject)
 	 *
-	 * @param Relation $Relation
+	 * @param ArgumentTerm $ArgumentTerm
 	 * @param array $bindings
 	 * @return Relation If replacements were made, a new Relation, otherwise $Relation.
 	 */
-	public static function bindRelationVariables(Relation $Relation, array &$bindings)
+	public static function bindRelationVariables(ArgumentTerm $ArgumentTerm, array &$bindings)
 	{
 		$replacementsMade = false;
-		$NewRelation = $Relation;
+		$NewRelation = $ArgumentTerm;
 
-		foreach ($Relation->getArguments() as $index => $Argument) {
+		foreach ($ArgumentTerm->getArguments() as $index => $Argument) {
 
 			if ($Argument instanceof Variable) {
 
@@ -41,13 +43,18 @@ class Binder
 				if (isset($bindings[$propertyName])) {
 
 					if (!$replacementsMade) {
-						$NewRelation = $Relation->createClone();
+						$NewRelation = $ArgumentTerm->createClone();
 					}
 
 					$NewRelation->setArgument($index, $bindings[$propertyName]);
 					$replacementsMade = true;
 
 				}
+
+			} elseif ($Argument instanceof FunctionApplication) {
+
+				self::bindRelationVariables($Argument, $bindings);
+
 			}
 		}
 

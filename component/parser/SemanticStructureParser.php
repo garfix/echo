@@ -3,6 +3,7 @@
 namespace agentecho\component\parser;
 
 use agentecho\datastructure\FormulationRule;
+use agentecho\datastructure\RelationTemplate;
 use agentecho\exception\SemanticStructureParseException;
 use agentecho\datastructure\Relation;
 use agentecho\datastructure\RelationList;
@@ -46,6 +47,8 @@ class SemanticStructureParser
 	// two chars
 	const T_TRANSFORMATION = 'transformation';
 	const T_COMMENT = 'comment';
+	const T_TEMPLATE_START = 'template start';
+	const T_TEMPLATE_END = 'template end';
 	// content
 	const T_IDENTIFIER = 'identifier';
 	const T_STRING = 'string';
@@ -126,6 +129,8 @@ class SemanticStructureParser
 		} elseif ($newPos = $this->parseAtom($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseParseRule($tokens, $pos, $Result)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $Result)) {
 			$pos = $newPos;
 		} else {
 			$pos = false;
@@ -305,10 +310,18 @@ class SemanticStructureParser
 						$FormulationRule->setCondition($List);
 					}
 
-				} elseif ($label == 'add') {
+				} elseif ($label == 'type') {
+
+					if ($pos = $this->parseSingleToken(self::T_IDENTIFIER, $tokens, $pos, $type)) {
+						if ($FormulationRule->typeExists($type)) {
+							$FormulationRule->setType($type);
+						}
+					}
+
+				} elseif ($label == 'production') {
 
 					if ($pos = $this->parseRelationList($tokens, $pos, $List)) {
-						$FormulationRule->setAddList($List);
+						$FormulationRule->setProduction($List);
 					}
 
 				} else {
@@ -578,30 +591,59 @@ class SemanticStructureParser
 
 		if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
 			$pos = $newPos;
-			$count++;
+		} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $relations[$count])) {
+			$pos = $newPos;
+		} else {
+			return false;
+		}
 
-			while ($newPos) {
+		$count++;
 
-				// and
-				if ($newPos = $this->parseSingleToken(self::T_AND, $tokens, $pos)) {
+		while ($newPos) {
+
+			// and
+			if ($newPos = $this->parseSingleToken(self::T_AND, $tokens, $pos)) {
+				$pos = $newPos;
+
+				// argument
+				$relations[$count] = null;
+				if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
+					$pos = $newPos;
+					$count++;
+				} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $relations[$count])) {
+					$pos = $newPos;
+					$count++;
+				} else {
+					return false;
+				}
+			}
+		}
+
+		$RelationList = new RelationList();
+		$RelationList->setRelations($relations);
+		return $pos;
+	}
+
+	private function parseRelationTemplate(array $tokens, $pos, &$RelationTemplate)
+	{
+		// {{
+		if ($newPos = $this->parseSingleToken(self::T_TEMPLATE_START, $tokens, $pos)) {
+			$pos = $newPos;
+
+			// function application
+			if ($newPos = $this->parseFunctionApplication($tokens, $pos, $FunctionApplication)) {
+				$pos = $newPos;
+
+				// }}
+				if ($newPos = $this->parseSingleToken(self::T_TEMPLATE_END, $tokens, $pos)) {
 					$pos = $newPos;
 
-					// argument
-					$relations[$count] = null;
-					if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
-						$pos = $newPos;
-						$count++;
-					} else {
-						return false;
-					}
+					$RelationTemplate = new RelationTemplate();
+					$RelationTemplate->setArgument(0, $FunctionApplication);
 
+					return $pos;
 				}
-
 			}
-
-			$RelationList = new RelationList();
-			$RelationList->setRelations($relations);
-			return $pos;
 		}
 
 		return false;
@@ -1020,6 +1062,14 @@ class SemanticStructureParser
 			} elseif (substr($string, $pos, 2) == '=>') {
 				$id = self::T_TRANSFORMATION;
 				$contents = '=>';
+				$pos += 2 - 1;
+			} elseif (substr($string, $pos, 2) == '{{') {
+				$id = self::T_TEMPLATE_START;
+				$contents = '{{';
+				$pos += 2 - 1;
+			} elseif (substr($string, $pos, 2) == '}}') {
+				$id = self::T_TEMPLATE_END;
+				$contents = '}}';
 				$pos += 2 - 1;
 			} elseif (substr($string, $pos, 3) == 'and') {
 				$id = self::T_AND;

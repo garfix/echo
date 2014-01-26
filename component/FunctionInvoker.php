@@ -3,6 +3,7 @@
 namespace agentecho\component;
 
 use agentecho\datastructure\FunctionApplication;
+use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
 
 /**
@@ -12,7 +13,17 @@ class FunctionInvoker
 {
 	public function applyFunctionApplication(FunctionApplication $FunctionApplication, $arguments)
 	{
-		$Function = $this->getFunction($FunctionApplication->getName());
+		return $this->apply($FunctionApplication, $arguments, 'functions');
+	}
+
+	public function applyTemplateFunctionApplication(FunctionApplication $FunctionApplication, $arguments, RelationList $Question)
+	{
+		return $this->apply($FunctionApplication, $arguments, 'templatefunctions', $Question);
+	}
+
+	private function apply(FunctionApplication $FunctionApplication, $arguments, $type, RelationList $Question = null)
+	{
+		$Function = $this->getFunction($FunctionApplication->getName(), $type);
 		$formalParameters = $FunctionApplication->getArguments();
 		$actualParameters = array();
 		foreach ($formalParameters as $Param) {
@@ -24,13 +35,19 @@ class FunctionInvoker
 				die('not implemented function value');
 			}
 		}
-		$result = $Function->invoke($actualParameters);
+
+		if ($type == 'templatefunctions') {
+			$result = $Function->invoke($actualParameters, $Question);
+		} else {
+			$result = $Function->invoke($actualParameters);
+		}
+
 		return $result;
 	}
 
-	private function getFunction($name)
+	private function getFunction($name, $type)
 	{
-		$class = 'agentecho\\functions\\' . ucfirst($name);
+		$class = 'agentecho\\' . $type . '\\' . ucfirst($name);
 		return new $class;
 	}
 }

@@ -49,6 +49,10 @@ ORAKEL
 Towards portable natural language interfaces to knowledge bases – The case of the ORAKEL system (2008)
 - benadert willekeurige databases
 
+Ephyra (OpenEphyra)
+http://www.ephyra.info/
+- Watson heeft gebruik gemaakt van diens answer type analysis
+
 Online Q & A
 ============
 
@@ -69,6 +73,7 @@ START, the world's first Web-based question answering system, has been on-line a
 - No access to source code, but many articles describing it
 
 Watson (IBM)
+- IBM Research
 - via an API (simple question-answer only)
 - api: https://www.ibmdw.net/watson/docs/category/access-the-question-and-answer-api/
 - forum: https://www.ibmdw.net/answers?community=watson
@@ -78,6 +83,12 @@ https://github.com/machinalis/quepy
 Quepy is a python framework to transform natural language questions to queries in a database query language.
 - online demo: http://quepy.machinalis.com/
 - Works with a fixed set of expressions
+
+Conferences
+===========
+TREC
+http://trec.nist.gov/
+http://en.wikipedia.org/wiki/Text_Retrieval_Conference
 
 Online parsers
 ==============

@@ -1,7 +1,20 @@
 [
 	condition:
 		location(?event, ?request),
-	add:
-		link (In, ?event, ?p) and
+	type:
+		single,
+	production:
+		{{ question() }} and
+		link(In, ?event, ?p) and
         name(?p, ?request)
+]
+
+[
+	condition:
+		identity(?subject, ?request),
+	type:
+		multiple,
+	production:
+		sentence(?n) and
+		{{ conjunction(?n, ?request) }}
 ]

@@ -7,11 +7,18 @@ namespace agentecho\datastructure;
  */
 class FormulationRule
 {
+	const TYPE_SINGLE = 'single';
+	const TYPE_MULTIPLE = 'multiple';
+	const TYPE_YES_NO = 'yesno';
+
 	/** @var RelationList */
 	private $Condition = null;
 
 	/** @var RelationList */
-	private $AddList = null;
+	private $Production = null;
+
+	/** @var string */
+	private $type = null;
 
 	/**
 	 * @param RelationList $Condition
@@ -30,19 +37,40 @@ class FormulationRule
 	}
 
 	/**
-	 * @param RelationList $AddList
+	 * @param RelationList $Production
 	 */
-	public function setAddList(RelationList $AddList)
+	public function setProduction(RelationList $Production)
 	{
-		$this->AddList = $AddList;
+		$this->Production = $Production;
 	}
 
 	/**
 	 * @return RelationList
 	 */
-	public function getAddList()
+	public function getProduction()
 	{
-		return $this->AddList !== null ? $this->AddList : new RelationList();
+		return $this->Production !== null ? $this->Production : new RelationList();
+	}
+
+	/**
+	 * @param string $type
+	 */
+	public function setType($type)
+	{
+		$this->type = $type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getType()
+	{
+		return $this->type;
+	}
+
+	public function typeExists($type)
+	{
+		return in_array($type, array(self::TYPE_SINGLE, self::TYPE_MULTIPLE, self::TYPE_YES_NO));
 	}
 
 	public function __toString()
@@ -53,8 +81,12 @@ class FormulationRule
 			$values[] = 'conditon: ' . $this->Condition;
 		}
 
-		if ($this->AddList) {
-			$values[] = 'add: ' . $this->Production;
+		if ($this->type) {
+			$values[] = 'type: ' . $this->type;
+		}
+
+		if ($this->Production) {
+			$values[] = 'production: ' . $this->Production;
 		}
 
 		return '[' . implode(', ', $values) . ']';

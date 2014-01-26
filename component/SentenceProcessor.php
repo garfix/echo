@@ -79,7 +79,7 @@ class SentenceProcessor
 
 				$SentenceRelation = $Question->getRelationByPredicate('sentence');
 				if (!$SentenceRelation) {
-					return false;
+					throw new FormulatorException();
 				}
 
 				/** @var Variable $SentenceEvent */
