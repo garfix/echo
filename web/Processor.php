@@ -157,6 +157,9 @@ class Processor
 		} elseif ($key == 'bindings') {
 			$View = new BindingsView();
 			$html = $View->getHtml($value);
+		} elseif ($key == 'formulation') {
+			$View = new RelationListView();
+			$html = $View->getHtml($value);
 		} elseif ($key == 'backtrace') {
 			$View = new BackTraceView();
 			$html = $View->getHtml($value);

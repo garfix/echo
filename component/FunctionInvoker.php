@@ -2,6 +2,8 @@
 
 namespace agentecho\component;
 
+use agentecho\datastructure\Atom;
+use agentecho\datastructure\Constant;
 use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\RelationList;
 use agentecho\datastructure\Variable;
@@ -29,6 +31,10 @@ class FunctionInvoker
 		foreach ($formalParameters as $Param) {
 			if ($Param instanceof Variable) {
 				$actualParameters[] = $arguments[$Param->getName()];
+			} elseif ($Param instanceof Constant) {
+				$actualParameters[] = $Param;
+			} elseif ($Param instanceof Atom) {
+				$actualParameters[] = $Param;
 			} elseif ($Param instanceof FunctionApplication) {
 				$actualParameters[] = $this->applyFunctionApplication($Param, $arguments);
 			} else {

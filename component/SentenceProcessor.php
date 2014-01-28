@@ -89,6 +89,7 @@ class SentenceProcessor
 			} catch (FormulatorException $E) {
 
 				$Answerer = new Answerer1();
+				$Answerer->setEventManager($this->EventManager);
 				$Answer = $Answerer->answer($Question, $CurrentGrammar, $KnowledgeManager);
 
 			}

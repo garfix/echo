@@ -60,6 +60,8 @@ class Answerer1
 			$Answer =  $this->getImperativeAnswer($SentenceEvent, $Question, $KnowledgeManager);
 		}
 
+		$this->send(new LogEvent(array('formulation' => $Answer)));
+
 		return $Answer;
 	}
 

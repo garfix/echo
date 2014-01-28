@@ -851,6 +851,10 @@ class SemanticStructureParser
 			$pos = $newPos;
 		} elseif ($newPos = $this->parseFunctionApplication($tokens, $pos, $argument)) {
 			$pos = $newPos;
+		} elseif ($newPos = $this->parseAtom($tokens, $pos, $argument)) {
+			$pos = $newPos;
+		} elseif ($newPos = $this->parseConstant($tokens, $pos, $argument)) {
+			$pos = $newPos;
 		} else {
 			$pos = false;
 		}

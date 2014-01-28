@@ -18,3 +18,17 @@
 		sentence(?n) and
 		{{ conjunction(?n, ?request) }}
 ]
+
+// how old? : ?q => ?q years old
+[
+	condition:
+		manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old),
+	type:
+		single,
+	production:
+		{{ question() }} and
+		mood(?e, Declarative) and
+		modifier(?complement, ?s1) and
+        determiner(?s1, ?q) and
+        isa(?s1, Year)
+]

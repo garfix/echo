@@ -38,7 +38,6 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 		$answer = 'sentence(?e) and mood(?e, Interrogative) and tense(?e, Past) and aspect(?e, Perfect) and isa(?e, Bear) and subject(?e, ?s) and name(?s, "Lord Byron") and ' .
 			'location(?e, ?request) and request(?request) and link(In, ?e, ?p) and name(?p, "London")';
 
-
 		$answerBindings = array(
 			array(
 				'request' => 'London',
@@ -63,8 +62,8 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 
 			object (?e, ?o) and
 
-			link(Of , ?s , ?S_Clause_NP_DP_subEntity) and
-			name(?S_Clause_NP_DP_subEntity , 'Lord Byron')
+			link(Of , ?s , ?sub) and
+			name(?sub, 'Lord Byron')
 		";
 
 		$answer = 'sentence(?n) and name(?n1, "Allegra Byron") and name(?n2, "Ada Lovelace") and link(And, ?n, ?n2, ?n1)';
@@ -81,6 +80,46 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 		$this->doTest($question, $answer, $answerBindings);
 	}
 
+	public function testAnswerWithCalculation()
+	{
+		$question = '
+			manner ( ?S_complement , ?S_request ) and
+			isa ( ?S_complement , Old ) and
+			tense ( ?S_event , Past ) and
+			name ( ?S_subject , "Mary Shelley" ) and
+			subject ( ?S_event , ?S_subject ) and
+			modifier ( ?S_event , ?S_complement ) and
+			request ( ?S_request ) and
+			mood ( ?S_event , Interrogative ) and
+			at_time ( ?S_event , ?S_Clause_SBar_subEvent ) and
+			isa ( ?S_subject , Female ) and
+			reference ( ?S_subject ) and
+			isa ( ?S_Clause_SBar_subEvent , Die ) and
+			subject ( ?S_Clause_SBar_subEvent , ?S_subject ) and
+			object ( ?S_Clause_SBar_subEvent , ?S_Clause_SBar_Clause_object ) and
+			mood ( ?S_Clause_SBar_subEvent , Declarative ) and
+			sentence ( ?S_event )
+		';
+
+		$answerBindings = array(
+			array(
+				'S_subject' => 'http://dbpedia.org/resource/Mary_Shelley',
+                's3' => '1851-02-01',
+                's1' => 'http://dbpedia.org/resource/Mary_Shelley',
+                's2' => '1797-08-30',
+                'S_request' => 53,
+			)
+		);
+#todo: there is a superfluous mood(?S_event, Interrogative)
+		$answer = 'manner(?S_complement, ?S_request) and isa(?S_complement, Old) and tense(?S_event, Past) and name(?S_subject, "Mary Shelley") and '.
+			'subject(?S_event, ?S_subject) and modifier(?S_event, ?S_complement) and request(?S_request) and mood(?S_event, Interrogative) and at_time(?S_event, ?S_Clause_SBar_subEvent) and ' .
+			'isa(?S_subject, Female) and reference(?S_subject) and isa(?S_Clause_SBar_subEvent, Die) and subject(?S_Clause_SBar_subEvent, ?S_subject) and ' .
+			'object(?S_Clause_SBar_subEvent, ?S_Clause_SBar_Clause_object) and mood(?S_Clause_SBar_subEvent, Declarative) and sentence(?S_event) and ' .
+			'mood(?S_event, Declarative) and modifier(?S_complement, ?s1) and determiner(?s1, "53") and isa(?s1, Year)';
+
+		$this->doTest($question, $answer, $answerBindings);
+	}
+
 	private function doTest($question, $answer, array $answerBindings)
 	{
 		$Parser = new SemanticStructureParser();
@@ -91,6 +130,5 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 
 		$Answer = $Formulator->formulate($Sentence, $answerBindings);
 		$this->assertSame($answer, (string)$Answer);
-
 	}
 }
