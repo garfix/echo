@@ -12,6 +12,7 @@ class Conjunction
 {
 	function invoke(array $parameters, RelationList $Question)
 	{
+#todo variables should be generated within the scope of a sentence
 		static $idGen = 0;
 
 		$RootVariable = $parameters[0];

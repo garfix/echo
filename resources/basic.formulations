@@ -1,8 +1,71 @@
+// how old? : ?q => ?q years old
+[
+	condition:
+
+	#todo: terrible condition
+
+		time(?e, ?t) and request(?q) and modifier(?e, ?complement),
+	type:
+		single,
+	production:
+		mood(?e, Declarative) and
+		{{ question() }} and
+		modifier(?complement, ?s1) and
+        determiner(?s1, ?q) and
+        isa(?s1, Year)
+]
+
 [
 	condition:
 		location(?event, ?request),
 	production:
+		mood(?event, Declarative) and
 		{{ question() }} and
 		link(In, ?event, ?p) and
         name(?p, ?request)
+]
+
+[
+	condition:
+		at_time(?event, ?request),
+	production:
+		mood(?event, Declarative) and
+		{{ question() }} and
+		link(On, ?event, ?p) and
+        name(?p, sqlDateToHumanDate(?request))
+]
+
+[
+	condition:
+		label(?s, ?request) and request(?request),
+	type:
+		multiple,
+	production:
+		mood(?event, Declarative) and
+		sentence(?n) and
+		{{ conjunction(?n, ?request) }}
+]
+
+[
+	condition:
+		request(?q) and object(?e, ?o) and sentence(?e),
+	type:
+		single,
+	production:
+		determiner(?o, ?q) and
+		mood(?e, Declarative) and
+		{{ question() }}
+]
+
+[
+	condition:
+# any sentence left
+		subject(?e, ?type),
+	type:
+		single,
+	production:
+		qualification(?e, ?q) and
+		isa(?q, Yes) and
+		mood(?e, Declarative) and
+		{{ question() }}
 ]

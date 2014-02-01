@@ -65,33 +65,45 @@ class SentenceProcessor
 				$this->changeRequestPropertyIntoVariable($Relation);
 			}
 
-			try {
+			// transform human-based metaphores into machine-processable tasks
+			$InterpretedQuestion = $this->interpret($Question, $KnowledgeManager);
 
-				// transform human-based metaphores into machine-processable tasks
-				$InterpretedQuestion = $this->interpret($Question, $KnowledgeManager);
+			// ask the knowledge manager to find the answer (in a set of variable bindings)
+			$bindings = $this->findAnswer($InterpretedQuestion, $KnowledgeManager);
 
-				// ask the knowledge manager to find the answer (in a set of variable bindings)
-				$bindings = $this->findAnswer($InterpretedQuestion, $KnowledgeManager);
+			// remove let relations
+			$Let = $InterpretedQuestion->getRelationByPredicate('let');
+			if ($Let) {
+				$InterpretedQuestion->removeRelation($Let);
+			}
+			$Aggregate = $InterpretedQuestion->getRelationByPredicate('aggregate');
+			if ($Aggregate) {
+				$InterpretedQuestion->removeRelation($Aggregate);
+			}
 
-				// turn the answer bindings into relations
-				$Formulator = new Formulator(__DIR__ . '/../resources/basic.formulations');
-				$Answer = $Formulator->formulate($Question, $bindings);
-
-				$SentenceRelation = $Question->getRelationByPredicate('sentence');
-				if (!$SentenceRelation) {
-					throw new FormulatorException();
+			// filter the request variable from the bindings
+			$Request = $InterpretedQuestion->getRelationByPredicate('request');
+			if ($Request) {
+				$requestVar = $Request->getFirstArgument()->getName();
+				$filterBindings = array();
+				foreach ($bindings as $i => $binding) {
+					if (isset($bindings[$i][$requestVar])) {
+						$filterBindings[] = array($requestVar => $bindings[$i][$requestVar]);
+					} else {
+						$filterBindings[] = array();
+					}
 				}
+			} else {
+				$filterBindings = $bindings;
+			}
 
-				/** @var Variable $SentenceEvent */
-				$SentenceEvent = $SentenceRelation->getArgument(0);
-				$this->makeDeclarative($Answer, $SentenceEvent);
+			// turn the answer bindings into relations
+			$Formulator = new Formulator(__DIR__ . '/../resources/basic.formulations');
+			$Answer = $Formulator->formulate($InterpretedQuestion, $filterBindings);
 
-			} catch (FormulatorException $E) {
-
-				$Answerer = new Answerer1();
-				$Answerer->setEventManager($this->EventManager);
-				$Answer = $Answerer->answer($Question, $CurrentGrammar, $KnowledgeManager);
-
+			$SentenceRelation = $Question->getRelationByPredicate('sentence');
+			if (!$SentenceRelation) {
+				throw new FormulatorException();
 			}
 
 			// substitute proper nouns by pronouns
@@ -329,7 +341,7 @@ class SentenceProcessor
 		foreach ($Relations->getRelations() as $Relation) {
 			if ($Relation->getPredicate() == 'aggregate') {
 
-				$bindings = array($Aggregator->applyAggregate($Relation, $bindings));
+				$bindings = $Aggregator->applyAggregate($Relation, $bindings);
 			}
 		}
 

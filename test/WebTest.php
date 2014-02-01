@@ -25,8 +25,8 @@ class WebTest extends \PHPUnit_Framework_TestCase
 
 	public function testWhenWasLordByronBorn()
 	{
-		$this->assertSame('Lord Byron was born on January 22, 1788.', $this->answer('en', 'When was "Lord Byron" born?'), 'en');
-		$this->assertSame('Lord Byron is geboren op 22 januari 1788.', $this->answer('nl', 'Wanneer is "Lord Byron" geboren?'), 'nl');
+		$this->assertSame('Lord Byron was born on 22-01-1788.', $this->answer('en', 'When was "Lord Byron" born?'), 'en');
+		$this->assertSame('Lord Byron is geboren op 22-01-1788.', $this->answer('nl', 'Wanneer is "Lord Byron" geboren?'), 'nl');
 	}
 
 	public function testWhereDidLordByronBornDie()
@@ -37,8 +37,8 @@ class WebTest extends \PHPUnit_Framework_TestCase
 
 	public function testWhenDidLordByronDie()
 	{
-		$this->assertSame('Lord Byron died on April 19, 1824.', $this->answer('en', 'When did "Lord Byron" die?'), 'en');
-		$this->assertSame('Lord Byron is gestorven op 19 april 1824.', $this->answer('nl', 'Wanneer is "Lord Byron" gestorven?'), 'nl');
+		$this->assertSame('Lord Byron died on 19-04-1824.', $this->answer('en', 'When did "Lord Byron" die?'), 'en');
+		$this->assertSame('Lord Byron is gestorven op 19-04-1824.', $this->answer('nl', 'Wanneer is "Lord Byron" gestorven?'), 'nl');
 	}
 
 	public function testWhoWereAdaLovelacesParents()

@@ -11,10 +11,11 @@ use agentecho\datastructure\FunctionApplication;
 class Aggregator
 {
 	/**
-	 * In a let(?a, ?b), place the result of ?b in ?a.
+	 * In a aggregate(?a, ?b), place the result of ?b in ?a.
 	 *
-	 * @param Relation $LetRelation
-	 * @param array $arguments
+	 * @param Relation $AggregatorRelation
+	 * @param array $results
+	 * @return array
 	 */
 	public function applyAggregate(Relation $AggregatorRelation, array $results)
 	{
@@ -37,9 +38,10 @@ class Aggregator
 			$arguments = array(
 				$argumentName => $select
 			);
-			$arguments[$varName] = $Invoker->applyFunctionApplication($Function, $arguments);
+
+			$results[0][$varName] = $Invoker->applyFunctionApplication($Function, $arguments);
 		}
 
-		return $arguments;
+		return $results;
 	}
 }

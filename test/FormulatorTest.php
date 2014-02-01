@@ -66,7 +66,7 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 			name(?sub, 'Lord Byron')
 		";
 
-		$answer = 'sentence(?n) and name(?n1, "Allegra Byron") and name(?n2, "Ada Lovelace") and link(And, ?n, ?n2, ?n1)';
+		$answer = 'sentence(?n) and name(?n5, "Allegra Byron") and name(?n6, "Ada Lovelace") and link(And, ?n, ?n6, ?n5)';
 
 		$answerBindings = array(
 			array(
@@ -115,7 +115,7 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 			'subject(?S_event, ?S_subject) and modifier(?S_event, ?S_complement) and request(?S_request) and mood(?S_event, Interrogative) and at_time(?S_event, ?S_Clause_SBar_subEvent) and ' .
 			'isa(?S_subject, Female) and reference(?S_subject) and isa(?S_Clause_SBar_subEvent, Die) and subject(?S_Clause_SBar_subEvent, ?S_subject) and ' .
 			'object(?S_Clause_SBar_subEvent, ?S_Clause_SBar_Clause_object) and mood(?S_Clause_SBar_subEvent, Declarative) and sentence(?S_event) and ' .
-			'mood(?S_event, Declarative) and modifier(?S_complement, ?s1) and determiner(?s1, "53") and isa(?s1, Year)';
+			'mood(?S_event, Declarative) and modifier(?S_complement, ?s1) and determiner(?s1, 53) and isa(?s1, Year)';
 
 		$this->doTest($question, $answer, $answerBindings);
 	}

@@ -4,6 +4,7 @@ namespace agentecho\component;
 
 use agentecho\component\events\EventSender;
 use agentecho\component\parser\FormulatorRulesParser;
+use agentecho\datastructure\Atom;
 use agentecho\datastructure\Constant;
 use agentecho\datastructure\FormulationRule;
 use agentecho\datastructure\FormulationRules;
@@ -11,7 +12,6 @@ use agentecho\datastructure\FunctionApplication;
 use agentecho\datastructure\RelationTemplate;
 use agentecho\datastructure\Variable;
 use agentecho\exception\FormulatorException;
-use agentecho\grammar\Grammar;
 use agentecho\datastructure\RelationList;
 
 /**
@@ -113,14 +113,15 @@ class Formulator
 					if (isset($answerBinding[$variableName])) {
 
 						$bindingValue = $answerBinding[$variableName];
+						$val = (is_numeric($bindingValue) ? new Atom($bindingValue) : new Constant($bindingValue));
 
 						if ($Rule->getType() == FormulationRule::TYPE_MULTIPLE) {
 							if (!isset($bindings[$name]) || !is_array($bindings[$name])) {
 								$bindings[$name] = array();
 							}
-							$bindings[$name][] = new Constant($bindingValue);
+							$bindings[$name][] = $val;
 						} else {
-							$bindings[$name] = new Constant($bindingValue);
+							$bindings[$name] = $val;
 						}
 					}
 				}
@@ -134,7 +135,7 @@ class Formulator
 		$AnswerRelations = $this->expandRelationTemplates($AnswerRelations, $bindings, $Question);
 
 		// execute the functions in the new relations
-		$AnswerRelations = $this->executeFunctions($AnswerRelations);
+		$AnswerRelations = $this->executeFunctions($AnswerRelations, $bindings);
 
 		return $AnswerRelations;
 	}
@@ -203,11 +204,22 @@ class Formulator
 	 * and returns these same relations.
 	 *
 	 * @param RelationList $Relations
+	 * @param array $bindings
 	 * @return RelationList
 	 */
-	private function executeFunctions(RelationList $Relations)
+	private function executeFunctions(RelationList $Relations, array $bindings)
 	{
-#todo
+		foreach ($Relations->getRelations() as $Relation) {
+			foreach ($Relation->getArguments() as $i => $Argument) {
+				if ($Argument instanceof FunctionApplication) {
+
+					$Invoker = new FunctionInvoker();
+					$NewArgument = $Invoker->applyFunctionApplication($Argument, $bindings);
+					$Relation->setArgument($i, $NewArgument);
+				}
+			}
+		}
+
 		return $Relations;
 	}
 }
