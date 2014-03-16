@@ -4,8 +4,8 @@
 	type:
 		single,
 	production:
-		{{ question() }} and
-		link(In, ?event, ?p) and
+		{{ question() }}
+		link(In, ?event, ?p)
         name(?p, ?request)
 ]
 
@@ -15,20 +15,20 @@
 	type:
 		multiple,
 	production:
-		sentence(?n) and
+		sentence(?n)
 		{{ conjunction(?n, ?request) }}
 ]
 
 // how old? : ?q => ?q years old
 [
 	condition:
-		manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old),
+		manner(?complement, ?q) modifier(?e, ?complement) isa(?complement, Old),
 	type:
 		single,
 	production:
-		{{ question() }} and
-		mood(?e, Declarative) and
-		modifier(?complement, ?s1) and
-        determiner(?s1, ?q) and
+		{{ question() }}
+		mood(?e, Declarative)
+		modifier(?complement, ?s1)
+        determiner(?s1, ?q)
         isa(?s1, Year)
 ]

@@ -1,50 +1,50 @@
 // author of
-isa(?s, Author) and link(Of, ?s, ?o) => author(?s, ?o);
+isa(?s, Author) link(Of, ?s, ?o) => author(?s, ?o);
 
 // name
 name(?a, ?b) => name(?a, ?b);
 
-// when ?e happens at ?t and this is the same time as ?f, and ?f is a death, then the subject of ?f dies at ?t
-time(?e, ?t) and at_time(?e, ?f) and subject(?e, ?sub1) and subject(?f, ?sub2) and isa(?f, Die) => time_property(?sub1, ?t) and die_at(?sub2, ?t);
+// when ?e happens at ?t this is the same time as ?f, ?f is a death, then the subject of ?f dies at ?t
+time(?e, ?t) at_time(?e, ?f) subject(?e, ?sub1) subject(?f, ?sub2) isa(?f, Die) => time_property(?sub1, ?t) die_at(?sub2, ?t);
 
 // same name
-subject(?e, ?s) and subject(?e, ?t) and name(?s, ?n) => name(?t, ?n);
+subject(?e, ?s) subject(?e, ?t) name(?s, ?n) => name(?t, ?n);
 
 // influenced by
-isa(?e, Influence) and subject(?e, ?s) and object(?e, ?o) => influence(?s, ?o);
+isa(?e, Influence) subject(?e, ?s) object(?e, ?o) => influence(?s, ?o);
 
 // have children
-isa(?e, Have) and subject(?e, ?s) and object(?e, ?o) and isa(?o, Child) => child(?s, ?o);
+isa(?e, Have) subject(?e, ?s) object(?e, ?o) isa(?o, Child) => child(?s, ?o);
 
 // born in
-location(?e, ?q) and isa(?e, Bear) and subject(?e, ?s) => born_in(?s, ?q);
+location(?e, ?q) isa(?e, Bear) subject(?e, ?s) => born_in(?s, ?q);
 
 // born at (1)
 born(?a, ?b) => born_at(?a, ?b);
 
 // born at (2)
-at_time(?e, ?q) and isa(?e, Bear) and subject(?e, ?s) => born_at(?s, ?q);
+at_time(?e, ?q) isa(?e, Bear) subject(?e, ?s) => born_at(?s, ?q);
 
 // die in
-location(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_in(?s, ?q);
+location(?e, ?q) isa(?e, Die) subject(?e, ?s) => die_in(?s, ?q);
 
 // die at (1)
 die(?a, ?b) => die_at(?a, ?b);
 
 // die at (2)
-at_time(?e, ?q) and isa(?e, Die) and subject(?e, ?s) => die_at(?s, ?q);
+at_time(?e, ?q) isa(?e, Die) subject(?e, ?s) => die_at(?s, ?q);
 
 // daughter
-isa(?child, Daughter) and link(Of, ?child, ?parent) => child(?parent, ?child);
+isa(?child, Daughter) link(Of, ?child, ?parent) => child(?parent, ?child);
 
 // child
-isa(?child, Child) and link(Of, ?child, ?parent) => child(?parent, ?child);
+isa(?child, Child) link(Of, ?child, ?parent) => child(?parent, ?child);
 
 // parent
-isa(?parent, Parent) and link(Of, ?parent, ?child) => child(?parent, ?child);
+isa(?parent, Parent) link(Of, ?parent, ?child) => child(?parent, ?child);
 
 // married to
-isa(?e, Marry) and subject(?e, ?s) and link(To, ?e, ?o) => marry(?s, ?o);
+isa(?e, Marry) subject(?e, ?s) link(To, ?e, ?o) => marry(?s, ?o);
 
 // identity mappings
 label(?a, ?b) => label(?a, ?b);
@@ -57,7 +57,7 @@ tense(?a, ?b) => true();
 reference(?a) => true();
 let(?a, ?b) => true();
 aggregate(?a, ?b) => true();
-manner(?o, ?q) and isa(?o, Child) => true();
+manner(?o, ?q) isa(?o, Child) => true();
 request(?a) => true();
 request_unit(?a) => true();
 aspect(?event, ?aspect) => true();

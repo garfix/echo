@@ -5,7 +5,7 @@
 	rule:
 		CP => NP punctuationMark CP,
 	condition:
-		link(?cp, CP.node, CP.firstEntity, CP.secondEntity) and
+		link(?cp, CP.node, CP.firstEntity, CP.secondEntity)
 		link(?cp, CP.secondEntity, ?grandchild1, ?grandchild2),
 	bind: {
 		NP.entity = CP.firstEntity;
@@ -21,7 +21,7 @@
 	rule:
 		CP => NP1 punctuationMark conjunction NP2,
 	condition:
-		link(?cp, CP.node, CP.firstEntity, CP.secondEntity) and
+		link(?cp, CP.node, CP.firstEntity, CP.secondEntity)
 		link(?cp, ?grandparent, ?sibling, CP.node),
 	bind: {
 		NP1.entity = CP.firstEntity;

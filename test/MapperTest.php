@@ -21,18 +21,18 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b)', 'oak(?b, ?a)', false, false);
 
 		// map 1 to 1 and 1 to 2
-		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and yellow(?b, ?c)', 'oak(?b, ?a) and pine(?b, ?s1) and larch(?s1, ?c)', false, false);
+		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) yellow(?b, ?c)', 'oak(?b, ?a) pine(?b, ?s1) larch(?s1, ?c)', false, false);
 
 		// map 2 to 1
-		$this->performMapper($Parser, $Mapper, 'green(?x, ?y) and orange(?y, ?z)', 'birch(?x, ?z)', false, false);
+		$this->performMapper($Parser, $Mapper, 'green(?x, ?y) orange(?y, ?z)', 'birch(?x, ?z)', false, false);
 
 		// some predicate occurs twice
-		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and yellow(?b, ?c) and blue(?c, ?d)', 'oak(?b, ?a) and oak(?d, ?c) and pine(?b, ?s1) and larch(?s1, ?c)', false, false);
+		$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) yellow(?b, ?c) blue(?c, ?d)', 'oak(?b, ?a) oak(?d, ?c) pine(?b, ?s1) larch(?s1, ?c)', false, false);
 
 		// some predicate could not be matched
 		$exception = false;
 		try {
-			$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) and pink(?b, ?c)', false, false, false);
+			$this->performMapper($Parser, $Mapper, 'blue(?a, ?b) pink(?b, ?c)', false, false, false);
 		} catch (\agentecho\exception\DataMappingFailedException $E) {
 			$exception = true;
 		}
@@ -44,7 +44,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
 		$Mapper = new DataMapper(__DIR__ . '/helpers/testMapper.map');
 		$Parser = new SemanticStructureParser();
 
-		$out = 'home_2_main_street(?p, ?s2) and main_street_2_town(?s2, ?s1) and town_2_forest(?s1, ?s3) and forest_2_school(?s3, ?p)';
+		$out = 'home_2_main_street(?p, ?s2) main_street_2_town(?s2, ?s1) town_2_forest(?s1, ?s3) forest_2_school(?s3, ?p)';
 		$this->performMapper($Parser, $Mapper, 'home_2_school(?p)', $out, true, true);
 	}
 

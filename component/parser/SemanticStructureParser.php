@@ -54,8 +54,6 @@ class SemanticStructureParser
 	const T_STRING = 'string';
 	const T_NUMBER = 'number';
 	const T_WHITESPACE = 'whitespace';
-	// keywords
-	const T_AND = 'and';
 	// operators
 	const T_PLUS = '+';
 
@@ -73,7 +71,7 @@ class SemanticStructureParser
 			return null;
 		}
 
-		// name(a, "John") and name(b, "Mary") and love(a, b)
+		// name(a, "John") name(b, "Mary") love(a, b)
 		$tokens = $this->tokenize($string);
 		if (!$tokens) {
 			throw new SemanticStructureParseException(substr($string, $this->lastPosParsed, 40));
@@ -432,7 +430,7 @@ class SemanticStructureParser
 	}
 
 	/**
-	 * Parses age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2) and diff(?d2, ?d1, ?a)
+	 * Parses age(?p, ?a) => born(?p, ?d1) die(?p, ?d2) diff(?d2, ?d1, ?a)
 	 * @param array $tokens
 	 * @param $pos
 	 * @param $DataMapping
@@ -586,42 +584,28 @@ class SemanticStructureParser
 
 	private function parseRelationList(array $tokens, $pos, &$RelationList)
 	{
-		$count = 0;
-		$relations = array($count => null);
-
-		if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
-			$pos = $newPos;
-		} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $relations[$count])) {
-			$pos = $newPos;
-		} else {
-			return false;
-		}
-
-		$count++;
+		$relations = array();
+		$newPos = true;
 
 		while ($newPos) {
 
-			// and
-			if ($newPos = $this->parseSingleToken(self::T_AND, $tokens, $pos)) {
+			// argument
+			if ($newPos = $this->parseRelation($tokens, $pos, $result)) {
+				$relations[] = $result;
 				$pos = $newPos;
-
-				// argument
-				$relations[$count] = null;
-				if ($newPos = $this->parseRelation($tokens, $pos, $relations[$count])) {
-					$pos = $newPos;
-					$count++;
-				} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $relations[$count])) {
-					$pos = $newPos;
-					$count++;
-				} else {
-					return false;
-				}
+			} elseif ($newPos = $this->parseRelationTemplate($tokens, $pos, $result)) {
+				$relations[] = $result;
+				$pos = $newPos;
 			}
 		}
 
-		$RelationList = new RelationList();
-		$RelationList->setRelations($relations);
-		return $pos;
+		if (count($relations) > 0) {
+			$RelationList = new RelationList();
+			$RelationList->setRelations($relations);
+			return $pos;
+		} else {
+			return false;
+		}
 	}
 
 	private function parseRelationTemplate(array $tokens, $pos, &$RelationTemplate)
@@ -695,38 +679,25 @@ class SemanticStructureParser
 
 	private function parseTermList(array $tokens, $pos, &$TermList)
 	{
-		$count = 0;
-		$terms = array($count => null);
+		$terms = array();
+		$newPos = true;
 
-		if ($newPos = $this->parseTerm($tokens, $pos, $terms[$count])) {
-			$pos = $newPos;
-			$count++;
+		while ($newPos) {
 
-			while ($newPos) {
-
-				// and
-				if ($newPos = $this->parseSingleToken(self::T_AND, $tokens, $pos)) {
-					$pos = $newPos;
-
-					// argument
-					$terms[$count] = null;
-					if ($newPos = $this->parseTerm($tokens, $pos, $terms[$count])) {
-						$pos = $newPos;
-						$count++;
-					} else {
-						return false;
-					}
-
-				}
-
+			// term
+			if ($newPos = $this->parseTerm($tokens, $pos, $result)) {
+				$terms[] = $result;
+				$pos = $newPos;
 			}
+		}
 
+		if (count($terms) > 0) {
 			$TermList = new TermList();
 			$TermList->setTerms($terms);
 			return $pos;
+		} else {
+			return false;
 		}
-
-		return false;
 	}
 
 	private function parseAssignmentList(array $tokens, $pos, &$AssignmentList)
@@ -1075,10 +1046,6 @@ class SemanticStructureParser
 				$id = self::T_TEMPLATE_END;
 				$contents = '}}';
 				$pos += 2 - 1;
-			} elseif (substr($string, $pos, 3) == 'and') {
-				$id = self::T_AND;
-				$contents = 'and';
-				$pos += 3 - 1;
 			} elseif (isset($singleCharTokens[$char])) {
 				// single character
 				$id = $singleCharTokens[$char];

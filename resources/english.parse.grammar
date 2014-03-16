@@ -5,8 +5,8 @@
 	rule:
 		Clause => WhADVP auxDo NP VP,
 	semantics: {
-		Clause.sem = WhADVP.sem and auxDo.sem and NP.sem and VP.sem and
-			subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and request(Clause.request) and mood(Clause.event, Interrogative);
+		Clause.sem = WhADVP.sem auxDo.sem NP.sem VP.sem
+			subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) request(Clause.request) mood(Clause.event, Interrogative);
 		Clause.event = VP.event;
 		Clause.subject = NP.entity;
 		Clause.object = WhADVP.entity;

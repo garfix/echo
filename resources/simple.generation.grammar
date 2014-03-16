@@ -42,7 +42,7 @@
 	rule:
 		SDecl => NP1 auxBe NP2,
 	condition:
-		subject(S.event, S.subject) and complement(S.event, S.complement),
+		subject(S.event, S.subject) complement(S.event, S.complement),
 	bind: {
 		NP1.entity = S.subject;
 		NP2.entity = S.complement
@@ -55,7 +55,7 @@
 	rule:
 		SDecl => NP auxBe AdjP,
 	condition:
-		subject(S.event, S.subject) and modifier(S.event, S.complement),
+		subject(S.event, S.subject) modifier(S.event, S.complement),
 	bind: {
 		NP.entity = S.subject;
 		AdjP.entity = S.complement
@@ -69,7 +69,7 @@
 	rule:
 		SDecl => NP auxPsv VP,
 	condition:
-		subject(S.event, S.subject) and object(S.event, S.object) and voice(S.event, Passive),
+		subject(S.event, S.subject) object(S.event, S.object) voice(S.event, Passive),
 	bind: {
 		NP.entity = S.object;
 		auxPsv.event = S.event;
@@ -83,7 +83,7 @@
 	rule:
 		SDecl => NP auxBe VP,
 	condition:
-		subject(S.event, S.subject) and aspect(S.event, Perfect),
+		subject(S.event, S.subject) aspect(S.event, Perfect),
 	bind: {
 		NP.entity = S.subject;
 		auxBe.event = S.event;
@@ -265,7 +265,7 @@
 	rule:
 		VP => pastParticipleVerb passivisationPreposition NP,
 	condition:
-		isa(VP.event, ?type) and subject(VP.event, VP.subject) and voice(VP.event, Passive),
+		isa(VP.event, ?type) subject(VP.event, VP.subject) voice(VP.event, Passive),
 	bind: {
 		pastParticipleVerb.event = VP.event;
 		passivisationPreposition.event = VP.event;
@@ -279,7 +279,7 @@
 	rule:
 		VP => pastParticipleVerb PP,
 	condition:
-		isa(VP.event, ?type) and link(?link, VP.event, VP.object) and aspect(VP.event, Perfect),
+		isa(VP.event, ?type) link(?link, VP.event, VP.object) aspect(VP.event, Perfect),
 	bind: {
 		pastParticipleVerb.event = VP.event;
 		PP.entity = VP.object
@@ -291,7 +291,7 @@
 	rule:
 		VP => simpleVerb PP,
 	condition:
-		isa(VP.event, ?type) and link(?link, VP.event, VP.object),
+		isa(VP.event, ?type) link(?link, VP.event, VP.object),
 	bind: {
 		simpleVerb.event = VP.event;
 		PP.entity = VP.object
@@ -303,7 +303,7 @@
 	rule:
 		VP => simpleVerb NP,
 	condition:
-		isa(VP.event, ?type) and object(VP.event, VP.object),
+		isa(VP.event, ?type) object(VP.event, VP.object),
 	bind: {
 		simpleVerb.event = VP.event;
 		NP.entity = VP.object
@@ -403,9 +403,9 @@
 	rule:
 		pastParticipleVerb => word,
 	condition:
-		isa(pastParticipleVerb.event, ?type) and isa(pastParticipleVerb.event, ?type),
+		isa(pastParticipleVerb.event, ?type) isa(pastParticipleVerb.event, ?type),
 	word:
-		isa(pastParticipleVerb.event, ?type) and tense(pastParticipleVerb.event, ?tense)
+		isa(pastParticipleVerb.event, ?type) tense(pastParticipleVerb.event, ?tense)
 ]
 
 # simpleVerb
@@ -415,9 +415,9 @@
 	rule:
 		simpleVerb => word,
 	condition:
-		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense),
+		isa(simpleVerb.event, ?type) tense(simpleVerb.event, ?tense),
 	word:
-		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, ?tense)
+		isa(simpleVerb.event, ?type) tense(simpleVerb.event, ?tense)
 ]
 
 // verb, implicit
@@ -427,5 +427,5 @@
 	condition:
 		isa(simpleVerb.event, ?type),
 	word:
-		isa(simpleVerb.event, ?type) and tense(simpleVerb.event, Present)
+		isa(simpleVerb.event, ?type) tense(simpleVerb.event, Present)
 ]

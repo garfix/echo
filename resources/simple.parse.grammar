@@ -2,7 +2,7 @@
 	rule:
 		S => Clause,
 	semantics: {
-		S.sem = Clause.sem and sentence(S.event);
+		S.sem = Clause.sem sentence(S.event);
 		S.event = Clause.event;
 		S.subject = Clause.subject;
 		S.object = Clause.object;
@@ -17,7 +17,7 @@
 	rule:
 		Clause => NP VP,
 	semantics: {
-		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and mood(Clause.event, Declarative);
+		Clause.sem = NP.sem VP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) mood(Clause.event, Declarative);
     	Clause.event = VP.event;
     	Clause.subject = NP.entity;
     	Clause.object = VP.object
@@ -30,7 +30,7 @@
 	rule:
 		Clause => VP,
 	semantics: {
-		Clause.sem = VP.sem and object(Clause.event, Clause.object) and mood(Clause.event, Imperative);
+		Clause.sem = VP.sem object(Clause.event, Clause.object) mood(Clause.event, Imperative);
 		Clause.event = VP.event;
 		Clause.object = VP.object
 	}
@@ -42,7 +42,7 @@
 	rule:
 		Clause => WhADVP VP NP,
 	semantics: {
-		Clause.sem = WhADVP.sem and VP.sem and NP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and request(Clause.request) and mood(Clause.event, Interrogative);
+		Clause.sem = WhADVP.sem VP.sem NP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) request(Clause.request) mood(Clause.event, Interrogative);
         Clause.event = VP.event;
         Clause.subject = NP.entity;
         Clause.subject = WhADVP.subject;
@@ -58,7 +58,7 @@
 	rule:
         Clause => WhADVP auxBe NP VP,
     semantics: {
-		Clause.sem = WhADVP.sem and auxBe.sem and NP.sem and VP.sem and subject(Clause.event, Clause.subject) and request(Clause.request) and mood(Clause.event, Interrogative);
+		Clause.sem = WhADVP.sem auxBe.sem NP.sem VP.sem subject(Clause.event, Clause.subject) request(Clause.request) mood(Clause.event, Interrogative);
 		Clause.event = WhADVP.event;
 		Clause.event = VP.event;
 		Clause.subject = NP.entity;
@@ -73,7 +73,7 @@
 	rule:
         Clause => aux NP VP,
     semantics: {
-		Clause.sem = NP.sem and VP.sem and subject(Clause.event, Clause.subject) and mood(Clause.event, Interrogative);
+		Clause.sem = NP.sem VP.sem subject(Clause.event, Clause.subject) mood(Clause.event, Interrogative);
 		Clause.event = VP.event;
 		Clause.subject = NP.entity
     }
@@ -85,7 +85,7 @@
 	rule:
         Clause => aux NP1 VP passivisationPreposition NP2,
     semantics: {
-        Clause.sem = NP1.sem and NP2.sem and VP.sem and subject(Clause.event, Clause.subject) and object(Clause.event, Clause.object) and mood(Clause.event, Interrogative) and voice(Clause.event, Passive);
+        Clause.sem = NP1.sem NP2.sem VP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) mood(Clause.event, Interrogative) voice(Clause.event, Passive);
         Clause.event = VP.event;
         Clause.subject = NP2.entity;
         Clause.object = NP1.entity
@@ -99,7 +99,7 @@
 	rule:
         Clause => auxBe NP1 NP2,
     semantics: {
-       Clause.sem = auxBe.sem and NP1.sem and NP2.sem and subject(Clause.event, Clause.subject) and complement(Clause.event, Clause.complement) and mood(Clause.event, Interrogative);
+       Clause.sem = auxBe.sem NP1.sem NP2.sem subject(Clause.event, Clause.subject) complement(Clause.event, Clause.complement) mood(Clause.event, Interrogative);
        Clause.complement = NP2.entity;
        Clause.subject = NP1.entity
     }
@@ -111,7 +111,7 @@
 	rule:
         Clause => WhADVP auxBe NP,
     semantics: {
-        Clause.sem = WhADVP.sem and auxBe.sem and NP.sem and subject(Clause.event, Clause.subject) and modifier(Clause.event, Clause.complement) and request(Clause.request) and mood(Clause.event, Interrogative);
+        Clause.sem = WhADVP.sem auxBe.sem NP.sem subject(Clause.event, Clause.subject) modifier(Clause.event, Clause.complement) request(Clause.request) mood(Clause.event, Interrogative);
         Clause.complement = WhADVP.entity;
         Clause.event = auxBe.event;
         Clause.subject = NP.entity;
@@ -125,7 +125,7 @@
 	rule:
 		Clause1 => Clause2 SBar,
 	semantics: {
-		Clause1.sem = Clause2.sem and SBar.sem;
+		Clause1.sem = Clause2.sem SBar.sem;
 		Clause1.event = Clause2.event;
 		Clause1.subject = Clause2.subject;
 		Clause1.object = Clause2.object;
@@ -141,7 +141,7 @@
 	rule:
 		SBar => whAdverb Clause,
 	semantics: {
-		SBar.sem = whAdverb.sem and Clause.sem;
+		SBar.sem = whAdverb.sem Clause.sem;
 		SBar.superEvent = whAdverb.event;
 		SBar.subEvent = whAdverb.adjunct;
 		SBar.subEvent = Clause.event
@@ -168,7 +168,7 @@
 	rule:
 		VP => verb NP,
 	semantics: {
-		VP.sem = verb.sem and NP.sem;
+		VP.sem = verb.sem NP.sem;
 		VP.event = verb.event;
 		VP.object = NP.entity
 	}
@@ -180,7 +180,7 @@
 	rule:
 		VP => verb NP1 NP2,
 	semantics: {
-		S.sem = verb.sem and NP1.sem and NP2.sem and subject(S.event, S.subject) and object(S.event, S.object);
+		S.sem = verb.sem NP1.sem NP2.sem subject(S.event, S.subject) object(S.event, S.object);
 		S.event = verb.event;
 		S.subject = NP1.entity;
 		S.object = NP2.entity
@@ -205,7 +205,7 @@
 	rule:
 		VP => verb PP,
 	semantics: {
-		VP.sem = verb.sem and PP.sem;
+		VP.sem = verb.sem PP.sem;
 		VP.event = verb.event;
 		VP.event = PP.superEntity
 	}
@@ -245,7 +245,7 @@
 	rule:
         WhADVP => whwordNP NP,
     semantics: {
-		WhADVP.sem = whwordNP.sem and NP.sem;
+		WhADVP.sem = whwordNP.sem NP.sem;
 		WhADVP.entity = whwordNP.entity;
 		WhADVP.entity = NP.entity;
 		WhADVP.request = whwordNP.adjunct
@@ -258,7 +258,7 @@
 	rule:
         WhADVP => whwordNP AdjP,
     semantics: {
-		WhADVP.sem = whwordNP.sem and AdjP.sem;
+		WhADVP.sem = whwordNP.sem AdjP.sem;
 		WhADVP.entity = whwordNP.entity;
 		WhADVP.entity = AdjP.entity;
 		WhADVP.request = whwordNP.adjunct
@@ -295,7 +295,7 @@
 	rule:
         NP => DP NBar,
     semantics: {
-		NP.sem = DP.sem and NBar.sem;
+		NP.sem = DP.sem NBar.sem;
         NP.entity = NBar.entity;
         NP.entity = DP.entity
     }
@@ -331,7 +331,7 @@
 	rule:
         NBar1 => AdjP NBar2,
     semantics: {
-		NBar1.sem = AdjP.sem and NBar2.sem and modifier(NBar2.entity, AdjP.entity);
+		NBar1.sem = AdjP.sem NBar2.sem modifier(NBar2.entity, AdjP.entity);
         NBar1.entity = NBar2.entity
     }
 ]
@@ -343,7 +343,7 @@
 	rule:
         NBar1 => NBar2 PP,
     semantics: {
-		NBar1.sem = NBar2.sem and PP.sem;
+		NBar1.sem = NBar2.sem PP.sem;
         NBar1.entity = NBar2.entity;
         NBar1.entity = PP.superEntity
     }
@@ -405,7 +405,7 @@
 	rule:
 		PP => preposition NP,
 	semantics: {
-		PP.sem = preposition.sem and NP.sem;
+		PP.sem = preposition.sem NP.sem;
 		PP.superEntity = preposition.superEntity;
 		PP.subEntity = preposition.subEntity;
 		PP.subEntity = NP.entity
@@ -431,7 +431,7 @@
 	rule:
 		AdjP => AdvP adjective,
 	semantics: {
-		AdjP.sem = AdvP.sem and adjective.sem;
+		AdjP.sem = AdvP.sem adjective.sem;
 		AdjP.entity = AdvP.entity;
         AdjP.entity = adjective.entity
 	}
@@ -443,7 +443,7 @@
 	rule:
 		AdjP => degreeAdverb adjective,
 	semantics: {
-		AdjP.sem = degreeAdverb.sem and adjective.sem;
+		AdjP.sem = degreeAdverb.sem adjective.sem;
 		AdjP.entity = degreeAdverb.entity;
         AdjP.entity = adjective.entity
 	}
@@ -455,7 +455,7 @@
 	rule:
 		AdjP => NP adjective,
 	semantics: {
-		AdjP.sem = NP.sem and adjective.sem;
+		AdjP.sem = NP.sem adjective.sem;
 		AdjP.entity = NP.entity;
 		AdjP.entity = adjective.entity
 	}
@@ -479,7 +479,7 @@
 	rule:
         AdvP => degreeAdverb adverb,
     semantics: {
-        AdvP.sem = degreeAdverb.sem and adverb.sem
+        AdvP.sem = degreeAdverb.sem adverb.sem
     }
 ]
 
@@ -501,7 +501,7 @@
 	rule:
         DP => NP possessiveMarker,
     semantics: {
-        DP.sem = NP.sem and possessiveMarker.sem;
+        DP.sem = NP.sem possessiveMarker.sem;
         DP.subEntity = possessiveMarker.subEntity;
         DP.entity = possessiveMarker.superEntity;
         DP.subEntity = NP.entity

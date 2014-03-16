@@ -21,16 +21,16 @@
 ] [
 	form: 'beïnvloed',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 // deze mag weg als de oude generatie regels er uit zijn
 	form: 'beïnvloed',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 	form: 'beïnvloedde',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 	form: 'boek',
 	partOfSpeech: 'verb'
@@ -66,45 +66,45 @@
 ] [
 	form: 'geboren',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Bear) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'geboren',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Bear) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Bear) aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'getrouwd',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Marry) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'getrouwd',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Marry) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Die) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Die) aspect(this.event, Perfect)
 ] [
 	form: 'gestorven',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Die) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Die) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'had',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Have) and tense(this.event, Past)
+	semantics: isa(this.event, Have) tense(this.event, Past)
 ] [
 #deprecated
 	form: 'had',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Have) and tense(this.event, Past)
+	semantics: isa(this.event, Have) tense(this.event, Past)
 ] [
 	form: 'het',
 	partOfSpeech: 'article'
 ] [
 	form: 'hoeveel',
 	partOfSpeech: 'whwordNP',
-	semantics: manner(this.entity, this.adjunct) and many(this.entity)
+	semantics: manner(this.entity, this.adjunct) many(this.entity)
 ] [
 	form: 'ik',
 	partOfSpeech: 'pronoun',
@@ -139,11 +139,11 @@
 ] [
 	form: 'liep',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Walk) and tense(this.event, Past)
+	semantics: isa(this.event, Walk) tense(this.event, Past)
 ] [
 	form: 'loopt',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Walk) and tense(this.event, Present)
+	semantics: isa(this.event, Walk) tense(this.event, Present)
 ] [
 	form: 'met',
 	partOfSpeech: 'preposition',
@@ -159,7 +159,7 @@
 ] [
 	form: 'ontmoette',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Meet) and tense(this.event, Past)
+	semantics: isa(this.event, Meet) tense(this.event, Past)
 ] [
 	form: 'oud',
 	partOfSpeech: 'adjective',

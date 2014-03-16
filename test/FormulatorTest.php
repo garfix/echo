@@ -22,21 +22,21 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 	public function testAnswerWhereQuestion()
 	{
 		$question = "
-			sentence(?e) and
-			mood(?e, Interrogative) and
-			tense(?e, Past) and
-			aspect(?e, Perfect) and
-			isa(?e, Bear) and
+			sentence(?e)
+			mood(?e, Interrogative)
+			tense(?e, Past)
+			aspect(?e, Perfect)
+			isa(?e, Bear)
 
-			subject(?e, ?s) and
-			name(?s, 'Lord Byron') and
+			subject(?e, ?s)
+			name(?s, 'Lord Byron')
 
-			location(?e, ?request) and
+			location(?e, ?request)
 			request(?request)
 		";
 
-		$answer = 'sentence(?e) and mood(?e, Interrogative) and tense(?e, Past) and aspect(?e, Perfect) and isa(?e, Bear) and subject(?e, ?s) and name(?s, "Lord Byron") and ' .
-			'location(?e, ?request) and request(?request) and link(In, ?e, ?p) and name(?p, "London")';
+		$answer = 'sentence(?e) mood(?e, Interrogative) tense(?e, Past) aspect(?e, Perfect) isa(?e, Bear) subject(?e, ?s) name(?s, "Lord Byron") ' .
+			'location(?e, ?request) request(?request) link(In, ?e, ?p) name(?p, "London")';
 
 		$answerBindings = array(
 			array(
@@ -51,22 +51,22 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 	{
 		// the question is irrelevant; it will be ignored
 		$question = "
-			sentence (?e) and
-			tense(?e , Past) and
-			mood(?e, Interrogative) and
+			sentence (?e)
+			tense(?e , Past)
+			mood(?e, Interrogative)
 
-			subject (?e, ?s) and
-			isa (?s , Child) and
-			identity(?s, ?request) and
-			request (?request) and
+			subject (?e, ?s)
+			isa (?s , Child)
+			identity(?s, ?request)
+			request (?request)
 
-			object (?e, ?o) and
+			object (?e, ?o)
 
-			link(Of , ?s , ?sub) and
+			link(Of , ?s , ?sub)
 			name(?sub, 'Lord Byron')
 		";
 
-		$answer = 'sentence(?n) and name(?n5, "Allegra Byron") and name(?n6, "Ada Lovelace") and link(And, ?n, ?n6, ?n5)';
+		$answer = 'sentence(?n) name(?n5, "Allegra Byron") name(?n6, "Ada Lovelace") link(And, ?n, ?n6, ?n5)';
 
 		$answerBindings = array(
 			array(
@@ -83,21 +83,21 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 	public function testAnswerWithCalculation()
 	{
 		$question = '
-			manner ( ?S_complement , ?S_request ) and
-			isa ( ?S_complement , Old ) and
-			tense ( ?S_event , Past ) and
-			name ( ?S_subject , "Mary Shelley" ) and
-			subject ( ?S_event , ?S_subject ) and
-			modifier ( ?S_event , ?S_complement ) and
-			request ( ?S_request ) and
-			mood ( ?S_event , Interrogative ) and
-			at_time ( ?S_event , ?S_Clause_SBar_subEvent ) and
-			isa ( ?S_subject , Female ) and
-			reference ( ?S_subject ) and
-			isa ( ?S_Clause_SBar_subEvent , Die ) and
-			subject ( ?S_Clause_SBar_subEvent , ?S_subject ) and
-			object ( ?S_Clause_SBar_subEvent , ?S_Clause_SBar_Clause_object ) and
-			mood ( ?S_Clause_SBar_subEvent , Declarative ) and
+			manner ( ?S_complement , ?S_request )
+			isa ( ?S_complement , Old )
+			tense ( ?S_event , Past )
+			name ( ?S_subject , "Mary Shelley" )
+			subject ( ?S_event , ?S_subject )
+			modifier ( ?S_event , ?S_complement )
+			request ( ?S_request )
+			mood ( ?S_event , Interrogative )
+			at_time ( ?S_event , ?S_Clause_SBar_subEvent )
+			isa ( ?S_subject , Female )
+			reference ( ?S_subject )
+			isa ( ?S_Clause_SBar_subEvent , Die )
+			subject ( ?S_Clause_SBar_subEvent , ?S_subject )
+			object ( ?S_Clause_SBar_subEvent , ?S_Clause_SBar_Clause_object )
+			mood ( ?S_Clause_SBar_subEvent , Declarative )
 			sentence ( ?S_event )
 		';
 
@@ -111,11 +111,11 @@ class FormulatorTest extends \PHPUnit_Framework_TestCase
 			)
 		);
 #todo: there is a superfluous mood(?S_event, Interrogative)
-		$answer = 'manner(?S_complement, ?S_request) and isa(?S_complement, Old) and tense(?S_event, Past) and name(?S_subject, "Mary Shelley") and '.
-			'subject(?S_event, ?S_subject) and modifier(?S_event, ?S_complement) and request(?S_request) and mood(?S_event, Interrogative) and at_time(?S_event, ?S_Clause_SBar_subEvent) and ' .
-			'isa(?S_subject, Female) and reference(?S_subject) and isa(?S_Clause_SBar_subEvent, Die) and subject(?S_Clause_SBar_subEvent, ?S_subject) and ' .
-			'object(?S_Clause_SBar_subEvent, ?S_Clause_SBar_Clause_object) and mood(?S_Clause_SBar_subEvent, Declarative) and sentence(?S_event) and ' .
-			'mood(?S_event, Declarative) and modifier(?S_complement, ?s1) and determiner(?s1, 53) and isa(?s1, Year)';
+		$answer = 'manner(?S_complement, ?S_request) isa(?S_complement, Old) tense(?S_event, Past) name(?S_subject, "Mary Shelley") '.
+			'subject(?S_event, ?S_subject) modifier(?S_event, ?S_complement) request(?S_request) mood(?S_event, Interrogative) at_time(?S_event, ?S_Clause_SBar_subEvent) ' .
+			'isa(?S_subject, Female) reference(?S_subject) isa(?S_Clause_SBar_subEvent, Die) subject(?S_Clause_SBar_subEvent, ?S_subject) ' .
+			'object(?S_Clause_SBar_subEvent, ?S_Clause_SBar_Clause_object) mood(?S_Clause_SBar_subEvent, Declarative) sentence(?S_event) ' .
+			'mood(?S_event, Declarative) modifier(?S_complement, ?s1) determiner(?s1, 53) isa(?s1, Year)';
 
 		$this->doTest($question, $answer, $answerBindings);
 	}

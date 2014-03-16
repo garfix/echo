@@ -1,17 +1,17 @@
 // how old
-manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old)
-	=> subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and
-	request(?q) and modifier(?e, ?complement) and isa(?complement, Old) and
+manner(?complement, ?q) modifier(?e, ?complement) isa(?complement, Old)
+	=> subject(?e, ?s) born(?s, ?b) time(?e, ?t)
+	request(?q) modifier(?e, ?complement) isa(?complement, Old)
 	let(?q, daysToYears(subtractDates(?t, ?b)));
 
 // how many
-manner(?o, ?q) and many(?o) => request(?q) and aggregate(?q, count(?o));
+manner(?o, ?q) many(?o) => request(?q) aggregate(?q, count(?o));
 
 // name (imperative)
-isa(?e, Name) and object(?e, ?o) => label(?o, ?n) and request(?n);
+isa(?e, Name) object(?e, ?o) => label(?o, ?n) request(?n);
 
 // who is ...?
 // a request for the identity of an individual is usually answered with his or her name
 // the birthname is chosen because it's more official than a label
 // I've used 'birthname' in stead of 'label' before, but it wasn't defined for many people
-identity(?s, ?i) and request(?i) => label(?s, ?n) and request(?n)
+identity(?s, ?i) request(?i) => label(?s, ?n) request(?n)

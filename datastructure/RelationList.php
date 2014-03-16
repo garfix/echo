@@ -145,7 +145,7 @@ class RelationList extends  Term
 
 	public function __toString()
 	{
-		return implode(' and ',  $this->relations);
+		return implode(' ',  $this->relations);
 	}
 
 	public function createClone()

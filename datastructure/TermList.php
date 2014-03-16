@@ -21,6 +21,6 @@ class TermList extends SemanticStructure
 
 	public function __toString()
 	{
-		return implode(' and ',  $this->terms);
+		return implode(' ',  $this->terms);
 	}
 }

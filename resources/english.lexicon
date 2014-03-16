@@ -48,12 +48,12 @@
 ] [
 	form: 'born',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Bear) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 #deprecated
 	form: 'born',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Bear) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Bear) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'bright',
 	partOfSpeech: 'degreeAdverb'
@@ -93,7 +93,7 @@
 ] [
 	form: 'died',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Die) and tense(this.event, Past)
+	semantics: isa(this.event, Die) tense(this.event, Past)
 ] [
 	form: 'died',
 	partOfSpeech: 'verb',
@@ -117,11 +117,11 @@
 # deprecated
 	form: 'had',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Have) and tense(this.event, Past)
+	semantics: isa(this.event, Have) tense(this.event, Past)
 ] [
 	form: 'had',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Have) and tense(this.event, Past)
+	semantics: isa(this.event, Have) tense(this.event, Past)
 ] [
 	form: 'have',
 	partOfSpeech: 'verb',
@@ -144,16 +144,16 @@
 ] [
 	form: 'influenced',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 #deprecated
 	form: 'influenced',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 	form: 'influenced',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Influence) and tense(this.event, Past)
+	semantics: isa(this.event, Influence) tense(this.event, Past)
 ] [
 	form: 'is',
 	partOfSpeech: 'auxBe',
@@ -169,19 +169,19 @@
 #deprecated
 	form: 'married',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Marry) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'married',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Marry) and tense(this.event, Past)
+	semantics: isa(this.event, Marry) tense(this.event, Past)
 ] [
 	form: 'married',
 	partOfSpeech: 'pastParticipleVerb',
-	semantics: isa(this.event, Marry) and tense(this.event, Past) and aspect(this.event, Perfect)
+	semantics: isa(this.event, Marry) tense(this.event, Past) aspect(this.event, Perfect)
 ] [
 	form: 'met',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Meet) and tense(this.event, Past)
+	semantics: isa(this.event, Meet) tense(this.event, Past)
 ] [
 	form: 'name',
 	partOfSpeech: 'verb',
@@ -201,7 +201,7 @@
 ] [
 	form: 'reads',
 	partOfSpeech: 'verb',
-	semantics: isa(this.event, Read) and tense(this.event, Present)
+	semantics: isa(this.event, Read) tense(this.event, Present)
 ] [
 	form: 'parents',
 	partOfSpeech: 'noun',
@@ -216,7 +216,7 @@
 ] [
 	form: 'she',
 	partOfSpeech: 'pronoun',
-	semantics: isa(this.entity, Female) and reference(this.entity)
+	semantics: isa(this.entity, Female) reference(this.entity)
 ] [
 	form: 'the',
 	partOfSpeech: 'determiner',
@@ -237,11 +237,11 @@
 ] [
 	form: 'walked',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Walk) and tense(this.event, Past)
+	semantics: isa(this.event, Walk) tense(this.event, Past)
 ] [
 	form: 'walks',
 	partOfSpeech: 'simpleVerb',
-	semantics: isa(this.event, Walk) and tense(this.event, Present)
+	semantics: isa(this.event, Walk) tense(this.event, Present)
 ] [
 	form: 'was',
 	partOfSpeech: 'aux',

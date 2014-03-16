@@ -25,7 +25,7 @@ class SemanticApplier
 	 * @param AssignmentList $List It is an assignmentlist now; it may grow out into a complete program
 	 *
 	 * Example (an Assignmentlist that can be paraphrased as):
-	 * 	S.sem = WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	 * 	S.sem = WhNP.sem auxBe.sem NP.sem subject(S.event, S.subject);
 	 *	S.event = WhNP.entity;
 	 *	S.subject = NP.entity;
 	 *	S.request = WhNP.request
@@ -79,7 +79,7 @@ class SemanticApplier
 	 * Create a new relation list that forms the semantic attachment of the current node.
 	 *
 	 * $SemanticAttachment example:
-	 *      WhNP.sem and auxBe.sem and NP.sem and subject(S.event, S.subject);
+	 *      WhNP.sem auxBe.sem NP.sem subject(S.event, S.subject);
 	 *
 	 * $childPropertyBindings example (left is child property as a string, right is parent property):
 	 *      ['NP.entity' => WhNP.entity]

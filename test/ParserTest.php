@@ -75,7 +75,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 		$Processor = new SentenceProcessor();
 
 		$Sentence = $Processor->parseSentence('John reads the red book', $English);
-		$this->assertSame('name(S.subject, "John") and isa(S.event, Read) and tense(S.event, Present) and determiner(S.object, The) and isa(S_Clause_VP_NP_NBar_AdjP.entity, Red) and isa(S.object, Book) and modifier(S.object, S_Clause_VP_NP_NBar_AdjP.entity) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+		$this->assertSame('name(S.subject, "John") isa(S.event, Read) tense(S.event, Present) determiner(S.object, The) isa(S_Clause_VP_NP_NBar_AdjP.entity, Red) isa(S.object, Book) modifier(S.object, S_Clause_VP_NP_NBar_AdjP.entity) subject(S.event, S.subject) object(S.event, S.object) mood(S.event, Declarative) sentence(S.event)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseDegreeAdverb()
@@ -114,7 +114,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Processor->parseSentence("How old was Mary Shelley when she died?", $English);
 		$this->assertSame('[S [Clause [Clause [WhADVP [whwordNP how][AdjP [adjective old]]][auxBe was][NP [PN [propernoun Mary][propernoun Shelley]]]][SBar [whAdverb when][Clause [NP [pronoun she]][VP [verb died]]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('manner(S.complement, S.request) and isa(S.complement, Old) and tense(S.event, Past) and name(S.subject, "Mary Shelley") and subject(S.event, S.subject) and modifier(S.event, S.complement) and request(S.request) and mood(S.event, Interrogative) and at_time(S.event, S_Clause_SBar.subEvent) and isa(S_Clause_SBar_Clause.subject, Female) and reference(S_Clause_SBar_Clause.subject) and isa(S_Clause_SBar.subEvent, Die) and subject(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.subject) and object(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.object) and mood(S_Clause_SBar.subEvent, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+		$this->assertSame('manner(S.complement, S.request) isa(S.complement, Old) tense(S.event, Past) name(S.subject, "Mary Shelley") subject(S.event, S.subject) modifier(S.event, S.complement) request(S.request) mood(S.event, Interrogative) at_time(S.event, S_Clause_SBar.subEvent) isa(S_Clause_SBar_Clause.subject, Female) reference(S_Clause_SBar_Clause.subject) isa(S_Clause_SBar.subEvent, Die) subject(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.subject) object(S_Clause_SBar.subEvent, S_Clause_SBar_Clause.object) mood(S_Clause_SBar.subEvent, Declarative) sentence(S.event)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseNumeral()
@@ -126,11 +126,11 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
 		$Sentence = $Processor->parseSentence("Ik ben 43 jaar oud.", $Dutch);
 		$this->assertSame('[S [Clause [NP [pronoun ik]][VP [copula ben][AdjP [NP [DP [numeral 43]][NBar [noun jaar]]][adjective oud]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) determiner(S.object, "43") isa(S.object, Year) isa(S.object, Old) subject(S.event, S.subject) object(S.event, S.object) mood(S.event, Declarative) sentence(S.event)', $Sentence->getSemanticsString());
 
 		$Sentence = $Processor->parseSentence("I am 43 years old.", $English);
 		$this->assertSame('[S [Clause [NP [pronoun i]][VP [copula am][AdjP [NP [DP [numeral 43]][NBar [noun years]]][adjective old]]]]]', $Sentence->getSyntaxString());
-		$this->assertSame('firstPerson(S.subject) and determiner(S.object, "43") and isa(S.object, Year) and isa(S.object, Old) and subject(S.event, S.subject) and object(S.event, S.object) and mood(S.event, Declarative) and sentence(S.event)', $Sentence->getSemanticsString());
+		$this->assertSame('firstPerson(S.subject) determiner(S.object, "43") isa(S.object, Year) isa(S.object, Old) subject(S.event, S.subject) object(S.event, S.object) mood(S.event, Declarative) sentence(S.event)', $Sentence->getSemanticsString());
 	}
 
 	public function testParseQuotes()

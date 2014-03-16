@@ -19,10 +19,10 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		// note: tense is implicitly the present
 
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			isa(?e, Walk) and
-			subject(?e, ?s) and
+			sentence(?e)
+			mood(?e, Declarative)
+			isa(?e, Walk)
+			subject(?e, ?s)
 			name(?s, 'John')
 		";
 
@@ -35,11 +35,11 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		// note: tense is explicitly the past
 
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			isa(?e, Walk) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
+			sentence(?e)
+			mood(?e, Declarative)
+			isa(?e, Walk)
+			tense(?e, Past)
+			subject(?e, ?s)
 			name(?s, 'John')
 		";
 
@@ -50,13 +50,13 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testVerbWithDirectObject()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			isa(?e, Influence) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			object(?e, ?o) and
-			name(?s, 'John Milton') and
+			sentence(?e)
+			mood(?e, Declarative)
+			isa(?e, Influence)
+			tense(?e, Past)
+			subject(?e, ?s)
+			object(?e, ?o)
+			name(?s, 'John Milton')
 			name(?o, 'Lord Byron')
 		";
 
@@ -67,14 +67,14 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testSimplePassiveSentence()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			voice(?e, Passive) and
-			isa(?e, Influence) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			object(?e, ?o) and
-			name(?s, 'John Milton') and
+			sentence(?e)
+			mood(?e, Declarative)
+			voice(?e, Passive)
+			isa(?e, Influence)
+			tense(?e, Past)
+			subject(?e, ?s)
+			object(?e, ?o)
+			name(?s, 'John Milton')
 			name(?o, 'Lord Byron')
 		";
 
@@ -85,16 +85,16 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testAffirmativeSentence()
 	{
 		$relations = "
-			sentence(?e) and
-			isa(?e, Meet) and
-			mood(?e, Declarative) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			object(?e, ?o) and
-			name(?s, 'Harry') and
-			name(?o, 'Sally') and
+			sentence(?e)
+			isa(?e, Meet)
+			mood(?e, Declarative)
+			tense(?e, Past)
+			subject(?e, ?s)
+			object(?e, ?o)
+			name(?s, 'Harry')
+			name(?o, 'Sally')
 
-			qualification(?e, ?a) and
+			qualification(?e, ?a)
 			isa(?a, Yes)
 		";
 
@@ -105,17 +105,17 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testPrepositionalPhrase()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			voice(?e, Passive) and
-			isa(?e, Influence) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			object(?e, ?o) and
-			isa(?s, Author) and
-			determiner(?s, The) and
-			link (Of, ?s, ?p) and
-			name(?o, 'Lord Byron') and
+			sentence(?e)
+			mood(?e, Declarative)
+			voice(?e, Passive)
+			isa(?e, Influence)
+			tense(?e, Past)
+			subject(?e, ?s)
+			object(?e, ?o)
+			isa(?s, Author)
+			determiner(?s, The)
+			link (Of, ?s, ?p)
+			name(?o, 'Lord Byron')
 			name(?p, 'Paradise Lost')
 		";
 
@@ -126,14 +126,14 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testHaveAndNumericDeterminer()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			isa(?e, Have) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			name(?s, 'Mary') and
-			object(?e, ?o) and
-			isa(?o, Child) and
+			sentence(?e)
+			mood(?e, Declarative)
+			isa(?e, Have)
+			tense(?e, Past)
+			subject(?e, ?s)
+			name(?s, 'Mary')
+			object(?e, ?o)
+			isa(?o, Child)
 			determiner(?o, 2)
 		";
 
@@ -144,15 +144,15 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testCopularSentence()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			name(?s, 'Ada Lovelace') and
-			complement(?e, ?c) and
-			isa(?c, Daughter) and
-			determiner(?c, The) and
-			link(Of, ?c, ?p) and
+			sentence(?e)
+			mood(?e, Declarative)
+			tense(?e, Past)
+			subject(?e, ?s)
+			name(?s, 'Ada Lovelace')
+			complement(?e, ?c)
+			isa(?c, Daughter)
+			determiner(?c, The)
+			link(Of, ?c, ?p)
 			name(?p, 'Lord Byron')
 		";
 
@@ -167,9 +167,9 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		//  ?e1  ?e2
 
 		$relations = "
-			sentence(?n1) and
-			link(And, ?n1, ?e1, ?e2) and
-			name(?e1, 'Ada Lovelace') and
+			sentence(?n1)
+			link(And, ?n1, ?e1, ?e2)
+			name(?e1, 'Ada Lovelace')
 			name(?e2, 'Allegra Byron')
 		";
 
@@ -188,13 +188,13 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 		//        ?e3   ?e4
 
 		$relations = "
-			sentence(?n1) and
-			link(And, ?n1, ?e1, ?n2) and
-			link(And, ?n2, ?e2, ?n3) and
-			link(And, ?n3, ?e3, ?e4) and
-			name(?e1, 'Joe') and
-			name(?e2, 'William') and
-			name(?e3, 'Jack') and
+			sentence(?n1)
+			link(And, ?n1, ?e1, ?n2)
+			link(And, ?n2, ?e2, ?n3)
+			link(And, ?n3, ?e3, ?e4)
+			name(?e1, 'Joe')
+			name(?e2, 'William')
+			name(?e3, 'Jack')
 			name(?e4, 'Averell')
 		";
 
@@ -205,12 +205,12 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testModifierCopularSentence()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			name(?s, 'Mary Shelley') and
-			modifier(?e, ?c) and
+			sentence(?e)
+			mood(?e, Declarative)
+			tense(?e, Past)
+			subject(?e, ?s)
+			name(?s, 'Mary Shelley')
+			modifier(?e, ?c)
 			isa(?c, Old)
 		";
 
@@ -221,15 +221,15 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testModifierCopularSentenceWithNumeralDeterminer()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			tense(?e, Past) and
-			subject(?e, ?s) and
-			name(?s, 'Mary Shelley') and
-			modifier(?e, ?c) and
-			isa(?c, Old) and
-			modifier(?c, ?d) and
-			determiner(?d, 53) and
+			sentence(?e)
+			mood(?e, Declarative)
+			tense(?e, Past)
+			subject(?e, ?s)
+			name(?s, 'Mary Shelley')
+			modifier(?e, ?c)
+			isa(?c, Old)
+			modifier(?c, ?d)
+			determiner(?d, 53)
 			isa(?d, Year)
 		";
 
@@ -240,14 +240,14 @@ class GenerationTest extends \PHPUnit_Framework_TestCase
 	public function testVerbWithPreposition()
 	{
 		$relations = "
-			sentence(?e) and
-			mood(?e, Declarative) and
-			isa(?e, Marry) and
-			tense(?e, Past) and
-			aspect(?e, Perfect) and
-			subject(?e, ?s) and
-			name(?s, 'Lord Byron') and
-			link(To, ?e, ?o) and
+			sentence(?e)
+			mood(?e, Declarative)
+			isa(?e, Marry)
+			tense(?e, Past)
+			aspect(?e, Perfect)
+			subject(?e, ?s)
+			name(?s, 'Lord Byron')
+			link(To, ?e, ?o)
 			name(?o, 'Anne Isabella Milbanke')
 		";
 		$this->doTest($relations, "en", "Lord Byron was married to Anne Isabella Milbanke.");

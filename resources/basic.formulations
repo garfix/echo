@@ -4,14 +4,14 @@
 
 	#todo: terrible condition
 
-		time(?e, ?t) and request(?q) and modifier(?e, ?complement),
+		time(?e, ?t) request(?q) modifier(?e, ?complement),
 	type:
 		single,
 	production:
-		mood(?e, Declarative) and
-		{{ question() }} and
-		modifier(?complement, ?s1) and
-        determiner(?s1, ?q) and
+		mood(?e, Declarative)
+		{{ question() }}
+		modifier(?complement, ?s1)
+        determiner(?s1, ?q)
         isa(?s1, Year)
 ]
 
@@ -19,9 +19,9 @@
 	condition:
 		location(?event, ?request),
 	production:
-		mood(?event, Declarative) and
-		{{ question() }} and
-		link(In, ?event, ?p) and
+		mood(?event, Declarative)
+		{{ question() }}
+		link(In, ?event, ?p)
         name(?p, ?request)
 ]
 
@@ -29,31 +29,31 @@
 	condition:
 		at_time(?event, ?request),
 	production:
-		mood(?event, Declarative) and
-		{{ question() }} and
-		link(On, ?event, ?p) and
+		mood(?event, Declarative)
+		{{ question() }}
+		link(On, ?event, ?p)
         name(?p, sqlDateToHumanDate(?request))
 ]
 
 [
 	condition:
-		label(?s, ?request) and request(?request),
+		label(?s, ?request)  request(?request),
 	type:
 		multiple,
 	production:
-		mood(?event, Declarative) and
-		sentence(?n) and
+		mood(?event, Declarative)
+		sentence(?n)
 		{{ conjunction(?n, ?request) }}
 ]
 
 [
 	condition:
-		request(?q) and object(?e, ?o) and sentence(?e),
+		request(?q) object(?e, ?o) sentence(?e),
 	type:
 		single,
 	production:
-		determiner(?o, ?q) and
-		mood(?e, Declarative) and
+		determiner(?o, ?q)
+		mood(?e, Declarative)
 		{{ question() }}
 ]
 
@@ -64,8 +64,8 @@
 	type:
 		single,
 	production:
-		qualification(?e, ?q) and
-		isa(?q, Yes) and
-		mood(?e, Declarative) and
+		qualification(?e, ?q)
+		isa(?q, Yes)
+		mood(?e, Declarative)
 		{{ question() }}
 ]

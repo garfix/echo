@@ -20,7 +20,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			S.sem = NP.sem and VP.sem and subject(S.event, S.subject);
+			S.sem = NP.sem VP.sem subject(S.event, S.subject);
 			S.event = VP.event;
 			S.subject = NP.entity
 		}");
@@ -32,7 +32,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, $childNodeSemantics);
 
-		$this->assertSame('name(S.subject, "John") and isa(S.event, Walk) and subject(S.event, S.subject)', (string)$Result);
+		$this->assertSame('name(S.subject, "John") isa(S.event, Walk) subject(S.event, S.subject)', (string)$Result);
 	}
 
 	public function testApplyRuleWithTwoNPs()
@@ -42,7 +42,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			S.sem = NP1.sem and NP2.sem and VP.sem and subject(S.event, S.subject) and object(S.event, S.object);
+			S.sem = NP1.sem NP2.sem VP.sem subject(S.event, S.subject) object(S.event, S.object);
 			S.event = VP.event;
 			S.subject = NP1.entity;
 			S.object = NP2.entity
@@ -56,7 +56,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, $childNodeSemantics);
 
-		$this->assertSame('name(S.subject, "John") and isa(S.object, Car) and isa(S.event, Drive) and subject(S.event, S.subject) and object(S.event, S.object)', (string)$Result);
+		$this->assertSame('name(S.subject, "John") isa(S.object, Car) isa(S.event, Drive) subject(S.event, S.subject) object(S.event, S.object)', (string)$Result);
 	}
 
 	public function testChildAssignmentsSingleOperand()
@@ -132,7 +132,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			NBar.sem = NP1.sem and NP2.sem and modifier(NP2.entity, NP1.entity);
+			NBar.sem = NP1.sem NP2.sem modifier(NP2.entity, NP1.entity);
 			NBar.entity = NP2.entity
 		}");
 
@@ -143,7 +143,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, $childNodeSemantics, array());
 
-		$this->assertSame("name(NBar_NP1.entity, \"John\") and isa(NBar.entity, Car) and modifier(NBar.entity, NBar_NP1.entity)", (string)$Result);
+		$this->assertSame("name(NBar_NP1.entity, \"John\") isa(NBar.entity, Car) modifier(NBar.entity, NBar_NP1.entity)", (string)$Result);
 	}
 
 	public function testRuleWithIndexedAntecedent()
@@ -153,7 +153,7 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		/** @var AssignmentList $Rule  */
 		$Rule = $Parser->parse("{
-			NBar1.sem = NBar2.sem and AdjP.sem and modifier(NBar1.entity, AdjP.entity);
+			NBar1.sem = NBar2.sem AdjP.sem modifier(NBar1.entity, AdjP.entity);
 			NBar1.entity = NBar2.entity
 		}");
 
@@ -164,6 +164,6 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 
 		$Result = $Applier->apply($Rule, $childNodeSemantics, array());
 
-		$this->assertSame("isa(NBar.entity, Car) and isa(NBar_AdjP.entity, Red) and modifier(NBar.entity, NBar_AdjP.entity)", (string)$Result);
+		$this->assertSame("isa(NBar.entity, Car) isa(NBar_AdjP.entity, Red) modifier(NBar.entity, NBar_AdjP.entity)", (string)$Result);
 	}
 }

@@ -105,7 +105,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'name(?a, "John") and name(?b, "Mary") and love(?a, ?b)';
+		$string = 'name(?a, "John") name(?b, "Mary") love(?a, ?b)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -135,7 +135,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = 'NP.sem = noun.sem and subject(?event, ?subject)';
+		$string = 'NP.sem = noun.sem subject(?event, ?subject)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -145,7 +145,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = '{S.sem = NP.sem and VP.sem; S.event = VP.event; S.subject = NP.entity}';
+		$string = '{S.sem = NP.sem VP.sem; S.event = VP.event; S.subject = NP.entity}';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -156,7 +156,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$Parser = new SemanticStructureParser();
 
 		// single mapping with multiple consequents
-		$string = 'age(?p, ?a) => born(?p, ?d1) and die(?p, ?d2) and diff(?d2, ?d1, ?a)';
+		$string = 'age(?p, ?a) => born(?p, ?d1) die(?p, ?d2) diff(?d2, ?d1, ?a)';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);
@@ -304,7 +304,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 		$caught = false;
 
 		try {
-			$string = 'name(?a) and ()';
+			$string = 'name(?a) ()';
 			$Parser->parse($string);
 		} catch (SemanticStructureParseException $E) {
 			$caught = true;
