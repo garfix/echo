@@ -2,7 +2,7 @@
 manner(?complement, ?q) and modifier(?e, ?complement) and isa(?complement, Old)
 	=> subject(?e, ?s) and born(?s, ?b) and time(?e, ?t) and
 	request(?q) and modifier(?e, ?complement) and isa(?complement, Old) and
-	let(?q, daysToYears(subtractDates(?t, ?b))) and request_unit(Year);
+	let(?q, daysToYears(subtractDates(?t, ?b)));
 
 // how many
 manner(?o, ?q) and many(?o) => request(?q) and aggregate(?q, count(?o));

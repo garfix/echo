@@ -1,0 +1,30 @@
+Question
+
+A question has a surface structure (the raw text) and a relational representation.
+
+Interpretation
+
+The question is interpreted into an interpretation. An interpretation is a language independent, idiom free, explicit, relational representation of the question.
+It contains no database-specific relations, and no language-specific relations. It is explicit enough to contain all elements needed to answer the question.
+
+Database relational representation
+
+A relational representation that contains relations as they are used in a specific database.
+
+Query
+
+A database specific representation as required to access the database.
+
+Database result
+
+The database result as a set of records that contain bindings for each of the free variables in the Interpretation.
+
+Formulation
+
+A relational representation that combines the Interpretation with the database results.
+
+Generation
+
+A surface representation of the answer.
+
+
