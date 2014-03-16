@@ -31,8 +31,6 @@ class SemanticStructureParser
 	// pairs
 	const T_BRACKET_OPEN = 'bracket open';
 	const T_BRACKET_CLOSE = 'bracket close';
-	const T_CURLY_BRACKET_OPEN = 'curly bracket open';
-	const T_CURLY_BRACKET_CLOSE = 'curly bracket close';
 	const T_SQUARE_BRACKET_OPEN = 'square bracket open';
 	const T_SQUARE_BRACKET_CLOSE = 'square bracket close';
 	// single
@@ -705,39 +703,32 @@ class SemanticStructureParser
 		$count = 0;
 		$assignments = array($count => null);
 
-		if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_OPEN, $tokens, $pos)) {
+		if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
+			$pos = $newPos;
+			$count++;
 
-			if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
-				$pos = $newPos;
-				$count++;
+			while ($newPos) {
 
-				while ($newPos) {
+				// ;
+				if ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
+					$pos = $newPos;
 
-					// ;
-					if ($newPos = $this->parseSingleToken(self::T_SEMICOLON, $tokens, $pos)) {
+					// argument
+					$assignments[$count] = null;
+					if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
 						$pos = $newPos;
-
-						// argument
-						$assignments[$count] = null;
-						if ($newPos = $this->parsePropertyAssignment($tokens, $pos, $assignments[$count])) {
-							$pos = $newPos;
-							$count++;
-						} else {
-							return false;
-						}
-
+						$count++;
+					} else {
+						return false;
 					}
 
 				}
-			}
-
-			if ($pos = $this->parseSingleToken(self::T_CURLY_BRACKET_CLOSE, $tokens, $pos)) {
-
-				$AssignmentList = new AssignmentList();
-				$AssignmentList->setAssignments($assignments);
-				return $pos;
 
 			}
+
+			$AssignmentList = new AssignmentList();
+			$AssignmentList->setAssignments($assignments);
+			return $pos;
 		}
 
 		return false;
@@ -990,8 +981,6 @@ class SemanticStructureParser
 		$singleCharTokens = array(
 			'(' => self::T_BRACKET_OPEN,
 			')' => self::T_BRACKET_CLOSE,
-			'{' => self::T_CURLY_BRACKET_OPEN,
-			'}' => self::T_CURLY_BRACKET_CLOSE,
 			'[' => self::T_SQUARE_BRACKET_OPEN,
 			']' => self::T_SQUARE_BRACKET_CLOSE,
 			',' => self::T_COMMA,

@@ -6,10 +6,9 @@
 		S => adverb punctuationMark SDecl,
 	condition:
 		qualification(S.event, S.qualification),
-	bind: {
+	bind:
 		SDecl.event = S.event;
 		adverb.event = S.qualification
-	}
 ]
 
 // Declarative sentences
@@ -18,9 +17,8 @@
 		S => SDecl,
 	condition:
 		mood(S.event, Declarative),
-	bind: {
+	bind:
 		SDecl.event = S.event
-	}
 ]
 
 // partial sentences: conjunction
@@ -29,9 +27,8 @@
 		S => CP,
 	condition:
 		link(?cp, S.event, ?left, ?right),
-	bind: {
+	bind:
 		CP.node = S.event
-	}
 ]
 
 # Declarative sentence
@@ -43,10 +40,9 @@
 		SDecl => NP1 auxBe NP2,
 	condition:
 		subject(S.event, S.subject) complement(S.event, S.complement),
-	bind: {
+	bind:
 		NP1.entity = S.subject;
 		NP2.entity = S.complement
-	}
 ]
 
 // Copular sentence with modifier
@@ -56,10 +52,9 @@
 		SDecl => NP auxBe AdjP,
 	condition:
 		subject(S.event, S.subject) modifier(S.event, S.complement),
-	bind: {
+	bind:
 		NP.entity = S.subject;
 		AdjP.entity = S.complement
-	}
 ]
 
 // Passive declarative
@@ -70,13 +65,12 @@
 		SDecl => NP auxPsv VP,
 	condition:
 		subject(S.event, S.subject) object(S.event, S.object) voice(S.event, Passive),
-	bind: {
+	bind:
 		NP.entity = S.object;
 		auxPsv.event = S.event;
 		VP.event = S.event;
 		VP.subject = S.subject;
 		VP.object = S.object
-	}
 ]
 
 [
@@ -84,11 +78,10 @@
 		SDecl => NP auxBe VP,
 	condition:
 		subject(S.event, S.subject) aspect(S.event, Perfect),
-	bind: {
+	bind:
 		NP.entity = S.subject;
 		auxBe.event = S.event;
 		VP.event = S.event
-	}
 ]
 
 // John Walks
@@ -97,10 +90,9 @@
 		SDecl => NP VP,
 	condition:
 		subject(S.event, S.subject),
-	bind: {
+	bind:
 		NP.entity = S.subject;
 		VP.event = S.event
-	}
 ]
 
 # Noun Phrase
@@ -112,19 +104,17 @@
 		NP => propernoun,
 	condition:
 		name(NP.entity, ?name),
-	bind: {
+	bind:
 		propernoun.entity = NP.entity
-	}
 ]
 
 // the author of Paradise Lost
 [
 	rule:
 		NP => DP NBar,
-	bind: {
+	bind:
 		DP.entity = NP.entity;
 		NBar.entity = NP.entity
-	}
 ]
 
 // Lord Byron
@@ -133,9 +123,8 @@
 		NP => noun,
 	condition:
 		name(NP.entity, ?name),
-	bind: {
+	bind:
 		noun.entity = NP.entity
-	}
 ]
 
 # Determiner Phrase
@@ -144,9 +133,8 @@
 [
 	rule:
 		DP => determiner,
-	bind: {
+	bind:
 		determiner.entity = DP.entity
-	}
 ]
 
 # determiner
@@ -169,19 +157,17 @@
 		NBar => NBar PP,
 	condition:
 		link(?link, NBar.entity, ?entity),
-	bind: {
+	bind:
 		NBar.entity = NBar.entity;
 		PP.superEntity = NBar.entity
-	}
 ]
 
 // author
 [
 	rule:
 		NBar => noun,
-	bind: {
+	bind:
 		noun.entity = NBar.entity
-	}
 ]
 
 # Propositional Phrase
@@ -192,12 +178,11 @@
 		PP => preposition NP,
 	condition:
     	link(?link, PP.superEntity, PP.subEntity),
-    bind: {
+    bind:
         preposition.superEntity = PP.superEntity;
         preposition.subEntity = PP.subEntity;
         NP.entity = PP.subEntity
-    }
-]
+ ]
 
 # Adjective Phrase
 
@@ -207,19 +192,17 @@
 		AdjP => NP adjective,
 	condition:
 		modifier(AdjP.entity, AdjP.modifier),
-	bind: {
+	bind:
 		NP.entity = AdjP.modifier;
 		adjective.entity = AdjP.entity
-	}
 ]
 
 // old
 [
 	rule:
 		AdjP => adjective,
-	bind: {
+	bind:
 		adjective.entity = AdjP.entity
-	}
 ]
 
 # adjective
@@ -266,12 +249,11 @@
 		VP => pastParticipleVerb passivisationPreposition NP,
 	condition:
 		isa(VP.event, ?type) subject(VP.event, VP.subject) voice(VP.event, Passive),
-	bind: {
+	bind:
 		pastParticipleVerb.event = VP.event;
 		passivisationPreposition.event = VP.event;
 		passivisationPreposition.subject = VP.subject;
 		NP.entity = VP.subject
-	}
 ]
 
 // married to Anne Isabella Milbanke
@@ -280,10 +262,9 @@
 		VP => pastParticipleVerb PP,
 	condition:
 		isa(VP.event, ?type) link(?link, VP.event, VP.object) aspect(VP.event, Perfect),
-	bind: {
+	bind:
 		pastParticipleVerb.event = VP.event;
 		PP.entity = VP.object
-	}
 ]
 
 // died in Missolonghi
@@ -292,10 +273,9 @@
 		VP => simpleVerb PP,
 	condition:
 		isa(VP.event, ?type) link(?link, VP.event, VP.object),
-	bind: {
+	bind:
 		simpleVerb.event = VP.event;
 		PP.entity = VP.object
-	}
 ]
 
 // influenced Lord Byron
@@ -304,10 +284,9 @@
 		VP => simpleVerb NP,
 	condition:
 		isa(VP.event, ?type) object(VP.event, VP.object),
-	bind: {
+	bind:
 		simpleVerb.event = VP.event;
 		NP.entity = VP.object
-	}
 ]
 
 // walks
@@ -316,9 +295,8 @@
 		VP => simpleVerb,
 	condition:
 		isa(VP.event, ?type),
-	bind: {
+	bind:
 		simpleVerb.event = VP.event
-	}
 ]
 
 # passivisationPreposition

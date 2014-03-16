@@ -19,11 +19,11 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			S.sem = NP.sem VP.sem subject(S.event, S.subject);
 			S.event = VP.event;
 			S.subject = NP.entity
-		}");
+		");
 
 		$childNodeSemantics = array(
 			'NP' => $Parser->parse("name(NP.entity, 'John')"),
@@ -41,12 +41,12 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			S.sem = NP1.sem NP2.sem VP.sem subject(S.event, S.subject) object(S.event, S.object);
 			S.event = VP.event;
 			S.subject = NP1.entity;
 			S.object = NP2.entity
-		}");
+		");
 
 		$childNodeSemantics = array(
 			'NP1' => $Parser->parse("name(NP.entity, 'John')"),
@@ -65,10 +65,10 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			PN.sem = name(PN.entity, propernoun1.text);
 			PN.entity = propernoun1.entity
-		}");
+		");
 
 		$childNodeTexts = array(
 			'propernoun1' => 'John'
@@ -85,11 +85,11 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			PN.sem = name(PN.entity, propernoun1.text + ' ' + propernoun2.text);
 			PN.entity = propernoun1.entity;
 			PN.entity = propernoun2.entity
-		}");
+		");
 
 		$childNodeTexts = array(
 			'propernoun1' => 'John',
@@ -107,12 +107,12 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			PN.sem = name(PN.entity, propernoun1.text + ' ' + propernoun2.text + ' ' + propernoun3.text);
 			PN.entity = propernoun1.entity;
 			PN.entity = propernoun2.entity;
 			PN.entity = propernoun3.entity
-		}");
+		");
 
 		$childNodeTexts = array(
 			'propernoun1' => 'Patrick',
@@ -131,10 +131,10 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			NBar.sem = NP1.sem NP2.sem modifier(NP2.entity, NP1.entity);
 			NBar.entity = NP2.entity
-		}");
+		");
 
 		$childNodeSemantics = array(
 			'NP1' => $Parser->parse("name(this.entity, 'John')"),
@@ -152,10 +152,10 @@ class SemanticApplierTest extends \PHPUnit_Framework_TestCase
 		$Applier = new SemanticApplier();
 
 		/** @var AssignmentList $Rule  */
-		$Rule = $Parser->parse("{
+		$Rule = $Parser->parse("
 			NBar1.sem = NBar2.sem AdjP.sem modifier(NBar1.entity, AdjP.entity);
 			NBar1.entity = NBar2.entity
-		}");
+		");
 
 		$childNodeSemantics = array(
 			'NBar2' => $Parser->parse("isa(this.entity, Car)"),

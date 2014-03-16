@@ -7,13 +7,12 @@
 	condition:
 		link(?cp, CP.node, CP.firstEntity, CP.secondEntity)
 		link(?cp, CP.secondEntity, ?grandchild1, ?grandchild2),
-	bind: {
+	bind:
 		NP.entity = CP.firstEntity;
 		conjunction.node = CP.node;
 		conjunction.firstEntity = CP.firstEntity;
 		conjunction.secondEntity = CP.secondEntity;
 		CP.node = CP.secondEntity
-	}
 ]
 
 // Jack and Averell
@@ -22,11 +21,10 @@
 		CP => NP1 conjunction NP2,
 	condition:
 		link(?cp, CP.node, CP.firstEntity, CP.secondEntity),
-	bind: {
+	bind:
 		NP1.entity = CP.firstEntity;
 		conjunction.node = CP.node;
 		conjunction.firstEntity = CP.firstEntity;
 		conjunction.secondEntity = CP.secondEntity;
 		NP2.entity = CP.secondEntity
-	}
 ]

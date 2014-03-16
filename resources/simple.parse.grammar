@@ -1,14 +1,13 @@
 [
 	rule:
 		S => Clause,
-	semantics: {
+	semantics:
 		S.sem = Clause.sem sentence(S.event);
 		S.event = Clause.event;
 		S.subject = Clause.subject;
 		S.object = Clause.object;
 		S.request = Clause.request;
 		S.complement = Clause.complement
-	}
 ]
 
 [
@@ -16,12 +15,11 @@
 
 	rule:
 		Clause => NP VP,
-	semantics: {
+	semantics:
 		Clause.sem = NP.sem VP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) mood(Clause.event, Declarative);
     	Clause.event = VP.event;
     	Clause.subject = NP.entity;
     	Clause.object = VP.object
-	}
 ]
 
 [
@@ -29,11 +27,10 @@
 
 	rule:
 		Clause => VP,
-	semantics: {
+	semantics:
 		Clause.sem = VP.sem object(Clause.event, Clause.object) mood(Clause.event, Imperative);
 		Clause.event = VP.event;
 		Clause.object = VP.object
-	}
 ]
 
 [
@@ -41,7 +38,7 @@
 
 	rule:
 		Clause => WhADVP VP NP,
-	semantics: {
+	semantics:
 		Clause.sem = WhADVP.sem VP.sem NP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) request(Clause.request) mood(Clause.event, Interrogative);
         Clause.event = VP.event;
         Clause.subject = NP.entity;
@@ -49,7 +46,6 @@
         Clause.object = WhADVP.entity;
         Clause.request = WhADVP.request;
         Clause.event = WhADVP.event
-	}
 ]
 
 [
@@ -57,40 +53,37 @@
 
 	rule:
         Clause => WhADVP auxBe NP VP,
-    semantics: {
+    semantics:
 		Clause.sem = WhADVP.sem auxBe.sem NP.sem VP.sem subject(Clause.event, Clause.subject) request(Clause.request) mood(Clause.event, Interrogative);
 		Clause.event = WhADVP.event;
 		Clause.event = VP.event;
 		Clause.subject = NP.entity;
 		Clause.request = WhADVP.request;
 		Clause.event = auxBe.event
-    }
-]
+ ]
 
 [
 	// Was John driving?
 
 	rule:
         Clause => aux NP VP,
-    semantics: {
+    semantics:
 		Clause.sem = NP.sem VP.sem subject(Clause.event, Clause.subject) mood(Clause.event, Interrogative);
 		Clause.event = VP.event;
 		Clause.subject = NP.entity
-    }
-]
+ ]
 
 [
 	// Was the car driven by John?
 
 	rule:
         Clause => aux NP1 VP passivisationPreposition NP2,
-    semantics: {
+    semantics:
         Clause.sem = NP1.sem NP2.sem VP.sem subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) mood(Clause.event, Interrogative) voice(Clause.event, Passive);
         Clause.event = VP.event;
         Clause.subject = NP2.entity;
         Clause.object = NP1.entity
-    }
-]
+ ]
 
 [
 	// Was John a fool?
@@ -98,33 +91,31 @@
 
 	rule:
         Clause => auxBe NP1 NP2,
-    semantics: {
+    semantics:
        Clause.sem = auxBe.sem NP1.sem NP2.sem subject(Clause.event, Clause.subject) complement(Clause.event, Clause.complement) mood(Clause.event, Interrogative);
        Clause.complement = NP2.entity;
        Clause.subject = NP1.entity
-    }
-]
+ ]
 
 [
 	// How old was Mary Shelley?
 
 	rule:
         Clause => WhADVP auxBe NP,
-    semantics: {
+    semantics:
         Clause.sem = WhADVP.sem auxBe.sem NP.sem subject(Clause.event, Clause.subject) modifier(Clause.event, Clause.complement) request(Clause.request) mood(Clause.event, Interrogative);
         Clause.complement = WhADVP.entity;
         Clause.event = auxBe.event;
         Clause.subject = NP.entity;
         Clause.request = WhADVP.request
-    }
-]
+ ]
 
 [
 	// How old was Mary Shelley when she died?
 
 	rule:
 		Clause1 => Clause2 SBar,
-	semantics: {
+	semantics:
 		Clause1.sem = Clause2.sem SBar.sem;
 		Clause1.event = Clause2.event;
 		Clause1.subject = Clause2.subject;
@@ -132,7 +123,6 @@
 		Clause1.event = SBar.superEvent;
 		Clause1.request = Clause2.request;
 		Clause1.complement = Clause2.complement
-	}
 ]
 
 [
@@ -140,12 +130,11 @@
 
 	rule:
 		SBar => whAdverb Clause,
-	semantics: {
+	semantics:
 		SBar.sem = whAdverb.sem Clause.sem;
 		SBar.superEvent = whAdverb.event;
 		SBar.subEvent = whAdverb.adjunct;
 		SBar.subEvent = Clause.event
-	}
 ]
 
 // Verb Phrase
@@ -155,10 +144,9 @@
 
 	rule:
 		VP => verb,
-	semantics: {
+	semantics:
 		VP.sem = verb.sem;
 		VP.event = verb.event
-	}
 ]
 
 [
@@ -167,11 +155,10 @@
 
 	rule:
 		VP => verb NP,
-	semantics: {
+	semantics:
 		VP.sem = verb.sem NP.sem;
 		VP.event = verb.event;
 		VP.object = NP.entity
-	}
 ]
 
 [
@@ -179,12 +166,11 @@
 
 	rule:
 		VP => verb NP1 NP2,
-	semantics: {
+	semantics:
 		S.sem = verb.sem NP1.sem NP2.sem subject(S.event, S.subject) object(S.event, S.object);
 		S.event = verb.event;
 		S.subject = NP1.entity;
 		S.object = NP2.entity
-	}
 ]
 
 [
@@ -192,11 +178,10 @@
 
 	rule:
 		VP => copula AdjP,
-	semantics: {
+	semantics:
 		VP.sem = AdjP.sem;
 		VP.event = AdjP.event;
 		VP.object = AdjP.entity
-	}
 ]
 
 [
@@ -204,11 +189,10 @@
 
 	rule:
 		VP => verb PP,
-	semantics: {
+	semantics:
 		VP.sem = verb.sem PP.sem;
 		VP.event = verb.event;
 		VP.event = PP.superEntity
-	}
 ]
 
 // Wh-adverb phrase
@@ -219,51 +203,47 @@
 
 	rule:
         WhADVP => whAdverb,
-    semantics: {
+    semantics:
         WhADVP.sem = whAdverb.sem;
         WhADVP.event = whAdverb.event;
         WhADVP.request = whAdverb.adjunct;
         WhADVP.subject = whAdverb.subject
-    }
-]
+ ]
 
 [
 	// where, when
 
 	rule:
         WhADVP => whAdverb,
-    semantics: {
+    semantics:
         WhADVP.sem = whAdverb.sem;
         WhADVP.request = whAdverb.adjunct;
         WhADVP.event = whAdverb.event
-    }
-]
+ ]
 
 [
 	// which car, how many children
 
 	rule:
         WhADVP => whwordNP NP,
-    semantics: {
+    semantics:
 		WhADVP.sem = whwordNP.sem NP.sem;
 		WhADVP.entity = whwordNP.entity;
 		WhADVP.entity = NP.entity;
 		WhADVP.request = whwordNP.adjunct
-    }
-]
+ ]
 
 [
 	// how old
 
 	rule:
         WhADVP => whwordNP AdjP,
-    semantics: {
+    semantics:
 		WhADVP.sem = whwordNP.sem AdjP.sem;
 		WhADVP.entity = whwordNP.entity;
 		WhADVP.entity = AdjP.entity;
 		WhADVP.request = whwordNP.adjunct
-    }
-]
+ ]
 
 // Noun Phrase
 
@@ -272,45 +252,41 @@
 
 	rule:
         NP => PN,
-    semantics: {
+    semantics:
 		NP.sem = PN.sem;
         NP.entity = PN.entity
-    }
-]
+ ]
 
 [
 	// he
 
 	rule:
         NP => pronoun,
-    semantics: {
+    semantics:
 		NP.sem = pronoun.sem;
         NP.entity = pronoun.entity
-    }
-]
+ ]
 
 [
 	// the car
 
 	rule:
         NP => DP NBar,
-    semantics: {
+    semantics:
 		NP.sem = DP.sem NBar.sem;
         NP.entity = NBar.entity;
         NP.entity = DP.entity
-    }
-]
+ ]
 
 [
 	// (large) car (in the lot)
 
 	rule:
         NP => NBar,
-    semantics: {
+    semantics:
 		NP.sem = NBar.sem;
         NP.entity = NBar.entity
-    }
-]
+ ]
 
 // N-Bar
 
@@ -319,22 +295,20 @@
 
 	rule:
         NBar => noun,
-    semantics: {
+    semantics:
 		NBar.sem = noun.sem;
         NBar.entity = noun.entity
-    }
-]
+ ]
 
 [
 	// blue car
 
 	rule:
         NBar1 => AdjP NBar2,
-    semantics: {
+    semantics:
 		NBar1.sem = AdjP.sem NBar2.sem modifier(NBar2.entity, AdjP.entity);
         NBar1.entity = NBar2.entity
-    }
-]
+ ]
 
 [
 	// car in the lot
@@ -342,12 +316,11 @@
 
 	rule:
         NBar1 => NBar2 PP,
-    semantics: {
+    semantics:
 		NBar1.sem = NBar2.sem PP.sem;
         NBar1.entity = NBar2.entity;
         NBar1.entity = PP.superEntity
-    }
-]
+ ]
 
 // Proper Name
 
@@ -356,60 +329,55 @@
 
 	rule:
         PN => propernoun,
-    semantics: {
+    semantics:
 		PN.sem = name(PN.entity, propernoun.text);
         PN.entity = propernoun.entity
-    }
-]
+ ]
 
 [
 	// Lord Byron, Ada Lovelace
 
 	rule:
         PN => propernoun1 propernoun2,
-    semantics: {
+    semantics:
 		PN.sem = name(PN.entity, propernoun1.text + " " + propernoun2.text);
         PN.entity = propernoun1.entity;
         PN.entity = propernoun2.entity
-    }
-]
+ ]
 
 [
 	// Jan de Wit
 
 	rule:
         PN => propernoun1 propernoun2 propernoun3,
-    semantics: {
+    semantics:
 		PN.sem = name(PN.entity, propernoun1.text + " " + propernoun2.text + " " + propernoun3.text);
         PN.entity = propernoun1.entity;
         PN.entity = propernoun2.entity;
         PN.entity = propernoun3.entity
-    }
-]
+ ]
 
 [
 	// Jan de Wit
 
 	rule:
         PN => propernoun1 insertion propernoun2,
-    semantics: {
+    semantics:
         PN.sem = name(PN.entity, propernoun1.text + " " + insertion.text + " " + propernoun2.text);
         PN.entity = propernoun1.entity;
         PN.entity = propernoun2.entity
-    }
-]
+ ]
 
 // Prepositional Phrase
 
 [
 	rule:
 		PP => preposition NP,
-	semantics: {
+	semantics:
 		PP.sem = preposition.sem NP.sem;
 		PP.superEntity = preposition.superEntity;
 		PP.subEntity = preposition.subEntity;
 		PP.subEntity = NP.entity
-	}
 ]
 
 // Adjectival Phrase
@@ -419,10 +387,9 @@
 
 	rule:
 		AdjP => adjective,
-	semantics: {
+	semantics:
 		AdjP.sem = adjective.sem;
 		AdjP.entity = adjective.entity
-	}
 ]
 
 [
@@ -430,11 +397,10 @@
 
 	rule:
 		AdjP => AdvP adjective,
-	semantics: {
+	semantics:
 		AdjP.sem = AdvP.sem adjective.sem;
 		AdjP.entity = AdvP.entity;
         AdjP.entity = adjective.entity
-	}
 ]
 
 [
@@ -442,11 +408,10 @@
 
 	rule:
 		AdjP => degreeAdverb adjective,
-	semantics: {
+	semantics:
 		AdjP.sem = degreeAdverb.sem adjective.sem;
 		AdjP.entity = degreeAdverb.entity;
         AdjP.entity = adjective.entity
-	}
 ]
 
 [
@@ -454,11 +419,10 @@
 
 	rule:
 		AdjP => NP adjective,
-	semantics: {
+	semantics:
 		AdjP.sem = NP.sem adjective.sem;
 		AdjP.entity = NP.entity;
 		AdjP.entity = adjective.entity
-	}
 ]
 
 // Adverbial Phrase
@@ -468,20 +432,18 @@
 
 	rule:
         AdvP => adverb,
-    semantics: {
+    semantics:
         AdvP.sem = adverb.sem
-    }
-]
+ ]
 
 [
 	// very quickly
 
 	rule:
         AdvP => degreeAdverb adverb,
-    semantics: {
+    semantics:
         AdvP.sem = degreeAdverb.sem adverb.sem
-    }
-]
+ ]
 
 // Determiner Phrase
 
@@ -489,24 +451,22 @@
 	// the
 	rule:
         DP => determiner,
-    semantics: {
+    semantics:
         DP.sem = determiner.sem;
         DP.entity = determiner.entity
-    }
-]
+ ]
 
 [
 	// Byron's
 
 	rule:
         DP => NP possessiveMarker,
-    semantics: {
+    semantics:
         DP.sem = NP.sem possessiveMarker.sem;
         DP.subEntity = possessiveMarker.subEntity;
         DP.entity = possessiveMarker.superEntity;
         DP.subEntity = NP.entity
-    }
-]
+ ]
 
 [
 	// 43 (years old)
@@ -514,9 +474,8 @@
 
 	rule:
 		DP => numeral,
-	semantics: {
+	semantics:
 		DP.sem = numeral.sem;
 		DP.entity = numeral.entity
-	}
 ]
 

@@ -4,7 +4,7 @@
 
 	rule:
 		Clause => WhADVP auxDo NP VP,
-	semantics: {
+	semantics:
 		Clause.sem = WhADVP.sem auxDo.sem NP.sem VP.sem
 			subject(Clause.event, Clause.subject) object(Clause.event, Clause.object) request(Clause.request) mood(Clause.event, Interrogative);
 		Clause.event = VP.event;
@@ -13,5 +13,4 @@
 		Clause.request = WhADVP.request;
 		Clause.event = WhADVP.event;
 		Clause.event = auxDo.event
-	}
 ]

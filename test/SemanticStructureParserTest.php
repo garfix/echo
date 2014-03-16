@@ -145,7 +145,7 @@ class SemanticStructureParserTest extends \PHPUnit_Framework_TestCase
 	{
 		$Parser = new SemanticStructureParser();
 
-		$string = '{S.sem = NP.sem VP.sem; S.event = VP.event; S.subject = NP.entity}';
+		$string = 'S.sem = NP.sem VP.sem; S.event = VP.event; S.subject = NP.entity';
 		$Structure = $Parser->parse($string);
 		$serialized = $Parser->serialize($Structure);
 		$this->assertEquals($string, $serialized);

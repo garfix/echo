@@ -27,6 +27,6 @@ class AssignmentList extends SemanticStructure
 
 	public function __toString()
 	{
-		return '{' . implode('; ', $this->assignments) . '}';
+		return implode('; ', $this->assignments);
 	}
 }
